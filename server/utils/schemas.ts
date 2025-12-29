@@ -130,6 +130,8 @@ export const adminSettingsSchema = z.object({
   peerTTL: z.coerce.number().int().positive().max(86400).optional(),
   minRatio: z.coerce.number().min(0).max(10).optional(),
   starterUpload: z.coerce.number().int().min(0).optional(),
+  siteName: z.string().min(1).max(50).optional(),
+  siteLogo: z.string().min(1).max(100).optional(),
 });
 
 // ============================================================================

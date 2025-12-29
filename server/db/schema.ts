@@ -33,6 +33,7 @@ export const users = pgTable(
     isAdmin: boolean('is_admin').default(false).notNull(),
     isModerator: boolean('is_moderator').default(false).notNull(),
     isBanned: boolean('is_banned').default(false).notNull(),
+    roleId: text('role_id'),
     lastIp: text('last_ip'),
     uploaded: bigint('uploaded', { mode: 'number' }).default(0).notNull(),
     downloaded: bigint('downloaded', { mode: 'number' }).default(0).notNull(),
@@ -50,6 +51,19 @@ export const users = pgTable(
 export const bannedIps = pgTable('banned_ips', {
   ip: text('ip').primaryKey(),
   reason: text('reason'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ============================================================================
+// Roles (Flexible permission management)
+// ============================================================================
+export const roles = pgTable('roles', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull().unique(),
+  color: text('color').default('#6b7280').notNull(),
+  canUploadWithoutModeration: boolean('can_upload_without_moderation')
+    .default(false)
+    .notNull(),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
@@ -83,6 +97,7 @@ export const torrents = pgTable(
     uploaderId: text('uploader_id').references(() => users.id),
     categoryId: text('category_id').references(() => categories.id),
     isActive: boolean('is_active').default(true).notNull(),
+    isApproved: boolean('is_approved').default(false).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [
@@ -190,7 +205,11 @@ export const torrentComments = pgTable('torrent_comments', {
 // ============================================================================
 // Relations
 // ============================================================================
-export const usersRelations = relations(users, ({ many }) => ({
+export const usersRelations = relations(users, ({ one, many }) => ({
+  role: one(roles, {
+    fields: [users.roleId],
+    references: [roles.id],
+  }),
   torrents: many(torrents),
   forumTopics: many(forumTopics),
   forumPosts: many(forumPosts),
@@ -198,6 +217,10 @@ export const usersRelations = relations(users, ({ many }) => ({
   hnrTracking: many(hnrTracking),
   invitesCreated: many(invitations, { relationName: 'invitesCreated' }),
   reportsCreated: many(reports, { relationName: 'reportsCreated' }),
+}));
+
+export const rolesRelations = relations(roles, ({ many }) => ({
+  users: many(users),
 }));
 
 export const categoriesRelations = relations(categories, ({ one, many }) => ({
@@ -476,6 +499,8 @@ export const reportsRelations = relations(reports, ({ one }) => ({
 // ============================================================================
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
+export type Role = typeof roles.$inferSelect;
+export type NewRole = typeof roles.$inferInsert;
 export type BannedIp = typeof bannedIps.$inferSelect;
 export type NewBannedIp = typeof bannedIps.$inferInsert;
 export type Category = typeof categories.$inferSelect;

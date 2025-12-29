@@ -47,7 +47,7 @@
               {{ u.username }}
             </p>
             <p class="text-[10px] font-mono text-text-muted">
-              {{ u.email }}
+              ID: {{ u.id.substring(0, 8) }}...
             </p>
             <p
               v-if="u.lastIp"
@@ -74,6 +74,22 @@
                   :class="u.isBanned ? 'translate-x-5' : 'translate-x-1'"
                 />
               </button>
+            </div>
+            <div v-if="user?.isAdmin && roles.length > 0" class="flex items-center gap-2">
+              <label
+                class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                >Role</label
+              >
+              <select
+                :value="u.roleId || ''"
+                @change="assignRole(u, ($event.target as HTMLSelectElement).value)"
+                class="bg-bg-primary border border-border rounded px-2 py-1 text-[10px] font-bold text-text-primary focus:outline-none focus:border-accent-primary"
+              >
+                <option value="">No Role</option>
+                <option v-for="role in roles" :key="role.id" :value="role.id">
+                  {{ role.name }}
+                </option>
+              </select>
             </div>
             <div v-if="user?.isAdmin" class="flex items-center gap-2">
               <label
@@ -133,11 +149,30 @@
 </template>
 
 <script setup lang="ts">
+interface Role {
+  id: string;
+  name: string;
+  color: string;
+  canUploadWithoutModeration: boolean;
+}
+
 const { user } = useUserSession();
 const userSearchQuery = ref('');
 const isSearching = ref(false);
 const hasSearched = ref(false);
 const foundUsers = ref<any[]>([]);
+const roles = ref<Role[]>([]);
+
+// Load roles on mount
+onMounted(async () => {
+  if (user.value?.isAdmin) {
+    try {
+      roles.value = (await $fetch('/api/admin/roles')) as Role[];
+    } catch (error: any) {
+      console.error('Failed to load roles:', error);
+    }
+  }
+});
 
 async function searchUsers() {
   if (!userSearchQuery.value.trim() || isSearching.value) return;
@@ -191,6 +226,22 @@ async function toggleBan(user: any) {
     }
   } catch (error: any) {
     alert(error.data?.message || `Failed to ${action} user`);
+  }
+}
+
+async function assignRole(targetUser: any, roleId: string) {
+  try {
+    await $fetch(`/api/admin/users/${targetUser.id}/assign-role`, {
+      method: 'PUT',
+      body: { roleId: roleId || null },
+    });
+    // Update local state
+    const index = foundUsers.value.findIndex((u) => u.id === targetUser.id);
+    if (index !== -1) {
+      foundUsers.value[index].roleId = roleId || null;
+    }
+  } catch (error: any) {
+    alert(error.data?.message || 'Failed to assign role');
   }
 }
 </script>

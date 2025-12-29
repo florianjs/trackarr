@@ -63,6 +63,12 @@ const menuItems = [
     description: 'Moderation overview and quick actions',
   },
   {
+    label: 'Pending Torrents',
+    path: '/mod/pending',
+    icon: 'ph:clock',
+    description: 'Review and approve pending torrent uploads',
+  },
+  {
     label: 'Users',
     path: '/mod/users',
     icon: 'ph:users',

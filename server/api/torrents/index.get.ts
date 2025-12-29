@@ -5,15 +5,29 @@ import { validateQuery, torrentQuerySchema } from '../../utils/schemas';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  await requireUserSession(event);
+  const { user } = await requireUserSession(event);
 
   // Validate query parameters with Zod
   const query = validateQuery(event, torrentQuerySchema);
 
   const offset = (query.page - 1) * query.limit;
 
+  // Check if user can see unapproved torrents
+  const canSeeUnapproved = user.isAdmin || user.isModerator;
+
   // Build where clause
   const conditions = [];
+
+  // Only show approved torrents to regular users (but show their own pending)
+  if (!canSeeUnapproved) {
+    conditions.push(
+      or(
+        eq(schema.torrents.isApproved, true),
+        eq(schema.torrents.uploaderId, user.id)
+      )
+    );
+  }
+
   if (query.search) {
     // Intelligent search: if it looks like an infoHash, search by it too
     const isHash = /^[0-9a-fA-F]{40}$/.test(query.search);

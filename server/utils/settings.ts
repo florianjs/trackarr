@@ -11,6 +11,8 @@ export const SETTINGS_KEYS = {
   HNR_GRACE_PERIOD: 'hnr_grace_period',
   INVITE_ENABLED: 'invite_enabled',
   DEFAULT_INVITES: 'default_invites',
+  SITE_NAME: 'site_name',
+  SITE_LOGO: 'site_logo',
 } as const;
 
 const settingsCache = new Map<
@@ -125,4 +127,20 @@ export async function isInviteEnabled(): Promise<boolean> {
 export async function getDefaultInvites(): Promise<number> {
   const value = await getSetting(SETTINGS_KEYS.DEFAULT_INVITES);
   return value ? parseInt(value, 10) : 2;
+}
+
+/**
+ * Get site name (for branding)
+ */
+export async function getSiteName(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.SITE_NAME);
+  return value || 'OpenTracker';
+}
+
+/**
+ * Get site logo icon name
+ */
+export async function getSiteLogo(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.SITE_LOGO);
+  return value || 'ph:broadcast-bold';
 }

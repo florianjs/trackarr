@@ -31,10 +31,20 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  if (typeof body.siteName === 'string') {
+    await setSetting(SETTINGS_KEYS.SITE_NAME, body.siteName);
+  }
+
+  if (typeof body.siteLogo === 'string') {
+    await setSetting(SETTINGS_KEYS.SITE_LOGO, body.siteLogo);
+  }
+
   return {
     success: true,
     registrationOpen: body.registrationOpen,
     minRatio: body.minRatio,
     starterUpload: body.starterUpload,
+    siteName: body.siteName,
+    siteLogo: body.siteLogo,
   };
 });

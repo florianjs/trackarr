@@ -13,11 +13,11 @@
           <div
             class="w-7 h-7 bg-white rounded-sm flex items-center justify-center transition-transform group-hover:rotate-12"
           >
-            <Icon name="ph:broadcast-bold" class="text-black text-lg" />
+            <Icon :name="branding?.siteLogo || 'ph:broadcast-bold'" class="text-black text-lg" />
           </div>
           <div class="flex flex-col leading-none">
             <span class="text-sm font-bold tracking-tighter uppercase"
-              >OpenTracker</span
+              >{{ branding?.siteName || 'OpenTracker' }}</span
             >
             <span class="text-[10px] text-text-muted font-mono"
               >v0.1.0-alpha</span
@@ -221,10 +221,13 @@
           <span>P2P PROTOCOL</span>
         </div>
         <div class="flex gap-6">
+          <a href="https://n0w.me/" target="_blank" rel="noopener" class="text-text-muted hover:text-white transition-colors"
+            ><Icon name="ph:globe" class="text-xl"
+          /></a>
           <a href="https://github.com/florianjs/opentracker" target="_blank" rel="noopener" class="text-text-muted hover:text-white transition-colors"
             ><Icon name="ph:github-logo" class="text-xl"
           /></a>
-          <a href="#" class="text-text-muted hover:text-white transition-colors"
+          <a href="https://discord.gg/GRFu35djvz" target="_blank" rel="noopener" class="text-text-muted hover:text-white transition-colors"
             ><Icon name="ph:discord-logo" class="text-xl"
           /></a>
         </div>
@@ -239,6 +242,9 @@ const router = useRouter();
 
 const showUserMenu = ref(false);
 const userMenuRef = ref<HTMLElement | null>(null);
+
+// Fetch site branding
+const { data: branding } = await useFetch<{ siteName: string; siteLogo: string }>('/api/branding');
 
 // Refresh user stats from database
 async function refreshStats() {

@@ -1,7 +1,7 @@
 import { db } from '~~/server/db';
 import { users } from '~~/server/db/schema';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
-import { ilike, or } from 'drizzle-orm';
+import { ilike } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   await requireModeratorSession(event);
@@ -13,18 +13,15 @@ export default defineEventHandler(async (event) => {
   }
 
   const results = await db.query.users.findMany({
-    where: or(
-      ilike(users.username, `%${search}%`),
-      ilike(users.email, `%${search}%`)
-    ),
+    where: ilike(users.username, `%${search}%`),
     limit: 10,
     columns: {
       id: true,
       username: true,
-      email: true,
       isAdmin: true,
       isModerator: true,
       isBanned: true,
+      roleId: true,
       lastIp: true,
       createdAt: true,
     },

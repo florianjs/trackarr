@@ -88,6 +88,20 @@ export default defineEventHandler(async (event) => {
   const id = randomUUID();
   const now = new Date();
 
+  // Check if user can bypass moderation (admins, mods, or users with permission via role)
+  // Need to fetch user's role to check permissions
+  const userWithRole = await db.query.users.findFirst({
+    where: (u, { eq }) => eq(u.id, user.id),
+    with: {
+      role: true,
+    },
+  });
+
+  const canBypassModeration =
+    user.isAdmin ||
+    user.isModerator ||
+    (userWithRole?.role?.canUploadWithoutModeration ?? false);
+
   await db.insert(schema.torrents).values({
     id,
     infoHash,
@@ -98,6 +112,7 @@ export default defineEventHandler(async (event) => {
     uploaderId: user.id, // Set uploader from authenticated user
     categoryId: categoryId || null,
     isActive: true,
+    isApproved: canBypassModeration,
     createdAt: now,
   });
 
@@ -133,13 +148,16 @@ export default defineEventHandler(async (event) => {
     name,
     size: totalSize,
     isActive: true,
+    isApproved: canBypassModeration,
     createdAt: now.toISOString(),
     magnetLink: generateMagnetLink(infoHash, name),
   };
 
   return {
     success: true,
-    message: 'Torrent created successfully',
+    message: canBypassModeration
+      ? 'Torrent created successfully'
+      : 'Torrent uploaded and pending moderation approval',
     data: torrent,
   };
 });

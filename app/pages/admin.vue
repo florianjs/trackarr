@@ -85,6 +85,12 @@ const menuItems = [
     description: 'Manage user accounts and permissions',
   },
   {
+    label: 'Roles',
+    path: '/admin/roles',
+    icon: 'ph:user-circle-gear',
+    description: 'Manage user roles and permissions',
+  },
+  {
     label: 'Reports',
     path: '/admin/reports',
     icon: 'ph:flag',
@@ -126,6 +132,6 @@ const currentItem = computed(
   () => menuItems.find((item) => item.path === route.path) || menuItems[0]
 );
 
-const currentTitle = computed(() => currentItem.value.label);
-const currentDescription = computed(() => currentItem.value.description);
+const currentTitle = computed(() => currentItem?.value?.label);
+const currentDescription = computed(() => currentItem?.value?.description);
 </script>
