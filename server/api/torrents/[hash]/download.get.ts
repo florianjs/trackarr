@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Personalize announce URL
-  const trackerUrl = new URL(config.public.trackerUrl);
+  const trackerUrl = new URL(config.public.trackerHttpUrl as string);
   trackerUrl.searchParams.set('passkey', user.passkey);
   const personalizedUrl = trackerUrl.toString();
 

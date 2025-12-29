@@ -58,7 +58,7 @@ export default defineEventHandler(async (event) => {
   const originalPrivate = decoded.info?.private;
 
   // Generate personalized URL
-  const trackerUrl = new URL(config.public.trackerUrl);
+  const trackerUrl = new URL(config.public.trackerHttpUrl as string);
   trackerUrl.searchParams.set('passkey', user.passkey);
   const personalizedUrl = trackerUrl.toString();
 
@@ -79,7 +79,7 @@ export default defineEventHandler(async (event) => {
       infoHash,
       torrentName: torrent.name,
       userPasskey: user.passkey,
-      trackerBaseUrl: config.public.trackerUrl,
+      trackerBaseUrl: config.public.trackerHttpUrl,
     },
     original: {
       announce: originalAnnounce,
