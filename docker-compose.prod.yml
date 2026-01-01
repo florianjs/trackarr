@@ -76,6 +76,8 @@ services:
       TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
       TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
       TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
+      # Security: Secret for hashing peer IPs
+      IP_HASH_SECRET: ${IP_HASH_SECRET}
     expose:
       - "3000"
       - "8080"
@@ -312,7 +314,7 @@ services:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
       GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
       GF_USERS_ALLOW_SIGN_UP: "false"
-      GF_SERVER_ROOT_URL: "%(protocol)s://%(domain)s/grafana/"
+      GF_SERVER_ROOT_URL: "https://${MONITORING_DOMAIN:-monitoring.localhost}/grafana/"
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
       # Plugins disabled - install manually if needed
       # GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-piechart-panel
