@@ -82,7 +82,6 @@
 
 	# Grafana
 	handle /grafana* {
-		uri strip_prefix /grafana
 		reverse_proxy grafana:3000
 	}
 

@@ -268,6 +268,44 @@ docker exec opentracker-db pg_isready           # PostgreSQL
 docker exec opentracker-redis redis-cli ping    # Redis
 ```
 
+### Updating
+
+To update your OpenTracker installation to the latest version:
+
+```bash
+cd /opt/opentracker
+git pull origin main
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+> **Note**: This will rebuild the containers with the latest code. Your data (PostgreSQL, Redis) is persisted in Docker volumes and will not be affected.
+
+### Troubleshooting
+
+**Full restart (stop and start all services):**
+
+```bash
+cd /opt/opentracker
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml up -d
+```
+
+**Full restart with rebuild (if you suspect issues with cached images):**
+
+```bash
+cd /opt/opentracker
+docker compose -f docker-compose.prod.yml down
+docker compose -f docker-compose.prod.yml up -d --build --force-recreate
+```
+
+**View logs to debug issues:**
+
+```bash
+docker compose -f docker-compose.prod.yml logs -f
+docker compose -f docker-compose.prod.yml logs -f app  # App only
+```
+
 ---
 
 ## 🧪 Development
