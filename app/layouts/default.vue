@@ -20,7 +20,7 @@
               >{{ branding?.siteName || 'OpenTracker' }}</span
             >
             <span class="text-[10px] text-text-muted font-mono"
-              >v0.1.0-alpha</span
+              >v{{ useRuntimeConfig().public.appVersion }}</span
             >
           </div>
         </NuxtLink>

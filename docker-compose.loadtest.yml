@@ -1,0 +1,98 @@
+# Local Production Mode for Load Testing
+# Uses production settings but exposes tracker port for direct testing
+# Usage: docker compose -f docker-compose.loadtest.yml up -d
+
+services:
+  app:
+    image: opentracker:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opentracker-loadtest
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET:-loadtest-secret-minimum-32-chars-here}
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-opentracker}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD:-tracker}
+      DB_NAME: ${DB_NAME:-opentracker}
+      DB_SSL: "false"
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret}
+    ports:
+      - "3000:3000"   # Nuxt app
+      - "8080:8080"   # Tracker HTTP (for load testing)
+    networks:
+      - opentracker-loadtest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: opentracker-loadtest-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tracker}
+      POSTGRES_DB: ${DB_NAME:-opentracker}
+    ports:
+      - "5432:5432"
+    volumes:
+      - loadtest_postgres:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    command: >
+      postgres
+      -c ssl=off
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c log_min_duration_statement=1000
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-tracker} -d ${DB_NAME:-opentracker}"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - opentracker-loadtest
+
+  redis:
+    image: redis:7-alpine
+    container_name: opentracker-loadtest-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly no
+      --save ""
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --maxclients 5000
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+    networks:
+      - opentracker-loadtest
+
+networks:
+  opentracker-loadtest:
+    driver: bridge
+
+volumes:
+  loadtest_postgres:

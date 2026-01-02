@@ -26,7 +26,7 @@
             <span class="text-sm font-bold tracking-tighter uppercase">{{
               siteName || 'OpenTracker'
             }}</span>
-            <span class="text-[10px] text-text-muted font-mono">v0.1.0-alpha</span>
+            <span class="text-[10px] text-text-muted font-mono">v{{ useRuntimeConfig().public.appVersion }}</span>
           </div>
         </div>
       </div>

@@ -369,6 +369,30 @@ npx drizzle-kit studio   # Database GUI
 
 ---
 
+## 🙏 Acknowledgements
+
+OpenTracker is built on the shoulders of giants. We'd like to thank the following open source projects:
+
+| Project | Role |
+|---------|------|
+| [Nuxt](https://nuxt.com) | Fullstack Vue framework |
+| [Vue.js](https://vuejs.org) | Reactive frontend framework |
+| [bittorrent-tracker](https://github.com/webtorrent/bittorrent-tracker) | BitTorrent tracker library |
+| [Drizzle ORM](https://orm.drizzle.team) | TypeScript ORM |
+| [PostgreSQL](https://www.postgresql.org) | Database |
+| [Redis](https://redis.io) | In-memory cache |
+| [ioredis](https://github.com/redis/ioredis) | Redis client for Node.js |
+| [Tailwind CSS](https://tailwindcss.com) | Utility-first CSS |
+| [Chart.js](https://www.chartjs.org) | Charts & visualizations |
+| [Prometheus](https://prometheus.io) | Metrics collection |
+| [Grafana](https://grafana.com) | Monitoring dashboards |
+| [VitePress](https://vitepress.dev) | Documentation framework |
+| [Vitest](https://vitest.dev) | Testing framework |
+| [Pinia](https://pinia.vuejs.org) | State management |
+| [Zod](https://zod.dev) | Schema validation |
+
+---
+
 ## 📄 License
 
 MIT License — see [LICENSE](LICENSE) for details.

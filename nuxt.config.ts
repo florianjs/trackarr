@@ -1,3 +1,5 @@
+import pkg from './package.json';
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -38,6 +40,7 @@ export default defineNuxtConfig({
     })(),
     redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
     public: {
+      appVersion: pkg.version,
       trackerHttpUrl: process.env.TRACKER_HTTP_URL || 'http://localhost:8080/announce',
       trackerUdpUrl: process.env.TRACKER_UDP_URL || 'udp://localhost:8081/announce',
       trackerWsUrl: process.env.TRACKER_WS_URL || 'ws://localhost:8082',

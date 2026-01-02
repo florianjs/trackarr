@@ -7,6 +7,7 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
+      - "8080:8080" # Tracker HTTP
       - "24678:24678" # Vite HMR
     environment:
       - NODE_ENV=development

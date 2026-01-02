@@ -1,6 +1,6 @@
 {
   "name": "opentracker",
-  "version": "0.1.4",
+  "version": "0.2.3",
   "type": "module",
   "private": true,
   "scripts": {
@@ -17,6 +17,7 @@
     "test": "vitest",
     "test:security": "vitest run tests/security",
     "test:coverage": "vitest run --coverage",
+    "test:load": "tsx tests/load/load-test.ts",
     "publish:public": "./scripts/publish-public.sh"
   },
   "dependencies": {
