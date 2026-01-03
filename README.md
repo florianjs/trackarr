@@ -11,7 +11,7 @@ Built with Nuxt 4 • PostgreSQL • Redis
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](#-tech-stack)
+[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](#-tech-stack) • [Live Demo](https://tracker.florianargaud.com/)
 
 ![OpenTracker Homepage](/public/images/image%20copy%203.png)
 

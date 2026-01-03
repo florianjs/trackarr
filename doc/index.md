@@ -12,6 +12,9 @@ hero:
     - theme: alt
       text: View on GitHub
       link: https://github.com/florianjs/opentracker
+    - theme: alt
+      text: Live Demo
+      link: https://tracker.florianargaud.com/
 
 features:
   - title: Zero-Knowledge Auth

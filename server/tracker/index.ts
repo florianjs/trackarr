@@ -111,6 +111,14 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
   }
 
   server.on('start', (addr: string, params: any) => {
+    // DEBUG: Log raw params to diagnose ratio tracking issue
+    console.log('[Tracker] RAW PARAMS (start):', JSON.stringify({
+      uploaded: params.uploaded,
+      downloaded: params.downloaded,
+      left: params.left,
+      passkey: params.passkey ? params.passkey.slice(0, 8) + '...' : 'MISSING',
+      allKeys: Object.keys(params),
+    }));
     const infoHash = params.infoHash || params.info_hash;
     const peerId = params.peerId || params.peer_id;
     const { uploaded, downloaded, left, passkey } = params;
@@ -174,6 +182,13 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
   });
 
   server.on('update', (addr: string, params: any) => {
+    // DEBUG: Log raw params to diagnose ratio tracking issue
+    console.log('[Tracker] RAW PARAMS (update):', JSON.stringify({
+      uploaded: params.uploaded,
+      downloaded: params.downloaded,
+      left: params.left,
+      passkey: params.passkey ? params.passkey.slice(0, 8) + '...' : 'MISSING',
+    }));
     const infoHash = params.infoHash || params.info_hash;
     const peerId = params.peerId || params.peer_id;
     const { uploaded, downloaded, left, passkey } = params;
