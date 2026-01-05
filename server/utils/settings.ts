@@ -20,6 +20,7 @@ export const SETTINGS_KEYS = {
   ANNOUNCEMENT_TYPE: 'announcement_type',
   // Homepage content
   HERO_TITLE: 'hero_title',
+  HERO_TITLE_SPLIT_POSITION: 'hero_title_split_position',
   HERO_SUBTITLE: 'hero_subtitle',
   STATUS_BADGE_TEXT: 'status_badge_text',
   FEATURE_1_TITLE: 'feature_1_title',
@@ -211,6 +212,14 @@ export async function getAnnouncementType(): Promise<'info' | 'warning' | 'error
 export async function getHeroTitle(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.HERO_TITLE);
   return value || 'OpenTracker';
+}
+
+/**
+ * Get hero title split position (character index where to split)
+ */
+export async function getHeroTitleSplitPosition(): Promise<number | null> {
+  const value = await getSetting(SETTINGS_KEYS.HERO_TITLE_SPLIT_POSITION);
+  return value ? parseInt(value, 10) : null;
 }
 
 /**

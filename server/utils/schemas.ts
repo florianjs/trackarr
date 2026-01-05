@@ -139,6 +139,7 @@ export const adminSettingsSchema = z.object({
   announcementType: z.enum(['info', 'warning', 'error']).optional(),
   // Homepage content
   heroTitle: z.string().max(50).optional(),
+  heroTitleSplitPosition: z.coerce.number().int().min(1).optional(),
   heroSubtitle: z.string().max(500).optional(),
   statusBadgeText: z.string().max(100).optional(),
   feature1Title: z.string().max(100).optional(),

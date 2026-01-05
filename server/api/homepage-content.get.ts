@@ -1,5 +1,6 @@
 import {
   getHeroTitle,
+  getHeroTitleSplitPosition,
   getHeroSubtitle,
   getStatusBadgeText,
   getFeature1Title,
@@ -16,6 +17,7 @@ import {
  */
 export default defineEventHandler(async () => {
   const heroTitle = await getHeroTitle();
+  const heroTitleSplitPosition = await getHeroTitleSplitPosition();
   const heroSubtitle = await getHeroSubtitle();
   const statusBadgeText = await getStatusBadgeText();
   const feature1Title = await getFeature1Title();
@@ -27,6 +29,7 @@ export default defineEventHandler(async () => {
 
   return {
     heroTitle,
+    heroTitleSplitPosition,
     heroSubtitle,
     statusBadgeText,
     features: [

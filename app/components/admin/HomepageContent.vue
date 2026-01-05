@@ -36,6 +36,27 @@
           <label
             class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
           >
+            Title Split Position ({{ heroTitleSplitPosition || Math.ceil(heroTitle.length / 2) }})
+          </label>
+          <input
+            v-model.number="heroTitleSplitPosition"
+            type="range"
+            :min="1"
+            :max="heroTitle.length"
+            class="w-full"
+          />
+          <div class="mt-2 p-3 bg-bg-secondary border border-border rounded">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2">Preview:</p>
+            <div class="text-2xl font-black text-text-primary tracking-tighter uppercase">
+              {{ titlePreview.first }}<span class="text-text-muted">{{ titlePreview.second }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <label
+            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
+          >
             Subtitle
           </label>
           <textarea
@@ -107,6 +128,7 @@
 
 <script setup lang="ts">
 const heroTitle = ref('OpenTracker');
+const heroTitleSplitPosition = ref<number | null>(null);
 const heroSubtitle = ref('High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.');
 const statusBadgeText = ref('Tracker Online & Operational');
 const features = ref([
@@ -116,10 +138,20 @@ const features = ref([
 ]);
 const loading = ref(false);
 
+const titlePreview = computed(() => {
+  const title = heroTitle.value;
+  const splitPos = heroTitleSplitPosition.value || Math.ceil(title.length / 2);
+  return {
+    first: title.slice(0, splitPos),
+    second: title.slice(splitPos),
+  };
+});
+
 onMounted(async () => {
   try {
     const settings = await $fetch<{
       heroTitle: string;
+      heroTitleSplitPosition: number | null;
       heroSubtitle: string;
       statusBadgeText: string;
       feature1Title: string;
@@ -131,6 +163,7 @@ onMounted(async () => {
     }>('/api/admin/settings');
     
     heroTitle.value = settings.heroTitle;
+    heroTitleSplitPosition.value = settings.heroTitleSplitPosition;
     heroSubtitle.value = settings.heroSubtitle;
     statusBadgeText.value = settings.statusBadgeText;
     features.value = [
@@ -150,6 +183,7 @@ async function saveContent() {
       method: 'PUT',
       body: {
         heroTitle: heroTitle.value,
+        heroTitleSplitPosition: heroTitleSplitPosition.value || Math.ceil(heroTitle.value.length / 2),
         heroSubtitle: heroSubtitle.value,
         statusBadgeText: statusBadgeText.value,
         feature1Title: features.value[0]?.title ?? '',

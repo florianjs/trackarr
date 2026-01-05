@@ -75,6 +75,10 @@ export default defineEventHandler(async (event) => {
     await setSetting(SETTINGS_KEYS.HERO_TITLE, body.heroTitle);
   }
 
+  if (typeof body.heroTitleSplitPosition === 'number') {
+    await setSetting(SETTINGS_KEYS.HERO_TITLE_SPLIT_POSITION, body.heroTitleSplitPosition.toString());
+  }
+
   if (typeof body.heroSubtitle === 'string') {
     await setSetting(SETTINGS_KEYS.HERO_SUBTITLE, body.heroSubtitle);
   }

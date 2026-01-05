@@ -134,6 +134,7 @@ interface TorrentWithStats {
 
 interface HomepageContent {
   heroTitle: string;
+  heroTitleSplitPosition: number | null;
   heroSubtitle: string;
   statusBadgeText: string;
   features: { title: string; description: string }[];
@@ -153,13 +154,13 @@ function handleSearch() {
 // Fetch homepage content
 const { data: content } = await useFetch<HomepageContent>('/api/homepage-content');
 
-// Compute hero title parts (split at middle if single word, or at first space)
+// Compute hero title parts using configured split position
 const heroTitleParts = computed(() => {
   const title = content.value?.heroTitle ?? 'OpenTracker';
-  const midpoint = Math.ceil(title.length / 2);
+  const splitPos = content.value?.heroTitleSplitPosition ?? Math.ceil(title.length / 2);
   return {
-    first: title.slice(0, midpoint),
-    second: title.slice(midpoint),
+    first: title.slice(0, splitPos),
+    second: title.slice(splitPos),
   };
 });
 

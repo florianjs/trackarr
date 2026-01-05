@@ -11,6 +11,7 @@ import {
   getAnnouncementMessage,
   getAnnouncementType,
   getHeroTitle,
+  getHeroTitleSplitPosition,
   getHeroSubtitle,
   getStatusBadgeText,
   getFeature1Title,
@@ -39,6 +40,7 @@ export default defineEventHandler(async (event) => {
   const announcementMessage = await getAnnouncementMessage();
   const announcementType = await getAnnouncementType();
   const heroTitle = await getHeroTitle();
+  const heroTitleSplitPosition = await getHeroTitleSplitPosition();
   const heroSubtitle = await getHeroSubtitle();
   const statusBadgeText = await getStatusBadgeText();
   const feature1Title = await getFeature1Title();
@@ -60,6 +62,7 @@ export default defineEventHandler(async (event) => {
     announcementMessage,
     announcementType,
     heroTitle,
+    heroTitleSplitPosition,
     heroSubtitle,
     statusBadgeText,
     feature1Title,
