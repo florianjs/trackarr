@@ -210,40 +210,42 @@
     </header>
 
     <!-- Announcement Banner -->
-    <Transition
-      enter-active-class="transition duration-200 ease-out"
-      enter-from-class="opacity-0 -translate-y-2"
-      enter-to-class="opacity-100 translate-y-0"
-      leave-active-class="transition duration-150 ease-in"
-      leave-from-class="opacity-100 translate-y-0"
-      leave-to-class="opacity-0 -translate-y-2"
-    >
-      <div
-        v-if="announcement?.enabled && announcement?.message && !announcementDismissed"
-        :class="[
-          'border-b',
-          announcementStyles[announcement.type || 'info'].bg,
-          announcementStyles[announcement.type || 'info'].border,
-        ]"
+    <ClientOnly>
+      <Transition
+        enter-active-class="transition duration-200 ease-out"
+        enter-from-class="opacity-0 -translate-y-2"
+        enter-to-class="opacity-100 translate-y-0"
+        leave-active-class="transition duration-150 ease-in"
+        leave-from-class="opacity-100 translate-y-0"
+        leave-to-class="opacity-0 -translate-y-2"
       >
-        <div class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3">
-          <Icon
-            :name="announcementStyles[announcement.type || 'info'].icon"
-            :class="['text-lg flex-shrink-0', announcementStyles[announcement.type || 'info'].text]"
-          />
-          <p :class="['text-sm flex-1', announcementStyles[announcement.type || 'info'].text]">
-            {{ announcement.message }}
-          </p>
-          <button
-            @click="dismissAnnouncement"
-            class="p-1 rounded hover:bg-white/10 transition-colors flex-shrink-0"
-            title="Dismiss"
-          >
-            <Icon name="ph:x" :class="['text-sm', announcementStyles[announcement.type || 'info'].text]" />
-          </button>
+        <div
+          v-if="announcementReady && announcement?.enabled && announcement?.message && !announcementDismissed"
+          :class="[
+            'border-b',
+            announcementStyles[announcement.type || 'info'].bg,
+            announcementStyles[announcement.type || 'info'].border,
+          ]"
+        >
+          <div class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3">
+            <Icon
+              :name="announcementStyles[announcement.type || 'info'].icon"
+              :class="['text-lg flex-shrink-0', announcementStyles[announcement.type || 'info'].text]"
+            />
+            <p :class="['text-sm flex-1', announcementStyles[announcement.type || 'info'].text]">
+              {{ announcement.message }}
+            </p>
+            <button
+              @click="dismissAnnouncement"
+              class="p-1 rounded hover:bg-white/10 transition-colors flex-shrink-0"
+              title="Dismiss"
+            >
+              <Icon name="ph:x" :class="['text-sm', announcementStyles[announcement.type || 'info'].text]" />
+            </button>
+          </div>
         </div>
-      </div>
-    </Transition>
+      </Transition>
+    </ClientOnly>
 
     <!-- Main Content -->
     <main class="flex-grow max-w-[1400px] w-full mx-auto px-4 py-6">
@@ -301,6 +303,18 @@ const { data: announcement } = await useFetch<{
 }>('/api/announcement');
 
 const announcementDismissed = ref(false);
+const announcementReady = ref(false);
+
+// Simple hash function for announcement message
+function hashString(str: string): string {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i);
+    hash = ((hash << 5) - hash) + char;
+    hash = hash & hash;
+  }
+  return Math.abs(hash).toString(36);
+}
 
 const announcementStyles = {
   info: {
@@ -325,15 +339,21 @@ const announcementStyles = {
 
 function dismissAnnouncement() {
   announcementDismissed.value = true;
-  if (import.meta.client) {
-    sessionStorage.setItem('announcement_dismissed', 'true');
+  if (import.meta.client && announcement.value?.message) {
+    const messageHash = hashString(announcement.value.message);
+    sessionStorage.setItem(`announcement_dismissed_${messageHash}`, 'true');
   }
 }
 
 onMounted(() => {
-  if (import.meta.client) {
-    announcementDismissed.value = sessionStorage.getItem('announcement_dismissed') === 'true';
+  if (import.meta.client && announcement.value?.message) {
+    const messageHash = hashString(announcement.value.message);
+    announcementDismissed.value = sessionStorage.getItem(`announcement_dismissed_${messageHash}`) === 'true';
   }
+  // Use nextTick to ensure transition is applied after DOM is ready
+  nextTick(() => {
+    announcementReady.value = true;
+  });
 });
 
 // Refresh user stats from database
