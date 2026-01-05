@@ -51,14 +51,29 @@
           <label
             class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
           >
-            Status Badge
+            Status Badge (Online)
           </label>
           <input
-            v-model="statusBadgeText"
+            v-model="statusBadgeTextOnline"
             type="text"
             maxlength="100"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
             placeholder="Tracker Online & Operational"
+          />
+        </div>
+
+        <div>
+          <label
+            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
+          >
+            Status Badge (Offline)
+          </label>
+          <input
+            v-model="statusBadgeTextOffline"
+            type="text"
+            maxlength="100"
+            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
+            placeholder="Tracker Offline"
           />
         </div>
       </div>
@@ -108,7 +123,8 @@
 <script setup lang="ts">
 const heroTitle = ref('OpenTracker');
 const heroSubtitle = ref('High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.');
-const statusBadgeText = ref('Tracker Online & Operational');
+const statusBadgeTextOnline = ref('Tracker Online & Operational');
+const statusBadgeTextOffline = ref('Tracker Offline');
 const features = ref([
   { title: 'High Performance', description: 'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.' },
   { title: 'Multi-Protocol', description: 'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.' },
@@ -121,7 +137,8 @@ onMounted(async () => {
     const settings = await $fetch<{
       heroTitle: string;
       heroSubtitle: string;
-      statusBadgeText: string;
+      statusBadgeTextOnline: string;
+      statusBadgeTextOffline: string;
       feature1Title: string;
       feature1Desc: string;
       feature2Title: string;
@@ -132,7 +149,8 @@ onMounted(async () => {
     
     heroTitle.value = settings.heroTitle;
     heroSubtitle.value = settings.heroSubtitle;
-    statusBadgeText.value = settings.statusBadgeText;
+    statusBadgeTextOnline.value = settings.statusBadgeTextOnline;
+    statusBadgeTextOffline.value = settings.statusBadgeTextOffline;
     features.value = [
       { title: settings.feature1Title, description: settings.feature1Desc },
       { title: settings.feature2Title, description: settings.feature2Desc },
@@ -151,7 +169,8 @@ async function saveContent() {
       body: {
         heroTitle: heroTitle.value,
         heroSubtitle: heroSubtitle.value,
-        statusBadgeText: statusBadgeText.value,
+        statusBadgeTextOnline: statusBadgeTextOnline.value,
+        statusBadgeTextOffline: statusBadgeTextOffline.value,
         feature1Title: features.value[0]?.title ?? '',
         feature1Desc: features.value[0]?.description ?? '',
         feature2Title: features.value[1]?.title ?? '',

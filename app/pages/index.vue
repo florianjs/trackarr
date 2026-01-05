@@ -17,7 +17,7 @@
         </span>
         <span
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
-          >{{ content?.statusBadgeText ?? 'Tracker Online & Operational' }}</span
+          >{{ trackerOnline ? (content?.statusBadgeTextOnline ?? 'Tracker Online & Operational') : (content?.statusBadgeTextOffline ?? 'Tracker Offline') }}</span
         >
       </div>
       <h1

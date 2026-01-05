@@ -79,8 +79,12 @@ export default defineEventHandler(async (event) => {
     await setSetting(SETTINGS_KEYS.HERO_SUBTITLE, body.heroSubtitle);
   }
 
-  if (typeof body.statusBadgeText === 'string') {
-    await setSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT, body.statusBadgeText);
+  if (typeof body.statusBadgeTextOnline === 'string') {
+    await setSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT_ONLINE, body.statusBadgeTextOnline);
+  }
+
+  if (typeof body.statusBadgeTextOffline === 'string') {
+    await setSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT_OFFLINE, body.statusBadgeTextOffline);
   }
 
   if (typeof body.feature1Title === 'string') {

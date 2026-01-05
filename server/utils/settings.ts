@@ -21,7 +21,8 @@ export const SETTINGS_KEYS = {
   // Homepage content
   HERO_TITLE: 'hero_title',
   HERO_SUBTITLE: 'hero_subtitle',
-  STATUS_BADGE_TEXT: 'status_badge_text',
+  STATUS_BADGE_TEXT_ONLINE: 'status_badge_text_online',
+  STATUS_BADGE_TEXT_OFFLINE: 'status_badge_text_offline',
   FEATURE_1_TITLE: 'feature_1_title',
   FEATURE_1_DESC: 'feature_1_desc',
   FEATURE_2_TITLE: 'feature_2_title',
@@ -222,11 +223,19 @@ export async function getHeroSubtitle(): Promise<string> {
 }
 
 /**
- * Get status badge text
+ * Get status badge text for online state
  */
-export async function getStatusBadgeText(): Promise<string> {
-  const value = await getSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT);
+export async function getStatusBadgeTextOnline(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT_ONLINE);
   return value || 'Tracker Online & Operational';
+}
+
+/**
+ * Get status badge text for offline state
+ */
+export async function getStatusBadgeTextOffline(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT_OFFLINE);
+  return value || 'Tracker Offline';
 }
 
 /**

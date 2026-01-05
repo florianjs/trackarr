@@ -140,7 +140,8 @@ export const adminSettingsSchema = z.object({
   // Homepage content
   heroTitle: z.string().max(50).optional(),
   heroSubtitle: z.string().max(500).optional(),
-  statusBadgeText: z.string().max(100).optional(),
+  statusBadgeTextOnline: z.string().max(100).optional(),
+  statusBadgeTextOffline: z.string().max(100).optional(),
   feature1Title: z.string().max(100).optional(),
   feature1Desc: z.string().max(500).optional(),
   feature2Title: z.string().max(100).optional(),
