@@ -7,10 +7,12 @@
       >
         <span class="relative flex h-2 w-2">
           <span
+            v-if="trackerOnline"
             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"
           ></span>
           <span
-            class="relative inline-flex rounded-full h-2 w-2 bg-success"
+            class="relative inline-flex rounded-full h-2 w-2"
+            :class="trackerOnline ? 'bg-success' : 'bg-error'"
           ></span>
         </span>
         <span
@@ -184,4 +186,10 @@ const { data: torrentsData } = await useFetch<{ data: TorrentWithStats[] }>(
 );
 
 const recentTorrents = computed(() => torrentsData.value?.data ?? []);
+
+const { data: trackerStatus } = await useFetch('/api/tracker-status', {
+  server: false,
+});
+
+const trackerOnline = computed(() => trackerStatus.value?.online ?? false);
 </script>

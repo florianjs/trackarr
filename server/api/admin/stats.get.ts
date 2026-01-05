@@ -3,6 +3,7 @@ import { db, schema } from '../../db';
 import { sql } from 'drizzle-orm';
 import { redis } from '../../redis/client';
 import { requireAdminSession } from '../../utils/adminAuth';
+import { checkProtocolHealth } from '../../utils/protocolHealthCheck';
 
 export default defineEventHandler(async (event) => {
   // Require admin authentication
@@ -51,23 +52,11 @@ export default defineEventHandler(async (event) => {
     console.error('[Stats] Failed to fetch peer count from Redis:', err);
   }
 
-  // Try to get tracker, may fail if native modules aren't built
-  let tracker = null;
-  let protocols = { http: false, udp: false, ws: false };
+  // Check protocol health dynamically
+  const protocols = await checkProtocolHealth();
 
-  try {
-    const { getTracker } = await import('../../tracker');
-    tracker = getTracker();
-    if (tracker) {
-      protocols = {
-        http: !!tracker.http,
-        udp: !!tracker.udp,
-        ws: !!tracker.ws,
-      };
-    }
-  } catch {
-    // Tracker not available (native modules not built)
-  }
+  // Determine tracker status based on protocol health
+  const tracker = protocols.http || protocols.udp || protocols.ws;
 
   return {
     status: tracker ? 'running' : 'stopped',
