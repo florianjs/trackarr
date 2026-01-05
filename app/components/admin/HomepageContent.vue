@@ -47,7 +47,7 @@
           />
           <div class="mt-2 p-3 bg-bg-secondary border border-border rounded">
             <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2">Preview:</p>
-            <div class="text-2xl font-black text-text-primary tracking-tighter uppercase">
+            <div class="text-2xl font-black text-text-primary tracking-tighter">
               {{ titlePreview.first }}<span class="text-text-muted">{{ titlePreview.second }}</span>
             </div>
           </div>

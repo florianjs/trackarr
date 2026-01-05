@@ -19,7 +19,7 @@
         >
       </div>
       <h1
-        class="text-4xl md:text-6xl font-black text-text-primary tracking-tighter uppercase mb-4"
+        class="text-4xl md:text-6xl font-black text-text-primary tracking-tighter mb-4"
       >
         {{ heroTitleParts.first }}<span class="text-text-muted">{{ heroTitleParts.second }}</span>
       </h1>
