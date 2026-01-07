@@ -1,6 +1,6 @@
 # Security Overview
 
-OpenTracker is built with security as a foundational principle, not an afterthought. This page provides an overview of the security architecture.
+Trackarr is built with security as a foundational principle, not an afterthought. This page provides an overview of the security architecture.
 
 ## Security Layers
 
@@ -14,7 +14,7 @@ OpenTracker is built with security as a foundational principle, not an afterthou
 
 ## Rate Limits
 
-OpenTracker implements distributed rate limiting to prevent abuse:
+Trackarr implements distributed rate limiting to prevent abuse:
 
 | Endpoint | Limit | Action on Abuse |
 |----------|-------|-----------------|

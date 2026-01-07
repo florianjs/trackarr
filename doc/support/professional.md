@@ -1,6 +1,6 @@
 # Professional Support
 
-Need help with your OpenTracker installation? I offer professional services to help you get the most out of your private tracker.
+Need help with your Trackarr installation? I offer professional services to help you get the most out of your private tracker.
 
 ## Services
 
@@ -10,7 +10,7 @@ Don't want to deal with server setup? I'll handle everything:
 
 - VPS provisioning and configuration
 - DNS and SSL setup
-- OpenTracker installation and optimization
+- Trackarr installation and optimization
 - Security hardening
 - Monitoring setup (Prometheus + Grafana)
 

@@ -1,6 +1,6 @@
 # Environment Variables
 
-Complete reference for all environment variables used by OpenTracker.
+Complete reference for all environment variables used by Trackarr.
 
 ## Required Variables
 
@@ -18,7 +18,7 @@ These must be set for the application to run:
 
 | Variable | Description | Default |
 |----------|-------------|---------|
-| `NUXT_PUBLIC_SITE_NAME` | Display name of your tracker | `OpenTracker` |
+| `NUXT_PUBLIC_SITE_NAME` | Display name of your tracker | `Trackarr` |
 | `NUXT_PUBLIC_SITE_URL` | Public URL | — |
 | `NUXT_PUBLIC_ANNOUNCE_URL` | Announce URL for torrents | — |
 | `NODE_ENV` | Environment mode | `development` |

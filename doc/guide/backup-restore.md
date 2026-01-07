@@ -1,6 +1,6 @@
 # Backup & Restore
 
-This guide covers backing up your OpenTracker database and restoring it on a new server.
+This guide covers backing up your Trackarr database and restoring it on a new server.
 
 ## Why Backup?
 
@@ -49,7 +49,7 @@ Store a copy of your `.env` file in a secure location (password manager, encrypt
 
 To restore your database on a new VPS:
 
-**1. Install OpenTracker on the new server**
+**1. Install Trackarr on the new server**
 
 Run the installer as usual:
 

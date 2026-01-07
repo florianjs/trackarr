@@ -1,6 +1,6 @@
 # API Reference
 
-OpenTracker exposes several API endpoints for tracker operations and frontend interactions.
+Trackarr exposes several API endpoints for tracker operations and frontend interactions.
 
 ## Tracker Endpoints
 
@@ -48,7 +48,7 @@ d5:filesd20:{info_hash}d8:completei10e10:downloadedi50e10:incompletei5eeee
 
 ## WebSocket Announces
 
-OpenTracker supports WebSocket announces for WebTorrent clients:
+Trackarr supports WebSocket announces for WebTorrent clients:
 
 ```javascript
 const ws = new WebSocket('wss://announce.your-domain.com')

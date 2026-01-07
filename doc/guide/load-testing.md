@@ -1,6 +1,6 @@
 # Load Testing
 
-OpenTracker includes a built-in load testing suite to measure tracker performance under high concurrency.
+Trackarr includes a built-in load testing suite to measure tracker performance under high concurrency.
 
 ## Quick Start
 

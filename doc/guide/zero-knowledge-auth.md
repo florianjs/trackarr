@@ -1,6 +1,6 @@
 # Zero-Knowledge Authentication
 
-OpenTracker uses a **Zero-Knowledge** authentication system where the server **never sees or stores your password**. All cryptographic operations happen client-side in your browser.
+Trackarr uses a **Zero-Knowledge** authentication system where the server **never sees or stores your password**. All cryptographic operations happen client-side in your browser.
 
 ## How It Works
 

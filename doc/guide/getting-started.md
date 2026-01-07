@@ -1,6 +1,6 @@
 # Getting Started
 
-This guide will help you get OpenTracker up and running in minutes.
+This guide will help you get Trackarr up and running in minutes.
 
 ## Prerequisites
 
@@ -124,7 +124,7 @@ Open `https://your-domain.com` to access your tracker.
 
 ## Updating
 
-To update your OpenTracker installation to the latest version:
+To update your Trackarr installation to the latest version:
 
 ```bash
 cd /opt/opentracker

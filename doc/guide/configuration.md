@@ -1,6 +1,6 @@
 # Configuration
 
-OpenTracker is configured primarily through environment variables. This page covers all available options.
+Trackarr is configured primarily through environment variables. This page covers all available options.
 
 ## Environment Variables
 
@@ -8,7 +8,7 @@ OpenTracker is configured primarily through environment variables. This page cov
 
 | Variable                | Description                        | Default       |
 | ----------------------- | ---------------------------------- | ------------- |
-| `NUXT_PUBLIC_SITE_NAME` | Your tracker's display name        | `OpenTracker` |
+| `NUXT_PUBLIC_SITE_NAME` | Your tracker's display name        | `Trackarr` |
 | `NUXT_PUBLIC_SITE_URL`  | Public URL of your tracker         | —             |
 | `NUXT_SESSION_PASSWORD` | Session encryption key (32+ chars) | —             |
 
@@ -66,7 +66,7 @@ Replace `your-domain.com` with your actual tracker domain.
 
 The production compose file includes:
 
-- **app** — Main OpenTracker application
+- **app** — Main Trackarr application
 - **db** — PostgreSQL 16 database
 - **redis** — Redis 7 cache
 - **caddy** — Reverse proxy with automatic HTTPS

@@ -2,7 +2,7 @@
 layout: home
 
 hero:
-  name: OpenTracker
+  name: Trackarr
   text: Modern Private BitTorrent Tracker
   tagline: High-performance, security-first tracker with Zero-Knowledge Authentication and Panic Mode encryption.
   actions:
@@ -11,7 +11,7 @@ hero:
       link: /guide/getting-started
     - theme: alt
       text: View on GitHub
-      link: https://github.com/florianjs/opentracker
+      link: https://github.com/florianjs/trackarr
     - theme: alt
       text: Live Demo
       link: https://tracker.florianargaud.com/
@@ -31,21 +31,21 @@ features:
     details: Prometheus metrics and Grafana dashboards out of the box. Track peers, announces, and system health in real-time.
 ---
 
-## Why OpenTracker?
+## Why Trackarr?
 
-OpenTracker is designed for communities that value **privacy** and **security** above all else. Unlike traditional trackers that store passwords and personal data in plaintext or with reversible encryption, OpenTracker uses cryptographic proofs that make it mathematically impossible to recover user credentials—even for administrators.
+Trackarr is designed for communities that value **privacy** and **security** above all else. Unlike traditional trackers that store passwords and personal data in plaintext or with reversible encryption, Trackarr uses cryptographic proofs that make it mathematically impossible to recover user credentials—even for administrators.
 
 ### Tech Stack
 
-| Layer | Technology | Purpose |
-|-------|------------|---------|
-| Frontend | Nuxt 4, Vue 3, Tailwind CSS | SSR, Composition API |
-| Backend | Nitro Server Engine | API routes, middleware |
-| Database | PostgreSQL 16 + Drizzle ORM | Data persistence, full-text search |
-| Cache | Redis 7 | Peer lists, sessions, rate limiting |
-| P2P | bittorrent-tracker | HTTP & WebSocket announces |
-| Crypto | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption |
-| Monitor | Prometheus + Grafana | Metrics, dashboards, alerting |
+| Layer    | Technology                          | Purpose                             |
+| -------- | ----------------------------------- | ----------------------------------- |
+| Frontend | Nuxt 4, Vue 3, Tailwind CSS         | SSR, Composition API                |
+| Backend  | Nitro Server Engine                 | API routes, middleware              |
+| Database | PostgreSQL 16 + Drizzle ORM         | Data persistence, full-text search  |
+| Cache    | Redis 7                             | Peer lists, sessions, rate limiting |
+| P2P      | bittorrent-tracker                  | HTTP & WebSocket announces          |
+| Crypto   | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption          |
+| Monitor  | Prometheus + Grafana                | Metrics, dashboards, alerting       |
 
 ---
 

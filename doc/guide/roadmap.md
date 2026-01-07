@@ -1,10 +1,16 @@
 # Roadmap
 
-OpenTracker is actively developed with a focus on performance, security, and usability. Below is our current development roadmap.
+Trackarr is actively developed with a focus on performance, security, and usability. Below is our current development roadmap.
 
-## v0.3.x
+## Released
 
-Features implemented, pending public release:
+### v0.4.0 — Rebranding to Trackarr
+
+- [x] **Project Rebranding** — Trackarr renamed to Trackarr
+- [x] **Repository Migration** — New public repository at `florianjs/trackarr`
+- [x] **Documentation Updates** — All references updated to Trackarr
+
+### v0.3.x — Core Features
 
 - [x] **Custom Branding** — Logo, favicon, site name, colors, font weight
 - [x] **Invitation System** — Private invite codes with per-user limits
@@ -18,7 +24,7 @@ Features implemented, pending public release:
 
 ---
 
-## v0.4.0 — User Features
+## v0.5.0 — User Features
 
 - [ ] **Favorites / Watchlist** — Save torrents to personal list
 - [ ] **Freeleech System** — Global and per-torrent freeleech toggle
@@ -27,7 +33,7 @@ Features implemented, pending public release:
 
 ---
 
-## v0.5.0 — Community
+## v0.6.0 — Community
 
 - [ ] **Torrent Requests** — Request content with bounty system
 - [ ] **Bonus Points** — Reward seeders with exchangeable points
@@ -36,13 +42,13 @@ Features implemented, pending public release:
 
 ---
 
-## v0.6.0 — Plugins System
+## v0.7.0 — Plugins System
 
 - [ ] **Plugin Architecture** — Admin-activatable modules
 
 ---
 
-## v0.7.0 — Public Tracker Mode
+## v0.8.0 — Public Tracker Mode
 
 - [ ] **Public Mode** — Browse and download without account
 - [ ] **Anonymous Announces** — Tracking without passkey
@@ -73,4 +79,4 @@ Features implemented, pending public release:
 ---
 
 > [!NOTE]
-> This roadmap is subject to change based on community feedback and project priorities. Have a feature request? Open an issue on [GitHub](https://github.com/florianjs/opentracker/issues).
+> This roadmap is subject to change based on community feedback and project priorities. Have a feature request? Open an issue on [GitHub](https://github.com/florianjs/trackarr/issues).
