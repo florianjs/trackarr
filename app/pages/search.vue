@@ -70,7 +70,9 @@
               >
                 No results found
               </h3>
-              <p class="text-xs text-text-muted mt-1 font-mono max-w-xs mx-auto">
+              <p
+                class="text-xs text-text-muted mt-1 font-mono max-w-xs mx-auto"
+              >
                 We couldn't find any torrents matching your search criteria. Try
                 different keywords or filters.
               </p>
@@ -163,6 +165,12 @@ const page = ref(parseInt((route.query.p as string) || '1', 10));
 // Fetch categories
 const { data: categories } = await useFetch<any[]>('/api/categories');
 
+// Fetch branding for page title
+const { data: branding } = await useFetch<{
+  siteName: string;
+  pageTitleSuffix: string | null;
+}>('/api/branding');
+
 // Fetch torrents
 const {
   data: torrentsData,
@@ -241,6 +249,9 @@ watch(
 );
 
 useHead({
-  title: 'Search Torrents - OpenTracker',
+  title: computed(
+    () =>
+      `Search Torrents ${branding.value?.pageTitleSuffix || `- ${branding.value?.siteName || 'OpenTracker'}`}`
+  ),
 });
 </script>

@@ -26,6 +26,7 @@ services:
       - caddy_data:/data
       - caddy_config:/config
       - caddy_logs:/var/log/caddy
+      - uploads_data:/srv/uploads
     networks:
       - opentracker-public
       - opentracker-internal
@@ -83,6 +84,8 @@ services:
     expose:
       - "3000"
       - "8080"
+    volumes:
+      - uploads_data:/app/public/uploads
     networks:
       - opentracker-public
       - opentracker-internal
@@ -309,7 +312,7 @@ services:
   # MONITORING - Grafana
   # =============================================================================
   grafana:
-    image: grafana/grafana:10.2.2
+    image: grafana/grafana:12.3.1
     container_name: opentracker-grafana
     restart: always
     environment:
@@ -410,7 +413,7 @@ services:
   #     - ./docker/redis/sentinel.conf:/etc/redis/sentinel.conf:ro
   #   networks:
   #     - opentracker-internal
-
+  # 
 networks:
   opentracker-public:
     driver: bridge
@@ -435,4 +438,6 @@ volumes:
   prometheus_data:
     driver: local
   grafana_data:
+    driver: local
+  uploads_data:
     driver: local

@@ -13,6 +13,73 @@
       </div>
     </div>
     <div class="card-body">
+      <!-- Generate Unique Codes Section -->
+      <div class="mb-6 p-3 rounded border border-accent/30 bg-accent/5">
+        <h4
+          class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3"
+        >
+          Generate Unique Codes
+        </h4>
+        <div class="flex gap-2 mb-3">
+          <input
+            v-model.number="generateCount"
+            type="number"
+            min="1"
+            max="50"
+            placeholder="Count"
+            class="input w-24 !py-2 text-xs"
+          />
+          <input
+            v-model.number="expiresInDays"
+            type="number"
+            min="0"
+            max="365"
+            placeholder="Expires in days (optional)"
+            class="input flex-1 !py-2 text-xs"
+          />
+          <button
+            @click="generateCodes"
+            :disabled="!generateCount || isGenerating"
+            class="btn btn-primary !px-4 !py-2 text-xs"
+          >
+            <Icon
+              v-if="isGenerating"
+              name="ph:circle-notch"
+              class="animate-spin mr-1"
+            />
+            Generate
+          </button>
+        </div>
+        <!-- Generated Codes Display -->
+        <div
+          v-if="generatedCodes.length > 0"
+          class="p-2 rounded bg-bg-primary border border-border"
+        >
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+              Generated Codes
+            </span>
+            <button
+              @click="copyAllCodes"
+              class="text-[10px] text-accent hover:underline"
+            >
+              Copy All
+            </button>
+          </div>
+          <div class="flex flex-wrap gap-1">
+            <code
+              v-for="code in generatedCodes"
+              :key="code"
+              @click="copyCode(code)"
+              class="px-2 py-0.5 text-[10px] font-mono bg-bg-tertiary rounded border border-border cursor-pointer hover:border-accent/50"
+              title="Click to copy"
+            >
+              {{ code }}
+            </code>
+          </div>
+        </div>
+      </div>
+
       <!-- Grant Invites Form -->
       <div class="mb-6 p-3 rounded border border-border bg-bg-tertiary/50">
         <h4
@@ -60,19 +127,17 @@
           <div>
             <div class="flex items-center gap-2 mb-1">
               <code
-                class="px-2 py-0.5 text-xs font-mono bg-bg-primary rounded border border-border"
+                class="px-2 py-0.5 text-xs font-mono bg-bg-primary rounded border border-border cursor-pointer hover:border-accent/50"
+                @click="copyCode(invite.code)"
+                title="Click to copy"
               >
                 {{ invite.code }}
               </code>
               <span
                 class="px-2 py-0.5 text-[10px] font-bold uppercase rounded"
-                :class="
-                  invite.usedBy
-                    ? 'bg-success/20 text-success'
-                    : 'bg-warning/20 text-warning'
-                "
+                :class="getInviteStatusClass(invite)"
               >
-                {{ invite.usedBy ? 'Used' : 'Pending' }}
+                {{ getInviteStatus(invite) }}
               </span>
             </div>
             <div class="flex items-center gap-4 text-[10px] text-text-muted">
@@ -129,6 +194,8 @@
 </template>
 
 <script setup lang="ts">
+import { useNotificationStore } from '~/stores/notifications';
+
 interface Invitation {
   id: string;
   code: string;
@@ -151,10 +218,17 @@ interface InvitesResponse {
   };
 }
 
+const notifications = useNotificationStore();
 const page = ref(1);
 const grantUserId = ref('');
 const grantCount = ref(2);
 const isGranting = ref(false);
+
+// Generate codes state
+const generateCount = ref(5);
+const expiresInDays = ref<number | undefined>(undefined);
+const isGenerating = ref(false);
+const generatedCodes = ref<string[]>([]);
 
 const { data: invites, refresh } = await useFetch<InvitesResponse>(
   '/api/admin/invites',
@@ -172,8 +246,43 @@ function formatDate(date: string) {
   });
 }
 
-function isExpired(date: string) {
+function isExpired(date?: string) {
+  if (!date) return false;
   return new Date(date) < new Date();
+}
+
+function getInviteStatus(invite: Invitation) {
+  if (invite.usedBy) return 'Used';
+  if (invite.expiresAt && isExpired(invite.expiresAt)) return 'Expired';
+  return 'Pending';
+}
+
+function getInviteStatusClass(invite: Invitation) {
+  if (invite.usedBy) return 'bg-success/20 text-success';
+  if (invite.expiresAt && isExpired(invite.expiresAt)) return 'bg-error/20 text-error';
+  return 'bg-warning/20 text-warning';
+}
+
+async function generateCodes() {
+  if (!generateCount.value) return;
+  isGenerating.value = true;
+  try {
+    const result = await $fetch<{ codes: string[] }>('/api/admin/invites/generate', {
+      method: 'POST',
+      body: {
+        count: generateCount.value,
+        expiresInDays: expiresInDays.value || undefined,
+      },
+    });
+    generatedCodes.value = result.codes;
+    notifications.success(`Generated ${result.codes.length} invite code(s)`);
+    await refresh();
+  } catch (error: any) {
+    console.error('Failed to generate codes:', error);
+    notifications.error(error.data?.message || 'Failed to generate codes');
+  } finally {
+    isGenerating.value = false;
+  }
 }
 
 async function grantInvites() {
@@ -187,13 +296,33 @@ async function grantInvites() {
         count: grantCount.value,
       },
     });
+    notifications.success(`Granted ${grantCount.value} invites to user`);
     grantUserId.value = '';
     grantCount.value = 2;
     await refresh();
   } catch (error: any) {
     console.error('Failed to grant invites:', error);
+    notifications.error(error.data?.message || 'Failed to grant invites');
   } finally {
     isGranting.value = false;
+  }
+}
+
+async function copyCode(code: string) {
+  try {
+    await navigator.clipboard.writeText(code);
+    notifications.success('Code copied!');
+  } catch {
+    notifications.error('Failed to copy code');
+  }
+}
+
+async function copyAllCodes() {
+  try {
+    await navigator.clipboard.writeText(generatedCodes.value.join('\n'));
+    notifications.success('All codes copied!');
+  } catch {
+    notifications.error('Failed to copy codes');
   }
 }
 </script>

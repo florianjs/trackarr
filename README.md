@@ -21,19 +21,19 @@ Built with Nuxt 4 • PostgreSQL • Redis
 
 ## ✨ Features
 
-| **Privacy & Authentication**           | **Performance**                      |
-| -------------------------------------- | ------------------------------------ |
-| Zero-Knowledge Authentication          | Redis-powered sub-ms peer lookups    |
-| Proof of Work anti-abuse               | PostgreSQL with full-text search     |
-| Private torrents (DHT/PEX disabled)    | HTTP & WebSocket announce support    |
-| Ratio tracking & enforcement           | Optimized for high concurrency       |
+| **Privacy & Authentication**        | **Performance**                   |
+| ----------------------------------- | --------------------------------- |
+| Zero-Knowledge Authentication       | Redis-powered sub-ms peer lookups |
+| Proof of Work anti-abuse            | PostgreSQL with full-text search  |
+| Private torrents (DHT/PEX disabled) | HTTP & WebSocket announce support |
+| Ratio tracking & enforcement        | Optimized for high concurrency    |
 
-| **Security**                 | **Emergency**                                   |
-| ---------------------------- | ----------------------------------------------- |
-| Distributed rate limiting    | **Panic Mode** — Instant database encryption    |
-| Auto IP blacklisting         | AES-256-GCM protected data                      |
-| SQL/XSS attack detection     | Full restoration with master password           |
-| SHA-256 hashed IPs           | Unrecoverable without password                  |
+| **Security**              | **Emergency**                                |
+| ------------------------- | -------------------------------------------- |
+| Distributed rate limiting | **Panic Mode** — Instant database encryption |
+| Auto IP blacklisting      | AES-256-GCM protected data                   |
+| SQL/XSS attack detection  | Full restoration with master password        |
+| SHA-256 hashed IPs        | Unrecoverable without password               |
 
 ---
 
@@ -168,11 +168,11 @@ The **Panic Button** allows administrators to **instantly encrypt all sensitive 
 
 Create the following **A records** pointing to your server's IP:
 
-| Subdomain | Record Type | Value |
-|-----------|-------------|-------|
-| `tracker.your-domain.com` | A | Your VPS IP |
-| `announce.your-domain.com` | A | Your VPS IP |
-| `monitoring.your-domain.com` | A | Your VPS IP |
+| Subdomain                    | Record Type | Value       |
+| ---------------------------- | ----------- | ----------- |
+| `tracker.your-domain.com`    | A           | Your VPS IP |
+| `announce.your-domain.com`   | A           | Your VPS IP |
+| `monitoring.your-domain.com` | A           | Your VPS IP |
 
 > **Note**: DNS propagation can take up to 24-48 hours, but usually completes within a few minutes. The installer will fail to obtain SSL certificates if DNS is not properly configured.
 
@@ -200,15 +200,14 @@ The installer will:
 > **Monitoring**: After installation, Grafana is accessible at `https://monitoring.your-domain.com/grafana`
 >
 > Default credentials: `admin` / `admin` (you'll be prompted to change on first login)
-> Having issues with the password ? Just launch : 
+> Having issues with the password ? Just launch :
 
 ```bash
 cd /opt/opentracker
-docker exec -it opentracker-grafana grafana-cli admin reset-admin-password <new-password>
+docker exec -it opentracker-grafana grafana cli admin reset-admin-password <new-password>
 ```
 
 ![Grafana Dashboard](/public/images/grafana.png)
-
 
 ### Option 2: Development with Docker
 
@@ -283,7 +282,6 @@ docker compose logs -f app
 | P2P      | bittorrent-tracker                  | HTTP & WebSocket announces          |
 | Crypto   | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption          |
 | Monitor  | Prometheus + Grafana                | Metrics, dashboards, alerting       |
-
 
 ---
 
@@ -373,23 +371,53 @@ npx drizzle-kit studio   # Database GUI
 
 OpenTracker is built on the shoulders of giants. We'd like to thank the following open source projects:
 
-| Project | Role |
-|---------|------|
-| [Nuxt](https://nuxt.com) | Fullstack Vue framework |
-| [Vue.js](https://vuejs.org) | Reactive frontend framework |
-| [bittorrent-tracker](https://github.com/webtorrent/bittorrent-tracker) | BitTorrent tracker library |
-| [Drizzle ORM](https://orm.drizzle.team) | TypeScript ORM |
-| [PostgreSQL](https://www.postgresql.org) | Database |
-| [Redis](https://redis.io) | In-memory cache |
-| [ioredis](https://github.com/redis/ioredis) | Redis client for Node.js |
-| [Tailwind CSS](https://tailwindcss.com) | Utility-first CSS |
-| [Chart.js](https://www.chartjs.org) | Charts & visualizations |
-| [Prometheus](https://prometheus.io) | Metrics collection |
-| [Grafana](https://grafana.com) | Monitoring dashboards |
-| [VitePress](https://vitepress.dev) | Documentation framework |
-| [Vitest](https://vitest.dev) | Testing framework |
-| [Pinia](https://pinia.vuejs.org) | State management |
-| [Zod](https://zod.dev) | Schema validation |
+| Project                                                                | Role                        |
+| ---------------------------------------------------------------------- | --------------------------- |
+| [Nuxt](https://nuxt.com)                                               | Fullstack Vue framework     |
+| [Vue.js](https://vuejs.org)                                            | Reactive frontend framework |
+| [bittorrent-tracker](https://github.com/webtorrent/bittorrent-tracker) | BitTorrent tracker library  |
+| [Drizzle ORM](https://orm.drizzle.team)                                | TypeScript ORM              |
+| [PostgreSQL](https://www.postgresql.org)                               | Database                    |
+| [Redis](https://redis.io)                                              | In-memory cache             |
+| [ioredis](https://github.com/redis/ioredis)                            | Redis client for Node.js    |
+| [Tailwind CSS](https://tailwindcss.com)                                | Utility-first CSS           |
+| [Chart.js](https://www.chartjs.org)                                    | Charts & visualizations     |
+| [Prometheus](https://prometheus.io)                                    | Metrics collection          |
+| [Grafana](https://grafana.com)                                         | Monitoring dashboards       |
+| [VitePress](https://vitepress.dev)                                     | Documentation framework     |
+| [Vitest](https://vitest.dev)                                           | Testing framework           |
+| [Pinia](https://pinia.vuejs.org)                                       | State management            |
+| [Zod](https://zod.dev)                                                 | Schema validation           |
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+<!-- CONTRIBUTORS:START -->
+## 👥 Contributors
+
+Thanks to all our contributors! Sorted by number of commits.
+
+| Avatar | Contributor | Commits |
+|:------:|-------------|:-------:|
+| <img src="https://avatars.githubusercontent.com/u/64362443?v=4" width="40" height="40" style="border-radius:50%"> | **[IkiaeM](https://github.com/IkiaeM)** | 2 |
+<!-- CONTRIBUTORS:END -->
 
 ---
 

@@ -9,8 +9,6 @@ export default defineNitroPlugin((nitroApp) => {
 
   const collectStats = async () => {
     try {
-      console.log('[Stats Collector] Collecting site stats...');
-
       // 1. Users Count
       const usersCountResult = await db
         .select({ count: sql<number>`count(*)::int` })
@@ -77,8 +75,6 @@ export default defineNitroPlugin((nitroApp) => {
         dbSize,
         createdAt: new Date(),
       });
-
-      console.log('[Stats Collector] Stats saved successfully.');
     } catch (err) {
       console.error('[Stats Collector] Failed to collect stats:', err);
     }

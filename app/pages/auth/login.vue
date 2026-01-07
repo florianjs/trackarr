@@ -4,14 +4,28 @@
       <!-- Logo -->
       <div class="text-center mb-8">
         <div
-          class="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 overflow-hidden"
         >
-          <Icon name="ph:broadcast-bold" class="text-black text-4xl" />
+          <img
+            v-if="branding?.siteLogoImage"
+            :src="branding.siteLogoImage"
+            alt="Logo"
+            class="w-full h-full object-contain"
+          />
+          <Icon
+            v-else
+            :name="branding?.siteLogo || 'ph:broadcast-bold'"
+            class="text-black text-4xl"
+          />
         </div>
-        <h1 class="text-2xl font-bold tracking-tighter uppercase">
-          OpenTracker
-        </h1>
-        <p class="text-text-muted text-sm mt-1">Private BitTorrent Tracker</p>
+        <h1
+          class="text-2xl font-bold tracking-tighter uppercase"
+          v-html="branding?.authTitle || branding?.siteName || 'OpenTracker'"
+        ></h1>
+        <p
+          class="text-text-muted text-sm mt-1"
+          v-html="branding?.authSubtitle || 'Private BitTorrent Tracker'"
+        ></p>
       </div>
 
       <div
@@ -64,9 +78,12 @@
         <div v-if="error" class="text-red-400 text-sm">
           {{ error }}
         </div>
-        
+
         <!-- Status indicator for ZKE challenge processing -->
-        <div v-if="authStatus" class="text-text-muted text-xs flex items-center gap-2">
+        <div
+          v-if="authStatus"
+          class="text-text-muted text-xs flex items-center gap-2"
+        >
           <Icon name="ph:spinner" class="animate-spin" />
           {{ authStatus }}
         </div>
@@ -110,6 +127,32 @@ const { fetch: fetchSession } = useUserSession();
 const router = useRouter();
 
 const { data: status } = await useFetch('/api/auth/status');
+const { data: branding } = await useFetch<{
+  siteName: string;
+  siteLogo: string;
+  siteLogoImage: string | null;
+  siteFavicon: string | null;
+  authTitle: string | null;
+  authSubtitle: string | null;
+}>('/api/branding');
+
+// Set dynamic favicon
+useHead({
+  link: [
+    {
+      rel: 'icon',
+      type: computed(() => {
+        const url = branding.value?.siteFavicon;
+        if (!url) return 'image/x-icon';
+        if (url.endsWith('.svg')) return 'image/svg+xml';
+        if (url.endsWith('.png')) return 'image/png';
+        if (url.endsWith('.webp')) return 'image/webp';
+        return 'image/x-icon';
+      }),
+      href: computed(() => branding.value?.siteFavicon || '/favicon.ico'),
+    },
+  ],
+});
 
 const form = reactive({
   username: '',

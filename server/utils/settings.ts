@@ -14,7 +14,17 @@ export const SETTINGS_KEYS = {
   SITE_NAME: 'site_name',
   SITE_LOGO: 'site_logo',
   SITE_LOGO_IMAGE: 'site_logo_image',
+  SITE_FAVICON: 'site_favicon',
   SITE_SUBTITLE: 'site_subtitle',
+  SITE_NAME_COLOR: 'site_name_color',
+  SITE_NAME_BOLD: 'site_name_bold',
+  // Extended branding
+  AUTH_TITLE: 'auth_title',
+  AUTH_SUBTITLE: 'auth_subtitle',
+  FOOTER_TEXT: 'footer_text',
+  PAGE_TITLE_SUFFIX: 'page_title_suffix',
+  WELCOME_MESSAGE: 'welcome_message',
+  SITE_RULES: 'site_rules',
   ANNOUNCEMENT_ENABLED: 'announcement_enabled',
   ANNOUNCEMENT_MESSAGE: 'announcement_message',
   ANNOUNCEMENT_TYPE: 'announcement_type',
@@ -170,11 +180,84 @@ export async function getSiteLogoImage(): Promise<string | null> {
 }
 
 /**
+ * Get site favicon URL (custom uploaded favicon)
+ */
+export async function getSiteFavicon(): Promise<string | null> {
+  const value = await getSetting(SETTINGS_KEYS.SITE_FAVICON);
+  return value || null;
+}
+
+/**
  * Get site subtitle (displayed below site name)
  */
 export async function getSiteSubtitle(): Promise<string | null> {
   const value = await getSetting(SETTINGS_KEYS.SITE_SUBTITLE);
   return value || null;
+}
+
+/**
+ * Get site name color
+ */
+export async function getSiteNameColor(): Promise<string | null> {
+  const value = await getSetting(SETTINGS_KEYS.SITE_NAME_COLOR);
+  return value || null;
+}
+
+/**
+ * Check if site name should be bold
+ */
+export async function isSiteNameBold(): Promise<boolean> {
+  const value = await getSetting(SETTINGS_KEYS.SITE_NAME_BOLD);
+  // Default to true if not set
+  return value !== 'false';
+}
+
+/**
+ * Get auth page title (login/register)
+ */
+export async function getAuthTitle(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.AUTH_TITLE);
+  return value || '';
+}
+
+/**
+ * Get auth page subtitle (login/register)
+ */
+export async function getAuthSubtitle(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.AUTH_SUBTITLE);
+  return value || 'Private BitTorrent Tracker';
+}
+
+/**
+ * Get footer text
+ */
+export async function getFooterText(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.FOOTER_TEXT);
+  return value || '';
+}
+
+/**
+ * Get page title suffix
+ */
+export async function getPageTitleSuffix(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.PAGE_TITLE_SUFFIX);
+  return value || '';
+}
+
+/**
+ * Get welcome message (rich text HTML)
+ */
+export async function getWelcomeMessage(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.WELCOME_MESSAGE);
+  return value || '';
+}
+
+/**
+ * Get site rules (rich text HTML)
+ */
+export async function getSiteRules(): Promise<string> {
+  const value = await getSetting(SETTINGS_KEYS.SITE_RULES);
+  return value || '';
 }
 
 /**
@@ -196,7 +279,9 @@ export async function getAnnouncementMessage(): Promise<string> {
 /**
  * Get announcement type (info, warning, error)
  */
-export async function getAnnouncementType(): Promise<'info' | 'warning' | 'error'> {
+export async function getAnnouncementType(): Promise<
+  'info' | 'warning' | 'error'
+> {
   const value = await getSetting(SETTINGS_KEYS.ANNOUNCEMENT_TYPE);
   if (value === 'warning' || value === 'error') return value;
   return 'info';
@@ -219,7 +304,10 @@ export async function getHeroTitle(): Promise<string> {
  */
 export async function getHeroSubtitle(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.HERO_SUBTITLE);
-  return value || 'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.';
+  return (
+    value ||
+    'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.'
+  );
 }
 
 /**
@@ -251,7 +339,10 @@ export async function getFeature1Title(): Promise<string> {
  */
 export async function getFeature1Desc(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.FEATURE_1_DESC);
-  return value || 'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.';
+  return (
+    value ||
+    'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.'
+  );
 }
 
 /**
@@ -267,7 +358,10 @@ export async function getFeature2Title(): Promise<string> {
  */
 export async function getFeature2Desc(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.FEATURE_2_DESC);
-  return value || 'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.';
+  return (
+    value ||
+    'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.'
+  );
 }
 
 /**
@@ -283,5 +377,8 @@ export async function getFeature3Title(): Promise<string> {
  */
 export async function getFeature3Desc(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.FEATURE_3_DESC);
-  return value || 'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.';
+  return (
+    value ||
+    'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.'
+  );
 }

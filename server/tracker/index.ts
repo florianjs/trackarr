@@ -101,8 +101,8 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
   // Event Handlers
   // ============================================================================
 
-  // DEBUG: Log ALL events (dev only)
-  if (process.env.NODE_ENV !== 'production') {
+  // DEBUG: Log ALL events (only when TRACKER_DEBUG is enabled)
+  if (TRACKER_DEBUG) {
     const originalEmit = server.emit.bind(server);
     server.emit = function (eventName: string, ...args: unknown[]) {
       console.log(
@@ -114,18 +114,6 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
   }
 
   server.on('start', (addr: string, params: any) => {
-    console.log('[Tracker] ========== START EVENT RECEIVED ==========');
-    console.log('[Tracker] addr:', addr);
-    console.log('[Tracker] params keys:', Object.keys(params));
-    if (TRACKER_DEBUG) {
-      console.log('[Tracker] RAW PARAMS (start):', JSON.stringify({
-        uploaded: params.uploaded,
-        downloaded: params.downloaded,
-        left: params.left,
-        passkey: params.passkey ? params.passkey.slice(0, 8) + '...' : 'MISSING',
-        allKeys: Object.keys(params),
-      }));
-    }
     const infoHash = params.infoHash || params.info_hash;
     const peerId = params.peerId || params.peer_id;
     const { uploaded, downloaded, left, passkey } = params;
@@ -189,16 +177,6 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
   });
 
   server.on('update', (addr: string, params: any) => {
-    console.log('[Tracker] ========== UPDATE EVENT RECEIVED ==========');
-    console.log('[Tracker] addr:', addr);
-    if (TRACKER_DEBUG) {
-      console.log('[Tracker] RAW PARAMS (update):', JSON.stringify({
-        uploaded: params.uploaded,
-        downloaded: params.downloaded,
-        left: params.left,
-        passkey: params.passkey ? params.passkey.slice(0, 8) + '...' : 'MISSING',
-      }));
-    }
     const infoHash = params.infoHash || params.info_hash;
     const peerId = params.peerId || params.peer_id;
     const { uploaded, downloaded, left, passkey } = params;
@@ -258,9 +236,10 @@ export function getTracker(): TrackerServer | null {
  * Get swarm stats from the tracker's internal data
  * This is more reliable than Redis cache as it reflects real-time state
  */
-export function getSwarmStats(
-  infoHash: string
-): { seeders: number; leechers: number } {
+export function getSwarmStats(infoHash: string): {
+  seeders: number;
+  leechers: number;
+} {
   if (!server) {
     return { seeders: 0, leechers: 0 };
   }

@@ -1,7 +1,7 @@
 import { count, eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { users } from '../../db/schema';
-import { getSetting, SETTINGS_KEYS } from '../../utils/settings';
+import { getSetting, SETTINGS_KEYS, isInviteEnabled } from '../../utils/settings';
 import type { PublicUser } from '~~/types/auth';
 
 /**
@@ -18,6 +18,7 @@ export default defineEventHandler(async (event) => {
 
   // Get registration status
   const registrationOpen = await getSetting(SETTINGS_KEYS.REGISTRATION_OPEN);
+  const inviteEnabled = await isInviteEnabled();
 
   let publicUser: PublicUser | null = null;
 
@@ -83,5 +84,6 @@ export default defineEventHandler(async (event) => {
     user: publicUser,
     // Whether new registrations are allowed
     registrationOpen: registrationOpen === 'true',
+    inviteEnabled,
   };
 });

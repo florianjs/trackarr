@@ -91,29 +91,64 @@
               >
                 <Icon name="ph:folder" class="text-text-muted text-xs" />
               </div>
-              <div>
-                <p
-                  class="text-xs font-bold text-text-primary uppercase tracking-wider"
-                >
-                  {{ category.name }}
-                </p>
-                <p class="text-[10px] font-mono text-text-muted">
-                  {{ category.slug }}
-                  <span
-                    v-if="category.subcategories?.length"
-                    class="ml-2 text-text-muted/60"
+              <div class="flex-1">
+                <!-- Edit Mode -->
+                <div v-if="editingId === category.id" class="flex items-center gap-2">
+                  <input
+                    v-model="editingName"
+                    type="text"
+                    class="input !py-1 !px-2 text-xs font-bold uppercase tracking-wider w-48"
+                    @keyup.enter="saveEdit(category.id)"
+                    @keyup.escape="cancelEdit"
+                  />
+                  <button
+                    class="p-1 text-success hover:bg-success/10 rounded transition-colors"
+                    :disabled="isSaving"
+                    @click="saveEdit(category.id)"
                   >
-                    ({{ category.subcategories.length }} subcategories)
-                  </span>
-                </p>
+                    <Icon v-if="isSaving" name="ph:circle-notch" class="animate-spin" />
+                    <Icon v-else name="ph:check-bold" />
+                  </button>
+                  <button
+                    class="p-1 text-text-muted hover:bg-bg-tertiary rounded transition-colors"
+                    @click="cancelEdit"
+                  >
+                    <Icon name="ph:x-bold" />
+                  </button>
+                </div>
+                <!-- Display Mode -->
+                <template v-else>
+                  <p
+                    class="text-xs font-bold text-text-primary uppercase tracking-wider"
+                  >
+                    {{ category.name }}
+                  </p>
+                  <p class="text-[10px] font-mono text-text-muted">
+                    {{ category.slug }}
+                    <span
+                      v-if="category.subcategories?.length"
+                      class="ml-2 text-text-muted/60"
+                    >
+                      ({{ category.subcategories.length }} subcategories)
+                    </span>
+                  </p>
+                </template>
               </div>
             </div>
-            <button
-              class="p-2 text-text-muted hover:text-error transition-colors rounded hover:bg-error/10 opacity-0 group-hover:opacity-100"
-              @click="deleteCategory(category.id)"
-            >
-              <Icon name="ph:trash-bold" />
-            </button>
+            <div v-if="editingId !== category.id" class="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+              <button
+                class="p-2 text-text-muted hover:text-text-primary transition-colors rounded hover:bg-bg-tertiary"
+                @click="startEdit(category)"
+              >
+                <Icon name="ph:pencil-bold" />
+              </button>
+              <button
+                class="p-2 text-text-muted hover:text-error transition-colors rounded hover:bg-error/10"
+                @click="deleteCategory(category.id)"
+              >
+                <Icon name="ph:trash-bold" />
+              </button>
+            </div>
           </div>
 
           <!-- Subcategories -->
@@ -135,23 +170,58 @@
                 >
                   <Icon name="ph:tag" class="text-text-muted text-xs" />
                 </div>
-                <div>
-                  <p
-                    class="text-xs font-bold text-text-primary uppercase tracking-wider"
-                  >
-                    {{ subcategory.name }}
-                  </p>
-                  <p class="text-[10px] font-mono text-text-muted">
-                    {{ subcategory.slug }}
-                  </p>
+                <div class="flex-1">
+                  <!-- Edit Mode for Subcategory -->
+                  <div v-if="editingId === subcategory.id" class="flex items-center gap-2">
+                    <input
+                      v-model="editingName"
+                      type="text"
+                      class="input !py-1 !px-2 text-xs font-bold uppercase tracking-wider w-48"
+                      @keyup.enter="saveEdit(subcategory.id)"
+                      @keyup.escape="cancelEdit"
+                    />
+                    <button
+                      class="p-1 text-success hover:bg-success/10 rounded transition-colors"
+                      :disabled="isSaving"
+                      @click="saveEdit(subcategory.id)"
+                    >
+                      <Icon v-if="isSaving" name="ph:circle-notch" class="animate-spin" />
+                      <Icon v-else name="ph:check-bold" />
+                    </button>
+                    <button
+                      class="p-1 text-text-muted hover:bg-bg-tertiary rounded transition-colors"
+                      @click="cancelEdit"
+                    >
+                      <Icon name="ph:x-bold" />
+                    </button>
+                  </div>
+                  <!-- Display Mode for Subcategory -->
+                  <template v-else>
+                    <p
+                      class="text-xs font-bold text-text-primary uppercase tracking-wider"
+                    >
+                      {{ subcategory.name }}
+                    </p>
+                    <p class="text-[10px] font-mono text-text-muted">
+                      {{ subcategory.slug }}
+                    </p>
+                  </template>
                 </div>
               </div>
-              <button
-                class="p-2 text-text-muted hover:text-error transition-colors rounded hover:bg-error/10 opacity-0 group-hover:opacity-100"
-                @click="deleteCategory(subcategory.id)"
-              >
-                <Icon name="ph:trash-bold" />
-              </button>
+              <div v-if="editingId !== subcategory.id" class="flex items-center gap-1 opacity-0 group-hover:opacity-100">
+                <button
+                  class="p-2 text-text-muted hover:text-text-primary transition-colors rounded hover:bg-bg-tertiary"
+                  @click="startEdit(subcategory)"
+                >
+                  <Icon name="ph:pencil-bold" />
+                </button>
+                <button
+                  class="p-2 text-text-muted hover:text-error transition-colors rounded hover:bg-error/10"
+                  @click="deleteCategory(subcategory.id)"
+                >
+                  <Icon name="ph:trash-bold" />
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -185,12 +255,46 @@ const newCategoryName = ref('');
 const parentCategoryId = ref<string | null>(null);
 const isAdding = ref(false);
 const expandedCategories = ref(new Set<string>());
+const editingId = ref<string | null>(null);
+const editingName = ref('');
+const isSaving = ref(false);
 
 function toggleCategory(id: string) {
   if (expandedCategories.value.has(id)) {
     expandedCategories.value.delete(id);
   } else {
     expandedCategories.value.add(id);
+  }
+}
+
+function startEdit(category: Category | Subcategory) {
+  editingId.value = category.id;
+  editingName.value = category.name;
+}
+
+function cancelEdit() {
+  editingId.value = null;
+  editingName.value = '';
+}
+
+async function saveEdit(id: string) {
+  if (!editingName.value.trim() || isSaving.value) return;
+
+  isSaving.value = true;
+  try {
+    await (globalThis as any).$fetch(`/api/admin/categories/${id}`, {
+      method: 'PUT',
+      body: {
+        name: editingName.value.trim(),
+      },
+    });
+    editingId.value = null;
+    editingName.value = '';
+    await refresh();
+  } catch (error: any) {
+    alert(error.data?.message || 'Failed to update category');
+  } finally {
+    isSaving.value = false;
   }
 }
 
