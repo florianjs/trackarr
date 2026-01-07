@@ -22,6 +22,11 @@ logs
 .fleet
 .idea
 
+# Secrets
+CREDENTIALS.txt
+secrets/
+docker/pgbouncer/userlist.txt
+
 # Local env files
 .env
 .env.*
