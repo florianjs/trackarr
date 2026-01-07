@@ -90,11 +90,11 @@ services:
       - opentracker-public
       - opentracker-internal
     depends_on:
-      - postgres:
+      postgres:
         condition: service_healthy
-      - redis:
+      redis:
         condition: service_healthy
-      - pgbouncer:
+      pgbouncer:
         condition: service_healthy
     deploy:
       resources:
