@@ -27,18 +27,21 @@
           </div>
           <div class="flex flex-col leading-none">
             <span
-              class="text-sm tracking-tighter uppercase transition-colors"
+              class="text-sm tracking-tighter transition-colors"
               :class="{
                 'font-bold': branding?.siteNameBold ?? true,
                 'font-medium': !(branding?.siteNameBold ?? true),
               }"
               :style="{ color: branding?.siteNameColor || '' }"
-              v-html="branding?.siteName || 'OpenTracker'"
+              v-html="branding?.siteName || 'OPENTRACKER'"
             ></span>
-            <span class="text-[10px] text-text-muted font-mono">{{
-              branding?.siteSubtitle ||
-              `v${useRuntimeConfig().public.appVersion}`
-            }}</span>
+            <span
+              class="text-[10px] text-text-muted font-mono"
+              v-html="
+                branding?.siteSubtitle ||
+                `v${useRuntimeConfig().public.appVersion}`
+              "
+            ></span>
           </div>
         </NuxtLink>
 
