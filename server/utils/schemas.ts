@@ -59,7 +59,11 @@ export const registerSchema = z.object({
   powNonce: z.string().min(1, 'Invalid PoW nonce'),
   powHash: z.string().length(64, 'Invalid PoW hash'),
   // Optional
-  inviteCode: z.string().length(32).optional(),
+  inviteCode: z
+    .string()
+    .transform((val) => (val === '' ? undefined : val))
+    .pipe(z.string().length(32).optional())
+    .optional(),
   panicPassword: z
     .string()
     .min(12, 'Panic password must be at least 12 characters')
@@ -124,29 +128,40 @@ export const adminCategorySchema = z.object({
 
 export const adminSettingsSchema = z.object({
   registrationOpen: z.boolean().optional(),
+  inviteEnabled: z.boolean().optional(),
+  defaultInvites: z.coerce.number().int().min(0).max(100).optional(),
   announceInterval: z.coerce.number().int().positive().max(3600).optional(),
   minAnnounceInterval: z.coerce.number().int().positive().max(1800).optional(),
   maxPeersPerTorrent: z.coerce.number().int().positive().max(1000).optional(),
   peerTTL: z.coerce.number().int().positive().max(86400).optional(),
   minRatio: z.coerce.number().min(0).max(10).optional(),
   starterUpload: z.coerce.number().int().min(0).optional(),
-  siteName: z.string().min(1).max(50).optional(),
+  siteName: z.string().min(1).max(500).optional(),
   siteLogo: z.string().min(1).max(100).optional(),
   siteLogoImage: z.string().max(500).optional().nullable(),
-  siteSubtitle: z.string().max(100).optional().nullable(),
+  siteSubtitle: z.string().max(500).optional().nullable(),
+  siteNameColor: z.string().max(50).optional().nullable(),
+  siteNameBold: z.boolean().optional(),
+  // Extended branding
+  authTitle: z.string().max(500).optional().nullable(),
+  authSubtitle: z.string().max(1000).optional().nullable(),
+  footerText: z.string().max(1000).optional().nullable(),
+  pageTitleSuffix: z.string().max(100).optional().nullable(),
+  welcomeMessage: z.string().max(5000).optional().nullable(),
+  siteRules: z.string().max(50000).optional().nullable(),
   announcementEnabled: z.boolean().optional(),
   announcementMessage: z.string().max(500).optional(),
   announcementType: z.enum(['info', 'warning', 'error']).optional(),
-  // Homepage content
-  heroTitle: z.string().max(50).optional(),
-  heroSubtitle: z.string().max(500).optional(),
+  // Homepage content (rich text HTML)
+  heroTitle: z.string().max(2000).optional(),
+  heroSubtitle: z.string().max(5000).optional(),
   statusBadgeText: z.string().max(100).optional(),
-  feature1Title: z.string().max(100).optional(),
-  feature1Desc: z.string().max(500).optional(),
-  feature2Title: z.string().max(100).optional(),
-  feature2Desc: z.string().max(500).optional(),
-  feature3Title: z.string().max(100).optional(),
-  feature3Desc: z.string().max(500).optional(),
+  feature1Title: z.string().max(500).optional(),
+  feature1Desc: z.string().max(2000).optional(),
+  feature2Title: z.string().max(500).optional(),
+  feature2Desc: z.string().max(2000).optional(),
+  feature3Title: z.string().max(500).optional(),
+  feature3Desc: z.string().max(2000).optional(),
 });
 
 // ============================================================================

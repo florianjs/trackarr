@@ -13,46 +13,38 @@
     <div class="card-body space-y-6">
       <!-- Hero Section -->
       <div class="space-y-4">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+        <p
+          class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
+        >
           Hero Section
         </p>
-        
-        <div>
-          <label
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-          >
-            Title
-          </label>
-          <input
+
+        <SettingsGroup
+          label="Title"
+          description="The main headline on the homepage. Use rich text for custom styling, colors, and fonts."
+        >
+          <WysiwygEditor
             v-model="heroTitle"
-            type="text"
-            maxlength="50"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
             placeholder="OpenTracker"
+            :maxLength="500"
           />
-        </div>
+        </SettingsGroup>
 
-        <div>
-          <label
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-          >
-            Subtitle
-          </label>
-          <textarea
+        <SettingsGroup
+          label="Subtitle"
+          description="A short description below the title. Supports rich text."
+        >
+          <WysiwygEditor
             v-model="heroSubtitle"
-            maxlength="500"
-            rows="3"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 resize-none"
             placeholder="High-performance, minimalist P2P tracking engine..."
+            :maxLength="1000"
           />
-        </div>
+        </SettingsGroup>
 
-        <div>
-          <label
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-          >
-            Status Badge
-          </label>
+        <SettingsGroup
+          label="Status Badge"
+          description="Text shown in the pill badge above the title."
+        >
           <input
             v-model="statusBadgeText"
             type="text"
@@ -60,46 +52,64 @@
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
             placeholder="Tracker Online & Operational"
           />
-        </div>
+        </SettingsGroup>
       </div>
 
       <!-- Feature Boxes -->
       <div class="space-y-4 pt-4 border-t border-border">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+        <p
+          class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
+        >
           Feature Boxes
         </p>
 
-        <div v-for="(feature, index) in features" :key="index" class="space-y-2">
-          <div class="flex items-center gap-2 mb-2">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-              Feature {{ index + 1 }}
-            </span>
+        <SettingsGroup
+          v-for="(feature, index) in features"
+          :key="index"
+          :label="`Feature ${index + 1}`"
+          description="Title and description for this feature card. Supports rich text."
+        >
+          <div class="space-y-3">
+            <div>
+              <label
+                class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
+                >Title</label
+              >
+              <WysiwygEditor
+                v-model="feature.title"
+                placeholder="Feature title"
+                :maxLength="300"
+              />
+            </div>
+            <div>
+              <label
+                class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
+                >Description</label
+              >
+              <WysiwygEditor
+                v-model="feature.description"
+                placeholder="Feature description..."
+                :maxLength="1000"
+              />
+            </div>
           </div>
-          <input
-            v-model="feature.title"
-            type="text"
-            maxlength="100"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Feature title"
-          />
-          <textarea
-            v-model="feature.description"
-            maxlength="500"
-            rows="2"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 resize-none"
-            placeholder="Feature description..."
-          />
-        </div>
+        </SettingsGroup>
       </div>
 
       <!-- Save Button -->
       <button
         @click="saveContent"
-        :disabled="loading"
-        class="w-full bg-text-primary text-bg-primary text-[10px] font-bold uppercase tracking-widest py-2.5 rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+        :disabled="loading || saved"
+        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        :class="
+          saved
+            ? 'bg-success text-white'
+            : 'bg-text-primary text-bg-primary hover:opacity-90'
+        "
       >
         <Icon v-if="loading" name="ph:circle-notch" class="animate-spin" />
-        {{ loading ? 'Saving...' : 'Save Homepage Content' }}
+        <Icon v-else-if="saved" name="ph:check-bold" />
+        {{ loading ? 'Saving...' : saved ? 'Saved' : 'Save Homepage Content' }}
       </button>
     </div>
   </div>
@@ -107,14 +117,29 @@
 
 <script setup lang="ts">
 const heroTitle = ref('OpenTracker');
-const heroSubtitle = ref('High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.');
+const heroSubtitle = ref(
+  'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.'
+);
 const statusBadgeText = ref('Tracker Online & Operational');
 const features = ref([
-  { title: 'High Performance', description: 'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.' },
-  { title: 'Multi-Protocol', description: 'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.' },
-  { title: 'Open Source', description: 'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.' },
+  {
+    title: 'High Performance',
+    description:
+      'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.',
+  },
+  {
+    title: 'Multi-Protocol',
+    description:
+      'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.',
+  },
+  {
+    title: 'Open Source',
+    description:
+      'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.',
+  },
 ]);
 const loading = ref(false);
+const saved = ref(false);
 
 onMounted(async () => {
   try {
@@ -129,7 +154,7 @@ onMounted(async () => {
       feature3Title: string;
       feature3Desc: string;
     }>('/api/admin/settings');
-    
+
     heroTitle.value = settings.heroTitle;
     heroSubtitle.value = settings.heroSubtitle;
     statusBadgeText.value = settings.statusBadgeText;
@@ -160,6 +185,10 @@ async function saveContent() {
         feature3Desc: features.value[2]?.description ?? '',
       },
     });
+    saved.value = true;
+    setTimeout(() => {
+      saved.value = false;
+    }, 2000);
   } catch (error) {
     console.error('Failed to save homepage content:', error);
   } finally {

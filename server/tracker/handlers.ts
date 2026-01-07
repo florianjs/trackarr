@@ -12,6 +12,9 @@ import { db, schema } from '../db';
 import { sql, eq } from 'drizzle-orm';
 import { createHnrEntry, updateSeedTime } from '../utils/hnr';
 
+// Debug mode for verbose tracker logging (set TRACKER_DEBUG=true in .env)
+const TRACKER_DEBUG = process.env.TRACKER_DEBUG === 'true';
+
 // ============================================================================
 // Deduplication Cache
 // Prevents processing the same announce multiple times when clients
@@ -51,29 +54,19 @@ export async function handleAnnounce(params: {
   event?: 'started' | 'stopped' | 'completed' | 'update' | null;
   passkey?: string;
 }): Promise<void> {
-  // Debug: Log raw input before conversion
-  console.log('[Tracker] handleAnnounce RAW INPUT:', {
-    infoHashType: typeof params.infoHash,
-    infoHashIsBuffer: Buffer.isBuffer(params.infoHash),
-    infoHashLength: params.infoHash?.length,
-    peerIdType: typeof params.peerId,
-    peerIdIsBuffer: Buffer.isBuffer(params.peerId),
-    event: params.event,
-    ip: params.ip,
-    port: params.port,
-  });
-
   const infoHash = bufferToHex(params.infoHash);
   const peerId = bufferToHex(params.peerId);
   const event = params.event || 'update';
 
-  // Debug: Log after conversion
-  console.log('[Tracker] handleAnnounce AFTER CONVERSION:', {
-    infoHash: infoHash?.slice(0, 16) + '...',
-    infoHashLength: infoHash?.length,
-    peerId: peerId?.slice(0, 16) + '...',
-    peerIdLength: peerId?.length,
-  });
+  if (TRACKER_DEBUG) {
+    console.log('[Tracker] handleAnnounce:', {
+      infoHash: infoHash?.slice(0, 16) + '...',
+      peerId: peerId?.slice(0, 16) + '...',
+      event,
+      ip: params.ip,
+      port: params.port,
+    });
+  }
 
   // Validate required fields
   if (!infoHash || infoHash.length !== 40) {
@@ -111,9 +104,11 @@ export async function handleAnnounce(params: {
   });
 
   const ipHash = hashIP(params.ip);
-  console.log(
-    `[Tracker] ANNOUNCE: event=${event} hash=${infoHash.slice(0, 12)}... peer=${peerId.slice(0, 8)}... ipHash=${ipHash} port=${params.port} left=${params.left}`
-  );
+  if (TRACKER_DEBUG) {
+    console.log(
+      `[Tracker] ANNOUNCE: event=${event} hash=${infoHash.slice(0, 12)}... peer=${peerId.slice(0, 8)}... ipHash=${ipHash} port=${params.port} left=${params.left}`
+    );
+  }
 
   // Calculate deltas for user stats
   const previousPeer = await getPeer(infoHash, peerId);
@@ -123,25 +118,16 @@ export async function handleAnnounce(params: {
   if (previousPeer) {
     deltaUploaded = Math.max(0, params.uploaded - previousPeer.uploaded);
     deltaDownloaded = Math.max(0, params.downloaded - previousPeer.downloaded);
-    console.log(
-      `[Tracker] DELTA (existing peer): uploaded=${params.uploaded} - ${previousPeer.uploaded} = ${deltaUploaded}, downloaded=${params.downloaded} - ${previousPeer.downloaded} = ${deltaDownloaded}`
-    );
   } else {
     // First announce for this peer in this session - don't credit full amount
     // The client sends cumulative session stats, but on first announce we can't know the baseline
     // So we store the current values and only credit deltas on subsequent announces
     deltaUploaded = 0;
     deltaDownloaded = 0;
-    console.log(
-      `[Tracker] DELTA (new peer): First announce, storing baseline - uploaded=${params.uploaded}, downloaded=${params.downloaded}`
-    );
   }
 
   // Update user stats if passkey is provided
   if (params.passkey && (deltaUploaded > 0 || deltaDownloaded > 0)) {
-    console.log(
-      `[Tracker] UPDATING USER STATS: passkey=${params.passkey.slice(0, 8)}... deltaUp=${deltaUploaded}, deltaDown=${deltaDownloaded}`
-    );
     await db
       .update(schema.users)
       .set({
@@ -154,9 +140,6 @@ export async function handleAnnounce(params: {
   if (event === 'stopped') {
     // Remove peer from swarm
     await removePeer(infoHash, peerId);
-    console.log(
-      `[Tracker] Peer left: ${peerId.slice(0, 8)}... from ${infoHash.slice(0, 8)}...`
-    );
     return;
   }
 
@@ -173,9 +156,6 @@ export async function handleAnnounce(params: {
   // Track completed downloads
   if (event === 'completed') {
     await incrementCompleted(infoHash);
-    console.log(
-      `[Tracker] Completed: ${peerId.slice(0, 8)}... on ${infoHash.slice(0, 8)}...`
-    );
 
     // Create HnR tracking entry
     if (params.passkey) {

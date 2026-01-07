@@ -1,0 +1,24 @@
+#!/bin/sh
+# Entrypoint script for OpenTracker Docker container
+# Runs database migrations before starting the application
+
+set -e
+
+echo "🚀 Starting OpenTracker..."
+
+# Run database schema push (migrations)
+echo "📦 Running database migrations..."
+./scripts/db-push.sh
+
+# Seed default categories if needed
+if [ -f ./scripts/seed-categories.ts ]; then
+  echo "🌱 Checking category seeds..."
+  npx tsx ./scripts/seed-categories.ts 2>/dev/null || echo "⚠️ Category seeding skipped or already complete"
+fi
+
+echo ""
+echo "✅ Database ready, starting application..."
+echo ""
+
+# Start the application
+exec node .output/server/index.mjs

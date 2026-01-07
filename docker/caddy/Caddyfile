@@ -39,6 +39,12 @@
 		health_timeout 10s
 	}
 
+	# Serve Uploaded Files
+	handle_path /uploads/* {
+		root * /srv/uploads
+		file_server
+	}
+
 	# Logging
 	log {
 		output file /var/log/caddy/access.log {

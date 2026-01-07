@@ -1,0 +1,168 @@
+# =============================================================================
+# Local Development/Testing Docker Compose
+# =============================================================================
+# Simplified setup for local testing - no Caddy, no SSL, no PgBouncer
+# Usage: docker compose -f docker-compose.local.yml --env-file .env.local-prod up -d
+# =============================================================================
+
+services:
+  # =============================================================================
+  # APPLICATION - Nuxt OpenTracker
+  # =============================================================================
+  app:
+    image: opentracker:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opentracker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      NITRO_SERVE_STATIC: "true"
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET}
+      # Direct connection to PostgreSQL (no PgBouncer for simplicity)
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-opentracker}
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-opentracker}
+      DB_SSL: "false"
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
+      TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
+      TRACKER_WS_URL: ${TRACKER_WS_URL:-}
+      IP_HASH_SECRET: ${IP_HASH_SECRET}
+      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+    ports:
+      - "3000:3000"   # Web UI
+      - "8080:8080"   # HTTP Tracker
+      - "8082:8082"   # WebSocket Tracker
+    volumes:
+      - uploads_data:/app/public/uploads
+      - uploads_data:/app/.output/public/uploads
+      - uploads_data:/app/.output/public/uploads
+    networks:
+      - opentracker
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+
+  # =============================================================================
+  # DATABASE - PostgreSQL
+  # =============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: opentracker-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-opentracker}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-tracker} -d ${DB_NAME:-opentracker}"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - opentracker
+
+  # =============================================================================
+  # CACHE - Redis
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: opentracker-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly yes
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - opentracker
+
+  # =============================================================================
+  # MONITORING - Prometheus
+  # =============================================================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: opentracker-prometheus
+    restart: unless-stopped
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=7d"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - opentracker
+
+  # =============================================================================
+  # MONITORING - Grafana
+  # =============================================================================
+  grafana:
+    image: grafana/grafana:12.3.1
+    container_name: opentracker-grafana
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+    ports:
+      - "3001:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+    depends_on:
+      - prometheus
+    networks:
+      - opentracker
+
+networks:
+  opentracker:
+    driver: bridge
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  grafana_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  uploads_data:
+    driver: local

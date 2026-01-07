@@ -12,73 +12,57 @@
     </div>
     <div class="card-body space-y-6">
       <!-- Enable Toggle -->
-      <div class="flex items-center justify-between">
-        <div>
-          <p class="text-sm font-medium text-text-primary">Enable Announcement</p>
-          <p class="text-[10px] text-text-muted mt-0.5">
-            Display a banner below the navbar on all pages
-          </p>
-        </div>
-        <button
-          @click="enabled = !enabled"
-          :class="[
-            'relative inline-flex h-6 w-11 items-center rounded-full transition-colors',
-            enabled ? 'bg-success' : 'bg-bg-tertiary border border-border',
-          ]"
-        >
-          <span
+      <SettingsGroup
+        label="Enable Announcement"
+        description="Display a banner below the main navigation bar on all pages."
+      >
+        <div class="flex items-center gap-3">
+          <button
+            @click="enabled = !enabled"
             :class="[
-              'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
-              enabled ? 'translate-x-6' : 'translate-x-1',
+              'relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/20',
+              enabled ? 'bg-success' : 'bg-bg-tertiary border border-border',
             ]"
-          />
-        </button>
-      </div>
-
-      <!-- Preview -->
-      <div v-if="enabled && message" class="space-y-2">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-          Preview
-        </p>
-        <div
-          :class="[
-            'px-4 py-3 rounded-lg border flex items-center gap-3',
-            typeStyles[type].bg,
-            typeStyles[type].border,
-          ]"
-        >
-          <Icon :name="typeStyles[type].icon" :class="['text-lg', typeStyles[type].text]" />
-          <p :class="['text-sm flex-1', typeStyles[type].text]">{{ message }}</p>
-          <Icon name="ph:x" class="text-text-muted hover:text-text-primary cursor-pointer" />
+          >
+            <span
+              :class="[
+                'inline-block h-4 w-4 transform rounded-full bg-white transition-transform',
+                enabled ? 'translate-x-6' : 'translate-x-1',
+              ]"
+            />
+          </button>
+          <span class="text-xs text-text-muted">
+            {{ enabled ? 'Enabled' : 'Disabled' }}
+          </span>
         </div>
-      </div>
+      </SettingsGroup>
 
       <!-- Message -->
-      <div>
-        <label
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-        >
-          Message
-        </label>
-        <textarea
-          v-model="message"
-          rows="3"
-          maxlength="500"
-          class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 resize-none"
-          placeholder="Enter your announcement message..."
-        />
-        <p class="text-[10px] text-text-muted mt-1.5 text-right">
-          {{ message.length }}/500
-        </p>
-      </div>
+      <SettingsGroup
+        label="Message"
+        description="The content of the announcement. Keep it short and clear."
+      >
+        <div class="relative">
+          <textarea
+            v-model="message"
+            rows="3"
+            maxlength="500"
+            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 resize-none"
+            placeholder="Enter your announcement message..."
+          />
+          <p
+            class="text-[10px] text-text-muted mt-1.5 text-right absolute bottom-2 right-2"
+          >
+            {{ message.length }}/500
+          </p>
+        </div>
+      </SettingsGroup>
 
       <!-- Type Selector -->
-      <div>
-        <label
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-        >
-          Banner Type
-        </label>
+      <SettingsGroup
+        label="Banner Type"
+        description="Determines the color and icon of the announcement banner."
+      >
         <div class="grid grid-cols-3 gap-2">
           <button
             v-for="option in typeOptions"
@@ -95,16 +79,50 @@
             {{ option.label }}
           </button>
         </div>
+      </SettingsGroup>
+
+      <!-- Preview -->
+      <div v-if="enabled && message" class="pt-6 border-t border-border/50">
+        <p
+          class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-4"
+        >
+          Live Preview
+        </p>
+        <div
+          :class="[
+            'px-4 py-3 rounded-lg border flex items-center gap-3',
+            typeStyles[type].bg,
+            typeStyles[type].border,
+          ]"
+        >
+          <Icon
+            :name="typeStyles[type].icon"
+            :class="['text-lg', typeStyles[type].text]"
+          />
+          <p :class="['text-sm flex-1', typeStyles[type].text]">
+            {{ message }}
+          </p>
+          <Icon
+            name="ph:x"
+            class="text-text-muted hover:text-text-primary cursor-pointer"
+          />
+        </div>
       </div>
 
       <!-- Save Button -->
       <button
         @click="saveAnnouncement"
-        :disabled="loading"
-        class="w-full bg-text-primary text-bg-primary text-[10px] font-bold uppercase tracking-widest py-2.5 rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+        :disabled="loading || saved"
+        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        :class="
+          saved
+            ? 'bg-success text-white'
+            : 'bg-text-primary text-bg-primary hover:opacity-90'
+        "
       >
         <Icon v-if="loading" name="ph:circle-notch" class="animate-spin" />
-        {{ loading ? 'Saving...' : 'Save Announcement' }}
+        <Icon v-else-if="saved" name="ph:check-bold" />
+        {{ loading ? 'Saving...' : saved ? 'Saved' : 'Save Announcement' }}
       </button>
     </div>
   </div>
@@ -115,6 +133,7 @@ const enabled = ref(false);
 const message = ref('');
 const type = ref<'info' | 'warning' | 'error'>('info');
 const loading = ref(false);
+const saved = ref(false);
 
 const typeOptions = [
   { value: 'info' as const, label: 'Info', icon: 'ph:info' },
@@ -169,6 +188,10 @@ async function saveAnnouncement() {
         announcementType: type.value,
       },
     });
+    saved.value = true;
+    setTimeout(() => {
+      saved.value = false;
+    }, 2000);
   } catch (error) {
     console.error('Failed to save announcement:', error);
   } finally {

@@ -20,6 +20,20 @@ export default defineEventHandler(async (event) => {
     await setRegistrationOpen(body.registrationOpen);
   }
 
+  if (typeof body.inviteEnabled === 'boolean') {
+    await setSetting(
+      SETTINGS_KEYS.INVITE_ENABLED,
+      body.inviteEnabled ? 'true' : 'false'
+    );
+  }
+
+  if (typeof body.defaultInvites === 'number') {
+    await setSetting(
+      SETTINGS_KEYS.DEFAULT_INVITES,
+      body.defaultInvites.toString()
+    );
+  }
+
   if (typeof body.minRatio === 'number') {
     await setSetting(SETTINGS_KEYS.MIN_RATIO, body.minRatio.toString());
   }
@@ -55,6 +69,49 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  if (body.siteNameColor !== undefined) {
+    if (body.siteNameColor === null || body.siteNameColor === '') {
+      await setSetting(SETTINGS_KEYS.SITE_NAME_COLOR, '');
+    } else {
+      await setSetting(SETTINGS_KEYS.SITE_NAME_COLOR, body.siteNameColor);
+    }
+  }
+
+  if (typeof body.siteNameBold === 'boolean') {
+    await setSetting(
+      SETTINGS_KEYS.SITE_NAME_BOLD,
+      body.siteNameBold ? 'true' : 'false'
+    );
+  }
+
+  // Extended branding
+  if (body.authTitle !== undefined) {
+    await setSetting(SETTINGS_KEYS.AUTH_TITLE, body.authTitle || '');
+  }
+
+  if (body.authSubtitle !== undefined) {
+    await setSetting(SETTINGS_KEYS.AUTH_SUBTITLE, body.authSubtitle || '');
+  }
+
+  if (body.footerText !== undefined) {
+    await setSetting(SETTINGS_KEYS.FOOTER_TEXT, body.footerText || '');
+  }
+
+  if (body.pageTitleSuffix !== undefined) {
+    await setSetting(
+      SETTINGS_KEYS.PAGE_TITLE_SUFFIX,
+      body.pageTitleSuffix || ''
+    );
+  }
+
+  if (body.welcomeMessage !== undefined) {
+    await setSetting(SETTINGS_KEYS.WELCOME_MESSAGE, body.welcomeMessage || '');
+  }
+
+  if (body.siteRules !== undefined) {
+    await setSetting(SETTINGS_KEYS.SITE_RULES, body.siteRules || '');
+  }
+
   if (typeof body.announcementEnabled === 'boolean') {
     await setSetting(
       SETTINGS_KEYS.ANNOUNCEMENT_ENABLED,
@@ -63,7 +120,10 @@ export default defineEventHandler(async (event) => {
   }
 
   if (typeof body.announcementMessage === 'string') {
-    await setSetting(SETTINGS_KEYS.ANNOUNCEMENT_MESSAGE, body.announcementMessage);
+    await setSetting(
+      SETTINGS_KEYS.ANNOUNCEMENT_MESSAGE,
+      body.announcementMessage
+    );
   }
 
   if (typeof body.announcementType === 'string') {
