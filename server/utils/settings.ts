@@ -40,6 +40,24 @@ export const SETTINGS_KEYS = {
   FEATURE_3_DESC: 'feature_3_desc',
 } as const;
 
+/**
+ * Check if HTML content is effectively empty (only contains empty tags)
+ */
+export function isHtmlEmpty(html: string | null | undefined): boolean {
+  if (!html) return true;
+  // Strip all HTML tags and check if there's any text content left
+  const textContent = html.replace(/<[^>]*>/g, '').trim();
+  return textContent.length === 0;
+}
+
+/**
+ * Clean HTML content - returns empty string if content is effectively empty
+ */
+export function cleanHtmlContent(html: string | null | undefined): string {
+  if (isHtmlEmpty(html)) return '';
+  return html || '';
+}
+
 const settingsCache = new Map<
   string,
   { value: string | null; timestamp: number }

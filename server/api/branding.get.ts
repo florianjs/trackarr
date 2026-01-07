@@ -10,6 +10,7 @@ import {
   getAuthSubtitle,
   getFooterText,
   getPageTitleSuffix,
+  isHtmlEmpty,
 } from '../utils/settings';
 
 /**
@@ -30,16 +31,16 @@ export default defineEventHandler(async () => {
   const pageTitleSuffix = await getPageTitleSuffix();
 
   return {
-    siteName,
+    siteName: isHtmlEmpty(siteName) ? null : siteName,
     siteLogo,
     siteLogoImage,
     siteFavicon,
-    siteSubtitle,
+    siteSubtitle: isHtmlEmpty(siteSubtitle) ? null : siteSubtitle,
     siteNameColor,
     siteNameBold,
-    authTitle,
-    authSubtitle,
-    footerText,
+    authTitle: isHtmlEmpty(authTitle) ? null : authTitle,
+    authSubtitle: isHtmlEmpty(authSubtitle) ? null : authSubtitle,
+    footerText: isHtmlEmpty(footerText) ? null : footerText,
     pageTitleSuffix,
   };
 });

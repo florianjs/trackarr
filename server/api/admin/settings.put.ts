@@ -3,6 +3,7 @@ import {
   setRegistrationOpen,
   setSetting,
   SETTINGS_KEYS,
+  cleanHtmlContent,
 } from '../../utils/settings';
 import { validateBody, adminSettingsSchema } from '../../utils/schemas';
 
@@ -46,7 +47,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (typeof body.siteName === 'string') {
-    await setSetting(SETTINGS_KEYS.SITE_NAME, body.siteName);
+    await setSetting(SETTINGS_KEYS.SITE_NAME, cleanHtmlContent(body.siteName));
   }
 
   if (typeof body.siteLogo === 'string') {
@@ -62,11 +63,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (body.siteSubtitle !== undefined) {
-    if (body.siteSubtitle === null || body.siteSubtitle === '') {
-      await setSetting(SETTINGS_KEYS.SITE_SUBTITLE, '');
-    } else {
-      await setSetting(SETTINGS_KEYS.SITE_SUBTITLE, body.siteSubtitle);
-    }
+    await setSetting(SETTINGS_KEYS.SITE_SUBTITLE, cleanHtmlContent(body.siteSubtitle)); // Empty = show version
   }
 
   if (body.siteNameColor !== undefined) {
@@ -84,17 +81,17 @@ export default defineEventHandler(async (event) => {
     );
   }
 
-  // Extended branding
+  // Extended branding - apply defaults when fields are emptied
   if (body.authTitle !== undefined) {
-    await setSetting(SETTINGS_KEYS.AUTH_TITLE, body.authTitle || '');
+    await setSetting(SETTINGS_KEYS.AUTH_TITLE, cleanHtmlContent(body.authTitle)); // Empty = use site name
   }
 
   if (body.authSubtitle !== undefined) {
-    await setSetting(SETTINGS_KEYS.AUTH_SUBTITLE, body.authSubtitle || '');
+    await setSetting(SETTINGS_KEYS.AUTH_SUBTITLE, cleanHtmlContent(body.authSubtitle)); // Empty = use site subtitle
   }
 
   if (body.footerText !== undefined) {
-    await setSetting(SETTINGS_KEYS.FOOTER_TEXT, body.footerText || '');
+    await setSetting(SETTINGS_KEYS.FOOTER_TEXT, cleanHtmlContent(body.footerText)); // Empty = auto-generated copyright
   }
 
   if (body.pageTitleSuffix !== undefined) {
@@ -105,11 +102,11 @@ export default defineEventHandler(async (event) => {
   }
 
   if (body.welcomeMessage !== undefined) {
-    await setSetting(SETTINGS_KEYS.WELCOME_MESSAGE, body.welcomeMessage || '');
+    await setSetting(SETTINGS_KEYS.WELCOME_MESSAGE, cleanHtmlContent(body.welcomeMessage));
   }
 
   if (body.siteRules !== undefined) {
-    await setSetting(SETTINGS_KEYS.SITE_RULES, body.siteRules || '');
+    await setSetting(SETTINGS_KEYS.SITE_RULES, cleanHtmlContent(body.siteRules));
   }
 
   if (typeof body.announcementEnabled === 'boolean') {
@@ -132,39 +129,39 @@ export default defineEventHandler(async (event) => {
 
   // Homepage content
   if (typeof body.heroTitle === 'string') {
-    await setSetting(SETTINGS_KEYS.HERO_TITLE, body.heroTitle);
+    await setSetting(SETTINGS_KEYS.HERO_TITLE, cleanHtmlContent(body.heroTitle));
   }
 
   if (typeof body.heroSubtitle === 'string') {
-    await setSetting(SETTINGS_KEYS.HERO_SUBTITLE, body.heroSubtitle);
+    await setSetting(SETTINGS_KEYS.HERO_SUBTITLE, cleanHtmlContent(body.heroSubtitle));
   }
 
   if (typeof body.statusBadgeText === 'string') {
-    await setSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT, body.statusBadgeText);
+    await setSetting(SETTINGS_KEYS.STATUS_BADGE_TEXT, body.statusBadgeText || '');
   }
 
   if (typeof body.feature1Title === 'string') {
-    await setSetting(SETTINGS_KEYS.FEATURE_1_TITLE, body.feature1Title);
+    await setSetting(SETTINGS_KEYS.FEATURE_1_TITLE, cleanHtmlContent(body.feature1Title));
   }
 
   if (typeof body.feature1Desc === 'string') {
-    await setSetting(SETTINGS_KEYS.FEATURE_1_DESC, body.feature1Desc);
+    await setSetting(SETTINGS_KEYS.FEATURE_1_DESC, cleanHtmlContent(body.feature1Desc));
   }
 
   if (typeof body.feature2Title === 'string') {
-    await setSetting(SETTINGS_KEYS.FEATURE_2_TITLE, body.feature2Title);
+    await setSetting(SETTINGS_KEYS.FEATURE_2_TITLE, cleanHtmlContent(body.feature2Title));
   }
 
   if (typeof body.feature2Desc === 'string') {
-    await setSetting(SETTINGS_KEYS.FEATURE_2_DESC, body.feature2Desc);
+    await setSetting(SETTINGS_KEYS.FEATURE_2_DESC, cleanHtmlContent(body.feature2Desc));
   }
 
   if (typeof body.feature3Title === 'string') {
-    await setSetting(SETTINGS_KEYS.FEATURE_3_TITLE, body.feature3Title);
+    await setSetting(SETTINGS_KEYS.FEATURE_3_TITLE, cleanHtmlContent(body.feature3Title));
   }
 
   if (typeof body.feature3Desc === 'string') {
-    await setSetting(SETTINGS_KEYS.FEATURE_3_DESC, body.feature3Desc);
+    await setSetting(SETTINGS_KEYS.FEATURE_3_DESC, cleanHtmlContent(body.feature3Desc));
   }
 
   return {

@@ -8,11 +8,13 @@ import {
   getFeature2Desc,
   getFeature3Title,
   getFeature3Desc,
+  isHtmlEmpty,
 } from '../utils/settings';
 
 /**
  * GET /api/homepage-content
  * Public endpoint returning homepage text content
+ * Returns null for empty fields - fallbacks handled client-side
  */
 export default defineEventHandler(async () => {
   const heroTitle = await getHeroTitle();
@@ -26,13 +28,22 @@ export default defineEventHandler(async () => {
   const feature3Desc = await getFeature3Desc();
 
   return {
-    heroTitle,
-    heroSubtitle,
-    statusBadgeText,
+    heroTitle: isHtmlEmpty(heroTitle) ? null : heroTitle,
+    heroSubtitle: isHtmlEmpty(heroSubtitle) ? null : heroSubtitle,
+    statusBadgeText: statusBadgeText || null,
     features: [
-      { title: feature1Title, description: feature1Desc },
-      { title: feature2Title, description: feature2Desc },
-      { title: feature3Title, description: feature3Desc },
+      {
+        title: isHtmlEmpty(feature1Title) ? null : feature1Title,
+        description: isHtmlEmpty(feature1Desc) ? null : feature1Desc,
+      },
+      {
+        title: isHtmlEmpty(feature2Title) ? null : feature2Title,
+        description: isHtmlEmpty(feature2Desc) ? null : feature2Desc,
+      },
+      {
+        title: isHtmlEmpty(feature3Title) ? null : feature3Title,
+        description: isHtmlEmpty(feature3Desc) ? null : feature3Desc,
+      },
     ],
   };
 });
