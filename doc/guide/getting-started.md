@@ -18,11 +18,11 @@ You must configure your DNS records to point to your VPS IP address before runni
 
 Create the following **A records** pointing to your server's IP:
 
-| Subdomain | Record Type | Value |
-|-----------|-------------|-------|
-| `tracker.your-domain.com` | A | Your VPS IP |
-| `announce.your-domain.com` | A | Your VPS IP |
-| `monitoring.your-domain.com` | A | Your VPS IP |
+| Subdomain                    | Record Type | Value       |
+| ---------------------------- | ----------- | ----------- |
+| `tracker.your-domain.com`    | A           | Your VPS IP |
+| `announce.your-domain.com`   | A           | Your VPS IP |
+| `monitoring.your-domain.com` | A           | Your VPS IP |
 
 ::: tip
 DNS propagation usually completes within a few minutes, but can take up to 24-48 hours. The installer will fail to obtain SSL certificates if DNS is not properly configured.
@@ -53,23 +53,37 @@ The installer will automatically:
 
 After installation, Grafana is accessible at `https://monitoring.your-domain.com/grafana` with default credentials `admin` / `admin`.
 
-### Option 2: Development with Docker
+### Option 2: Docker Setup (Interactive)
 
-For local development and testing:
+For local development or manual production deployment:
 
 ```bash
 # Clone repository
 git clone https://github.com/florianjs/opentracker.git && cd opentracker
-cp .env.example .env
 
-# Start all services (app + postgres + redis)
-docker compose up -d
-
-# View logs
-docker compose logs -f app
+# Run interactive setup
+./scripts/setup.sh
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to access your tracker.
+The setup script will:
+
+- Ask if you want **development** or **production** mode
+- For production: prompt for domain names and email
+- Generate all cryptographic secrets automatically
+- Configure tracker announce URLs
+- Create a ready-to-use `.env` file
+
+Then start the services:
+
+```bash
+# Development
+docker compose up -d
+
+# Production (with SSL, Caddy, monitoring)
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Open [http://localhost:3000](http://localhost:3000) (dev) or `https://your-domain.com` (prod) to access your tracker.
 
 ## First Steps After Installation
 
