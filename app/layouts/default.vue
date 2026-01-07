@@ -290,12 +290,14 @@
         class="max-w-[1400px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4"
       >
         <div
-          class="flex items-center gap-4 text-[10px] text-text-muted font-mono uppercase tracking-widest"
+          class="flex items-center gap-4 text-[10px] text-text-muted font-mono tracking-widest"
         >
-          <span>{{
-            branding?.footerText ||
-            `© ${new Date().getFullYear()} ${(branding?.siteName || 'OPENTRACKER').toUpperCase()}`
-          }}</span>
+          <span
+            v-html="
+              branding?.footerText ||
+              `© ${new Date().getFullYear()} ${(branding?.siteName || 'OPENTRACKER').toUpperCase()}`
+            "
+          ></span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
           <span>P2P PROTOCOL</span>
         </div>
