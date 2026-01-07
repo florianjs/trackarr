@@ -46,6 +46,10 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
+        TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
+        TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
     container_name: opentracker-app
     restart: always
     # Enhanced security: Drop all capabilities and add only required ones

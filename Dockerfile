@@ -1,6 +1,14 @@
 # Production Dockerfile for OpenTracker
 FROM node:20-alpine AS base
 
+ARG TRACKER_HTTP_URL
+ARG TRACKER_UDP_URL
+ARG TRACKER_WS_URL
+
+ENV TRACKER_HTTP_URL=${TRACKER_HTTP_URL}
+ENV TRACKER_UDP_URL=${TRACKER_UDP_URL}
+ENV TRACKER_WS_URL=${TRACKER_WS_URL}
+
 # Install dependencies only when needed
 FROM base AS deps
 RUN apk add --no-cache libc6-compat
