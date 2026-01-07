@@ -1,0 +1,3 @@
+<template>
+  <AdminCategories />
+</template>

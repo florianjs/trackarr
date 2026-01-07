@@ -1,0 +1,67 @@
+# Auto-tag on Release PR Merge
+# This workflow creates a git tag when a release/* branch is merged to main
+
+name: Create Release Tag
+
+on:
+    pull_request:
+        types: [closed]
+        branches: [main]
+
+permissions:
+    contents: write
+
+jobs:
+    create-tag:
+        # Only run if PR was merged (not just closed) and branch starts with release/
+        if: github.event.pull_request.merged == true && startsWith(github.event.pull_request.head.ref, 'release/')
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+
+            - name: Extract version from branch name
+              id: version
+              run: |
+                  BRANCH="${{ github.event.pull_request.head.ref }}"
+                  VERSION="${BRANCH#release/}"
+                  echo "version=$VERSION" >> $GITHUB_OUTPUT
+                  echo "Extracted version: $VERSION"
+
+            - name: Check if tag exists
+              id: check_tag
+              run: |
+                  if git rev-parse "${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+                    echo "exists=true" >> $GITHUB_OUTPUT
+                    echo "Tag ${{ steps.version.outputs.version }} already exists"
+                  else
+                    echo "exists=false" >> $GITHUB_OUTPUT
+                  fi
+
+            - name: Create and push tag
+              if: steps.check_tag.outputs.exists == 'false'
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git tag -a "${{ steps.version.outputs.version }}" -m "Release ${{ steps.version.outputs.version }}"
+                  git push origin "${{ steps.version.outputs.version }}"
+                  echo "✅ Created tag: ${{ steps.version.outputs.version }}"
+
+            - name: Create GitHub Release
+              if: steps.check_tag.outputs.exists == 'false'
+              uses: softprops/action-gh-release@v1
+              with:
+                  tag_name: ${{ steps.version.outputs.version }}
+                  name: Release ${{ steps.version.outputs.version }}
+                  body: ${{ github.event.pull_request.body }}
+                  generate_release_notes: true
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+            - name: Delete release branch
+              run: |
+                  git push origin --delete "${{ github.event.pull_request.head.ref }}" || true
+                  echo "🧹 Cleaned up branch: ${{ github.event.pull_request.head.ref }}"

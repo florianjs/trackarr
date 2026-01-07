@@ -1,0 +1,28 @@
+# Grafana Datasources Configuration
+
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    url: http://prometheus:9090
+    isDefault: true
+    editable: false
+    jsonData:
+      timeInterval: '15s'
+      httpMethod: POST
+
+  - name: PostgreSQL
+    type: postgres
+    url: postgres:5432
+    database: ${DB_NAME:-opentracker}
+    user: ${DB_USER:-tracker}
+    secureJsonData:
+      password: ${DB_PASSWORD:-tracker}
+    jsonData:
+      sslmode: disable
+      maxOpenConns: 5
+      maxIdleConns: 2
+      connMaxLifetime: 14400
+    editable: false

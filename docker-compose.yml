@@ -1,0 +1,119 @@
+services:
+  app:
+    build:
+      context: .
+      target: base
+    container_name: trackarr-app
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+      - "8080:8080" # Tracker HTTP
+      - "24678:24678" # Vite HMR
+    environment:
+      - NODE_ENV=development
+      - DATABASE_URL=postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}
+      - REDIS_URL=redis://redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=${DB_USER:-tracker}
+      - DB_PASSWORD=${DB_PASSWORD:-tracker}
+      - DB_NAME=${DB_NAME:-trackarr}
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - TRACKER_DEBUG=${TRACKER_DEBUG:-false}
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - /app/.nuxt
+      - /app/.output
+    working_dir: /app
+    command: sh -c "npm install && npm run dev"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - trackarr-internal
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: trackarr-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tracker}
+      POSTGRES_DB: ${DB_NAME:-trackarr}
+      # Security: Disable trust authentication
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    # Expose to host for local development (drizzle-kit, etc.)
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command: >
+      postgres
+      -c ssl=off
+      -c log_connections=on
+      -c log_disconnections=on
+      -c log_statement=ddl
+      -c max_connections=100
+      -c shared_buffers=256MB
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-tracker} -d ${DB_NAME:-trackarr}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - trackarr-internal
+
+  redis:
+    image: redis:7-alpine
+    container_name: trackarr-redis
+    restart: unless-stopped
+    command: >
+      redis-server
+      --appendonly no
+      --save ""
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --tcp-keepalive 300
+      --timeout 0
+      --tcp-backlog 511
+      --maxclients 1000
+      --protected-mode yes
+      --bind 0.0.0.0
+      --rename-command FLUSHALL ""
+      --rename-command FLUSHDB ""
+      --rename-command DEBUG ""
+      --rename-command CONFIG ""
+      --rename-command KEYS ""
+      --rename-command SHUTDOWN ""
+      --loglevel warning
+    # Internal only, accessed via Docker network
+    expose:
+      - "6379"
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - trackarr-internal
+
+networks:
+  trackarr-internal:
+    driver: bridge
+    internal: false # Set to true in production to isolate from host
+
+volumes:
+  postgres_data:

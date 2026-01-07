@@ -1,0 +1,14 @@
+; PgBouncer User Authentication File
+; Format: "username" "password"
+; 
+; For SCRAM-SHA-256, use: "username" "SCRAM-SHA-256$<iterations>:<salt>$<StoredKey>:<ServerKey>"
+; Or use md5: "username" "md5<md5hash>"
+; Or plaintext (not recommended): "username" "plaintext_password"
+;
+; Generate SCRAM hash with:
+; SELECT rolname, rolpassword FROM pg_authid WHERE rolname = 'tracker';
+;
+; IMPORTANT: Update this file with your actual credentials before production deployment
+; The password here should match the PostgreSQL user password
+
+"tracker" "tracker"

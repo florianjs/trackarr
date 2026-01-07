@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+/* 
+  --------------------------------------------------------------------------
+  Professional, Elegant, Compact Theme
+  --------------------------------------------------------------------------
+*/
+
+:root {
+  /* 
+     Typography 
+     "Inter" is excellent. We tighten it slightly for a more "data-dense" feel.
+  */
+  --vp-font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --vp-font-family-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  
+  /* 
+     Monochrome / Neutral Palette (Zinc/Slate based) 
+     High contrast text, subtle backgrounds.
+  */
+  
+  /* Brand - Pure Monochrome */
+  --vp-c-brand-1: #111827; /* Gray 900 */
+  --vp-c-brand-2: #374151; /* Gray 700 */
+  --vp-c-brand-3: #6b7280; /* Gray 500 */
+  --vp-c-brand-soft: rgba(0, 0, 0, 0.05);
+
+  /* Backgrounds */
+  --vp-c-bg: #ffffff;
+  --vp-c-bg-soft: #fafafa; /* Very subtle off-white */
+  --vp-c-bg-mute: #f4f4f5; /* Zinc 100 */
+  --vp-c-bg-alt: #f4f4f5;
+
+  /* Text - High Contrast */
+  --vp-c-text-1: #09090b; /* Zinc 950 */
+  --vp-c-text-2: #52525b; /* Zinc 600 */
+  --vp-c-text-3: #a1a1aa; /* Zinc 400 */
+
+  /* Borders - Crisp */
+  --vp-c-border: #e4e4e7; /* Zinc 200 */
+  --vp-c-divider: #e4e4e7;
+  --vp-c-gutter: #e4e4e7;
+
+  /* Layout - Compact Overrides */
+  --vp-layout-max-width: 1440px;
+  --vp-sidebar-width: 260px; /* Slightly narrower */
+}
+
+/* Dark Mode - Deep & Professional */
+.dark {
+  --vp-c-brand-1: #ffffff;
+  --vp-c-brand-2: #e4e4e7;
+  --vp-c-brand-3: #a1a1aa;
+  --vp-c-brand-soft: rgba(255, 255, 255, 0.1);
+
+  --vp-c-bg: #09090b; /* Zinc 950 - Deep black/gray */
+  --vp-c-bg-soft: #18181b; /* Zinc 900 */
+  --vp-c-bg-mute: #27272a; /* Zinc 800 */
+  --vp-c-bg-alt: #18181b;
+
+  --vp-c-text-1: #f4f4f5; /* Zinc 100 */
+  --vp-c-text-2: #a1a1aa; /* Zinc 400 */
+  --vp-c-text-3: #52525b; /* Zinc 600 */
+
+  --vp-c-border: #27272a; /* Zinc 800 */
+  --vp-c-divider: #27272a;
+  --vp-c-gutter: #27272a;
+  
+  --vp-code-block-bg: #18181b; /* Matches soft bg */
+}
+
+/* 
+   --------------------------------------------------------------------------
+   Component Overrides for "Compact & Elegant" feel
+   --------------------------------------------------------------------------
+*/
+
+/* Navbar - Glassy & Thin */
+.VPNavBar {
+  border-bottom: none !important;
+  background-color: rgba(255, 255, 255, 0.8) !important;
+  backdrop-filter: blur(8px);
+}
+.dark .VPNavBar {
+  background-color: rgba(9, 9, 11, 0.8) !important;
+}
+
+/* Sidebar - Dense & Clean */
+.VPSidebar {
+  border-right: none !important;
+}
+.theme-default-content {
+  font-size: 15px; /* Slightly smaller body text for density */
+  line-height: 1.7;
+}
+
+/* Sidebar Items */
+.VPSidebarItem.level-0 {
+  padding-bottom: 8px !important;
+}
+.VPSidebarItem .text {
+  font-size: 13px !important; /* Smaller sidebar text */
+  font-weight: 500 !important;
+}
+.VPSidebarItem.level-1 .item {
+  padding: 4px 0 !important; /* Compact vertical spacing */
+}
+
+/* Custom Blocks (Admonitions) - Minimalist */
+.custom-block {
+  border: none !important;
+  border-left-width: 4px !important;
+  border-radius: 6px;
+  background-color: var(--vp-c-bg-soft) !important;
+  padding: 0.75rem !important; /* Compact padding */
+}
+
+.custom-block.tip { border-left-color: var(--vp-c-brand-1) !important; }
+.custom-block.info { border-left-color: var(--vp-c-brand-3) !important; }
+.custom-block.warning { border-left-color: #f59e0b !important; } /* Amber */
+.custom-block.danger { border-left-color: #ef4444 !important; } /* Red */
+
+.custom-block p {
+  margin: 0 !important;
+  font-size: 14px;
+}
+.custom-block-title {
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  margin-bottom: 4px !important;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* Hero Section - Strict Monochrome */
+.VPHero .name {
+  @apply text-gray-900 dark:text-white;
+  background: none !important;
+  -webkit-text-fill-color: inherit !important;
+  letter-spacing: -0.02em;
+}
+.VPHero .text {
+  @apply text-gray-600 dark:text-gray-400;
+}
+
+/* Buttons - Sharp & Industrial */
+.VPButton {
+  border-radius: 6px !important; /* Less rounded */
+  font-weight: 500 !important;
+  text-transform: capitalize;
+  transition: all 0.2s ease;
+}
+.VPButton.brand {
+  background-color: var(--vp-c-text-1) !important;
+  color: var(--vp-c-bg) !important;
+  border: 1px solid var(--vp-c-text-1) !important;
+}
+.VPButton.brand:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+.VPButton.alt {
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--vp-c-text-1) !important;
+}
+.VPButton.alt:hover {
+  /* border-color: var(--vp-c-text-2) !important; */
+  background-color: var(--vp-c-bg-soft) !important;
+}
+
+/* Tables - Data Dense */
+table {
+  font-size: 14px;
+}
+th {
+  background-color: var(--vp-c-bg-soft) !important;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  color: var(--vp-c-text-2);
+}
+td {
+  padding: 8px 12px !important; /* Compact cells */
+}
+
+/* Code Blocks */
+.vp-doc pre {
+  border: none;
+  border-radius: 8px;
+}
+
+/* Headings */
+h1 { letter-spacing: -0.02em; font-weight: 700 !important; }
+h2 { letter-spacing: -0.01em; font-weight: 600 !important; padding-top: 24px !important; border-top: none; margin-top: 32px !important; }
+h3 { font-weight: 600 !important; }
+
+/* Transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+/* Feature Cards - Borderless */
+.VPFeature {
+  border: none !important;
+  background-color: var(--vp-c-bg-soft) !important;
+}

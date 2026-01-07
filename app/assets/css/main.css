@@ -1,0 +1,116 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    @apply antialiased;
+  }
+
+  body {
+    @apply bg-bg-primary text-text-primary font-sans selection:bg-white selection:text-black;
+    background-image: radial-gradient(
+      circle at 2px 2px,
+      #1a1a1a 1px,
+      transparent 0
+    );
+    background-size: 40px 40px;
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-bg-secondary;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-border rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-border-hover;
+  }
+}
+
+@layer components {
+  /* Card component */
+  .card {
+    @apply bg-bg-secondary/80 backdrop-blur-sm border border-border rounded-md transition-all duration-200 hover:border-border-hover;
+  }
+
+  .card-header {
+    @apply px-3 py-2 border-b border-border flex items-center justify-between;
+  }
+
+  .card-body {
+    @apply p-3;
+  }
+
+  /* Button styles */
+  .btn {
+    @apply px-3 py-1.5 rounded text-sm font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+  }
+
+  .btn-primary {
+    @apply bg-white text-black hover:bg-gray-200 shadow-[0_0_15px_rgba(255,255,255,0.1)];
+  }
+
+  .btn-secondary {
+    @apply bg-bg-tertiary text-text-primary border border-border hover:bg-bg-hover hover:border-border-hover;
+  }
+
+  /* Input styles */
+  .input {
+    @apply bg-bg-tertiary/50 border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-white/30 focus:bg-bg-tertiary transition-all;
+  }
+
+  /* Table styles */
+  .data-table {
+    @apply w-full text-xs border-separate border-spacing-0;
+  }
+
+  .data-table th {
+    @apply text-left text-text-muted font-semibold px-3 py-2 border-b border-border bg-bg-secondary/50 uppercase tracking-wider;
+  }
+
+  .data-table td {
+    @apply px-3 py-2 border-b border-border/50;
+  }
+
+  .data-table tr:last-child td {
+    @apply border-b-0;
+  }
+
+  .data-table tr:hover td {
+    @apply bg-white/[0.02];
+  }
+
+  /* Stat badge */
+  .stat-badge {
+    @apply inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-mono font-bold uppercase;
+  }
+
+  .stat-seeders {
+    @apply text-success bg-success/5 border border-success/20;
+  }
+
+  .stat-leechers {
+    @apply text-warning bg-warning/5 border border-warning/20;
+  }
+
+  .btn-search {
+    @apply p-1.5 text-text-muted hover:text-white transition-colors;
+  }
+}
+
+@layer utilities {
+  .truncate-hash {
+    @apply font-mono text-2xs;
+    max-width: 120px;
+  }
+}

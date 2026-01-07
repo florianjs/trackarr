@@ -1,0 +1,443 @@
+# Production Docker Compose Configuration
+# Enhanced security settings for private tracker deployment
+# Includes: Caddy (reverse proxy), PgBouncer (connection pooling), Prometheus + Grafana (monitoring)
+
+services:
+  # =============================================================================
+  # REVERSE PROXY - Caddy with automatic HTTPS
+  # =============================================================================
+  caddy:
+    image: caddy:2-alpine
+    container_name: trackarr-caddy
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    environment:
+      DOMAIN: ${DOMAIN:-localhost}
+      TRACKER_DOMAIN: ${TRACKER_DOMAIN:-tracker.localhost}
+      MONITORING_DOMAIN: ${MONITORING_DOMAIN:-monitoring.localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+      MONITORING_USER: ${MONITORING_USER:-admin}
+      MONITORING_PASSWORD_HASH: ${MONITORING_PASSWORD_HASH:-}
+    volumes:
+      - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+      - uploads_data:/srv/uploads
+    networks:
+      - trackarr-public
+      - trackarr-internal
+    depends_on:
+      - app
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+
+  # =============================================================================
+  # APPLICATION - Nuxt OpenTracker
+  # =============================================================================
+  app:
+    image: trackarr:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: trackarr-app
+    restart: always
+    # Enhanced security: Drop all capabilities and add only required ones
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE # Only if binding to port < 1024
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      NODE_ENV: production
+      # Session secret (required by nuxt-auth-utils)
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET}
+      # Database connection (SSL disabled for internal Docker network)
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@pgbouncer:6432/${DB_NAME:-trackarr}?sslmode=disable
+      DB_HOST: pgbouncer
+      DB_PORT: 6432
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD:-tracker}
+      DB_NAME: ${DB_NAME:-trackarr}
+      DB_SSL: "false"
+      # Redis connection
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      # Tracker announce URLs (displayed in admin dashboard)
+      TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
+      TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
+      TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
+      # Security: Secret for hashing peer IPs
+      IP_HASH_SECRET: ${IP_HASH_SECRET}
+      # Debug mode for verbose tracker logging
+      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+    expose:
+      - "3000"
+      - "8080"
+    volumes:
+      - uploads_data:/app/public/uploads
+    networks:
+      - trackarr-public
+      - trackarr-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "wget",
+          "--no-verbose",
+          "--tries=1",
+          "--spider",
+          "http://localhost:3000/api/health",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+
+  # =============================================================================
+  # DATABASE - PostgreSQL with optimized settings
+  # =============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: trackarr-db
+    restart: always
+    # Enhanced security
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_USER: ${DB_USER:-tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-tracker}
+      POSTGRES_DB: ${DB_NAME:-trackarr}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    # No exposed ports in production - internal network only
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    command: >
+      postgres
+      -c ssl=off
+      -c log_connections=on
+      -c log_disconnections=on
+      -c log_statement=ddl
+      -c log_min_duration_statement=1000
+      -c max_connections=200
+      -c shared_buffers=512MB
+      -c work_mem=16MB
+      -c maintenance_work_mem=128MB
+      -c effective_cache_size=1536MB
+      -c random_page_cost=1.1
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=16MB
+      -c default_statistics_target=100
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-tracker} -d ${DB_NAME:-trackarr}",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    networks:
+      - trackarr-internal
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  # =============================================================================
+  # =============================================================================
+  # CONNECTION POOLING - PgBouncer
+  # =============================================================================
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: trackarr-pgbouncer
+    restart: always
+    environment:
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}
+      DB_HOST: postgres
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD:-tracker}
+      AUTH_TYPE: scram-sha-256
+      POOL_MODE: transaction
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      MAX_CLIENT_CONN: 500
+      MAX_DB_CONNECTIONS: 100
+      LISTEN_PORT: 6432
+    expose:
+      - "6432"
+    networks:
+      - trackarr-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 32M
+    healthcheck:
+      test: ["CMD", "pg_isready", "-h", "localhost", "-p", "6432"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
+  # CACHE - Redis with persistence
+  # =============================================================================
+  redis:
+    image: redis:7
+    container_name: trackarr-redis
+    restart: always
+    # Enhanced security
+    # cap_drop:
+    #   - ALL
+    # security_opt:
+    #   - no-new-privileges:true
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --auto-aof-rewrite-percentage 100
+      --auto-aof-rewrite-min-size 64mb
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 512mb
+      --maxmemory-policy allkeys-lru
+      --tcp-keepalive 300
+      --timeout 0
+      --tcp-backlog 511
+      --maxclients 5000
+      --protected-mode yes
+      --bind 0.0.0.0
+      --rename-command FLUSHALL ""
+      --rename-command FLUSHDB ""
+      --rename-command DEBUG ""
+      --rename-command CONFIG ""
+      --rename-command KEYS ""
+      --rename-command SHUTDOWN ""
+      --loglevel warning
+    # No exposed ports in production - internal network only
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 10s
+    networks:
+      - trackarr-internal
+    deploy:
+      resources:
+        limits:
+          memory: 768M
+        reservations:
+          memory: 256M
+
+  # =============================================================================
+  # MONITORING - Prometheus
+  # =============================================================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: trackarr-prometheus
+    restart: always
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=30d"
+      - "--storage.tsdb.retention.size=10GB"
+      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
+      - "--web.console.templates=/usr/share/prometheus/consoles"
+      - "--web.enable-lifecycle"
+    volumes:
+      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    expose:
+      - "9090"
+    networks:
+      - trackarr-internal
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  # =============================================================================
+  # MONITORING - Grafana
+  # =============================================================================
+  grafana:
+    image: grafana/grafana:12.3.1
+    container_name: trackarr-grafana
+    restart: always
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: "https://${MONITORING_DOMAIN:-monitoring.localhost}/grafana/"
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+      # Plugins disabled - install manually if needed
+      # GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-piechart-panel
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
+    expose:
+      - "3000"
+    networks:
+      - trackarr-public
+      - trackarr-internal
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+
+  # =============================================================================
+  # EXPORTERS - Metrics collection
+  # =============================================================================
+  node-exporter:
+    image: prom/node-exporter:v1.7.0
+    container_name: trackarr-node-exporter
+    restart: always
+    command:
+      - "--path.procfs=/host/proc"
+      - "--path.sysfs=/host/sys"
+      - "--path.rootfs=/rootfs"
+      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/rootfs:ro
+    expose:
+      - "9100"
+    networks:
+      - trackarr-internal
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  postgres-exporter:
+    image: prometheuscommunity/postgres-exporter:v0.15.0
+    container_name: trackarr-postgres-exporter
+    restart: always
+    environment:
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}?sslmode=disable"
+    expose:
+      - "9187"
+    networks:
+      - trackarr-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  redis-exporter:
+    image: oliver006/redis_exporter:v1.55.0
+    container_name: trackarr-redis-exporter
+    restart: always
+    environment:
+      REDIS_ADDR: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    expose:
+      - "9121"
+    networks:
+      - trackarr-internal
+    depends_on:
+      redis:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 64M
+
+  # =============================================================================
+  # OPTIONAL: Redis Sentinel for HA (uncomment for production HA)
+  # =============================================================================
+  # redis-sentinel:
+  #   image: redis:7-alpine
+  #   container_name: trackarr-sentinel
+  #   command: redis-sentinel /etc/redis/sentinel.conf
+  #   volumes:
+  #     - ./docker/redis/sentinel.conf:/etc/redis/sentinel.conf:ro
+  #   networks:
+  #     - opentracker-internal
+  # 
+networks:
+  trackarr-public:
+    driver: bridge
+  trackarr-internal:
+    driver: bridge
+    internal: true # Isolated from host network
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  caddy_data:
+    driver: local
+  caddy_config:
+    driver: local
+  caddy_logs:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+  uploads_data:
+    driver: local

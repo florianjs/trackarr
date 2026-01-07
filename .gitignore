@@ -1,0 +1,49 @@
+# Nuxt dev/build outputs
+.output
+.data
+.nuxt
+.nitro
+.cache
+dist
+
+# Agents
+.github/*.md
+.agent
+
+# Node dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Misc
+.DS_Store
+.fleet
+.idea
+
+# Local env files
+.env
+.env.*
+!.env.example
+
+# SSL/TLS Certificates (DO NOT COMMIT)
+certs/
+*.key
+*.crt
+*.csr
+*.pem
+
+# IDE / Editor
+.vscode/
+.idea/
+
+# OS files
+Thumbs.db
+
+# Documentation (internal only)
+documentation/
+.dev-test/	
+.dev-downloads/	
+.publishignore
+.scripts/publish-public.sh

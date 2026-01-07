@@ -1,0 +1,3 @@
+<template>
+  <AdminHnR />
+</template>

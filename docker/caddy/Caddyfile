@@ -1,0 +1,104 @@
+# OpenTracker Production Caddyfile
+# Automatic HTTPS with Let's Encrypt
+
+{
+	# Global options
+	email {$ACME_EMAIL:admin@example.com}
+	
+	# Use staging for testing (remove in production)
+	# acme_ca https://acme-staging-v02.api.letsencrypt.org/directory
+}
+
+# Main application
+{$DOMAIN:localhost} {
+	# Security headers
+	header {
+		X-Frame-Options "SAMEORIGIN"
+		X-Content-Type-Options "nosniff"
+		X-XSS-Protection "1; mode=block"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Strict-Transport-Security "max-age=31536000; includeSubDomains; preload"
+		-Server
+	}
+
+	# Compression
+	encode gzip zstd
+
+	# Rate limiting (basic)
+	# For advanced rate limiting, use the app's built-in Redis-backed limiter
+
+	# Reverse proxy to Nuxt app
+	reverse_proxy opentracker-app:3000 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+		
+		# Health checks
+		health_uri /api/health
+		health_interval 30s
+		health_timeout 10s
+	}
+
+	# Serve Uploaded Files
+	handle_path /uploads/* {
+		root * /srv/uploads
+		file_server
+	}
+
+	# Logging
+	log {
+		output file /var/log/caddy/access.log {
+			roll_size 100mb
+			roll_keep 10
+			roll_keep_for 720h
+		}
+		format json
+	}
+}
+
+# Tracker announce endpoint (separate subdomain or port)
+{$TRACKER_DOMAIN:tracker.localhost} {
+	# Minimal headers for tracker
+	header {
+		-Server
+		X-Content-Type-Options "nosniff"
+	}
+
+	# Tracker endpoints
+	reverse_proxy opentracker-app:8080 {
+		header_up X-Real-IP {remote_host}
+		header_up X-Forwarded-For {remote_host}
+	}
+
+	log {
+		output file /var/log/caddy/tracker.log {
+			roll_size 100mb
+			roll_keep 5
+		}
+		format json
+	}
+}
+
+# Monitoring (internal access only - restrict in production)
+{$MONITORING_DOMAIN:monitoring.localhost} {
+	# Basic auth for monitoring endpoints
+	basicauth {
+		{$MONITORING_USER:admin} {$MONITORING_PASSWORD_HASH}
+	}
+
+	# Grafana
+	handle /grafana* {
+		reverse_proxy grafana:3000
+	}
+
+	# Prometheus (admin only)
+	handle /prometheus* {
+		uri strip_prefix /prometheus
+		reverse_proxy prometheus:9090
+	}
+
+	# Default to Grafana
+	handle {
+		redir /grafana{uri} permanent
+	}
+}
