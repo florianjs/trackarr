@@ -187,7 +187,7 @@ const {
 }>('/api/torrents', {
   query: computed(() => ({
     search: searchQuery.value,
-    category: selectedCategory.value,
+    categoryId: selectedCategory.value,
     page: page.value,
     limit: 20,
   })),

@@ -146,7 +146,7 @@ const router = useRouter();
 
 const search = ref((route.query.search as string) || '');
 const page = ref(parseInt((route.query.page as string) || '1', 10));
-const selectedCategory = ref((route.query.category as string) || '');
+const selectedCategory = ref((route.query.categoryId as string) || '');
 
 const showUploadModal = ref(false);
 
@@ -160,7 +160,7 @@ const { data, refresh, pending } = await useFetch<{
     page: page.value,
     limit: 25,
     search: search.value || undefined,
-    category: selectedCategory.value || undefined,
+    categoryId: selectedCategory.value || undefined,
   })),
 });
 
@@ -178,7 +178,7 @@ function doSearch() {
   router.push({
     query: {
       search: search.value || undefined,
-      category: selectedCategory.value || undefined,
+      categoryId: selectedCategory.value || undefined,
       page: undefined,
     },
   });
