@@ -36,9 +36,10 @@ COPY --from=builder --chown=nuxtjs:nodejs /app/drizzle.config.ts ./drizzle.confi
 COPY --from=builder --chown=nuxtjs:nodejs /app/server/db ./server/db
 COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/seed-categories.ts ./scripts/seed-categories.ts
 COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/db-push.sh ./scripts/db-push.sh
+COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/entrypoint.sh ./scripts/entrypoint.sh
 COPY --from=builder --chown=nuxtjs:nodejs /app/node_modules ./node_modules
 
-RUN chmod +x ./scripts/db-push.sh
+RUN chmod +x ./scripts/db-push.sh ./scripts/entrypoint.sh
 
 USER nuxtjs
 
@@ -47,4 +48,4 @@ EXPOSE 3000 8080 8082
 ENV NUXT_HOST=0.0.0.0
 ENV NUXT_PORT=3000
 
-CMD ["node", ".output/server/index.mjs"]
+ENTRYPOINT ["./scripts/entrypoint.sh"]

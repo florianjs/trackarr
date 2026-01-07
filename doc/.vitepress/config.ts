@@ -40,6 +40,7 @@ export default defineConfig({
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Configuration', link: '/guide/configuration' },
             { text: 'Backup & Restore', link: '/guide/backup-restore' },
+            { text: 'Roadmap', link: '/guide/roadmap' },
           ]
         },
         {

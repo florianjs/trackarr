@@ -1,0 +1,351 @@
+# Coolify Docker Compose Configuration
+# Optimized for Coolify deployment - Uses Coolify's built-in proxy
+#
+# BRANCH: preview
+# This file is intended for use with the 'preview' branch in Coolify.
+# Workflow: dev -> preview (Coolify staging) -> main (production release)
+#
+# USAGE IN COOLIFY:
+# 1. Create a new service -> Docker Compose
+# 2. Point to this repository, branch: preview
+# 3. Set docker-compose.coolify.yml as the compose file
+# 4. Add environment variables in Coolify UI (see below)
+#
+# REQUIRED ENV VARIABLES (set in Coolify):
+# - DB_PASSWORD (generate: openssl rand -base64 24)
+# - REDIS_PASSWORD (generate: openssl rand -base64 24)
+# - NUXT_SESSION_SECRET (generate: openssl rand -hex 32)
+# - IP_HASH_SECRET (generate: openssl rand -hex 32)
+# - TRACKER_HTTP_URL (full URL, e.g., https://tracker.example.com:8090/announce)
+# - GRAFANA_ROOT_URL (optional, e.g., https://tracker.example.com/grafana/)
+
+services:
+  # =============================================================================
+  # APPLICATION - Nuxt OpenTracker
+  # =============================================================================
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: opentracker-app
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - NET_BIND_SERVICE
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      NODE_ENV: production
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET}
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@pgbouncer:6432/${DB_NAME:-opentracker}?sslmode=disable
+      DB_HOST: pgbouncer
+      DB_PORT: 6432
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD}
+      DB_NAME: ${DB_NAME:-opentracker}
+      DB_SSL: "false"
+      REDIS_URL: redis://:${REDIS_PASSWORD}@redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      TRACKER_HTTP_URL: ${TRACKER_HTTP_URL}
+      TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
+      TRACKER_WS_URL: ${TRACKER_WS_URL:-}
+      IP_HASH_SECRET: ${IP_HASH_SECRET}
+      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+    ports:
+      - "3000:3000" # Web UI - Coolify will proxy this
+      - "8090:8080" # HTTP tracker (external 8090 -> internal 8080)
+    networks:
+      - coolify
+      - opentracker-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_started
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget --no-verbose --tries=1 --spider http://127.0.0.1:3000/api/health || exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 90s
+    volumes:
+      - app_data:/app/data
+    labels:
+      - "coolify.managed=true"
+
+  # =============================================================================
+  # DATABASE - PostgreSQL
+  # =============================================================================
+  postgres:
+    image: postgres:16-alpine
+    container_name: opentracker-db
+    restart: always
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - DAC_OVERRIDE
+      - FOWNER
+      - SETGID
+      - SETUID
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      POSTGRES_USER: ${DB_USER:-tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: ${DB_NAME:-opentracker}
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
+    expose:
+      - "5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    command: >
+      postgres
+      -c ssl=off
+      -c log_connections=on
+      -c log_disconnections=on
+      -c log_statement=ddl
+      -c log_min_duration_statement=1000
+      -c max_connections=200
+      -c shared_buffers=256MB
+      -c work_mem=8MB
+      -c maintenance_work_mem=64MB
+      -c effective_cache_size=768MB
+      -c random_page_cost=1.1
+      -c checkpoint_completion_target=0.9
+      -c wal_buffers=8MB
+      -c default_statistics_target=100
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${DB_USER:-tracker} -d ${DB_NAME:-opentracker}",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - opentracker-internal
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 256M
+
+  # =============================================================================
+  # CONNECTION POOLING - PgBouncer
+  # =============================================================================
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    container_name: opentracker-pgbouncer
+    restart: always
+    environment:
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-opentracker}
+      DB_HOST: postgres
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD}
+      AUTH_TYPE: scram-sha-256
+      POOL_MODE: transaction
+      DEFAULT_POOL_SIZE: 20
+      MIN_POOL_SIZE: 5
+      MAX_CLIENT_CONN: 500
+      MAX_DB_CONNECTIONS: 100
+      LISTEN_PORT: 6432
+    expose:
+      - "6432"
+    networks:
+      - opentracker-internal
+    depends_on:
+      postgres:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+        reservations:
+          memory: 32M
+    # PgBouncer doesn't support pg_isready - use simple TCP check
+    healthcheck:
+      test: ["CMD-SHELL", "nc -z localhost 6432 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # =============================================================================
+  # CACHE - Redis
+  # =============================================================================
+  redis:
+    image: redis:7-alpine
+    container_name: opentracker-redis
+    restart: always
+    command: >
+      redis-server
+      --appendonly yes
+      --appendfsync everysec
+      --auto-aof-rewrite-percentage 100
+      --auto-aof-rewrite-min-size 64mb
+      --save 900 1
+      --save 300 10
+      --save 60 10000
+      --requirepass ${REDIS_PASSWORD}
+      --maxmemory 256mb
+      --maxmemory-policy allkeys-lru
+      --tcp-keepalive 300
+      --timeout 0
+      --tcp-backlog 511
+      --maxclients 5000
+      --protected-mode yes
+      --bind 0.0.0.0
+      --loglevel warning
+    expose:
+      - "6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    networks:
+      - opentracker-internal
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+
+  # =============================================================================
+  # MONITORING - Prometheus
+  # =============================================================================
+  prometheus:
+    image: prom/prometheus:v2.48.0
+    container_name: opentracker-prometheus
+    restart: always
+    user: "nobody"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
+      - "--storage.tsdb.retention.time=15d"
+      - "--storage.tsdb.retention.size=5GB"
+      - "--web.enable-lifecycle"
+    volumes:
+      - prometheus_data:/prometheus
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml
+    expose:
+      - "9090"
+    networks:
+      - opentracker-internal
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    healthcheck:
+      test: ["CMD", "wget", "--spider", "-q", "http://localhost:9090/-/healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # =============================================================================
+  # MONITORING - Grafana
+  # =============================================================================
+  grafana:
+    image: grafana/grafana:10.2.0
+    container_name: opentracker-grafana
+    restart: always
+    user: "472"
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_USERS_ALLOW_SIGN_UP: "false"
+      GF_SERVER_ROOT_URL: ${GRAFANA_ROOT_URL:-http://localhost:3001}
+      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "3001:3000"
+    networks:
+      - coolify
+      - opentracker-internal
+    depends_on:
+      - prometheus
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+        reservations:
+          memory: 64M
+    healthcheck:
+      test:
+        ["CMD", "wget", "--spider", "-q", "http://localhost:3000/api/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+# =============================================================================
+# NETWORKS
+# =============================================================================
+networks:
+  # Coolify's proxy network - required for external access
+  coolify:
+    external: true
+  # Internal network for inter-service communication
+  opentracker-internal:
+    driver: bridge
+
+# =============================================================================
+# VOLUMES
+# =============================================================================
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  app_data:
+    driver: local
+  prometheus_data:
+    driver: local
+  grafana_data:
+    driver: local
+
+# =============================================================================
+# CONFIGS - Inline configuration files for Coolify compatibility
+# =============================================================================
+configs:
+  prometheus_config:
+    content: |
+      global:
+        scrape_interval: 15s
+        evaluation_interval: 15s
+        external_labels:
+          monitor: 'opentracker'
+
+      scrape_configs:
+        - job_name: 'prometheus'
+          static_configs:
+            - targets: ['localhost:9090']
+          metrics_path: /metrics

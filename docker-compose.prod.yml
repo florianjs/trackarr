@@ -309,7 +309,7 @@ services:
   # MONITORING - Grafana
   # =============================================================================
   grafana:
-    image: grafana/grafana:10.2.2
+    image: grafana/grafana:12.3.1
     container_name: opentracker-grafana
     restart: always
     environment:

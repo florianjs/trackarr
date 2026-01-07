@@ -27,11 +27,6 @@ logs
 .env.*
 !.env.example
 
-# Secrets
-CREDENTIALS.txt
-secrets/
-docker/pgbouncer/userlist.txt
-
 # SSL/TLS Certificates (DO NOT COMMIT)
 certs/
 *.key
