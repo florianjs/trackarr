@@ -4,19 +4,37 @@
       <!-- Logo -->
       <div class="text-center mb-8">
         <div
-          class="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4"
+          class="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 overflow-hidden"
         >
-          <Icon name="ph:broadcast-bold" class="text-black text-4xl" />
+          <img
+            v-if="branding?.siteLogoImage"
+            :src="branding.siteLogoImage"
+            alt="Logo"
+            class="w-full h-full object-contain"
+          />
+          <Icon
+            v-else
+            :name="branding?.siteLogo || 'ph:broadcast-bold'"
+            class="text-black text-4xl"
+          />
         </div>
-        <h1 class="text-2xl font-bold tracking-tighter uppercase">
-          OpenTracker
-        </h1>
-        <p class="text-text-muted text-sm mt-1">Private BitTorrent Tracker</p>
+        <h1
+          class="text-2xl font-bold tracking-tighter uppercase"
+          v-html="branding?.authTitle || branding?.siteName || 'OpenTracker'"
+        ></h1>
+        <p
+          class="text-text-muted text-sm mt-1"
+          v-html="branding?.authSubtitle || 'Private BitTorrent Tracker'"
+        ></p>
       </div>
 
       <!-- Registration Closed -->
       <div
-        v-if="!status?.registrationOpen && !status?.needsSetup"
+        v-if="
+          !status?.registrationOpen &&
+          !status?.inviteEnabled &&
+          !status?.needsSetup
+        "
         class="bg-bg-secondary border border-border rounded-lg p-6 text-center"
       >
         <Icon
@@ -39,7 +57,13 @@
       <!-- Register Form -->
       <div v-else class="bg-bg-secondary border border-border rounded-lg p-6">
         <h2 class="text-lg font-semibold mb-6">
-          {{ status?.needsSetup ? 'Create Admin Account' : 'Create Account' }}
+          {{
+            status?.needsSetup
+              ? 'Create Admin Account'
+              : !status?.registrationOpen && status?.inviteEnabled
+                ? 'Invite Only Registration'
+                : 'Create Account'
+          }}
         </h2>
 
         <div
@@ -56,12 +80,37 @@
         <div class="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded">
           <p class="text-red-400 text-sm">
             <Icon name="ph:shield-warning" class="inline mr-1" />
-            <strong>Zero Knowledge Encryption:</strong> Your password is never sent to the server. 
-            If you forget it, your account cannot be recovered.
+            <strong>Zero Knowledge Encryption:</strong> Your password is never
+            sent to the server. If you forget it, your account cannot be
+            recovered.
           </p>
         </div>
 
         <form @submit.prevent="handleRegister" class="space-y-4">
+          <!-- Invite Code (Required if registration closed) -->
+          <div v-if="status?.inviteEnabled">
+            <label
+              for="inviteCode"
+              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+            >
+              Invite Code
+              <span
+                v-if="status?.registrationOpen"
+                class="text-text-muted/50 normal-case tracking-normal ml-1"
+              >
+                (Optional)
+              </span>
+            </label>
+            <input
+              id="inviteCode"
+              v-model="form.inviteCode"
+              type="text"
+              :required="!status?.registrationOpen"
+              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors font-mono"
+              placeholder="Enter your invite code"
+            />
+          </div>
+
           <div>
             <label
               for="username"
@@ -177,8 +226,11 @@
               {{ authStatus }}
             </div>
             <!-- PoW Progress Bar -->
-            <div v-if="powProgress > 0" class="w-full bg-bg-tertiary rounded-full h-1">
-              <div 
+            <div
+              v-if="powProgress > 0"
+              class="w-full bg-bg-tertiary rounded-full h-1"
+            >
+              <div
                 class="bg-white h-1 rounded-full transition-all duration-300"
                 :style="{ width: `${Math.min(powProgress, 100)}%` }"
               />
@@ -227,6 +279,32 @@ const { fetch: fetchSession } = useUserSession();
 const router = useRouter();
 
 const { data: status } = await useFetch('/api/auth/status');
+const { data: branding } = await useFetch<{
+  siteName: string;
+  siteLogo: string;
+  siteLogoImage: string | null;
+  siteFavicon: string | null;
+  authTitle: string | null;
+  authSubtitle: string | null;
+}>('/api/branding');
+
+// Set dynamic favicon
+useHead({
+  link: [
+    {
+      rel: 'icon',
+      type: computed(() => {
+        const url = branding.value?.siteFavicon;
+        if (!url) return 'image/x-icon';
+        if (url.endsWith('.svg')) return 'image/svg+xml';
+        if (url.endsWith('.png')) return 'image/png';
+        if (url.endsWith('.webp')) return 'image/webp';
+        return 'image/x-icon';
+      }),
+      href: computed(() => branding.value?.siteFavicon || '/favicon.ico'),
+    },
+  ],
+});
 
 const form = reactive({
   username: '',
@@ -234,6 +312,7 @@ const form = reactive({
   confirmPassword: '',
   panicPassword: '',
   confirmPanicPassword: '',
+  inviteCode: '',
 });
 
 const error = ref('');
@@ -273,9 +352,10 @@ async function handleRegister() {
   try {
     // Step 1: Get PoW challenge
     authStatus.value = 'Getting challenge...';
-    const powChallenge = await $fetch<{ challenge: string; difficulty: number }>(
-      '/api/auth/pow'
-    );
+    const powChallenge = await $fetch<{
+      challenge: string;
+      difficulty: number;
+    }>('/api/auth/pow');
 
     // Step 2: Solve Proof of Work (anti-abuse)
     authStatus.value = 'Solving proof of work...';
@@ -305,6 +385,7 @@ async function handleRegister() {
         powChallenge: powSolution.challenge,
         powNonce: powSolution.nonce,
         powHash: powSolution.hash,
+        inviteCode: form.inviteCode,
         ...(status.value?.needsSetup && { panicPassword: form.panicPassword }),
       },
     });

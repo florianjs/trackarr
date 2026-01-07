@@ -72,7 +72,9 @@
         >
           <div class="flex items-center gap-2">
             <Icon name="ph:check-circle" class="text-success" />
-            <p class="text-sm text-text-muted">You're running the latest version</p>
+            <p class="text-sm text-text-muted">
+              You're running the latest version
+            </p>
           </div>
         </div>
 
@@ -106,7 +108,9 @@
               </code>
             </div>
           </div>
-          <div class="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg">
+          <div
+            class="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+          >
             <Icon name="ph:warning" class="text-yellow-400 mt-0.5" />
             <div class="text-xs text-yellow-400 space-y-1">
               <p>Backup your database before updating</p>
@@ -138,54 +142,45 @@
         </div>
       </div>
       <div class="card-body space-y-4">
-        <p class="text-xs text-text-muted">
+        <p class="text-xs text-text-muted mb-6">
           Change the Grafana admin password. You'll need your current password.
         </p>
 
-        <!-- Current Password -->
-        <div>
-          <label
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-          >
-            Current Password
-          </label>
+        <SettingsGroup
+          label="Current Password"
+          description="The password you currently use to log in to Grafana."
+        >
           <input
             v-model="grafana.currentPassword"
             type="password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
             placeholder="Enter current Grafana password"
           />
-        </div>
+        </SettingsGroup>
 
-        <!-- New Password -->
-        <div>
-          <label
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-          >
-            New Password
-          </label>
+        <SettingsGroup
+          label="New Password"
+          description="Must be at least 8 characters long."
+        >
           <input
             v-model="grafana.newPassword"
             type="password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Enter new password (min. 8 characters)"
+            placeholder="Enter new password"
           />
-        </div>
+        </SettingsGroup>
 
-        <!-- Confirm Password -->
-        <div>
-          <label
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted block mb-2"
-          >
-            Confirm New Password
-          </label>
+        <SettingsGroup
+          label="Confirm Password"
+          description="Re-enter your new password to verify."
+        >
           <input
             v-model="grafana.confirmPassword"
             type="password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
             placeholder="Confirm new password"
           />
-        </div>
+        </SettingsGroup>
 
         <!-- Error / Success Messages -->
         <div
@@ -209,7 +204,11 @@
           :disabled="grafana.loading || !isGrafanaFormValid"
           class="w-full bg-text-primary text-bg-primary text-[10px] font-bold uppercase tracking-widest py-2.5 rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
-          <Icon v-if="grafana.loading" name="ph:circle-notch" class="animate-spin" />
+          <Icon
+            v-if="grafana.loading"
+            name="ph:circle-notch"
+            class="animate-spin"
+          />
           {{ grafana.loading ? 'Updating...' : 'Update Grafana Password' }}
         </button>
       </div>
@@ -276,7 +275,9 @@ async function checkUpdates() {
 async function toggleUpdateInstructions() {
   if (!showUpdateInstructions.value && updateCommands.value.length === 0) {
     try {
-      const data = await $fetch<{ commands: UpdateCommand[] }>('/api/admin/system/update');
+      const data = await $fetch<{ commands: UpdateCommand[] }>(
+        '/api/admin/system/update'
+      );
       updateCommands.value = data.commands;
     } catch (error) {
       console.error('Failed to fetch update commands:', error);

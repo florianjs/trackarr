@@ -416,7 +416,8 @@ Thanks to all our contributors! Sorted by number of commits.
 
 | Avatar | Contributor | Commits |
 |:------:|-------------|:-------:|
-| <img src="https://github.com/.png" width="40" height="40" style="border-radius:50%"> | **[github-actions[bot]](https://github.com/)** | 5 |<!-- CONTRIBUTORS:END -->
+| <img src="https://avatars.githubusercontent.com/u/64362443?v=4" width="40" height="40" style="border-radius:50%"> | **[IkiaeM](https://github.com/IkiaeM)** | 2 |
+<!-- CONTRIBUTORS:END -->
 
 ---
 

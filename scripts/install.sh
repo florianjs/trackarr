@@ -300,14 +300,6 @@ prompt_configuration() {
         done
     fi
     
-    # Grafana admin password
-    read -sp "Grafana admin password (leave empty to generate): " GRAFANA_PASSWORD
-    echo ""
-    if [[ -z "$GRAFANA_PASSWORD" ]]; then
-        GRAFANA_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
-        log_info "Generated Grafana password"
-    fi
-    
     # Monitoring basic auth password
     read -sp "Monitoring basic auth password (leave empty to generate): " MONITORING_PASSWORD
     echo ""
@@ -426,7 +418,7 @@ MONITORING_USER=admin
 # Note: $ escaped as $$ for Docker Compose compatibility
 MONITORING_PASSWORD_HASH=$(echo "${MONITORING_PASSWORD_HASH}" | sed 's/\$/\$\$/g')
 GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=${GRAFANA_PASSWORD}
+GRAFANA_ADMIN_PASSWORD=admin
 EOF
     
     chmod 600 "$ENV_FILE"
@@ -625,7 +617,8 @@ print_summary() {
     echo ""
     echo -e "${BOLD}Grafana Credentials:${NC}"
     echo -e "  Username: ${CYAN}admin${NC}"
-    echo -e "  Password: ${CYAN}${GRAFANA_PASSWORD}${NC}"
+    echo -e "  Password: ${CYAN}admin${NC} (default)"
+    echo -e "  ${YELLOW}⚠️  Change this password at: https://${MONITORING_DOMAIN}/grafana${NC}"
     echo ""
     echo -e "${BOLD}Important Files:${NC}"
     echo -e "  Installation:     ${CYAN}${INSTALL_DIR}${NC}"
@@ -668,8 +661,9 @@ Username: admin
 Password: ${MONITORING_PASSWORD}
 
 GRAFANA
+URL: https://${MONITORING_DOMAIN}/grafana
 Username: admin
-Password: ${GRAFANA_PASSWORD}
+Password: admin (default - CHANGE THIS!)
 
 ADMIN API KEY
 ${ADMIN_API_KEY}

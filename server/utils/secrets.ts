@@ -25,7 +25,6 @@ export function readSecret(envKey: string, defaultValue?: string): string {
       if (existsSync(secretFilePath)) {
         const secret = readFileSync(secretFilePath, 'utf-8').trim();
         if (secret) {
-          console.log(`[Secrets] Loaded ${envKey} from Docker secret`);
           return secret;
         }
       } else {
@@ -42,13 +41,11 @@ export function readSecret(envKey: string, defaultValue?: string): string {
   // Fallback to direct environment variable
   const directValue = process.env[envKey];
   if (directValue) {
-    console.log(`[Secrets] Loaded ${envKey} from environment variable`);
     return directValue;
   }
 
   // Use default value if provided
   if (defaultValue !== undefined) {
-    console.warn(`[Secrets] Using default value for ${envKey}`);
     return defaultValue;
   }
 

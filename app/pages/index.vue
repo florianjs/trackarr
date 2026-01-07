@@ -15,17 +15,25 @@
         </span>
         <span
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
-          >{{ content?.statusBadgeText ?? 'Tracker Online & Operational' }}</span
+          >{{
+            content?.statusBadgeText ?? 'Tracker Online & Operational'
+          }}</span
         >
       </div>
       <h1
-        class="text-4xl md:text-6xl font-black text-text-primary tracking-tighter uppercase mb-4"
-      >
-        {{ heroTitleParts.first }}<span class="text-text-muted">{{ heroTitleParts.second }}</span>
-      </h1>
-      <p class="text-sm text-text-muted font-mono max-w-xl mx-auto mb-10">
-        {{ content?.heroSubtitle ?? 'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.' }}
-      </p>
+        class="text-4xl md:text-6xl font-black text-text-primary tracking-tighter uppercase mb-4 hero-title"
+        v-html="
+          content?.heroTitle ||
+          'Open<span class=\'text-text-muted\'>Tracker</span>'
+        "
+      ></h1>
+      <div
+        class="text-sm text-text-muted font-mono max-w-xl mx-auto mb-10 hero-subtitle"
+        v-html="
+          content?.heroSubtitle ||
+          'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.'
+        "
+      ></div>
 
       <!-- Search Bar -->
       <div class="max-w-2xl mx-auto">
@@ -85,15 +93,19 @@
     <div
       class="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 border-t border-border pt-12"
     >
-      <div v-for="(feature, index) in features" :key="index">
+      <div
+        v-for="(feature, index) in features"
+        :key="index"
+        class="feature-box"
+      >
         <h4
-          class="text-xs font-bold uppercase tracking-widest text-text-primary mb-3"
-        >
-          {{ feature.title }}
-        </h4>
-        <p class="text-xs text-text-muted leading-relaxed font-mono">
-          {{ feature.description }}
-        </p>
+          class="feature-title text-xs font-bold uppercase tracking-widest text-text-primary mb-3"
+          v-html="feature.title"
+        />
+        <div
+          class="feature-description text-xs text-text-muted leading-relaxed font-mono"
+          v-html="feature.description"
+        />
       </div>
     </div>
   </div>
@@ -151,25 +163,31 @@ function handleSearch() {
 }
 
 // Fetch homepage content
-const { data: content } = await useFetch<HomepageContent>('/api/homepage-content');
-
-// Compute hero title parts (split at middle if single word, or at first space)
-const heroTitleParts = computed(() => {
-  const title = content.value?.heroTitle ?? 'OpenTracker';
-  const midpoint = Math.ceil(title.length / 2);
-  return {
-    first: title.slice(0, midpoint),
-    second: title.slice(midpoint),
-  };
-});
+const { data: content } = await useFetch<HomepageContent>(
+  '/api/homepage-content'
+);
 
 // Features with defaults
 const features = computed(() => {
-  return content.value?.features ?? [
-    { title: 'High Performance', description: 'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.' },
-    { title: 'Multi-Protocol', description: 'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.' },
-    { title: 'Open Source', description: 'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.' },
-  ];
+  return (
+    content.value?.features ?? [
+      {
+        title: 'High Performance',
+        description:
+          'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.',
+      },
+      {
+        title: 'Multi-Protocol',
+        description:
+          'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.',
+      },
+      {
+        title: 'Open Source',
+        description:
+          'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.',
+      },
+    ]
+  );
 });
 
 // Fetch tracker stats for the hero section
@@ -185,3 +203,75 @@ const { data: torrentsData } = await useFetch<{ data: TorrentWithStats[] }>(
 
 const recentTorrents = computed(() => torrentsData.value?.data ?? []);
 </script>
+
+<style>
+/* Hero title styles - allow rich text formatting */
+.hero-title p {
+  margin: 0;
+  display: inline;
+}
+
+.hero-title strong {
+  font-weight: 900;
+}
+
+.hero-title em {
+  font-style: italic;
+}
+
+/* Hero subtitle styles */
+.hero-subtitle p {
+  margin: 0;
+}
+
+.hero-subtitle strong {
+  font-weight: 700;
+}
+
+.hero-subtitle a {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+/* Feature box styles - allow rich text formatting */
+.feature-title p {
+  margin: 0;
+  display: inline;
+}
+
+.feature-title strong {
+  font-weight: 900;
+}
+
+.feature-description p {
+  margin: 0 0 0.5rem 0;
+}
+
+.feature-description p:last-child {
+  margin-bottom: 0;
+}
+
+.feature-description strong {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.feature-description em {
+  font-style: italic;
+}
+
+.feature-description a {
+  color: var(--text-primary);
+  text-decoration: underline;
+}
+
+.feature-description ul,
+.feature-description ol {
+  margin: 0.5rem 0;
+  padding-left: 1.25rem;
+}
+
+.feature-description li {
+  margin: 0.25rem 0;
+}
+</style>

@@ -19,15 +19,26 @@
               alt="Logo"
               class="w-full h-full object-contain"
             />
-            <Icon v-else :name="branding?.siteLogo || 'ph:broadcast-bold'" class="text-black text-lg" />
+            <Icon
+              v-else
+              :name="branding?.siteLogo || 'ph:broadcast-bold'"
+              class="text-black text-lg"
+            />
           </div>
           <div class="flex flex-col leading-none">
-            <span class="text-sm font-bold tracking-tighter uppercase"
-              >{{ branding?.siteName || 'OpenTracker' }}</span
-            >
-            <span class="text-[10px] text-text-muted font-mono"
-              >{{ branding?.siteSubtitle || `v${useRuntimeConfig().public.appVersion}` }}</span
-            >
+            <span
+              class="text-sm tracking-tighter uppercase transition-colors"
+              :class="{
+                'font-bold': branding?.siteNameBold ?? true,
+                'font-medium': !(branding?.siteNameBold ?? true),
+              }"
+              :style="{ color: branding?.siteNameColor || '' }"
+              v-html="branding?.siteName || 'OpenTracker'"
+            ></span>
+            <span class="text-[10px] text-text-muted font-mono">{{
+              branding?.siteSubtitle ||
+              `v${useRuntimeConfig().public.appVersion}`
+            }}</span>
           </div>
         </NuxtLink>
 
@@ -220,19 +231,34 @@
         leave-to-class="opacity-0 -translate-y-2"
       >
         <div
-          v-if="announcementReady && announcement?.enabled && announcement?.message && !announcementDismissed"
+          v-if="
+            announcementReady &&
+            announcement?.enabled &&
+            announcement?.message &&
+            !announcementDismissed
+          "
           :class="[
             'border-b',
             announcementStyles[announcement.type || 'info'].bg,
             announcementStyles[announcement.type || 'info'].border,
           ]"
         >
-          <div class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3">
+          <div
+            class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3"
+          >
             <Icon
               :name="announcementStyles[announcement.type || 'info'].icon"
-              :class="['text-lg flex-shrink-0', announcementStyles[announcement.type || 'info'].text]"
+              :class="[
+                'text-lg flex-shrink-0',
+                announcementStyles[announcement.type || 'info'].text,
+              ]"
             />
-            <p :class="['text-sm flex-1', announcementStyles[announcement.type || 'info'].text]">
+            <p
+              :class="[
+                'text-sm flex-1',
+                announcementStyles[announcement.type || 'info'].text,
+              ]"
+            >
               {{ announcement.message }}
             </p>
             <button
@@ -240,7 +266,13 @@
               class="p-1 rounded hover:bg-white/10 transition-colors flex-shrink-0"
               title="Dismiss"
             >
-              <Icon name="ph:x" :class="['text-sm', announcementStyles[announcement.type || 'info'].text]" />
+              <Icon
+                name="ph:x"
+                :class="[
+                  'text-sm',
+                  announcementStyles[announcement.type || 'info'].text,
+                ]"
+              />
             </button>
           </div>
         </div>
@@ -260,18 +292,33 @@
         <div
           class="flex items-center gap-4 text-[10px] text-text-muted font-mono uppercase tracking-widest"
         >
-          <span>&copy; 2025 OPENTRACKER</span>
+          <span>{{
+            branding?.footerText ||
+            `© ${new Date().getFullYear()} ${(branding?.siteName || 'OPENTRACKER').toUpperCase()}`
+          }}</span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
           <span>P2P PROTOCOL</span>
         </div>
         <div class="flex gap-6">
-          <a href="https://n0w.me/" target="_blank" rel="noopener" class="text-text-muted hover:text-white transition-colors"
+          <a
+            href="https://n0w.me/"
+            target="_blank"
+            rel="noopener"
+            class="text-text-muted hover:text-white transition-colors"
             ><Icon name="ph:globe" class="text-xl"
           /></a>
-          <a href="https://github.com/florianjs/opentracker" target="_blank" rel="noopener" class="text-text-muted hover:text-white transition-colors"
+          <a
+            href="https://github.com/florianjs/opentracker"
+            target="_blank"
+            rel="noopener"
+            class="text-text-muted hover:text-white transition-colors"
             ><Icon name="ph:github-logo" class="text-xl"
           /></a>
-          <a href="https://discord.gg/GRFu35djvz" target="_blank" rel="noopener" class="text-text-muted hover:text-white transition-colors"
+          <a
+            href="https://discord.gg/GRFu35djvz"
+            target="_blank"
+            rel="noopener"
+            class="text-text-muted hover:text-white transition-colors"
             ><Icon name="ph:discord-logo" class="text-xl"
           /></a>
         </div>
@@ -292,8 +339,33 @@ const { data: branding } = await useFetch<{
   siteName: string;
   siteLogo: string;
   siteLogoImage: string | null;
+  siteFavicon: string | null;
   siteSubtitle: string | null;
+  siteNameColor: string | null;
+  siteNameBold: boolean | undefined;
+  authTitle: string | null;
+  authSubtitle: string | null;
+  footerText: string | null;
+  pageTitleSuffix: string | null;
 }>('/api/branding');
+
+// Set dynamic favicon
+useHead({
+  link: [
+    {
+      rel: 'icon',
+      type: computed(() => {
+        const url = branding.value?.siteFavicon;
+        if (!url) return 'image/x-icon';
+        if (url.endsWith('.svg')) return 'image/svg+xml';
+        if (url.endsWith('.png')) return 'image/png';
+        if (url.endsWith('.webp')) return 'image/webp';
+        return 'image/x-icon';
+      }),
+      href: computed(() => branding.value?.siteFavicon || '/favicon.ico'),
+    },
+  ],
+});
 
 // Fetch announcement
 const { data: announcement } = await useFetch<{
@@ -310,7 +382,7 @@ function hashString(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = ((hash << 5) - hash) + char;
+    hash = (hash << 5) - hash + char;
     hash = hash & hash;
   }
   return Math.abs(hash).toString(36);
@@ -348,7 +420,9 @@ function dismissAnnouncement() {
 onMounted(() => {
   if (import.meta.client && announcement.value?.message) {
     const messageHash = hashString(announcement.value.message);
-    announcementDismissed.value = sessionStorage.getItem(`announcement_dismissed_${messageHash}`) === 'true';
+    announcementDismissed.value =
+      sessionStorage.getItem(`announcement_dismissed_${messageHash}`) ===
+      'true';
   }
   // Use nextTick to ensure transition is applied after DOM is ready
   nextTick(() => {

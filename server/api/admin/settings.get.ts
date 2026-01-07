@@ -6,7 +6,16 @@ import {
   getSiteName,
   getSiteLogo,
   getSiteLogoImage,
+  getSiteFavicon,
   getSiteSubtitle,
+  getSiteNameColor,
+  isSiteNameBold,
+  getAuthTitle,
+  getAuthSubtitle,
+  getFooterText,
+  getPageTitleSuffix,
+  getWelcomeMessage,
+  getSiteRules,
   isAnnouncementEnabled,
   getAnnouncementMessage,
   getAnnouncementType,
@@ -19,6 +28,8 @@ import {
   getFeature2Desc,
   getFeature3Title,
   getFeature3Desc,
+  isInviteEnabled,
+  getDefaultInvites,
 } from '../../utils/settings';
 
 /**
@@ -34,7 +45,16 @@ export default defineEventHandler(async (event) => {
   const siteName = await getSiteName();
   const siteLogo = await getSiteLogo();
   const siteLogoImage = await getSiteLogoImage();
+  const siteFavicon = await getSiteFavicon();
   const siteSubtitle = await getSiteSubtitle();
+  const siteNameColor = await getSiteNameColor();
+  const siteNameBold = await isSiteNameBold();
+  const authTitle = await getAuthTitle();
+  const authSubtitle = await getAuthSubtitle();
+  const footerText = await getFooterText();
+  const pageTitleSuffix = await getPageTitleSuffix();
+  const welcomeMessage = await getWelcomeMessage();
+  const siteRules = await getSiteRules();
   const announcementEnabled = await isAnnouncementEnabled();
   const announcementMessage = await getAnnouncementMessage();
   const announcementType = await getAnnouncementType();
@@ -47,6 +67,8 @@ export default defineEventHandler(async (event) => {
   const feature2Desc = await getFeature2Desc();
   const feature3Title = await getFeature3Title();
   const feature3Desc = await getFeature3Desc();
+  const inviteEnabled = await isInviteEnabled();
+  const defaultInvites = await getDefaultInvites();
 
   return {
     registrationOpen,
@@ -55,7 +77,16 @@ export default defineEventHandler(async (event) => {
     siteName,
     siteLogo,
     siteLogoImage,
+    siteFavicon,
     siteSubtitle,
+    siteNameColor,
+    siteNameBold,
+    authTitle,
+    authSubtitle,
+    footerText,
+    pageTitleSuffix,
+    welcomeMessage,
+    siteRules,
     announcementEnabled,
     announcementMessage,
     announcementType,
@@ -68,5 +99,7 @@ export default defineEventHandler(async (event) => {
     feature2Desc,
     feature3Title,
     feature3Desc,
+    inviteEnabled,
+    defaultInvites,
   };
 });

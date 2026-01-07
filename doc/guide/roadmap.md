@@ -2,36 +2,73 @@
 
 OpenTracker is actively developed with a focus on performance, security, and usability. Below is our current development roadmap.
 
-## Current Focus (v0.3.x)
+## v0.3.x
 
-- [ ] **WebSocket support** — Real-time peer updates via WebSocket announces
-- [ ] **Distributed tracker** — Multi-node support for horizontal scaling
-- [ ] **IPv6 support** — Full IPv6 peer tracking and announce handling
-- [ ] **Enhanced admin dashboard** — More detailed analytics and management tools
+Features implemented, pending public release:
 
-## Planned (v0.4.x)
+- [x] **Custom Branding** — Logo, favicon, site name, colors, font weight
+- [x] **Invitation System** — Private invite codes with per-user limits
+- [x] **Registration Modes** — Open, invite-only, or closed registration
+- [x] **Hit and Run Tracking** — Track users who don't seed minimum time
+- [x] **Tags & Categories** — Flexible labels and admin category management
+- [x] **Reports & Moderation** — Flag content for moderation review
+- [x] **Homepage Customization** — WYSIWYG editor for homepage content
+- [x] **Panic Mode** — Emergency lockdown system
+- [x] **Grafana Monitoring** — Full observability stack
 
-- [ ] **Plugin system** — Extensible architecture for custom functionality
-- [ ] **Advanced rate limiting** — Per-torrent and per-user rate limits
-- [ ] **Prometheus metrics** — Native Prometheus endpoint for monitoring
-- [ ] **S3 backup integration** — Automated backups to S3-compatible storage
+---
 
-## Future Considerations
+## v0.4.0 — User Features
 
-- [ ] **Federation** — Inter-tracker communication protocol
-- [ ] **Mobile app** — iOS/Android companion app for monitoring
-- [ ] **CLI tool** — Command-line interface for tracker management
-- [ ] **Audit logging** — Detailed security audit trail
+- [ ] **Favorites / Watchlist** — Save torrents to personal list
+- [ ] **Freeleech System** — Global and per-torrent freeleech toggle
+- [ ] **User Classes** — Power User, VIP with granular permissions
+- [ ] **Notifications** — In-app alerts for replies, requests, etc.
 
-## Completed (v0.2.x)
+---
 
-- [x] Zero-Knowledge Authentication
-- [x] Panic Mode for emergency lockdown
-- [x] Grafana monitoring integration
-- [x] Load testing suite
-- [x] Site-wide announcements
-- [x] Custom branding support
-- [x] VitePress documentation
+## v0.5.0 — Community
+
+- [ ] **Torrent Requests** — Request content with bounty system
+- [ ] **Bonus Points** — Reward seeders with exchangeable points
+- [ ] **Private Messages** — User-to-user inbox system
+- [ ] **Collages / Collections** — Group torrents by theme
+
+---
+
+## v0.6.0 — Plugins System
+
+- [ ] **Plugin Architecture** — Admin-activatable modules
+
+---
+
+## v0.7.0 — Public Tracker Mode
+
+- [ ] **Public Mode** — Browse and download without account
+- [ ] **Anonymous Announces** — Tracking without passkey
+- [ ] **Public API** — Open endpoints for integrations
+- [ ] **Public Magnet Links** — Direct sharing
+
+---
+
+## v1.0.0 — Production Ready
+
+- [ ] **Theme System** — Dark/Light/Custom theme support
+- [ ] **i18n** — Multi-language support (FR, EN, ES...)
+- [ ] **E2E Tests** — Complete functional test suite
+- [ ] **API Documentation** — OpenAPI/Swagger at `/api/docs`
+- [ ] **Performance Audit** — Final optimizations
+
+---
+
+## Future (v1.x+)
+
+- [ ] WebSocket announces for real-time updates
+- [ ] Federation — Inter-tracker communication
+- [ ] Mobile app companion
+- [ ] CLI tool for tracker management
+- [ ] Distributed tracker (multi-node)
+- [ ] IPv6 support
 
 ---
 

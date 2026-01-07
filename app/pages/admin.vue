@@ -121,6 +121,12 @@ const menuItems = [
     description: 'Manage invitation system',
   },
   {
+    label: 'Branding',
+    path: '/admin/branding',
+    icon: 'ph:paint-brush',
+    description: 'Customize site appearance and branding',
+  },
+  {
     label: 'Settings',
     path: '/admin/settings',
     icon: 'ph:gear',

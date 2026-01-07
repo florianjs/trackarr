@@ -76,6 +76,14 @@ export default defineEventHandler(async (event) => {
         ),
       });
 
+      // If invite code provided but not found/valid, throw error immediately
+      if (!validInvite) {
+        throw createError({
+          statusCode: 400,
+          message: 'Invalid invite code',
+        });
+      }
+
       // Check if invite is expired
       if (
         validInvite?.expiresAt &&

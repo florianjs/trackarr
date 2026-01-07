@@ -39,6 +39,10 @@ COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/db-push.sh ./scripts/db-p
 COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/entrypoint.sh ./scripts/entrypoint.sh
 COPY --from=builder --chown=nuxtjs:nodejs /app/node_modules ./node_modules
 
+
+RUN mkdir -p /app/public/uploads && \
+    chown -R nuxtjs:nodejs /app/public/uploads
+
 RUN chmod +x ./scripts/db-push.sh ./scripts/entrypoint.sh
 
 USER nuxtjs
