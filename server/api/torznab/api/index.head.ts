@@ -6,7 +6,7 @@
  * Without this, Nuxt SSR middleware intercepts HEAD requests and redirects to login
  */
 
-import { getTorznabEnabled } from '../../utils/torznabSettings';
+import { getTorznabEnabled } from '../../../utils/torznabSettings';
 
 export default defineEventHandler(async (event) => {
   // Check if Torznab API is enabled

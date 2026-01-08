@@ -11,32 +11,32 @@
 
 import type { H3Event } from 'h3';
 import { z } from 'zod';
-import { db, schema } from '../../db';
-import { getStats } from '../../redis/cache';
+import { db, schema } from '../../../db';
+import { getStats } from '../../../redis/cache';
 import { desc, eq, ilike, and, inArray } from 'drizzle-orm';
-import { authenticateTorznab, sendTorznabError } from './utils/auth';
+import { authenticateTorznab, sendTorznabError } from '../utils/auth';
 import {
   buildCapsXml,
   buildSearchXml,
   TORZNAB_ERRORS,
   type TorznabItem,
-} from './utils/xml';
+} from '../utils/xml';
 import {
   buildCategoryTree,
   filterCategoriesByNewznab,
   getNewznabCategoryId,
-} from './utils/categories';
-import { rateLimit, getClientIP } from '../../utils/rateLimit';
+} from '../utils/categories';
+import { rateLimit, getClientIP } from '../../../utils/rateLimit';
 import {
   getTorznabEnabled,
   getTorznabRateLimitOptions,
   getTorznabEnableLogging,
-} from '../../utils/torznabSettings';
+} from '../../../utils/torznabSettings';
 import {
   logTorznabRequest,
   isTorznabUserBlocked,
   trackRateLimitHit,
-} from '../../utils/torznabStats';
+} from '../../../utils/torznabStats';
 
 // Query schema for Torznab requests
 const torznabQuerySchema = z.object({
