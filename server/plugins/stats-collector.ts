@@ -27,12 +27,12 @@ export default defineNitroPlugin((nitroApp) => {
         .from(schema.torrents);
       const torrentsCount = torrentsCountResult[0]?.count || 0;
 
-      // 3. Peers & Seeders Count (from Redis)
+      // 3. Peers & Seeders Count (from Redis) - count unique peers by ip:port
       // Note: ioredis with keyPrefix - SCAN returns full keys with prefix,
       // but we need to strip the prefix before passing to other commands
       const keyPrefix = process.env.REDIS_KEY_PREFIX || 'ot:';
-      let peersCount = 0;
-      let seedersCount = 0;
+      const uniquePeers = new Set<string>();
+      const uniqueSeeders = new Set<string>();
       let cursor = '0';
       do {
         const [nextCursor, keys] = await redis.scan(
@@ -52,12 +52,15 @@ export default defineNitroPlugin((nitroApp) => {
           for (const json of Object.values(peersData)) {
             try {
               const peer = JSON.parse(json as string);
-              peersCount++;
-              if (peer.isSeeder) seedersCount++;
+              const peerKey = `${peer.ip}:${peer.port}`;
+              uniquePeers.add(peerKey);
+              if (peer.isSeeder) uniqueSeeders.add(peerKey);
             } catch (e) {}
           }
         }
       } while (cursor !== '0');
+      const peersCount = uniquePeers.size;
+      const seedersCount = uniqueSeeders.size;
 
       // 4. Redis Memory Usage
       const info = await redis.info('memory');

@@ -48,9 +48,9 @@ export default defineEventHandler(async (event) => {
     );
     const dbSize = Number(dbSizeResult[0]?.pg_database_size) || 0;
 
-    // Peers & Seeders (SCAN)
-    let peersCount = 0;
-    let seedersCount = 0;
+    // Peers & Seeders (SCAN) - count unique peers by ip:port
+    const uniquePeers = new Set<string>();
+    const uniqueSeeders = new Set<string>();
     let cursor = '0';
     do {
       const [nextCursor, keys] = await redis.scan(
@@ -69,33 +69,47 @@ export default defineEventHandler(async (event) => {
         for (const json of Object.values(peersData)) {
           try {
             const peer = JSON.parse(json as string);
-            peersCount++;
-            if (peer.isSeeder) seedersCount++;
+            const peerKey = `${peer.ip}:${peer.port}`;
+            uniquePeers.add(peerKey);
+            if (peer.isSeeder) uniqueSeeders.add(peerKey);
           } catch (e) {}
         }
       }
     } while (cursor !== '0');
+    const peersCount = uniquePeers.size;
+    const seedersCount = uniqueSeeders.size;
 
-    // Append 'live' data point
-    // Check if we should append: only if history is empty OR last point is older than 5 mins
+    // Always append a 'live' data point to show current real-time stats
+    // This ensures the chart always reflects the current state
+    const livePoint = {
+      id: 'live',
+      usersCount,
+      torrentsCount,
+      peersCount,
+      seedersCount,
+      redisMemoryUsage,
+      dbSize,
+      createdAt: new Date(),
+    } as any;
+
+    // If the last historical point is very recent (< 1 min), replace it with live data
+    // Otherwise append as a new point
     const lastPoint = history[history.length - 1];
     const now = Date.now();
-    const fiveMinutes = 5 * 60 * 1000;
+    const oneMinute = 60 * 1000;
 
     if (
-      !lastPoint ||
-      now - new Date(lastPoint.createdAt).getTime() > fiveMinutes
+      lastPoint &&
+      now - new Date(lastPoint.createdAt).getTime() < oneMinute
     ) {
-      history.push({
-        id: 'live',
-        usersCount,
-        torrentsCount,
-        peersCount,
-        seedersCount,
-        redisMemoryUsage,
-        dbSize,
-        createdAt: new Date(),
-      } as any);
+      // Replace the last point with live data
+      history[history.length - 1] = {
+        ...lastPoint,
+        ...livePoint,
+        id: lastPoint.id,
+      };
+    } else {
+      history.push(livePoint);
     }
   } catch (err) {
     console.error('[Stats History] Failed to fetch live stats:', err);

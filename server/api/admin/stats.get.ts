@@ -13,13 +13,15 @@ export default defineEventHandler(async (event) => {
     .from(schema.torrents);
   const totalTorrents = torrentsCountResult[0]?.count || 0;
 
-  // Get total peers and seeders from Redis using SCAN for safety
+  // Get total unique peers and seeders from Redis using SCAN for safety
   // Note: ioredis with keyPrefix - SCAN returns full keys with prefix,
   // but we need to strip the prefix before passing to other commands
+  // We use Sets to count unique peers by ip:port (a peer seeding multiple torrents counts as 1)
   const keyPrefix = process.env.REDIS_KEY_PREFIX || 'ot:';
-  let totalPeers = 0;
-  let totalSeeders = 0;
+  const uniquePeers = new Set<string>();
+  const uniqueSeeders = new Set<string>();
   let cursor = '0';
+  let scannedKeys = 0;
   try {
     do {
       const [nextCursor, keys] = await redis.scan(
@@ -30,6 +32,7 @@ export default defineEventHandler(async (event) => {
         100
       );
       cursor = nextCursor;
+      scannedKeys += keys.length;
       for (const fullKey of keys) {
         // Strip the prefix from the key returned by SCAN to avoid double-prefixing
         const key = fullKey.startsWith(keyPrefix)
@@ -39,8 +42,10 @@ export default defineEventHandler(async (event) => {
         for (const json of Object.values(peersData)) {
           try {
             const peer = JSON.parse(json as string);
-            totalPeers++;
-            if (peer.isSeeder) totalSeeders++;
+            // Use ip:port as unique identifier for a peer
+            const peerKey = `${peer.ip}:${peer.port}`;
+            uniquePeers.add(peerKey);
+            if (peer.isSeeder) uniqueSeeders.add(peerKey);
           } catch (e) {
             // Ignore invalid JSON
           }
@@ -50,6 +55,9 @@ export default defineEventHandler(async (event) => {
   } catch (err) {
     console.error('[Stats] Failed to fetch peer count from Redis:', err);
   }
+
+  const totalPeers = uniquePeers.size;
+  const totalSeeders = uniqueSeeders.size;
 
   // Try to get tracker, may fail if native modules aren't built
   let tracker = null;
