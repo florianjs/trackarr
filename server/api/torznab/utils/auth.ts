@@ -35,12 +35,12 @@ export async function authenticateTorznab(
     );
   }
 
-  // Validate passkey format (40 hex chars)
-  if (!/^[a-f0-9]{40}$/i.test(apikey)) {
+  // Validate passkey format (32 or 40 hex chars - supports legacy and new passkeys)
+  if (!/^[a-f0-9]{32}$/i.test(apikey) && !/^[a-f0-9]{40}$/i.test(apikey)) {
     throw createTorznabError(
       event,
       TORZNAB_ERRORS.INCORRECT_CREDENTIALS,
-      `Invalid API key format. Expected 40 hex characters (your passkey), got ${apikey.length} characters`
+      `Invalid API key format. Expected 32 or 40 hex characters (your passkey), got ${apikey.length} characters`
     );
   }
 
@@ -73,24 +73,29 @@ export async function authenticateTorznab(
 
 /**
  * Create a Torznab-compliant error response
+ * The error contains XML in the 'data' field which should be extracted by the caller
  */
 export function createTorznabError(
   event: H3Event,
   error: { code: number; description: string },
   customMessage?: string
-): Error {
-  setHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
-
+): never {
   const httpStatus = error.code === 100 || error.code === 101 ? 401 : 400;
-
-  throw createError({
-    statusCode: httpStatus,
-    message: customMessage ?? error.description,
-    data: buildErrorXml({
-      code: error.code,
-      description: customMessage ?? error.description,
-    }),
+  const xml = buildErrorXml({
+    code: error.code,
+    description: customMessage ?? error.description,
   });
+
+  const err = createError({
+    statusCode: httpStatus,
+    statusMessage: 'Torznab Error',
+    message: customMessage ?? error.description,
+    data: xml,
+  });
+  // Mark this as a Torznab error so we can handle it specially
+  (err as any).isTorznab = true;
+
+  throw err;
 }
 
 /**

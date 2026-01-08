@@ -83,7 +83,19 @@ export default defineEventHandler(async (event) => {
   }
 
   // All other functions require authentication
-  const user = await authenticateTorznab(event);
+  // Wrap in try/catch to handle Torznab XML errors properly
+  let user: { passkey: string };
+  try {
+    user = await authenticateTorznab(event);
+  } catch (error: any) {
+    // If it's a Torznab error, return the XML directly
+    if (error.isTorznab && error.data) {
+      setHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
+      setResponseStatus(event, error.statusCode || 400);
+      return error.data;
+    }
+    throw error;
+  }
 
   // Check if user is blocked from Torznab API
   const blockStatus = await isTorznabUserBlocked(user.passkey);

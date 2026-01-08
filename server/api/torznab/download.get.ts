@@ -29,28 +29,31 @@ export default defineEventHandler(async (event) => {
   const enabled = await getTorznabEnabled();
   if (!enabled) {
     setHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
-    throw createError({
-      statusCode: 503,
-      message: 'Torznab API is currently disabled',
-      data: buildErrorXml({
-        code: 900,
-        description: 'Torznab API is currently disabled',
-      }),
+    return buildErrorXml({
+      code: 900,
+      description: 'Torznab API is currently disabled',
     });
   }
 
   // Authenticate via passkey
-  const user = await authenticateTorznab(event);
+  let user: Awaited<ReturnType<typeof authenticateTorznab>>;
+  try {
+    user = await authenticateTorznab(event);
+  } catch (error: any) {
+    // If it's a Torznab error, return the XML directly
+    if (error.isTorznab && error.data) {
+      setHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
+      setResponseStatus(event, error.statusCode || 400);
+      return error.data;
+    }
+    throw error;
+  }
 
   // Check if user is blocked from Torznab API
   const blockStatus = await isTorznabUserBlocked(user.passkey);
   if (blockStatus.blocked) {
     setHeader(event, 'Content-Type', 'application/xml; charset=utf-8');
-    throw createError({
-      statusCode: 403,
-      message: blockStatus.reason || 'Access denied',
-      data: buildErrorXml(TORZNAB_ERRORS.ACCOUNT_SUSPENDED),
-    });
+    return buildErrorXml(TORZNAB_ERRORS.ACCOUNT_SUSPENDED);
   }
 
   // Apply dynamic rate limiting
