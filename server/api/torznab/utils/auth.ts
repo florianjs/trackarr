@@ -37,7 +37,11 @@ export async function authenticateTorznab(
 
   // Validate passkey format (40 hex chars)
   if (!/^[a-f0-9]{40}$/i.test(apikey)) {
-    throw createTorznabError(event, TORZNAB_ERRORS.INCORRECT_CREDENTIALS);
+    throw createTorznabError(
+      event,
+      TORZNAB_ERRORS.INCORRECT_CREDENTIALS,
+      `Invalid API key format. Expected 40 hex characters (your passkey), got ${apikey.length} characters`
+    );
   }
 
   // Look up user by passkey

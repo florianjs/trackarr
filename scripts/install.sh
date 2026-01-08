@@ -558,16 +558,16 @@ run_migrations() {
 
     # Check/Rename database
     log_info "Verifying database name..."
-    if docker compose -f docker-compose.prod.yml exec -T postgres psql -U "$DB_USER" -d postgres -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
+    if docker compose -f docker-compose.prod.yml exec -T -e PGPASSWORD="$DB_PASSWORD" postgres psql -U "$DB_USER" -d postgres -lqt | cut -d \| -f 1 | grep -qw "$DB_NAME"; then
         log_success "Database '$DB_NAME' exists"
-    elif docker compose -f docker-compose.prod.yml exec -T postgres psql -U "$DB_USER" -d postgres -lqt | cut -d \| -f 1 | grep -qw "opentracker"; then
+    elif docker compose -f docker-compose.prod.yml exec -T -e PGPASSWORD="$DB_PASSWORD" postgres psql -U "$DB_USER" -d postgres -lqt | cut -d \| -f 1 | grep -qw "opentracker"; then
         log_warn "Found legacy database 'opentracker'. Renaming to '$DB_NAME'..."
-        docker compose -f docker-compose.prod.yml exec -T postgres psql -U "$DB_USER" -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'opentracker';" > /dev/null 2>&1 || true
-        docker compose -f docker-compose.prod.yml exec -T postgres psql -U "$DB_USER" -d postgres -c "ALTER DATABASE opentracker RENAME TO \"$DB_NAME\";"
+        docker compose -f docker-compose.prod.yml exec -T -e PGPASSWORD="$DB_PASSWORD" postgres psql -U "$DB_USER" -d postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'opentracker';" > /dev/null 2>&1 || true
+        docker compose -f docker-compose.prod.yml exec -T -e PGPASSWORD="$DB_PASSWORD" postgres psql -U "$DB_USER" -d postgres -c "ALTER DATABASE opentracker RENAME TO \"$DB_NAME\";"
         log_success "Database renamed successfully"
     else
         log_warn "Database '$DB_NAME' not found. Creating..."
-        docker compose -f docker-compose.prod.yml exec -T postgres psql -U "$DB_USER" -d postgres -c "CREATE DATABASE \"$DB_NAME\" OWNER \"$DB_USER\";"
+        docker compose -f docker-compose.prod.yml exec -T -e PGPASSWORD="$DB_PASSWORD" postgres psql -U "$DB_USER" -d postgres -c "CREATE DATABASE \"$DB_NAME\" OWNER \"$DB_USER\";"
         log_success "Database created"
     fi
     
