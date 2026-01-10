@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { settings } from '../db/schema';
+import pkg from '../../package.json';
 
 /**
  * Check if HTML content is effectively empty (just empty tags like <p></p> or whitespace)
@@ -169,7 +170,7 @@ export async function getDefaultInvites(): Promise<number> {
  */
 export async function getSiteName(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.SITE_NAME);
-  return value || 'Trackarr';
+  return isEmptyHtml(value) ? 'TRACKARR' : value!;
 }
 
 /**
@@ -199,9 +200,9 @@ export async function getSiteFavicon(): Promise<string | null> {
 /**
  * Get site subtitle (displayed below site name)
  */
-export async function getSiteSubtitle(): Promise<string | null> {
+export async function getSiteSubtitle(): Promise<string> {
   const value = await getSetting(SETTINGS_KEYS.SITE_SUBTITLE);
-  return isEmptyHtml(value) ? null : value;
+  return isEmptyHtml(value) ? `v${pkg.version}` : value!;
 }
 
 /**

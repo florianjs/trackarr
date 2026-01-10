@@ -27,20 +27,16 @@
           </div>
           <div class="flex flex-col leading-none">
             <span
-              class="text-sm tracking-tighter uppercase transition-colors"
+              class="text-sm tracking-tighter transition-colors"
               :class="{
                 'font-bold': branding?.siteNameBold ?? true,
                 'font-medium': !(branding?.siteNameBold ?? true),
               }"
               :style="{ color: branding?.siteNameColor || '' }"
-              v-html="branding?.siteName || 'Trackarr'"
+              v-html="branding?.siteName"
             ></span>
-            <span
-              class="text-[10px] text-text-muted font-mono [&>p]:inline [&>p]:m-0"
-              v-html="
-                branding?.siteSubtitle ||
-                `v${useRuntimeConfig().public.appVersion}`
-              "
+            <span class="text-[10px] text-text-muted font-mono"
+              v-html="branding?.siteSubtitle"
             ></span>
           </div>
         </NuxtLink>
@@ -299,7 +295,7 @@
             class="[&>p]:inline [&>p]:m-0"
             v-html="
               branding?.footerText ||
-              `© ${new Date().getFullYear()} ${(branding?.siteName || 'Trackarr').toUpperCase()}`
+              `© ${new Date().getFullYear()} ${(branding?.siteName || 'Trackarr')}`
             "
           ></span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
@@ -355,15 +351,8 @@ const { data: branding } = await useFetch<{
   pageTitleSuffix: string | null;
 }>('/api/branding');
 
-// Set dynamic favicon and title template
+// Set dynamic favicon
 useHead({
-  titleTemplate: computed(() => {
-    const suffix =
-      branding.value?.pageTitleSuffix ||
-      `- ${branding.value?.siteName || 'Trackarr'}`;
-    return (title?: string) =>
-      title ? `${title} ${suffix}` : suffix.replace(/^- /, '');
-  }),
   link: [
     {
       rel: 'icon',
