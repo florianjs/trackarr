@@ -21,10 +21,10 @@
         >
       </div>
       <h1
-        class="text-4xl md:text-6xl font-black text-text-primary tracking-tighter uppercase mb-4 hero-title"
+        class="text-4xl md:text-6xl font-black text-text-primary tracking-tighter mb-4 hero-title"
         v-html="
           content?.heroTitle ||
-          'Open<span class=\'text-text-muted\'>Tracker</span>'
+          'TRACKARR'
         "
       ></h1>
       <div

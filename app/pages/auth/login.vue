@@ -19,8 +19,8 @@
           />
         </div>
         <h1
-          class="text-2xl font-bold tracking-tighter uppercase"
-          v-html="branding?.authTitle || branding?.siteName || 'Trackarr'"
+          class="text-2xl font-bold tracking-tighter"
+          v-html="branding?.authTitle || branding?.siteName || 'TRACKARR'"
         ></h1>
         <div
           class="text-text-muted text-sm mt-1 [&>p]:m-0"

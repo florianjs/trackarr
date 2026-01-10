@@ -486,7 +486,7 @@
         >
           <WysiwygEditor
             v-model="heroTitle"
-            placeholder="Trackarr"
+            placeholder="Enter hero title..."
             :maxLength="500"
           />
         </SettingsGroup>
