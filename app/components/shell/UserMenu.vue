@@ -24,7 +24,7 @@
     >
       <div
         v-if="open"
-        class="absolute right-0 top-full mt-2 w-72 card shadow-lg shadow-black/10 overflow-hidden z-50"
+        class="absolute right-0 top-full mt-2 w-72 card shadow-lg shadow-scrim/10 overflow-hidden z-50"
         role="menu"
       >
         <div class="px-4 py-3 border-b border-border">
@@ -132,7 +132,12 @@ function toggle() {
 
 async function copyPasskey() {
   if (!passkey.value) return;
-  await navigator.clipboard.writeText(passkey.value).catch(() => {});
+  try {
+    await navigator.clipboard.writeText(passkey.value);
+  } catch {
+    // Clipboard unavailable (insecure context) or denied: keep the button as is
+    return;
+  }
   copied.value = true;
   setTimeout(() => (copied.value = false), 1500);
 }
@@ -154,8 +159,12 @@ onUnmounted(() => {
   document.removeEventListener('keydown', onKeydown);
 });
 
+// Another account signed in: drop what belonged to the previous one
 watch(() => user.value?.id, (id) => {
   passkey.value = null;
-  if (!id) open.value = false;
+  points.value = null;
+  avatarUrl.value = null;
+  if (id) loadAccount();
+  else open.value = false;
 });
 </script>

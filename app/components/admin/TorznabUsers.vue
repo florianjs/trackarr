@@ -262,7 +262,7 @@
               :disabled="actionLoading"
               class="px-4 py-2 rounded text-sm font-medium flex items-center gap-2"
               :class="confirmAction.variant === 'danger'
-                  ? 'bg-danger text-white'
+                  ? 'bg-danger text-paper'
                   : 'bg-leech text-black'
               "
             >

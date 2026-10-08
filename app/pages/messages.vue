@@ -297,13 +297,24 @@ async function toggleBlock() {
   if (!thread.value?.other) return;
   const blocked = !thread.value.iBlocked;
   if (blocked && !confirm(t('messages.confirmBlock', { name: thread.value.other.username }))) return;
-  await $fetch('/api/messages/block', { method: 'POST', body: { userId: thread.value.other.id, blocked } });
-  thread.value.iBlocked = blocked;
+  error.value = null;
+  try {
+    await $fetch('/api/messages/block', { method: 'POST', body: { userId: thread.value.other.id, blocked } });
+    thread.value.iBlocked = blocked;
+  } catch (err) {
+    error.value = errorText(err);
+  }
 }
 
 async function hideConversation() {
   if (!thread.value || !confirm(t('messages.confirmHide'))) return;
-  await $fetch(`/api/messages/${thread.value.id}`, { method: 'DELETE' });
+  error.value = null;
+  try {
+    await $fetch(`/api/messages/${thread.value.id}`, { method: 'DELETE' });
+  } catch (err) {
+    error.value = errorText(err);
+    return;
+  }
   await refreshList();
   router.replace('/messages');
 }

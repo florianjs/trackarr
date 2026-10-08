@@ -1,6 +1,6 @@
 import { and, desc, eq } from 'drizzle-orm';
 import { db, schema } from '../db';
-import { getStatsMany } from '../redis/cache';
+import { getStatsMany, type TorrentStats } from '../redis/cache';
 import { getUserActivity } from '../redis/userActivity';
 import { getUserHnrCount } from '../utils/hnr';
 import { sanitizeRichText } from '../utils/sanitize';
@@ -47,7 +47,10 @@ export default defineEventHandler(async (event) => {
       }),
     ]);
 
-  const stats = await getStatsMany(latest.map((t) => t.infoHash));
+  // Without Redis the page still renders, with empty swarm counts
+  const stats = await getStatsMany(latest.map((t) => t.infoHash)).catch(
+    () => new Map<string, TorrentStats>()
+  );
 
   return {
     account: {

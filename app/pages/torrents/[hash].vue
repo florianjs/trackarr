@@ -201,7 +201,7 @@
             <p v-if="deleteError" class="text-sm text-danger" role="alert">{{ deleteError }}</p>
             <div class="flex justify-end gap-2 pt-1">
               <button type="button" class="btn btn-secondary" :disabled="isDeleting" @click="showDeleteConfirm = false">{{ t('common.cancel') }}</button>
-              <button type="button" class="btn bg-danger text-white hover:bg-danger/85" :disabled="isDeleting" @click="deleteTorrent">
+              <button type="button" class="btn bg-danger text-paper hover:bg-danger/85" :disabled="isDeleting" @click="deleteTorrent">
                 <Icon v-if="isDeleting" name="ph:circle-notch" class="animate-spin" aria-hidden="true" />
                 {{ isDeleting ? t('common.deleting') : t('common.delete') }}
               </button>
@@ -337,7 +337,13 @@ async function postComment() {
 
 async function deleteComment(id: string) {
   if (!confirm(t('torrents.detail.confirmDeleteComment'))) return;
-  await $fetch(`/api/torrents/comments/${id}`, { method: 'DELETE' });
+  commentError.value = null;
+  try {
+    await $fetch(`/api/torrents/comments/${id}`, { method: 'DELETE' });
+  } catch (err) {
+    commentError.value = (err as { data?: { message?: string } }).data?.message ?? t('torrents.detail.commentDeleteFailed');
+  }
+  // Refresh either way: a 404 usually means someone else already deleted it
   await refresh();
 }
 
