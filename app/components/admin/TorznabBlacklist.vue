@@ -7,14 +7,14 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Blocked IPs & Users
+            {{ t('admin.torznabBlacklist.title') }}
           </h3>
         </div>
         <button
           @click="() => refresh()"
           :disabled="loading"
           class="p-1.5 bg-bg-tertiary border border-border rounded hover:border-white/20 transition-colors"
-          title="Refresh"
+          :title="t('common.refresh')"
         >
           <Icon
             name="ph:arrows-clockwise"
@@ -30,7 +30,7 @@
           <h4
             class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
           >
-            Rate Limited IPs
+            {{ t('admin.torznabBlacklist.rateLimitedIps') }}
           </h4>
           <div v-if="loading" class="space-y-2">
             <div
@@ -43,7 +43,7 @@
             v-else-if="data?.ipBlacklist.length === 0"
             class="text-sm text-text-muted py-4 text-center bg-bg-tertiary rounded-lg"
           >
-            No IPs currently blocked
+            {{ t('admin.torznabBlacklist.noIps') }}
           </div>
           <div v-else class="space-y-2">
             <div
@@ -60,7 +60,9 @@
                 </p>
               </div>
               <div class="text-right">
-                <span class="text-[10px] text-text-muted">Expires in</span>
+                <span class="text-[10px] text-text-muted">{{
+                  t('admin.torznabBlacklist.expiresIn')
+                }}</span>
                 <p class="text-xs font-mono text-yellow-400">
                   {{ formatTimeRemaining(entry.expiresAt) }}
                 </p>
@@ -74,7 +76,7 @@
           <h4
             class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
           >
-            Blocked API Users
+            {{ t('admin.torznabBlacklist.blockedUsers') }}
           </h4>
           <div v-if="loading" class="space-y-2">
             <div
@@ -87,7 +89,7 @@
             v-else-if="data?.blockedUsers.length === 0"
             class="text-sm text-text-muted py-4 text-center bg-bg-tertiary rounded-lg"
           >
-            No users currently blocked
+            {{ t('admin.torznabBlacklist.noUsers') }}
           </div>
           <div v-else class="space-y-2">
             <div
@@ -113,7 +115,9 @@
                   class="px-2 py-1 bg-bg-secondary border border-border rounded text-[10px] hover:border-white/20 transition-colors disabled:opacity-50"
                 >
                   {{
-                    unblocking === user.blockId ? 'Unblocking...' : 'Unblock'
+                    unblocking === user.blockId
+                      ? t('admin.torznabBlacklist.unblocking')
+                      : t('admin.torznabBlacklist.unblock')
                   }}
                 </button>
               </div>
@@ -126,6 +130,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface BlacklistEntry {
   ip: string;
   reason: string;
@@ -171,7 +177,7 @@ async function unblockUser(blockId: string) {
 
 function formatTimeRemaining(expiresAt: number): string {
   const remaining = expiresAt - Date.now();
-  if (remaining < 0) return 'Expired';
+  if (remaining < 0) return t('admin.torznabBlacklist.expired');
 
   const seconds = Math.floor(remaining / 1000);
   if (seconds < 60) return `${seconds}s`;
@@ -182,9 +188,11 @@ function formatTimeRemaining(expiresAt: number): string {
 
 function formatRelativeTime(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  if (seconds < 60) return 'Just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
+  if (seconds < 60) return t('admin.torznabBlacklist.justNow');
+  if (seconds < 3600)
+    return t('admin.torznabBlacklist.minutesAgo', { n: Math.floor(seconds / 60) });
+  if (seconds < 86400)
+    return t('admin.torznabBlacklist.hoursAgo', { n: Math.floor(seconds / 3600) });
+  return t('admin.torznabBlacklist.daysAgo', { n: Math.floor(seconds / 86400) });
 }
 </script>

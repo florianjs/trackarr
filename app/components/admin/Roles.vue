@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Role Management
+          {{ t('admin.roles.title') }}
         </h3>
       </div>
     </div>
@@ -16,18 +16,18 @@
         <h4
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
         >
-          Create New Role
+          {{ t('admin.roles.createTitle') }}
         </h4>
         <div class="flex flex-wrap gap-3">
           <input
             v-model="newRole.name"
             type="text"
-            placeholder="Role name..."
+            :placeholder="t('admin.roles.namePlaceholder')"
             class="input flex-1 min-w-[150px] !py-2 text-xs"
           />
           <div class="flex items-center gap-2">
             <label class="text-[10px] font-bold text-text-muted uppercase"
-              >Color</label
+              >{{ t('admin.roles.color') }}</label
             >
             <input
               v-model="newRole.color"
@@ -37,7 +37,7 @@
           </div>
           <div class="flex items-center gap-2">
             <label class="text-[10px] font-bold text-text-muted uppercase"
-              >Skip Moderation</label
+              >{{ t('admin.roles.skipModeration') }}</label
             >
             <button
               @click="newRole.canUploadWithoutModeration = !newRole.canUploadWithoutModeration"
@@ -69,7 +69,7 @@
               class="animate-spin"
             />
             <Icon v-else name="ph:plus-bold" />
-            <span>Create</span>
+            <span>{{ t('common.create') }}</span>
           </button>
         </div>
       </div>
@@ -94,10 +94,10 @@
               </p>
               <p class="text-[10px] text-text-muted">
                 <span v-if="role.canUploadWithoutModeration" class="text-success"
-                  >Can bypass moderation</span
+                  >{{ t('admin.roles.canBypass') }}</span
                 >
                 <span v-else class="text-text-muted/50"
-                  >Requires moderation</span
+                  >{{ t('admin.roles.requiresModeration') }}</span
                 >
               </p>
             </div>
@@ -106,7 +106,7 @@
             <div class="flex items-center gap-2">
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                >Skip Mod</label
+                >{{ t('admin.roles.skipMod') }}</label
               >
               <button
                 @click="togglePermission(role)"
@@ -130,7 +130,7 @@
             <button
               @click="deleteRole(role)"
               class="text-error hover:text-error/80 transition-colors p-1"
-              title="Delete role"
+              :title="t('admin.roles.delete')"
             >
               <Icon name="ph:trash-bold" class="w-4 h-4" />
             </button>
@@ -144,7 +144,7 @@
         <p
           class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
         >
-          No roles created yet
+          {{ t('admin.roles.empty') }}
         </p>
       </div>
       <div v-if="isLoading" class="flex justify-center py-8">
@@ -155,6 +155,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface Role {
   id: string;
   name: string;
@@ -200,7 +202,7 @@ async function createRole() {
       canUploadWithoutModeration: false,
     };
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to create role');
+    alert(error.data?.message || t('admin.roles.createFailed'));
   } finally {
     isCreating.value = false;
   }
@@ -219,13 +221,12 @@ async function togglePermission(role: Role) {
       roles.value[index] = updated;
     }
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to update role');
+    alert(error.data?.message || t('admin.roles.updateFailed'));
   }
 }
 
 async function deleteRole(role: Role) {
-  if (!confirm(`Are you sure you want to delete the role "${role.name}"?`))
-    return;
+  if (!confirm(t('admin.roles.confirmDelete', { name: role.name }))) return;
 
   try {
     await $fetch(`/api/admin/roles/${role.id}`, {
@@ -233,7 +234,7 @@ async function deleteRole(role: Role) {
     });
     roles.value = roles.value.filter((r) => r.id !== role.id);
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to delete role');
+    alert(error.data?.message || t('admin.roles.deleteFailed'));
   }
 }
 

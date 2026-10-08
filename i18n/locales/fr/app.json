@@ -398,6 +398,512 @@
       "copyFailed": "Impossible de copier le code"
     }
   },
+  "mod": {
+    "layout": {
+      "title": "Modération"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "Tableau de bord",
+        "description": "Vue d'ensemble de la modération et actions rapides"
+      },
+      "pending": {
+        "label": "Torrents en attente",
+        "description": "Examiner et approuver les torrents en attente"
+      },
+      "users": {
+        "label": "Utilisateurs",
+        "description": "Gérer les comptes utilisateurs et les bannissements"
+      },
+      "reports": {
+        "label": "Signalements",
+        "description": "Examiner et traiter les signalements des utilisateurs"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "Surveiller et gérer les infractions H&R"
+      }
+    },
+    "dashboard": {
+      "pendingReports": "Signalements en attente",
+      "pendingReportsHint": "Consultez la section des signalements pour traiter les plaintes des utilisateurs.",
+      "viewReports": "Voir les signalements",
+      "recentHnr": "H&R récents",
+      "recentHnrHint": "Surveillez les utilisateurs qui ne repartagent pas.",
+      "viewHnr": "Voir les H&R"
+    }
+  },
+  "admin": {
+    "layout": {
+      "title": "Administration",
+      "liveFeed": "FLUX DU TRACKER EN DIRECT"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "Tableau de bord",
+        "description": "Configuration du tracker et gestion des nœuds"
+      },
+      "users": {
+        "label": "Utilisateurs",
+        "description": "Gérer les comptes utilisateurs et les permissions"
+      },
+      "roles": {
+        "label": "Rôles",
+        "description": "Gérer les rôles et les permissions des utilisateurs"
+      },
+      "reports": {
+        "label": "Signalements",
+        "description": "Examiner et traiter les signalements des utilisateurs"
+      },
+      "categories": {
+        "label": "Catégories",
+        "description": "Gérer les catégories de torrents"
+      },
+      "tags": {
+        "label": "Tags",
+        "description": "Gérer les tags de torrents"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "Surveiller et gérer les infractions H&R"
+      },
+      "invites": {
+        "label": "Invitations",
+        "description": "Gérer le système d'invitations"
+      },
+      "torznab": {
+        "label": "API Torznab",
+        "description": "Configurer l'intégration *arr et la limitation de débit"
+      },
+      "branding": {
+        "label": "Personnalisation",
+        "description": "Personnaliser l'apparence et l'identité du site"
+      },
+      "settings": {
+        "label": "Paramètres",
+        "description": "Paramètres globaux d'inscription et du tracker"
+      }
+    },
+    "dashboard": {
+      "noHistory": "Aucune donnée historique pour le moment",
+      "noHistoryHint": "La collecte des statistiques vient de commencer. Revenez dans une heure."
+    },
+    "branding": {
+      "authSubtitle": "Sous-titre des pages de connexion",
+      "authSubtitleDescription": "Sous-titre affiché sous le titre des pages de connexion et d'inscription.",
+      "authSubtitlePlaceholder": "Tracker BitTorrent privé",
+      "authTitle": "Titre des pages de connexion",
+      "authTitleDescription": "Titre affiché sur les pages de connexion et d'inscription. Laisser vide pour utiliser le nom du site.",
+      "authTitlePlaceholder": "Saisissez le titre des pages de connexion...",
+      "bold": "Gras",
+      "currentFavicon": "Favicon actuel",
+      "currentLogo": "Logo actuel",
+      "dropFavicon": "Déposez un favicon ou cliquez pour l'envoyer",
+      "dropImage": "Déposez une image ou cliquez pour l'envoyer",
+      "favicon": "Favicon",
+      "faviconDescription": "Envoyez un favicon personnalisé (ICO, PNG, SVG). 1 Mo maximum. Affiché dans les onglets du navigateur.",
+      "feature": "Fonctionnalité {n}",
+      "featureBoxes": "Encarts de fonctionnalités",
+      "featureDescription": "Titre et description de cet encart. Prend en charge le texte enrichi.",
+      "featureDescriptionPlaceholder": "Description de la fonctionnalité...",
+      "featureTitle": "Titre",
+      "featureTitlePlaceholder": "Titre de la fonctionnalité",
+      "footerContent": "Contenu du pied de page",
+      "footerContentDescription": "Contenu personnalisé du pied de page. Prend en charge le texte enrichi.",
+      "heroSection": "Section d'en-tête",
+      "heroSubtitleDescription": "Une courte description sous le titre. Prend en charge le texte enrichi.",
+      "heroSubtitlePlaceholder": "Moteur de tracking P2P minimaliste et performant...",
+      "heroTitle": "Titre",
+      "heroTitleDescription": "Le titre principal de la page d'accueil. Utilisez le texte enrichi pour personnaliser le style, les couleurs et les polices.",
+      "heroTitlePlaceholder": "Saisissez le titre principal...",
+      "homepageContent": "Contenu de la page d'accueil",
+      "icon": "Icône",
+      "image": "Image",
+      "livePreview": "Aperçu en direct",
+      "logoIcon": "Icône du logo",
+      "logoIconDescription": "Utilisez les noms d'icônes Phosphor (ex. : ph:broadcast-bold).",
+      "logoImage": "Image du logo",
+      "logoImageDescription": "Envoyez un logo personnalisé (PNG, JPG, SVG, WebP). 5 Mo maximum.",
+      "logoType": "Type de logo",
+      "logoTypeDescription": "Choisissez entre une icône Phosphor et une image personnalisée.",
+      "pageTitleExample": "Exemple : « Rechercher des torrents {title} »",
+      "pageTitleSuffix": "Suffixe du titre des pages",
+      "pageTitleSuffixDescription": "Texte ajouté à la fin du titre des onglets. Texte brut uniquement.",
+      "quickSelect": "Sélection rapide",
+      "saveBranding": "Enregistrer l'identité",
+      "saveHomepageContent": "Enregistrer le contenu de l'accueil",
+      "saveTextBranding": "Enregistrer les textes",
+      "siteName": "Nom du site",
+      "siteNameColor": "Couleur du nom du site",
+      "siteNameDescription": "Affiché dans la barre de navigation et le titre du navigateur. Utilisez le texte enrichi pour personnaliser le style.",
+      "siteRules": "Règles du site",
+      "siteRulesDescription": "Règles et conditions affichées aux utilisateurs. Prend entièrement en charge le texte enrichi.",
+      "siteRulesPlaceholder": "Saisissez les règles et consignes du site...",
+      "statusBadge": "Badge de statut",
+      "statusBadgeDescription": "Texte affiché dans le badge au-dessus du titre.",
+      "statusBadgePlaceholder": "Tracker en ligne et opérationnel",
+      "subtitle": "Sous-titre",
+      "subtitleDescription": "Texte sous le nom du site. Laisser vide pour afficher la version. Prend en charge le texte enrichi.",
+      "subtitlePlaceholder": "Laisser vide pour afficher le numéro de version",
+      "textBranding": "Textes du site",
+      "textBrandingDescription": "Personnalisez les textes affichés sur l'ensemble du site. Utilisez l'éditeur de texte enrichi pour une mise en forme avancée.",
+      "title": "Identité du site",
+      "uploading": "Envoi en cours...",
+      "welcomeMessage": "Message de bienvenue",
+      "welcomeMessageDescription": "Message en texte enrichi affiché sur la page d'accueil ou le tableau de bord.",
+      "welcomeMessagePlaceholder": "Bienvenue dans notre communauté..."
+    },
+    "categories": {
+      "addFailed": "Échec de l'ajout de la catégorie",
+      "confirmDelete": "Voulez-vous vraiment supprimer cette catégorie ?",
+      "confirmSeed": "Les catégories recommandées compatibles Torznab vont être créées. Continuer ?",
+      "deleteFailed": "Échec de la suppression de la catégorie",
+      "empty": "Aucune catégorie définie",
+      "newCategoryPlaceholder": "Nom de la nouvelle catégorie...",
+      "newSubcategoryPlaceholder": "Nom de la nouvelle sous-catégorie...",
+      "newznabId": "ID Newznab",
+      "newznabIdHint": "ID de catégorie Newznab/Torznab (ex. : 2040 pour Movies/HD)",
+      "newznabIdTitle": "ID de catégorie Newznab/Torznab",
+      "nzId": "ID NZ",
+      "rootCategory": "Catégorie racine",
+      "seed": "Créer les catégories Torznab",
+      "seedFailed": "Échec de la création des catégories",
+      "seeded": "Aucune catégorie créée | 1 catégorie créée | {count} catégories créées",
+      "subcategoriesCount": "aucune sous-catégorie | 1 sous-catégorie | {count} sous-catégories",
+      "title": "Gestion des catégories",
+      "updateFailed": "Échec de la mise à jour de la catégorie"
+    },
+    "charts": {
+      "databaseSize": "Taille de la base de données (Mo)",
+      "day": "Jour",
+      "dbSize": "Taille BDD",
+      "growth": "Croissance des utilisateurs et des torrents",
+      "hour": "Heure",
+      "month": "Mois",
+      "peers": "Peers",
+      "peersSeeders": "Peers et seeders",
+      "redisMemory": "Mémoire Redis",
+      "redisMemoryUsage": "Mémoire Redis utilisée (Mo)",
+      "torrents": "Torrents",
+      "users": "Utilisateurs",
+      "view": "Vue :",
+      "week": "Semaine"
+    },
+    "invites": {
+      "allCodesCopied": "Tous les codes ont été copiés !",
+      "clickToCopy": "Cliquer pour copier",
+      "codeCopied": "Code copié !",
+      "copyAll": "Tout copier",
+      "copyCodeFailed": "Impossible de copier le code",
+      "copyCodesFailed": "Impossible de copier les codes",
+      "count": "Nombre",
+      "createdBy": "Créée par :",
+      "empty": "Aucune invitation trouvée",
+      "expires": "Expire le : {date}",
+      "expiresInDays": "Expiration en jours (facultatif)",
+      "generate": "Générer",
+      "generateFailed": "Échec de la génération des codes",
+      "generateTitle": "Générer des codes uniques",
+      "generatedCodes": "Codes générés",
+      "generatedToast": "Aucun code d'invitation généré | 1 code d'invitation généré | {count} codes d'invitation générés",
+      "grant": "Attribuer",
+      "grantFailed": "Échec de l'attribution des invitations",
+      "grantTitle": "Attribuer des invitations à un utilisateur",
+      "grantedToast": "Aucune invitation attribuée à l'utilisateur | 1 invitation attribuée à l'utilisateur | {count} invitations attribuées à l'utilisateur",
+      "statusExpired": "Expirée",
+      "statusPending": "En attente",
+      "statusUsed": "Utilisée",
+      "title": "Invitations",
+      "usedBy": "Utilisée par :",
+      "userId": "ID utilisateur"
+    },
+    "panic": {
+      "confirmText": "Toutes les données sensibles de la base de données vont être chiffrées. Elles resteront illisibles jusqu'à leur restauration avec le mot de passe de panique.",
+      "confirmTitle": "Confirmer le chiffrement de la base de données",
+      "encryptButton": "PANIQUE — Chiffrer la base de données",
+      "encryptFailed": "Échec du chiffrement",
+      "encryptNow": "Chiffrer maintenant",
+      "encryptedAt": "Chiffrée le : {date}",
+      "encryptedText": "Toutes les données sensibles sont actuellement chiffrées. Saisissez le mot de passe de panique pour rétablir l'accès.",
+      "encryptedTitle": "La base de données est chiffrée",
+      "encrypting": "Chiffrement...",
+      "intro": "Chiffre immédiatement toutes les données sensibles. Cette action rend les données illisibles sans le mot de passe de panique défini lors de la première inscription.",
+      "irreversible": "Cette action est irréversible sans le mot de passe de panique.",
+      "password": "Mot de passe de panique",
+      "passwordPlaceholder": "Saisissez le mot de passe de panique",
+      "restore": "Restaurer",
+      "restoreButton": "Restaurer la base de données",
+      "restoreFailed": "Échec de la restauration",
+      "restoreText": "Saisissez le mot de passe de panique défini lors de l'inscription du premier administrateur pour déchiffrer et restaurer toutes les données.",
+      "restoring": "Restauration...",
+      "title": "Verrouillage d'urgence"
+    },
+    "registration": {
+      "closed": "Fermées",
+      "currentStatus": "Statut actuel : {status}",
+      "defaultInvitesDescription": "Nombre de codes d'invitation attribués à chaque nouvel utilisateur lors de son inscription.",
+      "defaultInvitesLabel": "Invitations par défaut",
+      "gb": "Go",
+      "inviteOnlyDescription": "Exige un code d'invitation pour s'inscrire.",
+      "inviteOnlyLabel": "Mode sur invitation uniquement",
+      "minRatioDescription": "Les utilisateurs dont le ratio est inférieur à cette valeur ne pourront plus télécharger. Mettre 0 pour désactiver.",
+      "minRatioLabel": "Ratio minimum",
+      "open": "Ouvertes",
+      "openDescription": "Permet aux nouveaux utilisateurs de créer librement un compte.",
+      "openLabel": "Inscriptions ouvertes",
+      "starterCreditDescription": "Quantité d'upload offerte aux nouveaux utilisateurs pour éviter un blocage immédiat par le ratio.",
+      "starterCreditLabel": "Crédit de départ (Go)",
+      "statusClosed": "Les inscriptions sont fermées",
+      "statusInviteOnly": "Inscriptions sur invitation uniquement",
+      "statusOpen": "Les inscriptions sont ouvertes à tous",
+      "statusOpenInviteOptional": "Inscriptions ouvertes (invitation facultative)",
+      "title": "Inscriptions"
+    },
+    "system": {
+      "backupWarning": "Sauvegardez votre base de données avant la mise à jour",
+      "checkUpdates": "Rechercher des mises à jour",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordDescription": "Saisissez à nouveau votre nouveau mot de passe pour vérification.",
+      "confirmPasswordPlaceholder": "Confirmez le nouveau mot de passe",
+      "currentPassword": "Mot de passe actuel",
+      "currentPasswordDescription": "Le mot de passe que vous utilisez actuellement pour vous connecter à Grafana.",
+      "currentPasswordPlaceholder": "Saisissez le mot de passe Grafana actuel",
+      "currentVersion": "Version actuelle",
+      "downtimeWarning": "La mise à jour entraînera une brève interruption de service",
+      "grafanaFailed": "Échec de la mise à jour du mot de passe Grafana",
+      "grafanaIntro": "Modifiez le mot de passe administrateur de Grafana. Votre mot de passe actuel est requis.",
+      "grafanaSuccess": "Mot de passe Grafana mis à jour avec succès",
+      "grafanaTitle": "Mot de passe Grafana",
+      "hideInstructions": "Masquer les instructions de mise à jour",
+      "installedVersion": "Version de Trackarr installée",
+      "newPassword": "Nouveau mot de passe",
+      "newPasswordDescription": "Doit contenir au moins 8 caractères.",
+      "newPasswordPlaceholder": "Saisissez le nouveau mot de passe",
+      "published": "Publiée le {date}",
+      "showInstructions": "Afficher les instructions de mise à jour",
+      "step": "Étape {step} : {description}",
+      "upToDate": "Vous utilisez la dernière version",
+      "updateAvailable": "Mise à jour disponible : {version}",
+      "updateCommands": "Commandes de mise à jour",
+      "updateGrafanaPassword": "Mettre à jour le mot de passe Grafana",
+      "updating": "Mise à jour...",
+      "versionTitle": "Version et mises à jour",
+      "viewChangelog": "Voir le changelog"
+    },
+    "torznabUsers": {
+      "blockAccess": "Bloquer l'accès à l'API",
+      "blockConfirm": "Voulez-vous vraiment empêcher {username} d'utiliser l'API Torznab ? Cet utilisateur ne pourra plus rechercher ni télécharger via les applications *arr.",
+      "blockTitle": "Bloquer l'accès à l'API",
+      "blockUser": "Bloquer l'utilisateur",
+      "daysAgo": "il y a {n} j",
+      "empty": "Aucun utilisateur trouvé",
+      "hits": "{count} dépassement | {count} dépassement | {count} dépassements",
+      "hoursAgo": "il y a {n} h",
+      "justNow": "À l'instant",
+      "lastRequest": "Dernière requête",
+      "logsTitle": "Logs API - {username}",
+      "minutesAgo": "il y a {n} min",
+      "passkey": "Passkey",
+      "rateLimits": "Limites de débit",
+      "requests": "Requêtes",
+      "resetPasskey": "Réinitialiser la passkey",
+      "resetPasskeyConfirm": "Voulez-vous vraiment réinitialiser la passkey de {username} ? Cet utilisateur devra mettre à jour ses applications *arr avec la nouvelle passkey.",
+      "resetPasskeyTitle": "Réinitialiser la passkey",
+      "searchPlaceholder": "Rechercher des utilisateurs...",
+      "showing": "Affichage de {from} à {to} sur {total}",
+      "title": "Utilisateurs de l'API",
+      "viewLogs": "Voir les logs"
+    },
+    "stats": {
+      "activeTorrents": "Torrents actifs",
+      "totalPeers": "Total des peers",
+      "trackerStatus": "État du tracker",
+      "operational": "Opérationnel",
+      "offline": "Hors ligne"
+    },
+    "protocols": {
+      "title": "Protocoles"
+    },
+    "endpoints": {
+      "title": "Points d'accès",
+      "httpAnnounce": "Announce HTTP",
+      "udpAnnounce": "Announce UDP"
+    },
+    "torznabLogs": {
+      "title": "Requêtes récentes",
+      "totalRequests": "aucune requête | {count} requête au total | {count} requêtes au total",
+      "showing": "Affichage de {from} à {to} sur {total}",
+      "time": "Heure",
+      "function": "Fonction",
+      "query": "Requête",
+      "results": "Résultats",
+      "duration": "Durée",
+      "empty": "Aucun log disponible"
+    },
+    "torznabStats": {
+      "title": "Statistiques de l'API Torznab",
+      "totalRequests": "Total des requêtes",
+      "last24h": "Dernières 24 h",
+      "uniqueUsers": "Utilisateurs uniques",
+      "avgResponseTime": "Temps de réponse moyen",
+      "searchRequests": "Requêtes de recherche",
+      "tvSearches": "Recherches séries",
+      "movieSearches": "Recherches films",
+      "errors": "Erreurs"
+    },
+    "torznabConfig": {
+      "title": "Configuration de l'API",
+      "statusLabel": "État de l'API Torznab",
+      "statusDescription": "Active ou désactive l'API Torznab pour tous les utilisateurs. Une fois désactivée, les applications *arr ne pourront plus se connecter.",
+      "apiAccepting": "L'API accepte les requêtes",
+      "apiDisabled": "L'API est désactivée",
+      "loggingLabel": "Journalisation des requêtes",
+      "loggingDescription": "Enregistre toutes les requêtes de l'API pour le débogage et la supervision. Les logs sont conservés 7 jours.",
+      "loggingEnabled": "Journalisation activée",
+      "loggingDisabled": "Journalisation désactivée",
+      "endpointLabel": "Point d'accès de l'API",
+      "endpointDescription": "L'URL de base de l'API Torznab. Les utilisateurs l'ajoutent dans Prowlarr/Sonarr/Radarr.",
+      "copyUrl": "Copier l'URL"
+    },
+    "torznabBlacklist": {
+      "title": "IP et utilisateurs bloqués",
+      "rateLimitedIps": "IP limitées",
+      "noIps": "Aucune IP bloquée actuellement",
+      "expiresIn": "Expire dans",
+      "blockedUsers": "Utilisateurs API bloqués",
+      "noUsers": "Aucun utilisateur bloqué actuellement",
+      "unblock": "Débloquer",
+      "unblocking": "Déblocage...",
+      "expired": "Expiré",
+      "justNow": "À l'instant",
+      "minutesAgo": "il y a {n} min",
+      "hoursAgo": "il y a {n} h",
+      "daysAgo": "il y a {n} j"
+    },
+    "torznabRateLimit": {
+      "title": "Limitation de débit",
+      "intro": "Configurez les limites de requêtes pour éviter les abus de l'API. Ces limites s'appliquent par utilisateur (passkey) sur la fenêtre de temps définie.",
+      "windowLabel": "Fenêtre de temps",
+      "windowDescription": "La durée (en secondes) utilisée pour le calcul des limites.",
+      "seconds": "secondes",
+      "searchLabel": "Limite de requêtes de recherche",
+      "searchDescription": "Nombre maximal de requêtes de recherche (search, tvsearch, movie) par fenêtre et par utilisateur.",
+      "downloadLabel": "Limite de requêtes de téléchargement",
+      "downloadDescription": "Nombre maximal de téléchargements de fichiers .torrent par fenêtre et par utilisateur.",
+      "perWindow": "requêtes / {window}",
+      "strict": "Strict",
+      "default": "Par défaut",
+      "relaxed": "Souple",
+      "generous": "Généreux",
+      "presets": "Préréglages rapides",
+      "immediateNote": "Les modifications s'appliquent immédiatement aux nouvelles requêtes."
+    },
+    "tags": {
+      "add": "Ajouter un tag",
+      "empty": "Aucun tag configuré",
+      "addTitle": "Nouveau tag",
+      "placeholder": "ex. : 1080p",
+      "slug": "Slug",
+      "color": "Couleur",
+      "confirmDelete": "Supprimer ce tag ?"
+    },
+    "reports": {
+      "title": "Signalements",
+      "status": {
+        "pending": "En attente",
+        "resolved": "Résolu",
+        "dismissed": "Rejeté"
+      },
+      "by": "Par :",
+      "resolve": "Résoudre",
+      "dismiss": "Rejeter",
+      "empty": "Aucun signalement trouvé"
+    },
+    "homepage": {
+      "title": "Contenu de la page d'accueil",
+      "heroSection": "Section principale",
+      "heroTitleLabel": "Titre",
+      "heroTitleDescription": "Le titre principal de la page d'accueil. Utilisez le texte enrichi pour personnaliser le style, les couleurs et les polices.",
+      "subtitleLabel": "Sous-titre",
+      "subtitleDescription": "Une courte description sous le titre. Texte enrichi pris en charge.",
+      "subtitlePlaceholder": "Moteur de tracking P2P minimaliste et performant...",
+      "badgeLabel": "Badge d'état",
+      "badgeDescription": "Texte affiché dans le badge au-dessus du titre.",
+      "badgePlaceholder": "Tracker en ligne et opérationnel",
+      "featureBoxes": "Encadrés de fonctionnalités",
+      "featureLabel": "Fonctionnalité {n}",
+      "featureDescription": "Titre et description de cette carte de fonctionnalité. Texte enrichi pris en charge.",
+      "featureTitleLabel": "Titre",
+      "featureTitlePlaceholder": "Titre de la fonctionnalité",
+      "featureDescriptionPlaceholder": "Description de la fonctionnalité...",
+      "save": "Enregistrer le contenu de l'accueil"
+    },
+    "announcements": {
+      "title": "Annonce du site",
+      "enableLabel": "Activer l'annonce",
+      "enableDescription": "Affiche une bannière sous la barre de navigation principale sur toutes les pages.",
+      "messageLabel": "Message",
+      "messageDescription": "Le contenu de l'annonce. Restez bref et clair.",
+      "messagePlaceholder": "Saisissez le message de l'annonce...",
+      "typeLabel": "Type de bannière",
+      "typeDescription": "Détermine la couleur et l'icône de la bannière d'annonce.",
+      "typeInfo": "Info",
+      "typeWarning": "Avertissement",
+      "preview": "Aperçu en direct",
+      "save": "Enregistrer l'annonce"
+    },
+    "pending": {
+      "title": "Torrents en attente",
+      "uncategorized": "Sans catégorie",
+      "empty": "Aucun torrent en attente",
+      "allModerated": "Tous les torrents ont été modérés",
+      "approveFailed": "Impossible d'approuver le torrent",
+      "rejectPrompt": "Motif du rejet (facultatif) :",
+      "rejectFailed": "Impossible de rejeter le torrent"
+    },
+    "hnr": {
+      "title": "Suivi des Hit & Run",
+      "hitAndRun": "Hit & Run",
+      "pending": "En cours",
+      "checkNew": "Rechercher de nouveaux HnR",
+      "seedTime": "Temps de seed :",
+      "downloadedAt": "Téléchargé : {date}",
+      "clear": "Lever le HnR",
+      "exempt": "Exempter",
+      "exempted": "Exempté",
+      "empty": "Aucune entrée HnR trouvée"
+    },
+    "roles": {
+      "title": "Gestion des rôles",
+      "createTitle": "Nouveau rôle",
+      "namePlaceholder": "Nom du rôle...",
+      "color": "Couleur",
+      "skipModeration": "Sans modération",
+      "canBypass": "Peut contourner la modération",
+      "requiresModeration": "Modération requise",
+      "skipMod": "Sans modo",
+      "delete": "Supprimer le rôle",
+      "empty": "Aucun rôle créé pour l'instant",
+      "createFailed": "Impossible de créer le rôle",
+      "updateFailed": "Impossible de mettre à jour le rôle",
+      "confirmDelete": "Voulez-vous vraiment supprimer le rôle « {name} » ?",
+      "deleteFailed": "Impossible de supprimer le rôle"
+    },
+    "users": {
+      "title": "Gestion des utilisateurs",
+      "searchPlaceholder": "Rechercher par nom d'utilisateur ou e-mail...",
+      "ban": "Bannir",
+      "noRole": "Aucun rôle",
+      "mod": "Modo",
+      "empty": "Aucun utilisateur trouvé",
+      "updateRoleFailed": "Impossible de mettre à jour le rôle de l'utilisateur",
+      "confirmBan": "Voulez-vous vraiment bannir {name} ?",
+      "confirmUnban": "Voulez-vous vraiment débannir {name} ?",
+      "banFailed": "Impossible de bannir l'utilisateur",
+      "unbanFailed": "Impossible de débannir l'utilisateur",
+      "assignRoleFailed": "Impossible d'attribuer le rôle"
+    }
+  },
   "time": {
     "justNow": "à l'instant",
     "minutesAgo": "il y a {count} min",

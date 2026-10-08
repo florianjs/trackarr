@@ -2,7 +2,7 @@
   <div class="space-y-4">
     <!-- Time Range Selector -->
     <div class="flex items-center gap-2">
-      <span class="text-sm text-text-muted">View:</span>
+      <span class="text-sm text-text-muted">{{ t('admin.charts.view') }}</span>
       <div class="flex bg-bg-tertiary rounded-lg p-1 gap-1">
         <button
           v-for="range in timeRanges"
@@ -26,7 +26,7 @@
         <h3
           class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
         >
-          Users & Torrents Growth
+          {{ t('admin.charts.growth') }}
         </h3>
         <div class="h-64">
           <Line :data="growthData" :options="chartOptions" />
@@ -36,7 +36,7 @@
         <h3
           class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
         >
-          Peers & Seeders
+          {{ t('admin.charts.peersSeeders') }}
         </h3>
         <div class="h-64">
           <Line :data="peersData" :options="chartOptions" />
@@ -46,7 +46,7 @@
         <h3
           class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
         >
-          Redis Memory Usage (MB)
+          {{ t('admin.charts.redisMemoryUsage') }}
         </h3>
         <div class="h-64">
           <Line :data="redisData" :options="chartOptions" />
@@ -56,7 +56,7 @@
         <h3
           class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
         >
-          Database Size (MB)
+          {{ t('admin.charts.databaseSize') }}
         </h3>
         <div class="h-64">
           <Line :data="dbData" :options="chartOptions" />
@@ -91,18 +91,20 @@ ChartJS.register(
   Filler
 );
 
+const { t } = useI18n();
+
 const props = defineProps<{
   history: any[];
 }>();
 
 type TimeRange = 'hour' | 'day' | 'week' | 'month';
 
-const timeRanges = [
-  { value: 'hour' as TimeRange, label: 'Hour' },
-  { value: 'day' as TimeRange, label: 'Day' },
-  { value: 'week' as TimeRange, label: 'Week' },
-  { value: 'month' as TimeRange, label: 'Month' },
-];
+const timeRanges = computed(() => [
+  { value: 'hour' as TimeRange, label: t('admin.charts.hour') },
+  { value: 'day' as TimeRange, label: t('admin.charts.day') },
+  { value: 'week' as TimeRange, label: t('admin.charts.week') },
+  { value: 'month' as TimeRange, label: t('admin.charts.month') },
+]);
 
 const selectedRange = ref<TimeRange>('day');
 
@@ -187,7 +189,7 @@ const growthData = computed(() => ({
   labels: filteredHistory.value.map((h) => formatDate(h.createdAt)),
   datasets: [
     {
-      label: 'Users',
+      label: t('admin.charts.users'),
       data: filteredHistory.value.map((h) => h.usersCount),
       borderColor: '#3b82f6',
       backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -195,7 +197,7 @@ const growthData = computed(() => ({
       tension: 0.4,
     },
     {
-      label: 'Torrents',
+      label: t('admin.charts.torrents'),
       data: filteredHistory.value.map((h) => h.torrentsCount),
       borderColor: '#10b981',
       backgroundColor: 'rgba(16, 185, 129, 0.1)',
@@ -209,7 +211,7 @@ const peersData = computed(() => ({
   labels: filteredHistory.value.map((h) => formatDate(h.createdAt)),
   datasets: [
     {
-      label: 'Peers',
+      label: t('admin.charts.peers'),
       data: filteredHistory.value.map((h) => h.peersCount),
       borderColor: '#f59e0b',
       backgroundColor: 'rgba(245, 158, 11, 0.1)',
@@ -217,7 +219,7 @@ const peersData = computed(() => ({
       tension: 0.4,
     },
     {
-      label: 'Seeders',
+      label: t('common.seeders'),
       data: filteredHistory.value.map((h) => h.seedersCount),
       borderColor: '#8b5cf6',
       backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -231,7 +233,7 @@ const redisData = computed(() => ({
   labels: filteredHistory.value.map((h) => formatDate(h.createdAt)),
   datasets: [
     {
-      label: 'Redis Memory',
+      label: t('admin.charts.redisMemory'),
       data: filteredHistory.value.map((h) =>
         Number((h.redisMemoryUsage / 1024 / 1024).toFixed(2))
       ),
@@ -247,7 +249,7 @@ const dbData = computed(() => ({
   labels: filteredHistory.value.map((h) => formatDate(h.createdAt)),
   datasets: [
     {
-      label: 'DB Size',
+      label: t('admin.charts.dbSize'),
       data: filteredHistory.value.map((h) =>
         Number((h.dbSize / 1024 / 1024).toFixed(2))
       ),

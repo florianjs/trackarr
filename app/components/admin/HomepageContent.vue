@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Homepage Content
+          {{ t('admin.homepage.title') }}
         </h3>
       </div>
     </div>
@@ -16,12 +16,12 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
         >
-          Hero Section
+          {{ t('admin.homepage.heroSection') }}
         </p>
 
         <SettingsGroup
-          label="Title"
-          description="The main headline on the homepage. Use rich text for custom styling, colors, and fonts."
+          :label="t('admin.homepage.heroTitleLabel')"
+          :description="t('admin.homepage.heroTitleDescription')"
         >
           <WysiwygEditor
             v-model="heroTitle"
@@ -31,26 +31,26 @@
         </SettingsGroup>
 
         <SettingsGroup
-          label="Subtitle"
-          description="A short description below the title. Supports rich text."
+          :label="t('admin.homepage.subtitleLabel')"
+          :description="t('admin.homepage.subtitleDescription')"
         >
           <WysiwygEditor
             v-model="heroSubtitle"
-            placeholder="High-performance, minimalist P2P tracking engine..."
+            :placeholder="t('admin.homepage.subtitlePlaceholder')"
             :maxLength="1000"
           />
         </SettingsGroup>
 
         <SettingsGroup
-          label="Status Badge"
-          description="Text shown in the pill badge above the title."
+          :label="t('admin.homepage.badgeLabel')"
+          :description="t('admin.homepage.badgeDescription')"
         >
           <input
             v-model="statusBadgeText"
             type="text"
             maxlength="100"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Tracker Online & Operational"
+            :placeholder="t('admin.homepage.badgePlaceholder')"
           />
         </SettingsGroup>
       </div>
@@ -60,35 +60,35 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
         >
-          Feature Boxes
+          {{ t('admin.homepage.featureBoxes') }}
         </p>
 
         <SettingsGroup
           v-for="(feature, index) in features"
           :key="index"
-          :label="`Feature ${index + 1}`"
-          description="Title and description for this feature card. Supports rich text."
+          :label="t('admin.homepage.featureLabel', { n: index + 1 })"
+          :description="t('admin.homepage.featureDescription')"
         >
           <div class="space-y-3">
             <div>
               <label
                 class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
-                >Title</label
+                >{{ t('admin.homepage.featureTitleLabel') }}</label
               >
               <WysiwygEditor
                 v-model="feature.title"
-                placeholder="Feature title"
+                :placeholder="t('admin.homepage.featureTitlePlaceholder')"
                 :maxLength="300"
               />
             </div>
             <div>
               <label
                 class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
-                >Description</label
+                >{{ t('common.description') }}</label
               >
               <WysiwygEditor
                 v-model="feature.description"
-                placeholder="Feature description..."
+                :placeholder="t('admin.homepage.featureDescriptionPlaceholder')"
                 :maxLength="1000"
               />
             </div>
@@ -109,13 +109,21 @@
       >
         <Icon v-if="loading" name="ph:circle-notch" class="animate-spin" />
         <Icon v-else-if="saved" name="ph:check-bold" />
-        {{ loading ? 'Saving...' : saved ? 'Saved' : 'Save Homepage Content' }}
+        {{
+          loading
+            ? t('common.saving')
+            : saved
+              ? t('common.saved')
+              : t('admin.homepage.save')
+        }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 const heroTitle = ref('Trackarr');
 const heroSubtitle = ref(
   'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.'

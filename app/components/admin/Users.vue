@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          User Management
+          {{ t('admin.users.title') }}
         </h3>
       </div>
     </div>
@@ -15,7 +15,7 @@
         <input
           v-model="userSearchQuery"
           type="text"
-          placeholder="Search by username or email..."
+          :placeholder="t('admin.users.searchPlaceholder')"
           class="input flex-1 !py-2 text-xs font-bold uppercase tracking-wider"
           @keyup.enter="searchUsers"
         />
@@ -30,7 +30,7 @@
             class="animate-spin"
           />
           <Icon v-else name="ph:magnifying-glass-bold" />
-          <span>Search</span>
+          <span>{{ t('common.search') }}</span>
         </button>
       </div>
 
@@ -60,7 +60,7 @@
             <div class="flex items-center gap-2">
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                >Ban</label
+                >{{ t('admin.users.ban') }}</label
               >
               <button
                 @click="toggleBan(u)"
@@ -78,14 +78,14 @@
             <div v-if="user?.isAdmin && roles.length > 0" class="flex items-center gap-2">
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                >Role</label
+                >{{ t('common.role') }}</label
               >
               <select
                 :value="u.roleId || ''"
                 @change="assignRole(u, ($event.target as HTMLSelectElement).value)"
                 class="bg-bg-primary border border-border rounded px-2 py-1 text-[10px] font-bold text-text-primary focus:outline-none focus:border-accent-primary"
               >
-                <option value="">No Role</option>
+                <option value="">{{ t('admin.users.noRole') }}</option>
                 <option v-for="role in roles" :key="role.id" :value="role.id">
                   {{ role.name }}
                 </option>
@@ -94,7 +94,7 @@
             <div v-if="user?.isAdmin" class="flex items-center gap-2">
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                >Mod</label
+                >{{ t('admin.users.mod') }}</label
               >
               <button
                 @click="toggleUserRole(u, 'isModerator')"
@@ -114,7 +114,7 @@
             <div v-if="user?.isAdmin" class="flex items-center gap-2">
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                >Admin</label
+                >{{ t('common.admin') }}</label
               >
               <button
                 @click="toggleUserRole(u, 'isAdmin')"
@@ -141,7 +141,7 @@
         <p
           class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
         >
-          No users found
+          {{ t('admin.users.empty') }}
         </p>
       </div>
     </div>
@@ -156,6 +156,7 @@ interface Role {
   canUploadWithoutModeration: boolean;
 }
 
+const { t } = useI18n();
 const { user } = useUserSession();
 const userSearchQuery = ref('');
 const isSearching = ref(false);
@@ -205,13 +206,17 @@ async function toggleUserRole(user: any, role: 'isAdmin' | 'isModerator') {
       foundUsers.value[index] = { ...foundUsers.value[index], ...updatedUser };
     }
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to update user role');
+    alert(error.data?.message || t('admin.users.updateRoleFailed'));
   }
 }
 
 async function toggleBan(user: any) {
   const action = user.isBanned ? 'unban' : 'ban';
-  if (!confirm(`Are you sure you want to ${action} ${user.username}?`)) return;
+  const confirmMessage =
+    action === 'ban'
+      ? t('admin.users.confirmBan', { name: user.username })
+      : t('admin.users.confirmUnban', { name: user.username });
+  if (!confirm(confirmMessage)) return;
 
   try {
     await $fetch(`/api/admin/users/${user.id}/${action}`, {
@@ -225,7 +230,12 @@ async function toggleBan(user: any) {
       foundUsers.value[index].isBanned = !user.isBanned;
     }
   } catch (error: any) {
-    alert(error.data?.message || `Failed to ${action} user`);
+    alert(
+      error.data?.message ||
+        (action === 'ban'
+          ? t('admin.users.banFailed')
+          : t('admin.users.unbanFailed'))
+    );
   }
 }
 
@@ -241,7 +251,7 @@ async function assignRole(targetUser: any, roleId: string) {
       foundUsers.value[index].roleId = roleId || null;
     }
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to assign role');
+    alert(error.data?.message || t('admin.users.assignRoleFailed'));
   }
 }
 </script>

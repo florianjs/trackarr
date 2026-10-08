@@ -1,24 +1,24 @@
 <template>
   <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
     <StatsCard
-      title="Active Torrents"
+      :title="t('admin.stats.activeTorrents')"
       :value="stats?.live?.torrents ?? 0"
       icon="ph:package"
     />
     <StatsCard
-      title="Total Peers"
+      :title="t('admin.stats.totalPeers')"
       :value="stats?.cached?.peers ?? 0"
       icon="ph:users-three"
     />
     <StatsCard
-      title="Seeders"
+      :title="t('common.seeders')"
       :value="stats?.cached?.seeders ?? 0"
       icon="ph:plant"
       variant="success"
     />
     <StatsCard
-      title="Tracker Status"
-      :value="stats?.status === 'running' ? 'Operational' : 'Offline'"
+      :title="t('admin.stats.trackerStatus')"
+      :value="stats?.status === 'running' ? t('admin.stats.operational') : t('admin.stats.offline')"
       :icon="stats?.status === 'running' ? 'ph:activity' : 'ph:warning-circle'"
       :variant="stats?.status === 'running' ? 'success' : 'error'"
     />
@@ -26,6 +26,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 defineProps<{
   stats: any;
 }>();

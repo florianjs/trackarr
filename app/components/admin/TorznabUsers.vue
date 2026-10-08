@@ -7,14 +7,14 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            API Users
+            {{ t('admin.torznabUsers.title') }}
           </h3>
         </div>
         <button
           @click="() => refresh()"
           :disabled="loading"
           class="p-1.5 bg-bg-tertiary border border-border rounded hover:border-white/20 transition-colors"
-          title="Refresh"
+          :title="t('common.refresh')"
         >
           <Icon
             name="ph:arrows-clockwise"
@@ -34,7 +34,7 @@
           <input
             v-model="search"
             type="text"
-            placeholder="Search users..."
+            :placeholder="t('admin.torznabUsers.searchPlaceholder')"
             class="w-full bg-bg-tertiary border border-border rounded pl-9 pr-3 py-2 text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-white/20"
           />
         </div>
@@ -48,32 +48,32 @@
               <th
                 class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
               >
-                User
+                {{ t('common.user') }}
               </th>
               <th
                 class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
               >
-                Passkey
+                {{ t('admin.torznabUsers.passkey') }}
               </th>
               <th
                 class="text-center text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
               >
-                Requests
+                {{ t('admin.torznabUsers.requests') }}
               </th>
               <th
                 class="text-center text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
               >
-                Rate Limits
+                {{ t('admin.torznabUsers.rateLimits') }}
               </th>
               <th
                 class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
               >
-                Last Request
+                {{ t('admin.torznabUsers.lastRequest') }}
               </th>
               <th
                 class="text-right text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
               >
-                Actions
+                {{ t('common.actions') }}
               </th>
             </tr>
           </thead>
@@ -119,7 +119,7 @@
                   v-if="(user.apiStats?.rateLimitHits || 0) > 0"
                   class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-500/20 text-yellow-400"
                 >
-                  {{ user.apiStats?.rateLimitHits }} hits
+                  {{ t('admin.torznabUsers.hits', user.apiStats?.rateLimitHits ?? 0) }}
                 </span>
                 <span v-else class="text-xs text-text-muted">—</span>
               </td>
@@ -128,7 +128,7 @@
                   {{
                     user.apiStats?.lastRequest
                       ? formatRelativeTime(user.apiStats.lastRequest)
-                      : 'Never'
+                      : t('common.never')
                   }}
                 </span>
               </td>
@@ -137,21 +137,21 @@
                   <button
                     @click="showUserLogs(user)"
                     class="p-1.5 text-text-muted hover:text-text-primary hover:bg-bg-tertiary rounded transition-colors"
-                    title="View logs"
+                    :title="t('admin.torznabUsers.viewLogs')"
                   >
                     <Icon name="ph:list" class="text-sm" />
                   </button>
                   <button
                     @click="confirmResetPasskey(user)"
                     class="p-1.5 text-text-muted hover:text-yellow-400 hover:bg-bg-tertiary rounded transition-colors"
-                    title="Reset passkey"
+                    :title="t('admin.torznabUsers.resetPasskeyTitle')"
                   >
                     <Icon name="ph:key" class="text-sm" />
                   </button>
                   <button
                     @click="confirmBlockUser(user)"
                     class="p-1.5 text-text-muted hover:text-red-400 hover:bg-bg-tertiary rounded transition-colors"
-                    title="Block API access"
+                    :title="t('admin.torznabUsers.blockTitle')"
                   >
                     <Icon name="ph:prohibit" class="text-sm" />
                   </button>
@@ -160,7 +160,7 @@
             </tr>
             <tr v-if="!loading && filteredUsers.length === 0">
               <td colspan="6" class="py-8 text-center text-text-muted text-sm">
-                No users found
+                {{ t('admin.torznabUsers.empty') }}
               </td>
             </tr>
           </tbody>
@@ -173,8 +173,13 @@
         class="flex items-center justify-between mt-4 pt-4 border-t border-border"
       >
         <span class="text-xs text-text-muted">
-          Showing {{ offset + 1 }} -
-          {{ Math.min(offset + limit, data.total) }} of {{ data.total }}
+          {{
+            t('admin.torznabUsers.showing', {
+              from: offset + 1,
+              to: Math.min(offset + limit, data.total),
+              total: data.total,
+            })
+          }}
         </span>
         <div class="flex items-center gap-2">
           <button
@@ -182,14 +187,14 @@
             :disabled="offset === 0"
             class="px-3 py-1 bg-bg-tertiary border border-border rounded text-xs disabled:opacity-50 hover:border-white/20 transition-colors"
           >
-            Previous
+            {{ t('common.previous') }}
           </button>
           <button
             @click="nextPage"
             :disabled="offset + limit >= data.total"
             class="px-3 py-1 bg-bg-tertiary border border-border rounded text-xs disabled:opacity-50 hover:border-white/20 transition-colors"
           >
-            Next
+            {{ t('common.next') }}
           </button>
         </div>
       </div>
@@ -209,7 +214,7 @@
             class="flex items-center justify-between p-4 border-b border-border"
           >
             <h3 class="text-sm font-bold text-text-primary">
-              API Logs - {{ selectedUser.username }}
+              {{ t('admin.torznabUsers.logsTitle', { username: selectedUser.username }) }}
             </h3>
             <button
               @click="selectedUser = null"
@@ -250,7 +255,7 @@
               @click="confirmAction = null"
               class="px-4 py-2 bg-bg-tertiary border border-border rounded text-sm hover:border-white/20 transition-colors"
             >
-              Cancel
+              {{ t('common.cancel') }}
             </button>
             <button
               @click="executeAction"
@@ -277,6 +282,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface ApiStats {
   totalRequests: number;
   searchRequests: number;
@@ -359,9 +366,11 @@ async function showUserLogs(user: TorznabUser) {
 
 function confirmResetPasskey(user: TorznabUser) {
   confirmAction.value = {
-    title: 'Reset Passkey',
-    message: `Are you sure you want to reset the passkey for ${user.username}? They will need to update their *arr apps with the new passkey.`,
-    confirmText: 'Reset Passkey',
+    title: t('admin.torznabUsers.resetPasskey'),
+    message: t('admin.torznabUsers.resetPasskeyConfirm', {
+      username: user.username,
+    }),
+    confirmText: t('admin.torznabUsers.resetPasskey'),
     variant: 'warning',
     action: async () => {
       await $fetch(`/api/admin/torznab/users/${user.id}/reset`, {
@@ -374,9 +383,9 @@ function confirmResetPasskey(user: TorznabUser) {
 
 function confirmBlockUser(user: TorznabUser) {
   confirmAction.value = {
-    title: 'Block API Access',
-    message: `Are you sure you want to block ${user.username} from using the Torznab API? They won't be able to search or download via *arr apps.`,
-    confirmText: 'Block User',
+    title: t('admin.torznabUsers.blockAccess'),
+    message: t('admin.torznabUsers.blockConfirm', { username: user.username }),
+    confirmText: t('admin.torznabUsers.blockUser'),
     variant: 'danger',
     action: async () => {
       await $fetch(`/api/admin/torznab/users/${user.id}/block`, {
@@ -403,9 +412,11 @@ async function executeAction() {
 
 function formatRelativeTime(timestamp: number): string {
   const seconds = Math.floor((Date.now() - timestamp) / 1000);
-  if (seconds < 60) return 'Just now';
-  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
-  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
-  return `${Math.floor(seconds / 86400)}d ago`;
+  if (seconds < 60) return t('admin.torznabUsers.justNow');
+  if (seconds < 3600)
+    return t('admin.torznabUsers.minutesAgo', { n: Math.floor(seconds / 60) });
+  if (seconds < 86400)
+    return t('admin.torznabUsers.hoursAgo', { n: Math.floor(seconds / 3600) });
+  return t('admin.torznabUsers.daysAgo', { n: Math.floor(seconds / 86400) });
 }
 </script>

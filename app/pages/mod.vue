@@ -7,7 +7,7 @@
           <h2
             class="text-xs font-bold text-text-muted uppercase tracking-widest"
           >
-            Moderation
+            {{ t('mod.layout.title') }}
           </h2>
         </div>
 
@@ -53,43 +53,44 @@ definePageMeta({
   middleware: 'moderator' as any,
 });
 
+const { t } = useI18n();
 const route = useRoute();
 
-const menuItems = [
+const menuItems = computed(() => [
   {
-    label: 'Dashboard',
+    label: t('mod.nav.dashboard.label'),
     path: '/mod',
     icon: 'ph:shield-check',
-    description: 'Moderation overview and quick actions',
+    description: t('mod.nav.dashboard.description'),
   },
   {
-    label: 'Pending Torrents',
+    label: t('mod.nav.pending.label'),
     path: '/mod/pending',
     icon: 'ph:clock',
-    description: 'Review and approve pending torrent uploads',
+    description: t('mod.nav.pending.description'),
   },
   {
-    label: 'Users',
+    label: t('mod.nav.users.label'),
     path: '/mod/users',
     icon: 'ph:users',
-    description: 'Manage user accounts and bans',
+    description: t('mod.nav.users.description'),
   },
   {
-    label: 'Reports',
+    label: t('mod.nav.reports.label'),
     path: '/mod/reports',
     icon: 'ph:flag',
-    description: 'Review and handle user reports',
+    description: t('mod.nav.reports.description'),
   },
   {
-    label: 'Hit & Run',
+    label: t('mod.nav.hnr.label'),
     path: '/mod/hnr',
     icon: 'ph:lightning',
-    description: 'Monitor and manage H&R violations',
+    description: t('mod.nav.hnr.description'),
   },
-];
+]);
 
 const currentItem = computed(
-  () => menuItems.find((item) => item.path === route.path) || menuItems[0]
+  () => menuItems.value.find((item) => item.path === route.path) || menuItems.value[0]
 );
 
 const currentTitle = computed(() => currentItem.value?.label || '');

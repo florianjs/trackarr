@@ -6,32 +6,32 @@
           <th
             class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
           >
-            Time
+            {{ t('admin.torznabLogs.time') }}
           </th>
           <th
             class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
           >
-            User
+            {{ t('common.user') }}
           </th>
           <th
             class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
           >
-            Function
+            {{ t('admin.torznabLogs.function') }}
           </th>
           <th
             class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
           >
-            Query
+            {{ t('admin.torznabLogs.query') }}
           </th>
           <th
             class="text-center text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
           >
-            Results
+            {{ t('admin.torznabLogs.results') }}
           </th>
           <th
             class="text-right text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
           >
-            Time
+            {{ t('admin.torznabLogs.duration') }}
           </th>
         </tr>
       </thead>
@@ -87,7 +87,7 @@
               class="text-xs text-red-400"
               :title="log.error"
             >
-              Error
+              {{ t('common.error') }}
             </span>
             <span v-else class="text-xs text-text-muted">
               {{ log.resultCount }}
@@ -104,7 +104,7 @@
         </tr>
         <tr v-if="!loading && (!logs || logs.length === 0)">
           <td colspan="6" class="py-8 text-center text-text-muted text-sm">
-            No logs available
+            {{ t('admin.torznabLogs.empty') }}
           </td>
         </tr>
       </tbody>
@@ -113,6 +113,8 @@
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
+
 interface LogEntry {
   timestamp: number;
   passkey: string;
@@ -133,7 +135,7 @@ defineProps<{
 
 function formatTime(timestamp: number): string {
   const date = new Date(timestamp);
-  return date.toLocaleTimeString('en-US', {
+  return date.toLocaleTimeString(locale.value, {
     hour: '2-digit',
     minute: '2-digit',
     second: '2-digit',

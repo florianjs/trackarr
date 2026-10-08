@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Endpoints
+          {{ t('admin.endpoints.title') }}
         </h3>
       </div>
     </div>
@@ -14,7 +14,7 @@
       <div>
         <label
           class="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1"
-          >HTTP Announce</label
+          >{{ t('admin.endpoints.httpAnnounce') }}</label
         >
         <div class="flex items-center gap-2 mt-1">
           <code
@@ -33,7 +33,7 @@
       <div>
         <label
           class="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1"
-          >UDP Announce</label
+          >{{ t('admin.endpoints.udpAnnounce') }}</label
         >
         <div class="flex items-center gap-2 mt-1">
           <code
@@ -73,6 +73,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 const config = useRuntimeConfig();
 
 const endpoints = computed(() => ({

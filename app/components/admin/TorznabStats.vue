@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Torznab API Statistics
+          {{ t('admin.torznabStats.title') }}
         </h3>
       </div>
     </div>
@@ -29,7 +29,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Total Requests
+            {{ t('admin.torznabStats.totalRequests') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ formatNumber(stats?.totalRequests || 0) }}
@@ -40,7 +40,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Last 24h
+            {{ t('admin.torznabStats.last24h') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ formatNumber(stats?.last24hRequests || 0) }}
@@ -51,7 +51,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Unique Users
+            {{ t('admin.torznabStats.uniqueUsers') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ formatNumber(stats?.uniqueUsers || 0) }}
@@ -62,7 +62,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Avg Response Time
+            {{ t('admin.torznabStats.avgResponseTime') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ (stats?.avgResponseTime || 0).toFixed(0)
@@ -74,7 +74,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Search Requests
+            {{ t('admin.torznabStats.searchRequests') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ formatNumber(stats?.searchRequests || 0) }}
@@ -85,7 +85,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            TV Searches
+            {{ t('admin.torznabStats.tvSearches') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ formatNumber(stats?.tvSearchRequests || 0) }}
@@ -96,7 +96,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Movie Searches
+            {{ t('admin.torznabStats.movieSearches') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">
             {{ formatNumber(stats?.movieSearchRequests || 0) }}
@@ -107,7 +107,7 @@
           <p
             class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
           >
-            Errors
+            {{ t('admin.torznabStats.errors') }}
           </p>
           <p
             class="text-2xl font-bold"
@@ -122,6 +122,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface TorznabStats {
   totalRequests: number;
   searchRequests: number;

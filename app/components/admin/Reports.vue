@@ -7,7 +7,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Reports
+            {{ t('admin.reports.title') }}
           </h3>
           <span
             v-if="pendingCount > 0"
@@ -18,10 +18,10 @@
         </div>
         <div class="flex gap-2">
           <select v-model="statusFilter" class="input !py-1 text-xs">
-            <option value="">All</option>
-            <option value="pending">Pending</option>
-            <option value="resolved">Resolved</option>
-            <option value="dismissed">Dismissed</option>
+            <option value="">{{ t('common.all') }}</option>
+            <option value="pending">{{ t('admin.reports.status.pending') }}</option>
+            <option value="resolved">{{ t('admin.reports.status.resolved') }}</option>
+            <option value="dismissed">{{ t('admin.reports.status.dismissed') }}</option>
           </select>
         </div>
       </div>
@@ -40,7 +40,7 @@
                   class="px-2 py-0.5 text-[10px] font-bold uppercase rounded"
                   :class="getStatusClass(report.status)"
                 >
-                  {{ report.status }}
+                  {{ statusLabel(report.status) }}
                 </span>
                 <span
                   class="px-2 py-0.5 text-[10px] font-mono bg-bg-primary rounded border border-border"
@@ -56,7 +56,7 @@
               </p>
               <div class="flex items-center gap-4 text-[10px] text-text-muted">
                 <span>
-                  By:
+                  {{ t('admin.reports.by') }}
                   <span class="font-mono">{{ report.reporter?.username }}</span>
                 </span>
                 <span>
@@ -68,14 +68,14 @@
               <button
                 @click="resolveReport(report.id, 'resolved')"
                 class="p-1.5 rounded bg-success/10 text-success hover:bg-success/20 transition-colors"
-                title="Resolve"
+                :title="t('admin.reports.resolve')"
               >
                 <Icon name="ph:check-bold" class="w-4 h-4" />
               </button>
               <button
                 @click="resolveReport(report.id, 'dismissed')"
                 class="p-1.5 rounded bg-text-muted/10 text-text-muted hover:bg-text-muted/20 transition-colors"
-                title="Dismiss"
+                :title="t('admin.reports.dismiss')"
               >
                 <Icon name="ph:x-bold" class="w-4 h-4" />
               </button>
@@ -84,7 +84,7 @@
         </div>
       </div>
       <p v-else class="text-xs text-text-muted text-center py-4">
-        No reports found
+        {{ t('admin.reports.empty') }}
       </p>
 
       <!-- Pagination -->
@@ -97,7 +97,7 @@
           :disabled="page <= 1"
           class="btn btn-secondary !px-3 !py-1 text-[10px]"
         >
-          Prev
+          {{ t('common.previous') }}
         </button>
         <span class="text-xs text-text-muted self-center">
           {{ page }} / {{ reports.pagination.pages }}
@@ -107,7 +107,7 @@
           :disabled="page >= reports.pagination.pages"
           class="btn btn-secondary !px-3 !py-1 text-[10px]"
         >
-          Next
+          {{ t('common.next') }}
         </button>
       </div>
     </div>
@@ -115,6 +115,8 @@
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
+
 interface Report {
   id: string;
   reporterId: string;
@@ -170,8 +172,21 @@ function getStatusClass(status: string) {
   }
 }
 
+function statusLabel(status: string) {
+  switch (status) {
+    case 'pending':
+      return t('admin.reports.status.pending');
+    case 'resolved':
+      return t('admin.reports.status.resolved');
+    case 'dismissed':
+      return t('admin.reports.status.dismissed');
+    default:
+      return status;
+  }
+}
+
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',

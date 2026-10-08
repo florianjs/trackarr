@@ -7,7 +7,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Tags
+            {{ t('common.tags') }}
           </h3>
         </div>
         <button
@@ -15,7 +15,7 @@
           class="btn btn-primary !px-3 !py-1 text-[10px]"
         >
           <Icon name="ph:plus-bold" class="mr-1" />
-          Add Tag
+          {{ t('admin.tags.add') }}
         </button>
       </div>
     </div>
@@ -44,7 +44,7 @@
         </div>
       </div>
       <p v-else class="text-xs text-text-muted text-center py-4">
-        No tags configured
+        {{ t('admin.tags.empty') }}
       </p>
     </div>
 
@@ -60,7 +60,7 @@
             <h3
               class="text-xs font-bold uppercase tracking-wider text-text-primary"
             >
-              Add New Tag
+              {{ t('admin.tags.addTitle') }}
             </h3>
           </div>
           <div class="card-body space-y-4">
@@ -68,33 +68,33 @@
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 block"
               >
-                Name
+                {{ t('common.name') }}
               </label>
               <input
                 v-model="newTag.name"
                 type="text"
                 class="input w-full"
-                placeholder="e.g., 1080p"
+                :placeholder="t('admin.tags.placeholder')"
               />
             </div>
             <div>
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 block"
               >
-                Slug
+                {{ t('admin.tags.slug') }}
               </label>
               <input
                 v-model="newTag.slug"
                 type="text"
                 class="input w-full font-mono"
-                placeholder="e.g., 1080p"
+                :placeholder="t('admin.tags.placeholder')"
               />
             </div>
             <div>
               <label
                 class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 block"
               >
-                Color
+                {{ t('admin.tags.color') }}
               </label>
               <div class="flex gap-2">
                 <input
@@ -112,7 +112,7 @@
             </div>
             <div class="flex justify-end gap-2 pt-2">
               <button @click="showAddModal = false" class="btn btn-secondary">
-                Cancel
+                {{ t('common.cancel') }}
               </button>
               <button
                 @click="createTag"
@@ -124,7 +124,7 @@
                   name="ph:circle-notch"
                   class="animate-spin mr-1"
                 />
-                Create
+                {{ t('common.create') }}
               </button>
             </div>
           </div>
@@ -135,6 +135,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface Tag {
   id: string;
   name: string;
@@ -181,7 +183,7 @@ async function createTag() {
 }
 
 async function deleteTag(id: string) {
-  if (!confirm('Delete this tag?')) return;
+  if (!confirm(t('admin.tags.confirmDelete'))) return;
   try {
     await $fetch(`/api/admin/tags/${id}`, { method: 'DELETE' });
     await refresh();

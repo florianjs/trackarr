@@ -6,15 +6,15 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Site Announcement
+          {{ t('admin.announcements.title') }}
         </h3>
       </div>
     </div>
     <div class="card-body space-y-6">
       <!-- Enable Toggle -->
       <SettingsGroup
-        label="Enable Announcement"
-        description="Display a banner below the main navigation bar on all pages."
+        :label="t('admin.announcements.enableLabel')"
+        :description="t('admin.announcements.enableDescription')"
       >
         <div class="flex items-center gap-3">
           <button
@@ -32,15 +32,15 @@
             />
           </button>
           <span class="text-xs text-text-muted">
-            {{ enabled ? 'Enabled' : 'Disabled' }}
+            {{ enabled ? t('common.enabled') : t('common.disabled') }}
           </span>
         </div>
       </SettingsGroup>
 
       <!-- Message -->
       <SettingsGroup
-        label="Message"
-        description="The content of the announcement. Keep it short and clear."
+        :label="t('admin.announcements.messageLabel')"
+        :description="t('admin.announcements.messageDescription')"
       >
         <div class="relative">
           <textarea
@@ -48,7 +48,7 @@
             rows="3"
             maxlength="500"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 resize-none"
-            placeholder="Enter your announcement message..."
+            :placeholder="t('admin.announcements.messagePlaceholder')"
           />
           <p
             class="text-[10px] text-text-muted mt-1.5 text-right absolute bottom-2 right-2"
@@ -60,8 +60,8 @@
 
       <!-- Type Selector -->
       <SettingsGroup
-        label="Banner Type"
-        description="Determines the color and icon of the announcement banner."
+        :label="t('admin.announcements.typeLabel')"
+        :description="t('admin.announcements.typeDescription')"
       >
         <div class="grid grid-cols-3 gap-2">
           <button
@@ -86,7 +86,7 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-4"
         >
-          Live Preview
+          {{ t('admin.announcements.preview') }}
         </p>
         <div
           :class="[
@@ -122,24 +122,32 @@
       >
         <Icon v-if="loading" name="ph:circle-notch" class="animate-spin" />
         <Icon v-else-if="saved" name="ph:check-bold" />
-        {{ loading ? 'Saving...' : saved ? 'Saved' : 'Save Announcement' }}
+        {{
+          loading
+            ? t('common.saving')
+            : saved
+              ? t('common.saved')
+              : t('admin.announcements.save')
+        }}
       </button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 const enabled = ref(false);
 const message = ref('');
 const type = ref<'info' | 'warning' | 'error'>('info');
 const loading = ref(false);
 const saved = ref(false);
 
-const typeOptions = [
-  { value: 'info' as const, label: 'Info', icon: 'ph:info' },
-  { value: 'warning' as const, label: 'Warning', icon: 'ph:warning' },
-  { value: 'error' as const, label: 'Error', icon: 'ph:warning-circle' },
-];
+const typeOptions = computed(() => [
+  { value: 'info' as const, label: t('admin.announcements.typeInfo'), icon: 'ph:info' },
+  { value: 'warning' as const, label: t('admin.announcements.typeWarning'), icon: 'ph:warning' },
+  { value: 'error' as const, label: t('common.error'), icon: 'ph:warning-circle' },
+]);
 
 const typeStyles = {
   info: {

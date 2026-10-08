@@ -8,7 +8,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Version & Updates
+            {{ t('admin.system.versionTitle') }}
           </h3>
         </div>
       </div>
@@ -16,9 +16,9 @@
         <!-- Current Version -->
         <div class="flex items-center justify-between">
           <div>
-            <p class="text-sm font-medium text-text-primary">Current Version</p>
+            <p class="text-sm font-medium text-text-primary">{{ t('admin.system.currentVersion') }}</p>
             <p class="text-[10px] text-text-muted mt-0.5">
-              Installed version of Trackarr
+              {{ t('admin.system.installedVersion') }}
             </p>
           </div>
           <div class="flex items-center gap-2">
@@ -31,7 +31,7 @@
               @click="checkUpdates"
               :disabled="checkingUpdates"
               class="p-2 bg-bg-tertiary border border-border rounded hover:border-white/20 transition-colors disabled:opacity-50"
-              title="Check for updates"
+              :title="t('admin.system.checkUpdates')"
             >
               <Icon
                 name="ph:arrows-clockwise"
@@ -49,18 +49,18 @@
           <div class="flex items-center gap-2">
             <Icon name="ph:arrow-circle-up" class="text-success" />
             <p class="text-sm font-medium text-success">
-              Update Available: {{ versionInfo.latestRelease.version }}
+              {{ t('admin.system.updateAvailable', { version: versionInfo.latestRelease.version }) }}
             </p>
           </div>
           <p class="text-xs text-text-muted">
-            Published {{ formatDate(versionInfo.latestRelease.publishedAt) }}
+            {{ t('admin.system.published', { date: formatDate(versionInfo.latestRelease.publishedAt) }) }}
           </p>
           <a
             :href="versionInfo.latestRelease.url"
             target="_blank"
             class="inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-primary"
           >
-            View changelog
+            {{ t('admin.system.viewChangelog') }}
             <Icon name="ph:arrow-square-out" class="text-[10px]" />
           </a>
         </div>
@@ -73,7 +73,7 @@
           <div class="flex items-center gap-2">
             <Icon name="ph:check-circle" class="text-success" />
             <p class="text-sm text-text-muted">
-              You're running the latest version
+              {{ t('admin.system.upToDate') }}
             </p>
           </div>
         </div>
@@ -83,7 +83,7 @@
           <p
             class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
           >
-            Update Commands
+            {{ t('admin.system.updateCommands') }}
           </p>
           <div class="space-y-2">
             <div
@@ -93,12 +93,12 @@
             >
               <div class="flex items-center justify-between mb-1">
                 <span class="text-[10px] text-text-muted">
-                  Step {{ cmd.step }}: {{ cmd.description }}
+                  {{ t('admin.system.step', { step: cmd.step, description: cmd.description }) }}
                 </span>
                 <button
                   @click="copyCommand(cmd.command)"
                   class="text-text-muted hover:text-text-primary"
-                  title="Copy"
+                  :title="t('common.copy')"
                 >
                   <Icon name="ph:copy" class="text-xs" />
                 </button>
@@ -113,8 +113,8 @@
           >
             <Icon name="ph:warning" class="text-yellow-400 mt-0.5" />
             <div class="text-xs text-yellow-400 space-y-1">
-              <p>Backup your database before updating</p>
-              <p>The update will cause a brief downtime</p>
+              <p>{{ t('admin.system.backupWarning') }}</p>
+              <p>{{ t('admin.system.downtimeWarning') }}</p>
             </div>
           </div>
         </div>
@@ -124,7 +124,11 @@
           class="w-full bg-bg-tertiary border border-border text-[10px] font-bold uppercase tracking-widest py-2.5 rounded hover:border-white/20 transition-colors flex items-center justify-center gap-2"
         >
           <Icon name="ph:terminal" />
-          {{ showUpdateInstructions ? 'Hide' : 'Show' }} Update Instructions
+          {{
+            showUpdateInstructions
+              ? t('admin.system.hideInstructions')
+              : t('admin.system.showInstructions')
+          }}
         </button>
       </div>
     </div>
@@ -137,48 +141,48 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Grafana Password
+            {{ t('admin.system.grafanaTitle') }}
           </h3>
         </div>
       </div>
       <div class="card-body space-y-4">
         <p class="text-xs text-text-muted mb-6">
-          Change the Grafana admin password. You'll need your current password.
+          {{ t('admin.system.grafanaIntro') }}
         </p>
 
         <SettingsGroup
-          label="Current Password"
-          description="The password you currently use to log in to Grafana."
+          :label="t('admin.system.currentPassword')"
+          :description="t('admin.system.currentPasswordDescription')"
         >
           <input
             v-model="grafana.currentPassword"
             type="password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Enter current Grafana password"
+            :placeholder="t('admin.system.currentPasswordPlaceholder')"
           />
         </SettingsGroup>
 
         <SettingsGroup
-          label="New Password"
-          description="Must be at least 8 characters long."
+          :label="t('admin.system.newPassword')"
+          :description="t('admin.system.newPasswordDescription')"
         >
           <input
             v-model="grafana.newPassword"
             type="password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Enter new password"
+            :placeholder="t('admin.system.newPasswordPlaceholder')"
           />
         </SettingsGroup>
 
         <SettingsGroup
-          label="Confirm Password"
-          description="Re-enter your new password to verify."
+          :label="t('admin.system.confirmPassword')"
+          :description="t('admin.system.confirmPasswordDescription')"
         >
           <input
             v-model="grafana.confirmPassword"
             type="password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Confirm new password"
+            :placeholder="t('admin.system.confirmPasswordPlaceholder')"
           />
         </SettingsGroup>
 
@@ -209,7 +213,7 @@
             name="ph:circle-notch"
             class="animate-spin"
           />
-          {{ grafana.loading ? 'Updating...' : 'Update Grafana Password' }}
+          {{ grafana.loading ? t('admin.system.updating') : t('admin.system.updateGrafanaPassword') }}
         </button>
       </div>
     </div>
@@ -217,6 +221,8 @@
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
+
 interface VersionInfo {
   currentVersion: string;
   latestRelease: {
@@ -300,12 +306,12 @@ async function changeGrafanaPassword() {
       },
     });
 
-    grafana.success = 'Grafana password updated successfully';
+    grafana.success = t('admin.system.grafanaSuccess');
     grafana.currentPassword = '';
     grafana.newPassword = '';
     grafana.confirmPassword = '';
   } catch (error: any) {
-    grafana.error = error.data?.message || 'Failed to update Grafana password';
+    grafana.error = error.data?.message || t('admin.system.grafanaFailed');
   } finally {
     grafana.loading = false;
   }
@@ -317,7 +323,7 @@ function copyCommand(command: string) {
 
 function formatDate(dateStr: string): string {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString(locale.value, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',

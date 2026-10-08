@@ -6,15 +6,15 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Registration
+          {{ t('admin.registration.title') }}
         </h3>
       </div>
     </div>
     <div class="card-body">
       <!-- Open Registration Toggle -->
       <SettingsGroup
-        label="Open Registration"
-        description="Allow new users to create accounts freely."
+        :label="t('admin.registration.openLabel')"
+        :description="t('admin.registration.openDescription')"
       >
         <div class="flex items-center gap-3">
           <button
@@ -33,15 +33,15 @@
             />
           </button>
           <span class="text-xs text-text-muted">
-            {{ registrationOpen ? 'Open' : 'Closed' }}
+            {{ registrationOpen ? t('admin.registration.open') : t('admin.registration.closed') }}
           </span>
         </div>
       </SettingsGroup>
 
       <!-- Invite Only Mode Toggle -->
       <SettingsGroup
-        label="Invite Only Mode"
-        description="Require invitation code for registration."
+        :label="t('admin.registration.inviteOnlyLabel')"
+        :description="t('admin.registration.inviteOnlyDescription')"
       >
         <div class="flex items-center gap-3">
           <button
@@ -60,7 +60,7 @@
             />
           </button>
           <span class="text-xs text-text-muted">
-            {{ inviteEnabled ? 'Enabled' : 'Disabled' }}
+            {{ inviteEnabled ? t('common.enabled') : t('common.disabled') }}
           </span>
         </div>
       </SettingsGroup>
@@ -77,7 +77,7 @@
         />
         <div class="flex-1">
           <p class="text-sm font-semibold" :class="getStatusTextClass()">
-            Current Status: {{ getStatusText() }}
+            {{ t('admin.registration.currentStatus', { status: getStatusText() }) }}
           </p>
         </div>
       </div>
@@ -86,8 +86,8 @@
         <!-- Default Invites Per User -->
         <SettingsGroup
           v-if="inviteEnabled"
-          label="Default Invites"
-          description="Number of invitation codes each new user receives upon registration."
+          :label="t('admin.registration.defaultInvitesLabel')"
+          :description="t('admin.registration.defaultInvitesDescription')"
         >
           <div class="flex items-center gap-3">
             <input
@@ -103,8 +103,8 @@
 
         <!-- Minimum Ratio -->
         <SettingsGroup
-          label="Minimum Ratio"
-          description="Users with a ratio below this value will be blocked from downloading. Set to 0 to disable."
+          :label="t('admin.registration.minRatioLabel')"
+          :description="t('admin.registration.minRatioDescription')"
         >
           <div class="flex items-center gap-3">
             <input
@@ -119,15 +119,15 @@
               class="text-xs text-text-muted font-mono"
               v-if="minRatio <= 0"
             >
-              (Disabled)
+              ({{ t('common.disabled') }})
             </span>
           </div>
         </SettingsGroup>
 
         <!-- Starter Credit -->
         <SettingsGroup
-          label="Starter Credit (GB)"
-          description="Initial upload amount given to new users to prevent immediate ratio blocking."
+          :label="t('admin.registration.starterCreditLabel')"
+          :description="t('admin.registration.starterCreditDescription')"
         >
           <div class="flex items-center gap-3">
             <input
@@ -137,7 +137,7 @@
               class="w-full md:w-32 bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 font-mono"
               placeholder="0"
             />
-            <span class="text-xs text-text-muted">GB</span>
+            <span class="text-xs text-text-muted">{{ t('admin.registration.gb') }}</span>
           </div>
         </SettingsGroup>
       </div>
@@ -159,7 +159,11 @@
         />
         <Icon v-else-if="saved" name="ph:check-bold" />
         {{
-          settingsLoading ? 'Saving...' : saved ? 'Saved' : 'Save Configuration'
+          settingsLoading
+            ? t('common.saving')
+            : saved
+              ? t('common.saved')
+              : t('common.saveConfiguration')
         }}
       </button>
     </div>
@@ -167,6 +171,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 const registrationOpen = ref(false);
 const inviteEnabled = ref(false);
 const defaultInvites = ref(2);
@@ -222,12 +228,12 @@ function getStatusTextClass() {
 
 function getStatusText() {
   if (registrationOpen.value && !inviteEnabled.value)
-    return 'Registration is open to everyone';
+    return t('admin.registration.statusOpen');
   if (registrationOpen.value && inviteEnabled.value)
-    return 'Registration open (invite optional)';
+    return t('admin.registration.statusOpenInviteOptional');
   if (!registrationOpen.value && inviteEnabled.value)
-    return 'Invite-only registration';
-  return 'Registration is closed';
+    return t('admin.registration.statusInviteOnly');
+  return t('admin.registration.statusClosed');
 }
 
 async function toggleRegistration() {
