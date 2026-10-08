@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Emergency Lockdown
+          {{ t('admin.panic.title') }}
         </h3>
       </div>
     </div>
@@ -15,8 +15,7 @@
       <!-- Not Encrypted State -->
       <div v-if="!isEncrypted">
         <p class="text-text-muted text-sm mb-4">
-          Encrypt all sensitive data immediately. This action renders data
-          unreadable without the panic password set during first registration.
+          {{ t('admin.panic.intro') }}
         </p>
 
         <button
@@ -25,7 +24,7 @@
           class="w-full bg-error text-white text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-error/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon name="ph:lock-simple" />
-          PANIC — Encrypt Database
+          {{ t('admin.panic.encryptButton') }}
         </button>
       </div>
 
@@ -36,13 +35,12 @@
         >
           <Icon name="ph:warning" class="text-error text-xl mt-0.5" />
           <div>
-            <p class="text-error font-semibold">Database is encrypted</p>
+            <p class="text-error font-semibold">{{ t('admin.panic.encryptedTitle') }}</p>
             <p class="text-text-muted text-sm mt-1">
-              All sensitive data is currently encrypted. Enter the panic
-              password to restore access.
+              {{ t('admin.panic.encryptedText') }}
             </p>
             <p v-if="encryptedAt" class="text-text-muted text-xs mt-2">
-              Encrypted at: {{ new Date(encryptedAt).toLocaleString() }}
+              {{ t('admin.panic.encryptedAt', { date: new Date(encryptedAt).toLocaleString() }) }}
             </p>
           </div>
         </div>
@@ -53,7 +51,7 @@
           class="w-full bg-success text-white text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-success/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon name="ph:lock-open" />
-          Restore Database
+          {{ t('admin.panic.restoreButton') }}
         </button>
       </div>
     </div>
@@ -71,18 +69,17 @@
           <div class="flex items-center gap-3 mb-4">
             <Icon name="ph:warning-octagon" class="text-error text-3xl" />
             <h3 class="text-lg font-bold text-text-primary">
-              Confirm Database Encryption
+              {{ t('admin.panic.confirmTitle') }}
             </h3>
           </div>
 
           <p class="text-text-muted text-sm mb-4">
-            This will encrypt all sensitive data in the database. The data will
-            be unreadable until restored with the panic password.
+            {{ t('admin.panic.confirmText') }}
           </p>
 
           <div class="bg-error/10 border border-error/30 rounded p-3 mb-4">
             <p class="text-error text-sm font-medium">
-              ⚠️ This action is irreversible without the panic password.
+              ⚠️ {{ t('admin.panic.irreversible') }}
             </p>
           </div>
 
@@ -91,14 +88,14 @@
               for="panicPasswordEncrypt"
               class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
             >
-              Panic Password
+              {{ t('admin.panic.password') }}
             </label>
             <input
               id="panicPasswordEncrypt"
               v-model="panicPassword"
               type="password"
               class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-error transition-colors"
-              placeholder="Enter panic password"
+              :placeholder="t('admin.panic.passwordPlaceholder')"
               @keyup.enter="triggerPanic"
             />
           </div>
@@ -112,7 +109,7 @@
               @click="showConfirmModal = false"
               class="flex-1 bg-bg-tertiary text-text-secondary text-sm font-medium py-2.5 rounded hover:bg-bg-tertiary/80 transition-colors"
             >
-              Cancel
+              {{ t('common.cancel') }}
             </button>
             <button
               @click="triggerPanic"
@@ -124,7 +121,7 @@
                 name="ph:circle-notch"
                 class="animate-spin"
               />
-              {{ loading ? 'Encrypting...' : 'Encrypt Now' }}
+              {{ loading ? t('admin.panic.encrypting') : t('admin.panic.encryptNow') }}
             </button>
           </div>
         </div>
@@ -144,13 +141,12 @@
           <div class="flex items-center gap-3 mb-4">
             <Icon name="ph:lock-key-open" class="text-success text-3xl" />
             <h3 class="text-lg font-bold text-text-primary">
-              Restore Database
+              {{ t('admin.panic.restoreButton') }}
             </h3>
           </div>
 
           <p class="text-text-muted text-sm mb-4">
-            Enter the panic password that was set during the first admin
-            registration to decrypt and restore all data.
+            {{ t('admin.panic.restoreText') }}
           </p>
 
           <div class="mb-4">
@@ -158,14 +154,14 @@
               for="panicPassword"
               class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
             >
-              Panic Password
+              {{ t('admin.panic.password') }}
             </label>
             <input
               id="panicPassword"
               v-model="panicPassword"
               type="password"
               class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-success transition-colors"
-              placeholder="Enter panic password"
+              :placeholder="t('admin.panic.passwordPlaceholder')"
               @keyup.enter="restoreDatabase"
             />
           </div>
@@ -179,7 +175,7 @@
               @click="showRestoreModal = false"
               class="flex-1 bg-bg-tertiary text-text-secondary text-sm font-medium py-2.5 rounded hover:bg-bg-tertiary/80 transition-colors"
             >
-              Cancel
+              {{ t('common.cancel') }}
             </button>
             <button
               @click="restoreDatabase"
@@ -191,7 +187,7 @@
                 name="ph:circle-notch"
                 class="animate-spin"
               />
-              {{ loading ? 'Restoring...' : 'Restore' }}
+              {{ loading ? t('admin.panic.restoring') : t('admin.panic.restore') }}
             </button>
           </div>
         </div>
@@ -201,6 +197,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 const isEncrypted = ref(false);
 const encryptedAt = ref<string | null>(null);
 const loading = ref(false);
@@ -239,7 +237,7 @@ async function triggerPanic() {
     showConfirmModal.value = false;
     panicPassword.value = '';
   } catch (err: any) {
-    error.value = err.data?.message || 'Encryption failed';
+    error.value = err.data?.message || t('admin.panic.encryptFailed');
   } finally {
     loading.value = false;
   }
@@ -262,7 +260,7 @@ async function restoreDatabase() {
     showRestoreModal.value = false;
     panicPassword.value = '';
   } catch (err: any) {
-    error.value = err.data?.message || 'Restore failed';
+    error.value = err.data?.message || t('admin.panic.restoreFailed');
   } finally {
     loading.value = false;
   }

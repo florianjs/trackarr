@@ -5,7 +5,7 @@
       class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-text-muted hover:text-white mb-6 transition-colors"
     >
       <Icon name="ph:arrow-left-bold" />
-      Back to index
+      {{ t('torrents.detail.backToIndex') }}
     </NuxtLink>
 
     <!-- Torrent Header -->
@@ -18,7 +18,7 @@
             <div class="flex items-center gap-2 mb-1">
               <span
                 class="text-[10px] font-bold bg-bg-tertiary border border-border px-1.5 py-0.5 rounded-sm text-text-muted uppercase tracking-wider"
-                >Object</span
+                >{{ t('torrents.detail.object') }}</span
               >
               <span class="text-[10px] font-mono text-text-muted">{{
                 torrent.id
@@ -59,7 +59,7 @@
               @click="showEditModal = true"
             >
               <Icon name="ph:pencil-simple-bold" />
-              <span>Edit</span>
+              <span>{{ t('common.edit') }}</span>
             </button>
             <!-- Delete Button (owner/mod/admin only) -->
             <button
@@ -68,14 +68,14 @@
               @click="confirmDelete"
             >
               <Icon name="ph:trash-bold" />
-              <span>Delete</span>
+              <span>{{ t('common.delete') }}</span>
             </button>
             <button
               class="btn btn-secondary flex items-center gap-2 !py-2 text-xs font-bold uppercase tracking-wider"
               @click="copyHash"
             >
               <Icon name="ph:copy-bold" />
-              <span>Copy Hash</span>
+              <span>{{ t('torrents.detail.copyHash') }}</span>
             </button>
             <a
               :href="`/api/torrents/${torrent.infoHash}/download`"
@@ -83,7 +83,7 @@
               download
             >
               <Icon name="ph:download-simple-bold" />
-              <span>Download</span>
+              <span>{{ t('torrents.detail.download') }}</span>
             </a>
           </div>
         </div>
@@ -92,7 +92,7 @@
           <div class="flex flex-col">
             <span
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1"
-              >Info Hash</span
+              >{{ t('torrents.detail.infoHash') }}</span
             >
             <code
               class="text-xs font-mono text-text-secondary bg-bg-tertiary/50 px-2 py-1 rounded border border-border/50"
@@ -103,7 +103,7 @@
           <div class="flex flex-col">
             <span
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1"
-              >Created At</span
+              >{{ t('torrents.detail.createdAt') }}</span
             >
             <div class="flex items-center gap-2">
               <span class="text-xs font-mono text-text-secondary">{{
@@ -123,24 +123,24 @@
     <!-- Stats Grid -->
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
       <StatsCard
-        title="Seeders"
+        :title="t('common.seeders')"
         :value="torrent.stats.seeders"
         icon="ph:arrow-up-bold"
         variant="success"
       />
       <StatsCard
-        title="Leechers"
+        :title="t('common.leechers')"
         :value="torrent.stats.leechers"
         icon="ph:arrow-down-bold"
         variant="warning"
       />
       <StatsCard
-        title="Completed"
+        :title="t('common.completed')"
         :value="torrent.stats.completed"
         icon="ph:check-circle-bold"
       />
       <StatsCard
-        title="Total Size"
+        :title="t('torrents.detail.totalSize')"
         :value="formatSize(torrent.size)"
         icon="ph:database-bold"
       />
@@ -154,7 +154,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Description
+            {{ t('common.description') }}
           </h3>
         </div>
       </div>
@@ -176,7 +176,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Active Swarm ({{ torrent.peers.length }})
+            {{ t('torrents.detail.activeSwarm', { count: torrent.peers.length }) }}
           </h3>
         </div>
       </div>
@@ -184,11 +184,11 @@
         <table class="data-table">
           <thead>
             <tr>
-              <th>Endpoint</th>
-              <th>Type</th>
-              <th>Uploaded</th>
-              <th>Downloaded</th>
-              <th class="text-right">Last Seen</th>
+              <th>{{ t('torrents.detail.endpoint') }}</th>
+              <th>{{ t('torrents.detail.type') }}</th>
+              <th>{{ t('common.uploaded') }}</th>
+              <th>{{ t('common.downloaded') }}</th>
+              <th class="text-right">{{ t('torrents.detail.lastSeen') }}</th>
             </tr>
           </thead>
           <tbody>
@@ -197,7 +197,7 @@
                 colspan="5"
                 class="text-center text-text-muted py-12 font-mono text-xs uppercase tracking-widest"
               >
-                No active peers detected in swarm
+                {{ t('torrents.detail.noPeers') }}
               </td>
             </tr>
             <tr v-for="peer in torrent.peers" :key="peer.id">
@@ -218,7 +218,7 @@
                     "
                     class="text-[8px]"
                   />
-                  {{ peer.isSeeder ? 'Seeder' : 'Leecher' }}
+                  {{ peer.isSeeder ? t('torrents.detail.seeder') : t('torrents.detail.leecher') }}
                 </span>
               </td>
               <td class="text-text-secondary font-mono text-[10px]">
@@ -261,13 +261,12 @@
             <h3
               class="text-xs font-bold uppercase tracking-widest text-text-primary"
             >
-              Confirm Delete
+              {{ t('torrents.detail.confirmDeleteTitle') }}
             </h3>
           </div>
           <div class="p-6">
             <p class="text-sm text-text-secondary mb-4">
-              Are you sure you want to delete this torrent? This action cannot
-              be undone.
+              {{ t('torrents.detail.confirmDeleteText') }}
             </p>
             <p
               class="text-xs font-mono text-text-muted bg-bg-tertiary p-2 rounded border border-border mb-6 truncate"
@@ -283,7 +282,7 @@
                 :disabled="isDeleting"
                 @click="showDeleteConfirm = false"
               >
-                Cancel
+                {{ t('common.cancel') }}
               </button>
               <button
                 class="btn btn-primary flex-1 text-[10px] font-bold uppercase tracking-widest bg-error hover:bg-error/80 flex items-center justify-center gap-2"
@@ -295,7 +294,7 @@
                   name="ph:circle-notch"
                   class="animate-spin"
                 />
-                <span>{{ isDeleting ? 'Deleting...' : 'Delete' }}</span>
+                <span>{{ isDeleting ? t('common.deleting') : t('common.delete') }}</span>
               </button>
             </div>
           </div>
@@ -344,6 +343,7 @@ interface TorrentDetail {
   peers: Peer[];
 }
 
+const { t } = useI18n();
 const route = useRoute();
 const hash = route.params.hash as string;
 
@@ -387,17 +387,17 @@ const editableTorrent = computed(() => ({
 }));
 
 const externalLinks = computed(() => {
-  const t = torrent.value;
-  if (!t) return [];
+  const tor = torrent.value;
+  if (!tor) return [];
   const links: { label: string; href: string }[] = [];
-  if (t.imdbId) links.push({ label: 'IMDb', href: imdbUrl(t.imdbId) });
-  if (t.tmdbId) {
+  if (tor.imdbId) links.push({ label: 'IMDb', href: imdbUrl(tor.imdbId) });
+  if (tor.tmdbId) {
     // Torznab TV categories are 5000-5999
-    const newznabId = t.category?.newznabId ?? 0;
-    const kind = t.tvdbId || (newznabId >= 5000 && newznabId < 6000) ? 'tv' : 'movie';
-    links.push({ label: 'TMDb', href: tmdbUrl(t.tmdbId, kind) });
+    const newznabId = tor.category?.newznabId ?? 0;
+    const kind = tor.tvdbId || (newznabId >= 5000 && newznabId < 6000) ? 'tv' : 'movie';
+    links.push({ label: 'TMDb', href: tmdbUrl(tor.tmdbId, kind) });
   }
-  if (t.tvdbId) links.push({ label: 'TheTVDB', href: tvdbUrl(t.tvdbId) });
+  if (tor.tvdbId) links.push({ label: 'TheTVDB', href: tvdbUrl(tor.tvdbId) });
   return links;
 });
 
@@ -406,7 +406,7 @@ const renderedDescription = computed(() => {
 });
 
 if (error.value || !torrent.value) {
-  throw createError({ statusCode: 404, message: 'Torrent not found' });
+  throw createError({ statusCode: 404, message: t('torrents.detail.notFound') });
 }
 
 async function copyHash() {
@@ -433,7 +433,7 @@ async function deleteTorrent() {
     deleteError.value =
       fetchError.data?.message ||
       fetchError.message ||
-      'Failed to delete torrent';
+      t('torrents.detail.deleteFailed');
   } finally {
     isDeleting.value = false;
   }

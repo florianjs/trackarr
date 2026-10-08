@@ -3,7 +3,7 @@
     <div class="card-header">
       <div class="flex items-center gap-2">
         <Icon name="ph:plug-connect" class="text-text-muted" />
-        <h3 class="text-xs font-bold uppercase tracking-wider">Protocols</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider">{{ t('admin.protocols.title') }}</h3>
       </div>
     </div>
     <div class="card-body">
@@ -21,7 +21,7 @@
               class="text-[10px] font-bold"
               :class="active ? 'text-success' : 'text-text-muted'"
             >
-              {{ active ? 'ACTIVE' : 'INACTIVE' }}
+              {{ active ? t('common.active') : t('common.inactive') }}
             </span>
             <div
               class="w-1.5 h-1.5 rounded-full"
@@ -39,6 +39,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 defineProps<{
   protocols: Record<string, boolean> | undefined;
 }>();

@@ -7,7 +7,7 @@
           <h2
             class="text-xs font-bold text-text-muted uppercase tracking-widest"
           >
-            Administration
+            {{ t('admin.layout.title') }}
           </h2>
         </div>
 
@@ -40,7 +40,7 @@
                 class="relative inline-flex rounded-full h-2 w-2 bg-success"
               ></span>
             </span>
-            LIVE TRACKER FEED
+            {{ t('admin.layout.liveFeed') }}
           </div>
         </div>
       </div>
@@ -69,79 +69,80 @@ definePageMeta({
   middleware: 'admin',
 });
 
+const { t } = useI18n();
 const route = useRoute();
 
-const menuItems = [
+const menuItems = computed(() => [
   {
-    label: 'Dashboard',
+    label: t('admin.nav.dashboard.label'),
     path: '/admin',
     icon: 'ph:layout',
-    description: 'Tracker configuration and node management',
+    description: t('admin.nav.dashboard.description'),
   },
   {
-    label: 'Users',
+    label: t('admin.nav.users.label'),
     path: '/admin/users',
     icon: 'ph:users',
-    description: 'Manage user accounts and permissions',
+    description: t('admin.nav.users.description'),
   },
   {
-    label: 'Roles',
+    label: t('admin.nav.roles.label'),
     path: '/admin/roles',
     icon: 'ph:user-circle-gear',
-    description: 'Manage user roles and permissions',
+    description: t('admin.nav.roles.description'),
   },
   {
-    label: 'Reports',
+    label: t('admin.nav.reports.label'),
     path: '/admin/reports',
     icon: 'ph:flag',
-    description: 'Review and handle user reports',
+    description: t('admin.nav.reports.description'),
   },
   {
-    label: 'Categories',
+    label: t('admin.nav.categories.label'),
     path: '/admin/categories',
     icon: 'ph:folders',
-    description: 'Manage torrent categories',
+    description: t('admin.nav.categories.description'),
   },
   {
-    label: 'Tags',
+    label: t('admin.nav.tags.label'),
     path: '/admin/tags',
     icon: 'ph:tag',
-    description: 'Manage torrent tags',
+    description: t('admin.nav.tags.description'),
   },
   {
-    label: 'Hit & Run',
+    label: t('admin.nav.hnr.label'),
     path: '/admin/hnr',
     icon: 'ph:lightning',
-    description: 'Monitor and manage H&R violations',
+    description: t('admin.nav.hnr.description'),
   },
   {
-    label: 'Invitations',
+    label: t('admin.nav.invites.label'),
     path: '/admin/invites',
     icon: 'ph:envelope-simple',
-    description: 'Manage invitation system',
+    description: t('admin.nav.invites.description'),
   },
   {
-    label: 'Torznab API',
+    label: t('admin.nav.torznab.label'),
     path: '/admin/torznab',
     icon: 'ph:plug',
-    description: 'Configure *arr integration and rate limiting',
+    description: t('admin.nav.torznab.description'),
   },
   {
-    label: 'Branding',
+    label: t('admin.nav.branding.label'),
     path: '/admin/branding',
     icon: 'ph:paint-brush',
-    description: 'Customize site appearance and branding',
+    description: t('admin.nav.branding.description'),
   },
   {
-    label: 'Settings',
+    label: t('admin.nav.settings.label'),
     path: '/admin/settings',
     icon: 'ph:gear',
-    description: 'System-wide registration and tracker settings',
+    description: t('admin.nav.settings.description'),
   },
-];
+]);
 
 const currentItem = computed(
-  () => menuItems.find((item) => item.path === route.path) || menuItems[0]
+  () => menuItems.value.find((item) => item.path === route.path) || menuItems.value[0]
 );
 
 const currentTitle = computed(() => currentItem?.value?.label);

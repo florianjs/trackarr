@@ -18,10 +18,10 @@
         class="w-12 h-12 text-text-muted mx-auto mb-4"
       />
       <h3 class="text-lg font-medium text-text-primary">
-        No historical data yet
+        {{ t('admin.dashboard.noHistory') }}
       </h3>
       <p class="text-sm text-text-muted mt-1">
-        Stats collection has just started. Check back in an hour.
+        {{ t('admin.dashboard.noHistoryHint') }}
       </p>
     </div>
 
@@ -36,6 +36,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface TrackerStats {
   status: string;
   cached: {

@@ -17,10 +17,10 @@
           <h2
             class="text-xl font-bold text-text-primary tracking-tight uppercase"
           >
-            Torrent Index
+            {{ t('torrents.list.title') }}
           </h2>
           <p class="text-xs text-text-muted font-mono mt-0.5">
-            {{ pagination.total }} objects indexed in database
+            {{ t('torrents.list.indexedCount', { count: pagination.total }, pagination.total) }}
           </p>
         </div>
 
@@ -28,7 +28,7 @@
         <div class="flex flex-wrap items-center gap-2">
           <SearchBar
             v-model="search"
-            placeholder="Search by name or hash..."
+            :placeholder="t('torrents.list.searchPlaceholder')"
             class="w-full md:w-64"
             :loading="pending"
             @search="doSearch"
@@ -38,7 +38,7 @@
             @click="showUploadModal = true"
           >
             <Icon name="ph:plus-bold" />
-            <span>Upload</span>
+            <span>{{ t('torrents.list.upload') }}</span>
           </button>
         </div>
       </div>
@@ -61,17 +61,17 @@
             <h3
               class="text-sm font-bold text-text-primary uppercase tracking-wider"
             >
-              No results found
+              {{ t('torrents.list.noResults') }}
             </h3>
             <p class="text-xs text-text-muted mt-1 font-mono">
-              The search query did not match any indexed torrents.
+              {{ t('torrents.list.noResultsHint') }}
             </p>
             <button
               v-if="search || selectedCategory"
               class="btn btn-secondary mt-6 text-xs uppercase tracking-widest font-bold"
               @click="clearFilters"
             >
-              Reset Filters
+              {{ t('torrents.list.resetFilters') }}
             </button>
           </div>
         </div>
@@ -84,7 +84,7 @@
           <p
             class="text-[10px] font-mono text-text-muted uppercase tracking-widest"
           >
-            Page {{ pagination.page }} / {{ pagination.pages }}
+            {{ t('common.pageOf', { page: pagination.page, pages: pagination.pages }) }}
           </p>
           <div class="flex gap-1">
             <button
@@ -141,6 +141,7 @@ interface Pagination {
   pages: number;
 }
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 

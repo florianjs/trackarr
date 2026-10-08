@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Site Branding
+          {{ t('admin.branding.title') }}
         </h3>
       </div>
     </div>
@@ -16,7 +16,7 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
         >
-          Live Preview
+          {{ t('admin.branding.livePreview') }}
         </p>
         <div class="flex items-center gap-2.5">
           <div
@@ -55,8 +55,8 @@
 
       <!-- Site Name -->
       <SettingsGroup
-        label="Site Name"
-        description="Displayed in the navbar and browser title. Use rich text for custom styling."
+        :label="t('admin.branding.siteName')"
+        :description="t('admin.branding.siteNameDescription')"
       >
         <WysiwygEditor
           v-model="siteName"
@@ -71,14 +71,14 @@
               v-model="siteNameColor"
               type="color"
               class="w-8 h-8 rounded cursor-pointer bg-transparent border-0 p-0"
-              title="Site Name Color"
+              :title="t('admin.branding.siteNameColor')"
             />
             <button
               v-if="siteNameColor"
               @click="siteNameColor = null"
               class="text-xs text-text-muted hover:text-text-secondary underline"
             >
-              Reset
+              {{ t('common.reset') }}
             </button>
           </div>
 
@@ -94,27 +94,27 @@
               ></div>
             </div>
             <input type="checkbox" v-model="siteNameBold" class="hidden" />
-            <span class="text-xs font-medium">Bold</span>
+            <span class="text-xs font-medium">{{ t('admin.branding.bold') }}</span>
           </label>
         </div>
       </SettingsGroup>
 
       <!-- Site Subtitle -->
       <SettingsGroup
-        label="Subtitle"
-        description="Text below site name. Leave empty to show version. Supports rich text."
+        :label="t('admin.branding.subtitle')"
+        :description="t('admin.branding.subtitleDescription')"
       >
         <WysiwygEditor
           v-model="siteSubtitle"
-          placeholder="Leave empty for version number"
+          :placeholder="t('admin.branding.subtitlePlaceholder')"
           :maxLength="300"
         />
       </SettingsGroup>
 
       <!-- Logo Type Toggle -->
       <SettingsGroup
-        label="Logo Type"
-        description="Choose between a Phosphor icon or a custom image."
+        :label="t('admin.branding.logoType')"
+        :description="t('admin.branding.logoTypeDescription')"
       >
         <div class="flex gap-2">
           <button
@@ -126,7 +126,7 @@
                 : 'bg-bg-tertiary border-border text-text-secondary hover:border-white/20'
             "
           >
-            <Icon name="ph:phosphor-logo" class="mr-1" /> Icon
+            <Icon name="ph:phosphor-logo" class="mr-1" /> {{ t('admin.branding.icon') }}
           </button>
           <button
             @click="useCustomImage = true"
@@ -137,7 +137,7 @@
                 : 'bg-bg-tertiary border-border text-text-secondary hover:border-white/20'
             "
           >
-            <Icon name="ph:image" class="mr-1" /> Image
+            <Icon name="ph:image" class="mr-1" /> {{ t('admin.branding.image') }}
           </button>
         </div>
       </SettingsGroup>
@@ -145,8 +145,8 @@
       <!-- Icon Selection (when useCustomImage is false) -->
       <SettingsGroup
         v-if="!useCustomImage"
-        label="Logo Icon"
-        description="Use Phosphor icon names (e.g., ph:broadcast-bold)."
+        :label="t('admin.branding.logoIcon')"
+        :description="t('admin.branding.logoIconDescription')"
       >
         <div class="flex gap-2 mb-3">
           <input
@@ -168,7 +168,7 @@
           <p
             class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2"
           >
-            Quick Select
+            {{ t('admin.branding.quickSelect') }}
           </p>
           <div class="flex flex-wrap gap-2">
             <button
@@ -187,8 +187,8 @@
       <!-- Image Upload (when useCustomImage is true) -->
       <SettingsGroup
         v-if="useCustomImage"
-        label="Logo Image"
-        description="Upload a custom logo (PNG, JPG, SVG, WebP). Max 5MB."
+        :label="t('admin.branding.logoImage')"
+        :description="t('admin.branding.logoImageDescription')"
       >
         <!-- Current Image Preview -->
         <div v-if="siteLogoImage" class="mb-3 flex items-center gap-3">
@@ -201,7 +201,7 @@
           >
             <img
               :src="siteLogoImage"
-              alt="Current logo"
+              :alt="t('admin.branding.currentLogo')"
               class="max-w-full max-h-full object-contain"
               @error="handleImageError"
             />
@@ -215,7 +215,7 @@
               @click="removeImage"
               class="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 w-fit"
             >
-              <Icon name="ph:trash" /> Remove
+              <Icon name="ph:trash" /> {{ t('common.remove') }}
             </button>
           </div>
         </div>
@@ -247,15 +247,15 @@
           <p
             class="text-xs text-text-muted group-hover:text-text-primary transition-colors"
           >
-            {{ uploading ? 'Uploading...' : 'Drop image or click to upload' }}
+            {{ uploading ? t('admin.branding.uploading') : t('admin.branding.dropImage') }}
           </p>
         </div>
       </SettingsGroup>
 
       <!-- Favicon Upload -->
       <SettingsGroup
-        label="Favicon"
-        description="Upload a custom favicon (ICO, PNG, SVG). Max 1MB. Shown in browser tabs."
+        :label="t('admin.branding.favicon')"
+        :description="t('admin.branding.faviconDescription')"
       >
         <!-- Current Favicon Preview -->
         <div v-if="siteFavicon" class="mb-3 flex items-center gap-3">
@@ -268,7 +268,7 @@
           >
             <img
               :src="siteFavicon"
-              alt="Current favicon"
+              :alt="t('admin.branding.currentFavicon')"
               class="max-w-full max-h-full object-contain"
               @error="handleFaviconError"
             />
@@ -282,7 +282,7 @@
               @click="removeFavicon"
               class="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 w-fit"
             >
-              <Icon name="ph:trash" /> Remove
+              <Icon name="ph:trash" /> {{ t('common.remove') }}
             </button>
           </div>
         </div>
@@ -316,8 +316,8 @@
           >
             {{
               uploadingFavicon
-                ? 'Uploading...'
-                : 'Drop favicon or click to upload'
+                ? t('admin.branding.uploading')
+                : t('admin.branding.dropFavicon')
             }}
           </p>
         </div>
@@ -336,7 +336,13 @@
       >
         <Icon v-if="loading" name="ph:circle-notch" class="animate-spin" />
         <Icon v-else-if="saved" name="ph:check-bold" />
-        {{ loading ? 'Saving...' : saved ? 'Saved' : 'Save Branding' }}
+        {{
+          loading
+            ? t('common.saving')
+            : saved
+              ? t('common.saved')
+              : t('admin.branding.saveBranding')
+        }}
       </button>
     </div>
   </div>
@@ -349,43 +355,42 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Text Branding
+          {{ t('admin.branding.textBranding') }}
         </h3>
       </div>
       <p class="text-xs text-text-muted mt-1">
-        Customize text that appears throughout the site. Use the rich text
-        editor for advanced formatting.
+        {{ t('admin.branding.textBrandingDescription') }}
       </p>
     </div>
     <div class="card-body space-y-6">
       <!-- Auth Page Title -->
       <SettingsGroup
-        label="Auth Page Title"
-        description="Title shown on login/register pages. Leave empty to use Site Name."
+        :label="t('admin.branding.authTitle')"
+        :description="t('admin.branding.authTitleDescription')"
       >
         <WysiwygEditor
           v-model="authTitle"
-          placeholder="Enter auth page title..."
+          :placeholder="t('admin.branding.authTitlePlaceholder')"
           :maxLength="200"
         />
       </SettingsGroup>
 
       <!-- Auth Page Subtitle -->
       <SettingsGroup
-        label="Auth Page Subtitle"
-        description="Subtitle shown below the title on login/register pages."
+        :label="t('admin.branding.authSubtitle')"
+        :description="t('admin.branding.authSubtitleDescription')"
       >
         <WysiwygEditor
           v-model="authSubtitle"
-          placeholder="Private BitTorrent Tracker"
+          :placeholder="t('admin.branding.authSubtitlePlaceholder')"
           :maxLength="500"
         />
       </SettingsGroup>
 
       <!-- Footer Text -->
       <SettingsGroup
-        label="Footer Content"
-        description="Custom footer content. Supports rich text formatting."
+        :label="t('admin.branding.footerContent')"
+        :description="t('admin.branding.footerContentDescription')"
       >
         <WysiwygEditor
           v-model="footerText"
@@ -396,8 +401,8 @@
 
       <!-- Page Title Suffix -->
       <SettingsGroup
-        label="Page Title Suffix"
-        description="Text appended to browser tab titles. Plain text only."
+        :label="t('admin.branding.pageTitleSuffix')"
+        :description="t('admin.branding.pageTitleSuffixDescription')"
       >
         <div class="space-y-2">
           <input
@@ -408,33 +413,37 @@
             :placeholder="`- ${siteName?.replace(/<[^>]*>/g, '') || 'Trackarr'}`"
           />
           <p class="text-[10px] text-text-muted">
-            Example: "Search Torrents {{
-              pageTitleSuffix || ` - ${siteName?.replace(/<[^>]*>/g, '') || 'Trackarr'}`
-            }}"
+            {{
+              t('admin.branding.pageTitleExample', {
+                title:
+                  pageTitleSuffix ||
+                  ` - ${siteName?.replace(/<[^>]*>/g, '') || 'Trackarr'}`,
+              })
+            }}
           </p>
         </div>
       </SettingsGroup>
 
       <!-- Welcome Message -->
       <SettingsGroup
-        label="Welcome Message"
-        description="Rich text message displayed on the homepage or dashboard."
+        :label="t('admin.branding.welcomeMessage')"
+        :description="t('admin.branding.welcomeMessageDescription')"
       >
         <WysiwygEditor
           v-model="welcomeMessage"
-          placeholder="Welcome to our tracker community..."
+          :placeholder="t('admin.branding.welcomeMessagePlaceholder')"
           :maxLength="2000"
         />
       </SettingsGroup>
 
       <!-- Rules / Terms -->
       <SettingsGroup
-        label="Site Rules"
-        description="Rules and terms displayed to users. Supports full rich text."
+        :label="t('admin.branding.siteRules')"
+        :description="t('admin.branding.siteRulesDescription')"
       >
         <WysiwygEditor
           v-model="siteRules"
-          placeholder="Enter site rules and guidelines..."
+          :placeholder="t('admin.branding.siteRulesPlaceholder')"
           :maxLength="10000"
         />
       </SettingsGroup>
@@ -453,7 +462,11 @@
         <Icon v-if="loadingText" name="ph:circle-notch" class="animate-spin" />
         <Icon v-else-if="savedText" name="ph:check-bold" />
         {{
-          loadingText ? 'Saving...' : savedText ? 'Saved' : 'Save Text Branding'
+          loadingText
+            ? t('common.saving')
+            : savedText
+              ? t('common.saved')
+              : t('admin.branding.saveTextBranding')
         }}
       </button>
     </div>
@@ -467,7 +480,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Homepage Content
+          {{ t('admin.branding.homepageContent') }}
         </h3>
       </div>
     </div>
@@ -477,41 +490,41 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
         >
-          Hero Section
+          {{ t('admin.branding.heroSection') }}
         </p>
 
         <SettingsGroup
-          label="Title"
-          description="The main headline on the homepage. Use rich text for custom styling, colors, and fonts."
+          :label="t('admin.branding.heroTitle')"
+          :description="t('admin.branding.heroTitleDescription')"
         >
           <WysiwygEditor
             v-model="heroTitle"
-            placeholder="Enter hero title..."
+            :placeholder="t('admin.branding.heroTitlePlaceholder')"
             :maxLength="500"
           />
         </SettingsGroup>
 
         <SettingsGroup
-          label="Subtitle"
-          description="A short description below the title. Supports rich text."
+          :label="t('admin.branding.subtitle')"
+          :description="t('admin.branding.heroSubtitleDescription')"
         >
           <WysiwygEditor
             v-model="heroSubtitle"
-            placeholder="High-performance, minimalist P2P tracking engine..."
+            :placeholder="t('admin.branding.heroSubtitlePlaceholder')"
             :maxLength="1000"
           />
         </SettingsGroup>
 
         <SettingsGroup
-          label="Status Badge"
-          description="Text shown in the pill badge above the title."
+          :label="t('admin.branding.statusBadge')"
+          :description="t('admin.branding.statusBadgeDescription')"
         >
           <input
             v-model="statusBadgeText"
             type="text"
             maxlength="100"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            placeholder="Tracker Online & Operational"
+            :placeholder="t('admin.branding.statusBadgePlaceholder')"
           />
         </SettingsGroup>
       </div>
@@ -521,35 +534,35 @@
         <p
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
         >
-          Feature Boxes
+          {{ t('admin.branding.featureBoxes') }}
         </p>
 
         <SettingsGroup
           v-for="(feature, index) in features"
           :key="index"
-          :label="`Feature ${index + 1}`"
-          description="Title and description for this feature card. Supports rich text."
+          :label="t('admin.branding.feature', { n: index + 1 })"
+          :description="t('admin.branding.featureDescription')"
         >
           <div class="space-y-3">
             <div>
               <label
                 class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
-                >Title</label
+                >{{ t('admin.branding.featureTitle') }}</label
               >
               <WysiwygEditor
                 v-model="feature.title"
-                placeholder="Feature title"
+                :placeholder="t('admin.branding.featureTitlePlaceholder')"
                 :maxLength="300"
               />
             </div>
             <div>
               <label
                 class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
-                >Description</label
+                >{{ t('common.description') }}</label
               >
               <WysiwygEditor
                 v-model="feature.description"
-                placeholder="Feature description..."
+                :placeholder="t('admin.branding.featureDescriptionPlaceholder')"
                 :maxLength="1000"
               />
             </div>
@@ -576,10 +589,10 @@
         <Icon v-else-if="savedHomepage" name="ph:check-bold" />
         {{
           loadingHomepage
-            ? 'Saving...'
+            ? t('common.saving')
             : savedHomepage
-              ? 'Saved'
-              : 'Save Homepage Content'
+              ? t('common.saved')
+              : t('admin.branding.saveHomepageContent')
         }}
       </button>
     </div>
@@ -587,6 +600,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 const siteName = ref<string>('Trackarr');
 const siteLogo = ref('ph:broadcast-bold');
 const siteLogoImage = ref<string | null>(null);

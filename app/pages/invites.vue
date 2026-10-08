@@ -5,10 +5,10 @@
         <h2
           class="text-xl font-bold text-text-primary tracking-tight uppercase"
         >
-          My Invitations
+          {{ t('invites.title') }}
         </h2>
         <p class="text-xs text-text-muted font-mono mt-0.5">
-          Invite new members to the tracker
+          {{ t('invites.subtitle') }}
         </p>
       </div>
       <div class="flex items-center gap-4">
@@ -16,7 +16,7 @@
           <p
             class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
           >
-            Invites Remaining
+            {{ t('invites.remaining') }}
           </p>
           <p class="text-2xl font-bold text-accent">
             {{ inviteData?.remaining || 0 }}
@@ -33,7 +33,7 @@
             class="animate-spin mr-2"
           />
           <Icon v-else name="ph:plus-bold" class="mr-2" />
-          Generate Invite
+          {{ t('invites.generate') }}
         </button>
       </div>
     </div>
@@ -45,7 +45,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Your Invites
+            {{ t('invites.yourInvites') }}
           </h3>
         </div>
       </div>
@@ -64,7 +64,7 @@
                 <code
                   class="px-3 py-1.5 text-sm font-mono bg-bg-primary rounded border border-border select-all cursor-pointer"
                   @click="copyCode(invite.code)"
-                  title="Click to copy"
+                  :title="t('invites.clickToCopy')"
                 >
                   {{ invite.code }}
                 </code>
@@ -76,9 +76,9 @@
                 </span>
               </div>
               <div class="flex items-center gap-4 text-[10px] text-text-muted">
-                <span> Created: {{ formatDate(invite.createdAt) }} </span>
+                <span> {{ t('invites.createdAt', { date: formatDate(invite.createdAt) }) }} </span>
                 <span v-if="invite.usedByUser">
-                  Used by:
+                  {{ t('invites.usedBy') }}
                   <span class="font-mono">{{
                     invite.usedByUser.username
                   }}</span>
@@ -87,7 +87,7 @@
                   v-else-if="invite.expiresAt"
                   :class="isExpired(invite.expiresAt) ? 'text-error' : ''"
                 >
-                  Expires: {{ formatDate(invite.expiresAt) }}
+                  {{ t('invites.expiresAt', { date: formatDate(invite.expiresAt) }) }}
                 </span>
               </div>
             </div>
@@ -97,7 +97,7 @@
               class="btn btn-secondary !px-3 !py-2 text-xs"
             >
               <Icon name="ph:copy-bold" class="mr-1" />
-              Copy
+              {{ t('common.copy') }}
             </button>
           </div>
         </div>
@@ -112,10 +112,10 @@
           <p
             class="text-xs font-bold text-text-muted uppercase tracking-widest mb-2"
           >
-            No invites yet
+            {{ t('invites.empty') }}
           </p>
           <p class="text-[10px] text-text-muted">
-            Generate an invite code to share with friends
+            {{ t('invites.emptyHint') }}
           </p>
         </div>
       </div>
@@ -141,6 +141,7 @@ interface InviteResponse {
   remaining: number;
 }
 
+const { t, locale } = useI18n();
 const notifications = useNotificationStore();
 const isGenerating = ref(false);
 
@@ -155,9 +156,9 @@ function getStatusClass(invite: Invite) {
 }
 
 function getStatusLabel(invite: Invite) {
-  if (invite.usedBy) return 'Used';
-  if (invite.expiresAt && isExpired(invite.expiresAt)) return 'Expired';
-  return 'Active';
+  if (invite.usedBy) return t('invites.status.used');
+  if (invite.expiresAt && isExpired(invite.expiresAt)) return t('invites.status.expired');
+  return t('common.active');
 }
 
 function isExpired(date?: string) {
@@ -166,7 +167,7 @@ function isExpired(date?: string) {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -181,9 +182,9 @@ async function generateInvite() {
   try {
     await $fetch('/api/invites', { method: 'POST' });
     await refresh();
-    notifications.success('Invite code generated!');
+    notifications.success(t('invites.toast.generated'));
   } catch (error: any) {
-    notifications.error(error.data?.message || 'Failed to generate invite');
+    notifications.error(error.data?.message || t('invites.toast.generateFailed'));
   } finally {
     isGenerating.value = false;
   }
@@ -192,9 +193,9 @@ async function generateInvite() {
 async function copyCode(code: string) {
   try {
     await navigator.clipboard.writeText(code);
-    notifications.success('Invite code copied to clipboard!');
+    notifications.success(t('invites.toast.copied'));
   } catch {
-    notifications.error('Failed to copy code');
+    notifications.error(t('invites.toast.copyFailed'));
   }
 }
 </script>

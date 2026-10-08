@@ -10,7 +10,7 @@
         type="button"
         @click="editor.chain().focus().toggleBold().run()"
         :class="['toolbar-btn', { active: editor.isActive('bold') }]"
-        title="Bold"
+        :title="t('editor.bold')"
       >
         <Icon name="ph:text-b-bold" />
       </button>
@@ -18,7 +18,7 @@
         type="button"
         @click="editor.chain().focus().toggleItalic().run()"
         :class="['toolbar-btn', { active: editor.isActive('italic') }]"
-        title="Italic"
+        :title="t('editor.italic')"
       >
         <Icon name="ph:text-italic" />
       </button>
@@ -26,7 +26,7 @@
         type="button"
         @click="editor.chain().focus().toggleStrike().run()"
         :class="['toolbar-btn', { active: editor.isActive('strike') }]"
-        title="Strikethrough"
+        :title="t('editor.strikethrough')"
       >
         <Icon name="ph:text-strikethrough" />
       </button>
@@ -41,7 +41,7 @@
           'toolbar-btn',
           { active: editor.isActive('heading', { level: 1 }) },
         ]"
-        title="Heading 1"
+        :title="t('editor.heading1')"
       >
         <Icon name="ph:text-h-one" />
       </button>
@@ -52,7 +52,7 @@
           'toolbar-btn',
           { active: editor.isActive('heading', { level: 2 }) },
         ]"
-        title="Heading 2"
+        :title="t('editor.heading2')"
       >
         <Icon name="ph:text-h-two" />
       </button>
@@ -63,7 +63,7 @@
           'toolbar-btn',
           { active: editor.isActive('heading', { level: 3 }) },
         ]"
-        title="Heading 3"
+        :title="t('editor.heading3')"
       >
         <Icon name="ph:text-h-three" />
       </button>
@@ -75,7 +75,7 @@
         type="button"
         @click="editor.chain().focus().toggleBulletList().run()"
         :class="['toolbar-btn', { active: editor.isActive('bulletList') }]"
-        title="Bullet List"
+        :title="t('editor.bulletList')"
       >
         <Icon name="ph:list-bullets" />
       </button>
@@ -83,7 +83,7 @@
         type="button"
         @click="editor.chain().focus().toggleOrderedList().run()"
         :class="['toolbar-btn', { active: editor.isActive('orderedList') }]"
-        title="Numbered List"
+        :title="t('editor.numberedList')"
       >
         <Icon name="ph:list-numbers" />
       </button>
@@ -95,7 +95,7 @@
         type="button"
         @click="editor.chain().focus().toggleBlockquote().run()"
         :class="['toolbar-btn', { active: editor.isActive('blockquote') }]"
-        title="Quote"
+        :title="t('editor.quote')"
       >
         <Icon name="ph:quotes" />
       </button>
@@ -103,7 +103,7 @@
         type="button"
         @click="editor.chain().focus().toggleCodeBlock().run()"
         :class="['toolbar-btn', { active: editor.isActive('codeBlock') }]"
-        title="Code Block"
+        :title="t('editor.codeBlock')"
       >
         <Icon name="ph:code" />
       </button>
@@ -111,7 +111,7 @@
         type="button"
         @click="editor.chain().focus().setHorizontalRule().run()"
         class="toolbar-btn"
-        title="Horizontal Rule"
+        :title="t('editor.horizontalRule')"
       >
         <Icon name="ph:minus" />
       </button>
@@ -124,7 +124,7 @@
           type="color"
           @input="setColor($event)"
           class="w-6 h-6 rounded cursor-pointer bg-transparent border-0 p-0"
-          title="Text Color"
+          :title="t('editor.textColor')"
         />
       </div>
 
@@ -135,7 +135,7 @@
         type="button"
         @click="editor.chain().focus().unsetAllMarks().clearNodes().run()"
         class="toolbar-btn"
-        title="Clear Formatting"
+        :title="t('editor.clearFormatting')"
       >
         <Icon name="ph:eraser" />
       </button>
@@ -146,7 +146,7 @@
         @click="editor.chain().focus().undo().run()"
         :disabled="!editor.can().undo()"
         class="toolbar-btn"
-        title="Undo"
+        :title="t('editor.undo')"
       >
         <Icon name="ph:arrow-counter-clockwise" />
       </button>
@@ -155,7 +155,7 @@
         @click="editor.chain().focus().redo().run()"
         :disabled="!editor.can().redo()"
         class="toolbar-btn"
-        title="Redo"
+        :title="t('editor.redo')"
       >
         <Icon name="ph:arrow-clockwise" />
       </button>
@@ -198,12 +198,14 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: string): void;
 }>();
 
+const { t } = useI18n();
+
 const editor = useEditor({
   content: props.modelValue,
   extensions: [
     StarterKit,
     Placeholder.configure({
-      placeholder: props.placeholder || 'Start typing...',
+      placeholder: props.placeholder || t('editor.placeholder'),
     }),
     TextStyle,
     Color,

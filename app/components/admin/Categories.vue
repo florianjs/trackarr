@@ -6,7 +6,7 @@
         <h3
           class="text-xs font-bold uppercase tracking-wider text-text-primary"
         >
-          Category Management
+          {{ t('admin.categories.title') }}
         </h3>
       </div>
     </div>
@@ -17,7 +17,7 @@
           v-model="parentCategoryId"
           class="input !py-2 text-xs font-bold uppercase tracking-wider w-48"
         >
-          <option :value="null">Root Category</option>
+          <option :value="null">{{ t('admin.categories.rootCategory') }}</option>
           <option
             v-for="category in categories"
             :key="category.id"
@@ -31,8 +31,8 @@
           type="text"
           :placeholder="
             parentCategoryId
-              ? 'New subcategory name...'
-              : 'New category name...'
+              ? t('admin.categories.newSubcategoryPlaceholder')
+              : t('admin.categories.newCategoryPlaceholder')
           "
           class="input flex-1 !py-2 text-xs font-bold uppercase tracking-wider"
           @keyup.enter="addCategory"
@@ -40,11 +40,11 @@
         <input
           v-model.number="newCategoryNewznabId"
           type="number"
-          placeholder="Newznab ID"
+          :placeholder="t('admin.categories.newznabId')"
           min="1000"
           max="9999"
           class="input w-28 !py-2 text-xs font-bold tracking-wider"
-          title="Newznab/Torznab category ID (e.g., 2040 for Movies/HD)"
+          :title="t('admin.categories.newznabIdHint')"
         />
         <button
           class="btn btn-primary !px-6 flex items-center gap-2 uppercase tracking-widest font-bold text-xs"
@@ -53,7 +53,7 @@
         >
           <Icon v-if="isAdding" name="ph:circle-notch" class="animate-spin" />
           <Icon v-else name="ph:plus-bold" />
-          <span>Add</span>
+          <span>{{ t('common.add') }}</span>
         </button>
       </div>
 
@@ -65,7 +65,7 @@
         <p
           class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-4"
         >
-          No categories defined
+          {{ t('admin.categories.empty') }}
         </p>
         <button
           class="btn btn-primary !px-4 !py-2 text-xs font-bold uppercase tracking-wider"
@@ -78,7 +78,7 @@
             class="animate-spin mr-2"
           />
           <Icon v-else name="ph:plant" class="mr-2" />
-          Seed Torznab Categories
+          {{ t('admin.categories.seed') }}
         </button>
       </div>
       <div v-else class="space-y-3">
@@ -129,11 +129,11 @@
                   <input
                     v-model.number="editingNewznabId"
                     type="number"
-                    placeholder="NZ ID"
+                    :placeholder="t('admin.categories.nzId')"
                     min="1000"
                     max="9999"
                     class="input !py-1 !px-2 text-xs font-bold tracking-wider w-20"
-                    title="Newznab/Torznab category ID"
+                    :title="t('admin.categories.newznabIdTitle')"
                   />
                   <button
                     class="p-1 text-success hover:bg-success/10 rounded transition-colors"
@@ -173,7 +173,12 @@
                       v-if="category.subcategories?.length"
                       class="ml-2 text-text-muted/60"
                     >
-                      ({{ category.subcategories.length }} subcategories)
+                      ({{
+                        t(
+                          'admin.categories.subcategoriesCount',
+                          category.subcategories.length
+                        )
+                      }})
                     </span>
                   </p>
                 </template>
@@ -233,11 +238,11 @@
                     <input
                       v-model.number="editingNewznabId"
                       type="number"
-                      placeholder="NZ ID"
+                      :placeholder="t('admin.categories.nzId')"
                       min="1000"
                       max="9999"
                       class="input !py-1 !px-2 text-xs font-bold tracking-wider w-20"
-                      title="Newznab/Torznab category ID"
+                      :title="t('admin.categories.newznabIdTitle')"
                     />
                     <button
                       class="p-1 text-success hover:bg-success/10 rounded transition-colors"
@@ -303,6 +308,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface Subcategory {
   id: string;
   name: string;
@@ -372,7 +379,7 @@ async function saveEdit(id: string) {
     editingNewznabId.value = null;
     await refresh();
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to update category');
+    alert(error.data?.message || t('admin.categories.updateFailed'));
   } finally {
     isSaving.value = false;
   }
@@ -401,14 +408,14 @@ async function addCategory() {
 
     await refresh();
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to add category');
+    alert(error.data?.message || t('admin.categories.addFailed'));
   } finally {
     isAdding.value = false;
   }
 }
 
 async function deleteCategory(id: string) {
-  if (!confirm('Are you sure you want to delete this category?')) return;
+  if (!confirm(t('admin.categories.confirmDelete'))) return;
 
   try {
     await $fetch(`/api/admin/categories/${id}`, {
@@ -416,7 +423,7 @@ async function deleteCategory(id: string) {
     });
     await refresh();
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to delete category');
+    alert(error.data?.message || t('admin.categories.deleteFailed'));
   }
 }
 
@@ -424,9 +431,7 @@ const isSeeding = ref(false);
 
 async function seedCategories() {
   if (
-    !confirm(
-      'This will create recommended Torznab-compatible categories. Continue?'
-    )
+    !confirm(t('admin.categories.confirmSeed'))
   )
     return;
 
@@ -439,9 +444,9 @@ async function seedCategories() {
       }
     );
     await refresh();
-    alert(`Created ${result.created} categories`);
+    alert(t('admin.categories.seeded', result.created));
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to seed categories');
+    alert(error.data?.message || t('admin.categories.seedFailed'));
   } finally {
     isSeeding.value = false;
   }

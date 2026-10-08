@@ -14,12 +14,12 @@
         <h1
           class="text-3xl font-black text-text-primary tracking-tighter uppercase mb-4"
         >
-          Search <span class="text-text-muted">Torrents</span>
+          {{ t('search.titlePrefix') }} <span class="text-text-muted">{{ t('search.titleAccent') }}</span>
         </h1>
         <div class="max-w-2xl lg:mx-0 mx-auto">
           <SearchBar
             v-model="searchQuery"
-            placeholder="Search by name, tag or infohash..."
+            :placeholder="t('search.placeholder')"
             size="lg"
             :loading="pending"
             @search="handleSearch"
@@ -33,7 +33,7 @@
           <div class="flex items-center gap-2">
             <Icon name="ph:list-bullets-bold" class="text-text-muted" />
             <h3 class="text-xs font-bold uppercase tracking-wider">
-              Search Results
+              {{ t('search.results') }}
               <span v-if="pagination.total > 0" class="text-text-muted ml-1">
                 ({{ pagination.total }})
               </span>
@@ -44,7 +44,7 @@
             <div
               class="text-[10px] font-mono text-text-muted uppercase tracking-widest"
             >
-              Sort by: <span class="text-text-primary">Newest</span>
+              {{ t('search.sortBy') }} <span class="text-text-primary">{{ t('search.newest') }}</span>
             </div>
           </div>
         </div>
@@ -68,13 +68,12 @@
               <h3
                 class="text-sm font-bold text-text-primary uppercase tracking-wider"
               >
-                No results found
+                {{ t('search.noResults') }}
               </h3>
               <p
                 class="text-xs text-text-muted mt-1 font-mono max-w-xs mx-auto"
               >
-                We couldn't find any torrents matching your search criteria. Try
-                different keywords or filters.
+                {{ t('search.noResultsHint') }}
               </p>
             </div>
             <div v-else class="p-20 text-center">
@@ -85,7 +84,7 @@
               <p
                 class="text-xs text-text-muted font-mono uppercase tracking-widest"
               >
-                Searching database...
+                {{ t('search.searching') }}
               </p>
             </div>
           </div>
@@ -98,7 +97,7 @@
             <p
               class="text-[10px] font-mono text-text-muted uppercase tracking-widest"
             >
-              Page {{ pagination.page }} / {{ pagination.pages }}
+              {{ t('common.pageOf', { page: pagination.page, pages: pagination.pages }) }}
             </p>
             <div class="flex gap-1">
               <button
@@ -125,7 +124,7 @@
         <div class="flex items-center gap-2 mb-6 px-1">
           <Icon name="ph:trend-up-bold" class="text-text-muted" />
           <h3 class="text-xs font-bold uppercase tracking-wider">
-            Trending Torrents
+            {{ t('search.trending') }}
           </h3>
         </div>
         <div class="card overflow-hidden">
@@ -155,6 +154,7 @@ interface TorrentWithStats {
   };
 }
 
+const { t } = useI18n();
 const route = useRoute();
 const router = useRouter();
 
@@ -243,6 +243,6 @@ watch(
 );
 
 useHead({
-  title: 'Search Torrents',
+  title: () => t('search.pageTitle'),
 });
 </script>

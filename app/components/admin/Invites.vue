@@ -7,7 +7,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Invitations
+            {{ t('admin.invites.title') }}
           </h3>
         </div>
       </div>
@@ -18,7 +18,7 @@
         <h4
           class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3"
         >
-          Generate Unique Codes
+          {{ t('admin.invites.generateTitle') }}
         </h4>
         <div class="flex gap-2 mb-3">
           <input
@@ -26,7 +26,7 @@
             type="number"
             min="1"
             max="50"
-            placeholder="Count"
+            :placeholder="t('admin.invites.count')"
             class="input w-24 !py-2 text-xs"
           />
           <input
@@ -34,7 +34,7 @@
             type="number"
             min="0"
             max="365"
-            placeholder="Expires in days (optional)"
+            :placeholder="t('admin.invites.expiresInDays')"
             class="input flex-1 !py-2 text-xs"
           />
           <button
@@ -47,7 +47,7 @@
               name="ph:circle-notch"
               class="animate-spin mr-1"
             />
-            Generate
+            {{ t('admin.invites.generate') }}
           </button>
         </div>
         <!-- Generated Codes Display -->
@@ -57,13 +57,13 @@
         >
           <div class="flex items-center justify-between mb-2">
             <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
-              Generated Codes
+              {{ t('admin.invites.generatedCodes') }}
             </span>
             <button
               @click="copyAllCodes"
               class="text-[10px] text-accent hover:underline"
             >
-              Copy All
+              {{ t('admin.invites.copyAll') }}
             </button>
           </div>
           <div class="flex flex-wrap gap-1">
@@ -72,7 +72,7 @@
               :key="code"
               @click="copyCode(code)"
               class="px-2 py-0.5 text-[10px] font-mono bg-bg-tertiary rounded border border-border cursor-pointer hover:border-accent/50"
-              title="Click to copy"
+              :title="t('admin.invites.clickToCopy')"
             >
               {{ code }}
             </code>
@@ -85,13 +85,13 @@
         <h4
           class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
         >
-          Grant Invites to User
+          {{ t('admin.invites.grantTitle') }}
         </h4>
         <div class="flex gap-2">
           <input
             v-model="grantUserId"
             type="text"
-            placeholder="User ID"
+            :placeholder="t('admin.invites.userId')"
             class="input flex-1 !py-2 text-xs font-mono"
           />
           <input
@@ -99,7 +99,7 @@
             type="number"
             min="1"
             max="100"
-            placeholder="Count"
+            :placeholder="t('admin.invites.count')"
             class="input w-20 !py-2 text-xs"
           />
           <button
@@ -112,7 +112,7 @@
               name="ph:circle-notch"
               class="animate-spin mr-1"
             />
-            Grant
+            {{ t('admin.invites.grant') }}
           </button>
         </div>
       </div>
@@ -129,7 +129,7 @@
               <code
                 class="px-2 py-0.5 text-xs font-mono bg-bg-primary rounded border border-border cursor-pointer hover:border-accent/50"
                 @click="copyCode(invite.code)"
-                title="Click to copy"
+                :title="t('admin.invites.clickToCopy')"
               >
                 {{ invite.code }}
               </code>
@@ -142,11 +142,11 @@
             </div>
             <div class="flex items-center gap-4 text-[10px] text-text-muted">
               <span>
-                Created by:
+                {{ t('admin.invites.createdBy') }}
                 <span class="font-mono">{{ invite.creator?.username }}</span>
               </span>
               <span v-if="invite.usedByUser">
-                Used by:
+                {{ t('admin.invites.usedBy') }}
                 <span class="font-mono">{{ invite.usedByUser.username }}</span>
               </span>
               <span>
@@ -156,14 +156,14 @@
                 v-if="invite.expiresAt && !invite.usedBy"
                 :class="isExpired(invite.expiresAt) ? 'text-error' : ''"
               >
-                Expires: {{ formatDate(invite.expiresAt) }}
+                {{ t('admin.invites.expires', { date: formatDate(invite.expiresAt) }) }}
               </span>
             </div>
           </div>
         </div>
       </div>
       <p v-else class="text-xs text-text-muted text-center py-4">
-        No invitations found
+        {{ t('admin.invites.empty') }}
       </p>
 
       <!-- Pagination -->
@@ -176,7 +176,7 @@
           :disabled="page <= 1"
           class="btn btn-secondary !px-3 !py-1 text-[10px]"
         >
-          Prev
+          {{ t('common.previous') }}
         </button>
         <span class="text-xs text-text-muted self-center">
           {{ page }} / {{ invites.pagination.pages }}
@@ -186,7 +186,7 @@
           :disabled="page >= invites.pagination.pages"
           class="btn btn-secondary !px-3 !py-1 text-[10px]"
         >
-          Next
+          {{ t('common.next') }}
         </button>
       </div>
     </div>
@@ -218,6 +218,7 @@ interface InvitesResponse {
   };
 }
 
+const { t, locale } = useI18n();
 const notifications = useNotificationStore();
 const page = ref(1);
 const grantUserId = ref('');
@@ -238,7 +239,7 @@ const { data: invites, refresh } = await useFetch<InvitesResponse>(
 );
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
@@ -252,9 +253,9 @@ function isExpired(date?: string) {
 }
 
 function getInviteStatus(invite: Invitation) {
-  if (invite.usedBy) return 'Used';
-  if (invite.expiresAt && isExpired(invite.expiresAt)) return 'Expired';
-  return 'Pending';
+  if (invite.usedBy) return t('admin.invites.statusUsed');
+  if (invite.expiresAt && isExpired(invite.expiresAt)) return t('admin.invites.statusExpired');
+  return t('admin.invites.statusPending');
 }
 
 function getInviteStatusClass(invite: Invitation) {
@@ -275,11 +276,13 @@ async function generateCodes() {
       },
     });
     generatedCodes.value = result.codes;
-    notifications.success(`Generated ${result.codes.length} invite code(s)`);
+    notifications.success(
+      t('admin.invites.generatedToast', result.codes.length)
+    );
     await refresh();
   } catch (error: any) {
     console.error('Failed to generate codes:', error);
-    notifications.error(error.data?.message || 'Failed to generate codes');
+    notifications.error(error.data?.message || t('admin.invites.generateFailed'));
   } finally {
     isGenerating.value = false;
   }
@@ -296,13 +299,13 @@ async function grantInvites() {
         count: grantCount.value,
       },
     });
-    notifications.success(`Granted ${grantCount.value} invites to user`);
+    notifications.success(t('admin.invites.grantedToast', grantCount.value));
     grantUserId.value = '';
     grantCount.value = 2;
     await refresh();
   } catch (error: any) {
     console.error('Failed to grant invites:', error);
-    notifications.error(error.data?.message || 'Failed to grant invites');
+    notifications.error(error.data?.message || t('admin.invites.grantFailed'));
   } finally {
     isGranting.value = false;
   }
@@ -311,18 +314,18 @@ async function grantInvites() {
 async function copyCode(code: string) {
   try {
     await navigator.clipboard.writeText(code);
-    notifications.success('Code copied!');
+    notifications.success(t('admin.invites.codeCopied'));
   } catch {
-    notifications.error('Failed to copy code');
+    notifications.error(t('admin.invites.copyCodeFailed'));
   }
 }
 
 async function copyAllCodes() {
   try {
     await navigator.clipboard.writeText(generatedCodes.value.join('\n'));
-    notifications.success('All codes copied!');
+    notifications.success(t('admin.invites.allCodesCopied'));
   } catch {
-    notifications.error('Failed to copy codes');
+    notifications.error(t('admin.invites.copyCodesFailed'));
   }
 }
 </script>

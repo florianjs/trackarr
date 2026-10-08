@@ -38,7 +38,7 @@
       <button
         v-if="modelValue"
         class="text-text-muted hover:text-white transition-colors p-2"
-        title="Clear"
+        :title="t('searchBar.clear')"
         @click="clear"
       >
         <Icon name="ph:x" :class="size === 'lg' ? 'h-4 w-4' : 'h-3.5 w-3.5'" />
@@ -46,7 +46,7 @@
       <button
         class="btn-search"
         :class="size === 'lg' ? 'btn-lg' : 'btn-sm'"
-        title="Search"
+        :title="t('common.search')"
         @click="$emit('search')"
       >
         <Icon
@@ -71,7 +71,7 @@
 </style>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 
 const props = defineProps<{
   modelValue: string;
@@ -85,8 +85,11 @@ const emit = defineEmits<{
   (e: 'search'): void;
 }>();
 
+const { t } = useI18n();
 const size = props.size ?? 'sm';
-const placeholder = props.placeholder ?? 'Search...';
+const placeholder = computed(
+  () => props.placeholder ?? t('searchBar.placeholder')
+);
 
 const inputRef = ref<HTMLInputElement | null>(null);
 

@@ -7,13 +7,14 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Pending Torrents
+            {{ t('admin.pending.title') }}
           </h3>
         </div>
         <button
           @click="loadPending"
           class="btn btn-ghost !p-2"
           :disabled="isLoading"
+          :title="t('common.refresh')"
         >
           <Icon
             name="ph:arrows-clockwise-bold"
@@ -42,11 +43,11 @@
               >
                 <span class="flex items-center gap-1">
                   <Icon name="ph:user-bold" />
-                  {{ torrent.uploader?.username || 'Unknown' }}
+                  {{ torrent.uploader?.username || t('common.unknown') }}
                 </span>
                 <span class="flex items-center gap-1">
                   <Icon name="ph:folder-bold" />
-                  {{ torrent.category?.name || 'Uncategorized' }}
+                  {{ torrent.category?.name || t('admin.pending.uncategorized') }}
                 </span>
                 <span class="flex items-center gap-1">
                   <Icon name="ph:hard-drives-bold" />
@@ -76,7 +77,7 @@
                   class="animate-spin"
                 />
                 <Icon v-else name="ph:check-bold" />
-                <span>Approve</span>
+                <span>{{ t('common.approve') }}</span>
               </button>
               <button
                 @click="reject(torrent)"
@@ -84,7 +85,7 @@
                 class="btn !px-3 !py-1.5 flex items-center gap-1 text-xs uppercase tracking-wider font-bold bg-error/10 text-error hover:bg-error/20 border border-error/30"
               >
                 <Icon name="ph:x-bold" />
-                <span>Reject</span>
+                <span>{{ t('common.reject') }}</span>
               </button>
             </div>
           </div>
@@ -101,10 +102,10 @@
         <p
           class="text-xs font-bold text-text-muted uppercase tracking-widest"
         >
-          No pending torrents
+          {{ t('admin.pending.empty') }}
         </p>
         <p class="text-[10px] text-text-muted/70 mt-1">
-          All torrents have been moderated
+          {{ t('admin.pending.allModerated') }}
         </p>
       </div>
       <div v-if="isLoading" class="flex justify-center py-12">
@@ -118,6 +119,8 @@
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
+
 interface PendingTorrent {
   id: string;
   infoHash: string;
@@ -156,16 +159,16 @@ async function approve(torrent: PendingTorrent) {
     await $fetch(`/api/mod/torrents/${torrent.infoHash}/approve`, {
       method: 'POST',
     });
-    pending.value = pending.value.filter((t) => t.id !== torrent.id);
+    pending.value = pending.value.filter((p) => p.id !== torrent.id);
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to approve torrent');
+    alert(error.data?.message || t('admin.pending.approveFailed'));
   } finally {
     processingId.value = null;
   }
 }
 
 async function reject(torrent: PendingTorrent) {
-  const reason = prompt('Reason for rejection (optional):');
+  const reason = prompt(t('admin.pending.rejectPrompt'));
   if (reason === null) return; // User cancelled
 
   processingId.value = torrent.id;
@@ -174,9 +177,9 @@ async function reject(torrent: PendingTorrent) {
       method: 'POST',
       body: { reason },
     });
-    pending.value = pending.value.filter((t) => t.id !== torrent.id);
+    pending.value = pending.value.filter((p) => p.id !== torrent.id);
   } catch (error: any) {
-    alert(error.data?.message || 'Failed to reject torrent');
+    alert(error.data?.message || t('admin.pending.rejectFailed'));
   } finally {
     processingId.value = null;
   }
@@ -194,7 +197,7 @@ function formatSize(bytes: number): string {
 }
 
 function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('en-US', {
+  return new Date(dateStr).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',

@@ -3,7 +3,9 @@
     <div class="sticky top-20">
       <div class="flex items-center gap-2 px-3 py-2 mb-2">
         <Icon name="ph:folders-bold" class="text-text-muted" />
-        <h3 class="text-xs font-bold uppercase tracking-wider">Categories</h3>
+        <h3 class="text-xs font-bold uppercase tracking-wider">
+          {{ t('sidebar.categories') }}
+        </h3>
       </div>
 
       <nav class="space-y-0.5">
@@ -18,7 +20,7 @@
           @click="$emit('select', '')"
         >
           <Icon name="ph:list-bold" class="text-sm" />
-          <span>All Torrents</span>
+          <span>{{ t('sidebar.allTorrents') }}</span>
         </button>
 
         <!-- Categories -->
@@ -96,6 +98,7 @@ const emit = defineEmits<{
   select: [id: string];
 }>();
 
+const { t } = useI18n();
 const expandedIds = ref<Set<string>>(new Set());
 
 // Auto-expand parent if a subcategory is selected

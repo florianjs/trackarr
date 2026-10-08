@@ -18,10 +18,10 @@
             class="flex items-center gap-2 text-text-muted text-xs font-mono uppercase tracking-widest mb-2"
           >
             <NuxtLink to="/forum" class="hover:text-white transition-colors"
-              >Forum</NuxtLink
+              >{{ t('forum.title') }}</NuxtLink
             >
             <Icon name="ph:caret-right" />
-            <span>Category</span>
+            <span>{{ t('common.category') }}</span>
           </div>
           <h1 class="text-2xl font-bold tracking-tight">{{ category.name }}</h1>
           <p class="text-text-muted text-sm">{{ category.description }}</p>
@@ -32,7 +32,7 @@
             class="px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors flex items-center gap-2"
           >
             <Icon name="ph:plus-bold" />
-            New Topic
+            {{ t('forum.category.newTopic') }}
           </NuxtLink>
         </div>
       </div>
@@ -43,16 +43,16 @@
         <div
           class="grid grid-cols-12 px-6 py-3 border-b border-border bg-bg-tertiary/50 text-[10px] uppercase tracking-widest font-bold text-text-muted"
         >
-          <div class="col-span-7">Topic</div>
-          <div class="col-span-2 text-center">Replies</div>
-          <div class="col-span-3 text-right">Last Post</div>
+          <div class="col-span-7">{{ t('forum.category.topic') }}</div>
+          <div class="col-span-2 text-center">{{ t('forum.category.replies') }}</div>
+          <div class="col-span-3 text-right">{{ t('forum.category.lastPost') }}</div>
         </div>
 
         <div
           v-if="category.topics.length === 0"
           class="p-12 text-center text-text-muted italic"
         >
-          No topics in this category yet.
+          {{ t('forum.category.empty') }}
         </div>
 
         <div
@@ -88,7 +88,7 @@
               <div
                 class="text-xs text-text-muted mt-0.5 flex items-center gap-2"
               >
-                by
+                {{ t('forum.category.by') }}
                 <span class="text-text-secondary">{{
                   topic.author.username
                 }}</span>
@@ -97,7 +97,7 @@
                   v-if="user?.isAdmin || user?.isModerator"
                   @click.stop.prevent="handleDeleteTopic(topic.id)"
                   class="text-red-500 hover:text-red-400 ml-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                  title="Delete Topic"
+                  :title="t('forum.category.deleteTopic')"
                 >
                   <Icon name="ph:trash" />
                 </button>
@@ -121,6 +121,7 @@
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
 const route = useRoute();
 const { user } = useUserSession();
 const {
@@ -130,7 +131,7 @@ const {
 } = await useFetch(`/api/forum/categories/${route.params.id}`);
 
 async function handleDeleteTopic(topicId: string) {
-  if (!confirm('Are you sure you want to delete this topic?')) return;
+  if (!confirm(t('forum.confirmDeleteTopic'))) return;
   try {
     await $fetch(`/api/forum/topics/${topicId}`, {
       method: 'DELETE',
@@ -142,7 +143,7 @@ async function handleDeleteTopic(topicId: string) {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

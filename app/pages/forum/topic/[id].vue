@@ -18,7 +18,7 @@
             class="flex items-center gap-2 text-text-muted text-xs font-mono uppercase tracking-widest mb-2"
           >
             <NuxtLink to="/forum" class="hover:text-white transition-colors"
-              >Forum</NuxtLink
+              >{{ t('forum.title') }}</NuxtLink
             >
             <Icon name="ph:caret-right" />
             <NuxtLink
@@ -27,7 +27,7 @@
               >{{ topic.category.name }}</NuxtLink
             >
             <Icon name="ph:caret-right" />
-            <span>Topic</span>
+            <span>{{ t('forum.topic.breadcrumb') }}</span>
           </div>
           <h1 class="text-2xl font-bold tracking-tight flex items-center gap-3">
             <Icon
@@ -51,21 +51,21 @@
             <Icon
               :name="topic.isPinned ? 'ph:push-pin-slash' : 'ph:push-pin'"
             />
-            {{ topic.isPinned ? 'Unpin' : 'Pin' }}
+            {{ topic.isPinned ? t('forum.topic.unpin') : t('forum.topic.pin') }}
           </button>
           <button
             @click="handleToggleLock"
             class="px-3 py-1.5 bg-bg-secondary border border-border text-[10px] font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors flex items-center gap-2"
           >
             <Icon :name="topic.isLocked ? 'ph:lock-open' : 'ph:lock'" />
-            {{ topic.isLocked ? 'Unlock' : 'Lock' }}
+            {{ topic.isLocked ? t('forum.topic.unlock') : t('forum.topic.lock') }}
           </button>
           <button
             @click="handleDeleteTopic"
             class="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider rounded hover:bg-red-500/20 transition-colors flex items-center gap-2"
           >
             <Icon name="ph:trash" />
-            Delete
+            {{ t('common.delete') }}
           </button>
         </div>
       </div>
@@ -94,12 +94,12 @@
                 <span
                   v-if="post.author.isAdmin"
                   class="text-[8px] uppercase tracking-tighter px-1 bg-white/10 rounded text-text-secondary"
-                  >Admin</span
+                  >{{ t('common.admin') }}</span
                 >
                 <span
                   v-if="post.author.isModerator"
                   class="text-[8px] uppercase tracking-tighter px-1 bg-white/10 rounded text-text-secondary"
-                  >Mod</span
+                  >{{ t('forum.topic.modBadge') }}</span
                 >
               </div>
             </div>
@@ -110,12 +110,12 @@
             <div
               class="text-xs text-text-muted font-mono uppercase tracking-widest mb-4 flex justify-between items-center"
             >
-              <span>Posted on {{ formatDate(post.createdAt) }}</span>
+              <span>{{ t('forum.topic.postedOn', { date: formatDate(post.createdAt) }) }}</span>
               <button
                 v-if="user?.isAdmin || user?.isModerator"
                 @click="handleDeletePost(post.id)"
                 class="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-400 p-1"
-                title="Delete Post"
+                :title="t('forum.topic.deletePost')"
               >
                 <Icon name="ph:trash" class="text-lg" />
               </button>
@@ -134,14 +134,14 @@
         v-if="!topic.isLocked || user?.isAdmin || user?.isModerator"
         class="mt-8 space-y-4"
       >
-        <h3 class="text-lg font-bold">Post a Reply</h3>
+        <h3 class="text-lg font-bold">{{ t('forum.topic.replyTitle') }}</h3>
         <div
           class="bg-bg-secondary border border-border rounded-lg p-6 space-y-4"
         >
           <textarea
             v-model="replyContent"
             class="w-full bg-bg-tertiary border border-border rounded px-4 py-3 text-sm focus:outline-none focus:border-white/40 transition-colors h-48 resize-none"
-            placeholder="Write your reply here..."
+            :placeholder="t('forum.topic.replyPlaceholder')"
           ></textarea>
           <div class="flex justify-end">
             <button
@@ -149,7 +149,7 @@
               :disabled="!replyContent.trim() || posting"
               class="px-6 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
             >
-              {{ posting ? 'Posting...' : 'Post Reply' }}
+              {{ posting ? t('forum.topic.posting') : t('forum.topic.postReply') }}
             </button>
           </div>
         </div>
@@ -158,13 +158,14 @@
         v-else
         class="mt-8 p-6 bg-bg-tertiary/30 border border-border border-dashed rounded-lg text-center text-text-muted italic"
       >
-        This topic is locked. You cannot reply.
+        {{ t('forum.topic.locked') }}
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
 const route = useRoute();
 const { user } = useUserSession();
 const {
@@ -224,7 +225,7 @@ async function handleToggleLock() {
 }
 
 async function handleDeleteTopic() {
-  if (!topic.value || !confirm('Are you sure you want to delete this topic?'))
+  if (!topic.value || !confirm(t('forum.confirmDeleteTopic')))
     return;
   try {
     await $fetch(`/api/forum/topics/${topic.value.id}`, {
@@ -237,7 +238,7 @@ async function handleDeleteTopic() {
 }
 
 async function handleDeletePost(postId: string) {
-  if (!confirm('Are you sure you want to delete this post?')) return;
+  if (!confirm(t('forum.topic.confirmDeletePost'))) return;
   try {
     const res = await $fetch<{ message: string }>(
       `/api/forum/posts/${postId}`,
@@ -256,7 +257,7 @@ async function handleDeletePost(postId: string) {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleString('en-US', {
+  return new Date(date).toLocaleString(locale.value, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

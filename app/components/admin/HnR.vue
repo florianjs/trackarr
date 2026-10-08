@@ -7,7 +7,7 @@
           <h3
             class="text-xs font-bold uppercase tracking-wider text-text-primary"
           >
-            Hit & Run Tracking
+            {{ t('admin.hnr.title') }}
           </h3>
           <span
             v-if="hnrCount > 0"
@@ -18,16 +18,16 @@
         </div>
         <div class="flex gap-2">
           <select v-model="statusFilter" class="input !py-1 text-xs">
-            <option value="">All</option>
-            <option value="hnr">Hit & Run</option>
-            <option value="pending">Pending</option>
-            <option value="completed">Completed</option>
+            <option value="">{{ t('common.all') }}</option>
+            <option value="hnr">{{ t('admin.hnr.hitAndRun') }}</option>
+            <option value="pending">{{ t('admin.hnr.pending') }}</option>
+            <option value="completed">{{ t('common.completed') }}</option>
           </select>
           <button
             @click="checkHnrs"
             :disabled="isChecking"
             class="btn btn-secondary !px-3 !py-1 text-[10px]"
-            title="Check for new HnRs"
+            :title="t('admin.hnr.checkNew')"
           >
             <Icon
               :name="
@@ -68,27 +68,33 @@
               class="flex items-center gap-4 mt-1 text-[10px] text-text-muted"
             >
               <span>
-                Seed time:
+                {{ t('admin.hnr.seedTime') }}
                 <span class="font-mono">{{
                   formatDuration(entry.seedTime)
                 }}</span>
                 / {{ formatDuration(entry.requiredSeedTime) }}
               </span>
-              <span> Downloaded: {{ formatDate(entry.downloadedAt) }} </span>
+              <span>
+                {{
+                  t('admin.hnr.downloadedAt', {
+                    date: formatDate(entry.downloadedAt),
+                  })
+                }}
+              </span>
             </div>
           </div>
           <div v-if="entry.isHnr && !entry.isExempt" class="flex gap-1">
             <button
               @click="handleAction(entry.id, 'clear')"
               class="p-1.5 rounded bg-success/10 text-success hover:bg-success/20 transition-colors"
-              title="Clear HnR"
+              :title="t('admin.hnr.clear')"
             >
               <Icon name="ph:check-bold" class="w-4 h-4" />
             </button>
             <button
               @click="handleAction(entry.id, 'exempt')"
               class="p-1.5 rounded bg-warning/10 text-warning hover:bg-warning/20 transition-colors"
-              title="Exempt"
+              :title="t('admin.hnr.exempt')"
             >
               <Icon name="ph:shield-bold" class="w-4 h-4" />
             </button>
@@ -97,12 +103,12 @@
             v-else-if="entry.isExempt"
             class="text-[10px] text-text-muted uppercase tracking-wider"
           >
-            Exempt
+            {{ t('admin.hnr.exempted') }}
           </span>
         </div>
       </div>
       <p v-else class="text-xs text-text-muted text-center py-4">
-        No HnR entries found
+        {{ t('admin.hnr.empty') }}
       </p>
 
       <!-- Pagination -->
@@ -115,7 +121,7 @@
           :disabled="page <= 1"
           class="btn btn-secondary !px-3 !py-1 text-[10px]"
         >
-          Prev
+          {{ t('common.previous') }}
         </button>
         <span class="text-xs text-text-muted self-center">
           {{ page }} / {{ hnrData.pagination.pages }}
@@ -125,7 +131,7 @@
           :disabled="page >= hnrData.pagination.pages"
           class="btn btn-secondary !px-3 !py-1 text-[10px]"
         >
-          Next
+          {{ t('common.next') }}
         </button>
       </div>
     </div>
@@ -133,6 +139,8 @@
 </template>
 
 <script setup lang="ts">
+const { t, locale } = useI18n();
+
 interface HnrEntry {
   id: string;
   userId: string;
@@ -186,10 +194,10 @@ function getStatusClass(entry: HnrEntry) {
 }
 
 function getStatusLabel(entry: HnrEntry) {
-  if (entry.isExempt) return 'Exempt';
+  if (entry.isExempt) return t('admin.hnr.exempted');
   if (entry.isHnr) return 'HnR';
   if (entry.completedAt) return 'OK';
-  return 'Pending';
+  return t('admin.hnr.pending');
 }
 
 function formatDuration(seconds: number) {
@@ -199,7 +207,7 @@ function formatDuration(seconds: number) {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     hour: '2-digit',
