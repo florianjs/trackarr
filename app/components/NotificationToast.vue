@@ -31,6 +31,7 @@
             </div>
             <button
               class="shrink-0 text-text-muted hover:text-white transition-colors"
+              :aria-label="t('common.close')"
               @click="notificationStore.remove(notification.id)"
             >
               <Icon name="ph:x-bold" class="w-4 h-4" />
@@ -43,6 +44,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 const notificationStore = useNotificationStore();
 const { notifications } = storeToRefs(notificationStore);
 

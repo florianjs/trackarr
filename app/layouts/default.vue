@@ -51,7 +51,7 @@
           >
             <div class="flex items-center gap-2">
               <Icon :name="link.icon" class="text-base" />
-              <span>{{ link.label }}</span>
+              <span>{{ t(link.labelKey) }}</span>
             </div>
           </NuxtLink>
         </nav>
@@ -85,7 +85,7 @@
             <div class="flex flex-col items-center leading-tight">
               <span
                 class="text-[9px] text-text-muted uppercase font-bold tracking-tighter"
-                >Ratio</span
+                >{{ t('common.ratio') }}</span
               >
               <span :class="['text-xs font-mono font-bold', ratioColor]">
                 {{ calculateRatio(user.uploaded, user.downloaded) }}
@@ -94,7 +94,7 @@
             <button
               @click="refreshStats"
               class="p-1 rounded hover:bg-white/5 text-text-muted hover:text-text-secondary transition-colors"
-              title="Refresh stats"
+              :title="t('layout.refreshStats')"
             >
               <Icon name="ph:arrows-clockwise" class="text-xs" />
             </button>
@@ -143,13 +143,13 @@
                       v-if="user?.isAdmin"
                       class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 bg-white/10 rounded text-text-secondary"
                     >
-                      Admin
+                      {{ t('common.admin') }}
                     </span>
                     <span
                       v-if="user?.isModerator"
                       class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 bg-white/10 rounded text-text-secondary"
                     >
-                      Moderator
+                      {{ t('common.moderator') }}
                     </span>
                   </div>
                 </div>
@@ -158,7 +158,7 @@
                     <p
                       class="text-[10px] uppercase tracking-wider text-text-muted mb-1"
                     >
-                      Passkey
+                      {{ t('layout.passkey') }}
                     </p>
                     <code
                       class="text-xs font-mono text-text-secondary break-all"
@@ -172,7 +172,7 @@
                       <p
                         class="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"
                       >
-                        Uploaded
+                        {{ t('common.uploaded') }}
                       </p>
                       <p class="text-xs font-mono text-success">
                         {{ formatSize(user?.uploaded || 0) }}
@@ -182,7 +182,7 @@
                       <p
                         class="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"
                       >
-                        Downloaded
+                        {{ t('common.downloaded') }}
                       </p>
                       <p class="text-xs font-mono text-error">
                         {{ formatSize(user?.downloaded || 0) }}
@@ -192,7 +192,7 @@
                       <p
                         class="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"
                       >
-                        Ratio
+                        {{ t('common.ratio') }}
                       </p>
                       <p class="text-xs font-mono" :class="ratioColor">
                         {{ calculateRatio(user?.uploaded, user?.downloaded) }}
@@ -206,7 +206,7 @@
                     class="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/5 transition-colors flex items-center gap-2"
                   >
                     <Icon name="ph:sign-out" />
-                    Sign Out
+                    {{ t('layout.signOut') }}
                   </button>
                 </div>
               </div>
@@ -260,7 +260,7 @@
             <button
               @click="dismissAnnouncement"
               class="p-1 rounded hover:bg-white/10 transition-colors flex-shrink-0"
-              title="Dismiss"
+              :title="t('layout.dismiss')"
             >
               <Icon
                 name="ph:x"
@@ -296,7 +296,7 @@
             "
           ></span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
-          <span>P2P PROTOCOL</span>
+          <span>{{ t('layout.p2pProtocol') }}</span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
           <LanguageSwitcher />
         </div>
@@ -329,6 +329,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 const { user, clear, fetch } = useUserSession();
 
 // Passkey is not part of the client session: fetch it on demand
@@ -448,22 +449,22 @@ async function refreshStats() {
 }
 
 const navLinks = [
-  { to: '/', label: 'Dashboard', icon: 'ph:squares-four', adminOnly: false },
+  { to: '/', labelKey: 'nav.dashboard', icon: 'ph:squares-four', adminOnly: false },
   {
     to: '/search',
-    label: 'Search',
+    labelKey: 'nav.search',
     icon: 'ph:magnifying-glass',
     adminOnly: false,
   },
-  { to: '/torrents', label: 'Torrents', icon: 'ph:files', adminOnly: false },
+  { to: '/torrents', labelKey: 'nav.torrents', icon: 'ph:files', adminOnly: false },
   {
     to: '/forum',
-    label: 'Forum',
+    labelKey: 'nav.forum',
     icon: 'ph:chat-centered-text',
     adminOnly: false,
   },
-  { to: '/admin', label: 'Admin', icon: 'ph:shield-check', adminOnly: true },
-  { to: '/mod', label: 'Mod', icon: 'ph:shield', modOnly: true },
+  { to: '/admin', labelKey: 'nav.admin', icon: 'ph:shield-check', adminOnly: true },
+  { to: '/mod', labelKey: 'nav.mod', icon: 'ph:shield', modOnly: true },
 ];
 
 const visibleNavLinks = computed(() =>

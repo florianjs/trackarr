@@ -1,5 +1,212 @@
 {
   "common": {
-    "language": "Language"
+    "language": "Language",
+    "save": "Save",
+    "saving": "Saving...",
+    "saveChanges": "Save changes",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleting": "Deleting...",
+    "edit": "Edit",
+    "close": "Close",
+    "create": "Create",
+    "creating": "Creating...",
+    "add": "Add",
+    "remove": "Remove",
+    "search": "Search",
+    "loading": "Loading...",
+    "refresh": "Refresh",
+    "reset": "Reset",
+    "copy": "Copy",
+    "copied": "Copied!",
+    "approve": "Approve",
+    "reject": "Reject",
+    "all": "All",
+    "unknown": "Unknown",
+    "never": "Never",
+    "optional": "optional",
+    "actions": "Actions",
+    "name": "Name",
+    "description": "Description",
+    "enabled": "Enabled",
+    "disabled": "Disabled",
+    "active": "Active",
+    "inactive": "Inactive",
+    "previous": "Previous",
+    "next": "Next",
+    "error": "Error",
+    "user": "User",
+    "username": "Username",
+    "password": "Password",
+    "role": "Role",
+    "reason": "Reason",
+    "category": "Category",
+    "tags": "Tags",
+    "size": "Size",
+    "seeders": "Seeders",
+    "leechers": "Leechers",
+    "completed": "Completed",
+    "ratio": "Ratio",
+    "uploaded": "Uploaded",
+    "downloaded": "Downloaded",
+    "admin": "Admin",
+    "moderator": "Moderator",
+    "pageOf": "Page {page} / {pages}",
+    "saveConfiguration": "Save Configuration",
+    "saved": "Saved"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "search": "Search",
+    "torrents": "Torrents",
+    "forum": "Forum",
+    "admin": "Admin",
+    "mod": "Mod"
+  },
+  "layout": {
+    "refreshStats": "Refresh stats",
+    "passkey": "Passkey",
+    "signOut": "Sign Out",
+    "dismiss": "Dismiss",
+    "p2pProtocol": "P2P Protocol"
+  },
+  "auth": {
+    "defaultSubtitle": "Private BitTorrent Tracker",
+    "usernamePlaceholder": "Enter your username",
+    "passwordPlaceholder": "Enter your password",
+    "status": {
+      "fetchingChallenge": "Fetching challenge...",
+      "generatingProof": "Generating proof...",
+      "authenticating": "Authenticating...",
+      "gettingChallenge": "Getting challenge...",
+      "solvingPow": "Solving proof of work...",
+      "generatingCredentials": "Generating secure credentials..."
+    },
+    "login": {
+      "registrationsClosed": "Registrations are currently closed. Only existing members can sign in.",
+      "signingIn": "Signing in...",
+      "signIn": "Sign In",
+      "noAccount": "Don't have an account?",
+      "createOne": "Create one",
+      "failed": "Login failed"
+    },
+    "register": {
+      "closedTitle": "Registration Closed",
+      "closedText": "New registrations are currently not accepted. If you have an invite, please contact an administrator.",
+      "createAdminAccount": "Create Admin Account",
+      "inviteOnlyTitle": "Invite Only Registration",
+      "createAccount": "Create Account",
+      "firstAccountWarning": "This is the first account. It will have administrator privileges.",
+      "zkeTitle": "Zero Knowledge Encryption:",
+      "zkeText": "Your password is never sent to the server. If you forget it, your account cannot be recovered.",
+      "inviteCode": "Invite Code",
+      "inviteCodePlaceholder": "Enter your invite code",
+      "usernamePlaceholder": "3-20 characters, letters, numbers, _ or -",
+      "passwordPlaceholder": "At least 8 characters",
+      "confirmPassword": "Confirm Password",
+      "confirmPasswordPlaceholder": "Re-enter your password",
+      "panicWarning": "The panic password enables emergency database encryption. Store it securely — it cannot be recovered or changed.",
+      "panicPassword": "Panic Password",
+      "panicPasswordPlaceholder": "At least 12 characters",
+      "confirmPanicPassword": "Confirm Panic Password",
+      "confirmPanicPasswordPlaceholder": "Re-enter panic password",
+      "creatingAccount": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "signInLink": "Sign in",
+      "failed": "Registration failed",
+      "errors": {
+        "passwordMismatch": "Passwords do not match",
+        "passwordTooShort": "Password must be at least 8 characters",
+        "panicMismatch": "Panic passwords do not match",
+        "panicTooShort": "Panic password must be at least 12 characters"
+      }
+    }
+  },
+  "home": {
+    "statusBadge": "Tracker Online & Operational",
+    "heroSubtitle": "High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.",
+    "searchPlaceholder": "Search torrents by name, tag or infohash...",
+    "torrentCount": "{count} Torrents | {count} Torrent | {count} Torrents",
+    "peerCount": "{count} Peers | {count} Peer | {count} Peers",
+    "lowLatency": "Ultra-low Latency",
+    "recentlyIndexed": "Recently Indexed",
+    "browseAll": "Browse all",
+    "features": {
+      "performance": {
+        "title": "High Performance",
+        "description": "Built with Node.js and Redis for sub-millisecond response times and high concurrency support."
+      },
+      "protocols": {
+        "title": "Multi-Protocol",
+        "description": "Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients."
+      },
+      "openSource": {
+        "title": "Open Source",
+        "description": "Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem."
+      }
+    }
+  },
+  "searchBar": {
+    "placeholder": "Search...",
+    "clear": "Clear"
+  },
+  "sidebar": {
+    "categories": "Categories",
+    "allTorrents": "All Torrents"
+  },
+  "report": {
+    "title": "Report {type}",
+    "targetTypes": {
+      "torrent": "torrent",
+      "user": "user",
+      "post": "post",
+      "comment": "comment"
+    },
+    "selectReason": "Select a reason...",
+    "reasons": {
+      "spam": "Spam or advertising",
+      "fake": "Fake or misleading content",
+      "copyright": "Copyright violation",
+      "inappropriate": "Inappropriate content",
+      "harassment": "Harassment or abuse",
+      "other": "Other"
+    },
+    "details": "Additional Details",
+    "detailsPlaceholder": "Provide any additional context...",
+    "submit": "Submit Report",
+    "submitted": "Report submitted successfully",
+    "failed": "Failed to submit report"
+  },
+  "mediaIds": {
+    "label": "External IDs",
+    "imdbPlaceholder": "IMDb (tt0133093 or URL)",
+    "tmdbPlaceholder": "TMDb (603 or URL)",
+    "help": "Used by Sonarr / Radarr to match releases. Paste an ID or the page URL."
+  },
+  "editor": {
+    "placeholder": "Start typing...",
+    "bold": "Bold",
+    "italic": "Italic",
+    "strikethrough": "Strikethrough",
+    "heading1": "Heading 1",
+    "heading2": "Heading 2",
+    "heading3": "Heading 3",
+    "bulletList": "Bullet List",
+    "numberedList": "Numbered List",
+    "quote": "Quote",
+    "codeBlock": "Code Block",
+    "horizontalRule": "Horizontal Rule",
+    "textColor": "Text Color",
+    "clearFormatting": "Clear Formatting",
+    "undo": "Undo",
+    "redo": "Redo"
+  },
+  "time": {
+    "justNow": "just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "monthsAgo": "{count}mo ago",
+    "yearsAgo": "{count}y ago | {count}y ago"
   }
 }

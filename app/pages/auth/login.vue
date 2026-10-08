@@ -24,7 +24,7 @@
         ></h1>
         <div
           class="text-text-muted text-sm mt-1 [&>p]:m-0"
-          v-html="branding?.authSubtitle || 'Private BitTorrent Tracker'"
+          v-html="branding?.authSubtitle || t('auth.defaultSubtitle')"
         ></div>
       </div>
 
@@ -34,7 +34,7 @@
       >
         <Icon name="ph:info" class="text-blue-400 text-lg mt-0.5 shrink-0" />
         <p class="text-blue-400 text-xs leading-relaxed">
-          Registrations are currently closed. Only existing members can sign in.
+          {{ t('auth.login.registrationsClosed') }}
         </p>
       </div>
 
@@ -44,7 +44,7 @@
             for="username"
             class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
           >
-            Username
+            {{ t('common.username') }}
           </label>
           <input
             id="username"
@@ -53,7 +53,7 @@
             required
             autocomplete="username"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-            placeholder="Enter your username"
+            :placeholder="t('auth.usernamePlaceholder')"
           />
         </div>
 
@@ -62,7 +62,7 @@
             for="password"
             class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
           >
-            Password
+            {{ t('common.password') }}
           </label>
           <input
             id="password"
@@ -71,7 +71,7 @@
             required
             autocomplete="current-password"
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-            placeholder="Enter your password"
+            :placeholder="t('auth.passwordPlaceholder')"
           />
         </div>
 
@@ -93,8 +93,8 @@
           :disabled="loading"
           class="w-full bg-white text-black font-medium py-2.5 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          <span v-if="loading">Signing in...</span>
-          <span v-else>Sign In</span>
+          <span v-if="loading">{{ t('auth.login.signingIn') }}</span>
+          <span v-else>{{ t('auth.login.signIn') }}</span>
         </button>
       </form>
 
@@ -103,14 +103,18 @@
         class="mt-6 pt-6 border-t border-border text-center"
       >
         <p class="text-text-muted text-sm">
-          Don't have an account?
+          {{ t('auth.login.noAccount') }}
           <NuxtLink
             to="/auth/register"
             class="text-white hover:underline font-medium"
           >
-            Create one
+            {{ t('auth.login.createOne') }}
           </NuxtLink>
         </p>
+      </div>
+
+      <div class="mt-6 flex justify-center">
+        <LanguageSwitcher />
       </div>
     </div>
   </div>
@@ -123,6 +127,7 @@ definePageMeta({
   layout: false,
 });
 
+const { t } = useI18n();
 const { fetch: fetchSession } = useUserSession();
 const router = useRouter();
 
@@ -170,14 +175,14 @@ async function handleLogin() {
 
   try {
     // Step 1: Get challenge and salt from server
-    authStatus.value = 'Fetching challenge...';
+    authStatus.value = t('auth.status.fetchingChallenge');
     const challengeData = await $fetch<{ salt: string; challenge: string }>(
       '/api/auth/challenge',
       { query: { username: form.username } }
     );
 
     // Step 2: Generate ZKE proof client-side
-    authStatus.value = 'Generating proof...';
+    authStatus.value = t('auth.status.generatingProof');
     const proof = await generateLoginProof(
       form.password,
       challengeData.salt,
@@ -185,7 +190,7 @@ async function handleLogin() {
     );
 
     // Step 3: Send proof to server (password never leaves client)
-    authStatus.value = 'Authenticating...';
+    authStatus.value = t('auth.status.authenticating');
     await $fetch('/api/auth/login', {
       method: 'POST',
       body: {
@@ -199,7 +204,7 @@ async function handleLogin() {
     await fetchSession();
     router.push('/');
   } catch (err: any) {
-    error.value = err.data?.message || 'Login failed';
+    error.value = err.data?.message || t('auth.login.failed');
   } finally {
     loading.value = false;
     authStatus.value = '';

@@ -13,12 +13,17 @@
               <h3
                 class="text-xs font-bold uppercase tracking-wider text-text-primary"
               >
-                Report {{ targetType }}
+                {{
+                  t('report.title', {
+                    type: t(`report.targetTypes.${targetType}`),
+                  })
+                }}
               </h3>
             </div>
             <button
               @click="close"
               class="text-text-muted hover:text-text-primary"
+              :aria-label="t('common.close')"
             >
               <Icon name="ph:x-bold" />
             </button>
@@ -29,37 +34,45 @@
             <label
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-2 block"
             >
-              Reason
+              {{ t('common.reason') }}
             </label>
             <select v-model="reason" class="input w-full">
-              <option value="">Select a reason...</option>
-              <option value="Spam or advertising">Spam or advertising</option>
+              <option value="">{{ t('report.selectReason') }}</option>
+              <option value="Spam or advertising">
+                {{ t('report.reasons.spam') }}
+              </option>
               <option value="Fake or misleading content">
-                Fake or misleading content
+                {{ t('report.reasons.fake') }}
               </option>
-              <option value="Copyright violation">Copyright violation</option>
+              <option value="Copyright violation">
+                {{ t('report.reasons.copyright') }}
+              </option>
               <option value="Inappropriate content">
-                Inappropriate content
+                {{ t('report.reasons.inappropriate') }}
               </option>
-              <option value="Harassment or abuse">Harassment or abuse</option>
-              <option value="Other">Other</option>
+              <option value="Harassment or abuse">
+                {{ t('report.reasons.harassment') }}
+              </option>
+              <option value="Other">{{ t('report.reasons.other') }}</option>
             </select>
           </div>
           <div>
             <label
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-2 block"
             >
-              Additional Details (optional)
+              {{ t('report.details') }} ({{ t('common.optional') }})
             </label>
             <textarea
               v-model="details"
               rows="3"
               class="input w-full resize-none"
-              placeholder="Provide any additional context..."
+              :placeholder="t('report.detailsPlaceholder')"
             ></textarea>
           </div>
           <div class="flex justify-end gap-2 pt-2">
-            <button @click="close" class="btn btn-secondary">Cancel</button>
+            <button @click="close" class="btn btn-secondary">
+              {{ t('common.cancel') }}
+            </button>
             <button
               @click="submitReport"
               :disabled="!reason || isSubmitting"
@@ -70,7 +83,7 @@
                 name="ph:circle-notch"
                 class="animate-spin mr-1"
               />
-              Submit Report
+              {{ t('report.submit') }}
             </button>
           </div>
         </div>
@@ -93,6 +106,7 @@ const emit = defineEmits<{
   (e: 'submitted'): void;
 }>();
 
+const { t } = useI18n();
 const notifications = useNotificationStore();
 const reason = ref('');
 const details = ref('');
@@ -118,11 +132,11 @@ async function submitReport() {
         details: details.value || undefined,
       },
     });
-    notifications.success('Report submitted successfully');
+    notifications.success(t('report.submitted'));
     emit('submitted');
     close();
   } catch (error: any) {
-    notifications.error(error.data?.message || 'Failed to submit report');
+    notifications.error(error.data?.message || t('report.failed'));
   } finally {
     isSubmitting.value = false;
   }

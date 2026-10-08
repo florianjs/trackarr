@@ -1,5 +1,212 @@
 {
   "common": {
-    "language": "Langue"
+    "language": "Langue",
+    "save": "Enregistrer",
+    "saving": "Enregistrement...",
+    "saveChanges": "Enregistrer les modifications",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "deleting": "Suppression...",
+    "edit": "Modifier",
+    "close": "Fermer",
+    "create": "Créer",
+    "creating": "Création...",
+    "add": "Ajouter",
+    "remove": "Retirer",
+    "search": "Rechercher",
+    "loading": "Chargement...",
+    "refresh": "Actualiser",
+    "reset": "Réinitialiser",
+    "copy": "Copier",
+    "copied": "Copié !",
+    "approve": "Approuver",
+    "reject": "Rejeter",
+    "all": "Tous",
+    "unknown": "Inconnu",
+    "never": "Jamais",
+    "optional": "facultatif",
+    "actions": "Actions",
+    "name": "Nom",
+    "description": "Description",
+    "enabled": "Activé",
+    "disabled": "Désactivé",
+    "active": "Actif",
+    "inactive": "Inactif",
+    "previous": "Précédent",
+    "next": "Suivant",
+    "error": "Erreur",
+    "user": "Utilisateur",
+    "username": "Nom d'utilisateur",
+    "password": "Mot de passe",
+    "role": "Rôle",
+    "reason": "Raison",
+    "category": "Catégorie",
+    "tags": "Tags",
+    "size": "Taille",
+    "seeders": "Seeders",
+    "leechers": "Leechers",
+    "completed": "Complétés",
+    "ratio": "Ratio",
+    "uploaded": "Envoyé",
+    "downloaded": "Téléchargé",
+    "admin": "Admin",
+    "moderator": "Modérateur",
+    "pageOf": "Page {page} / {pages}",
+    "saveConfiguration": "Enregistrer la configuration",
+    "saved": "Enregistré"
+  },
+  "nav": {
+    "dashboard": "Tableau de bord",
+    "search": "Recherche",
+    "torrents": "Torrents",
+    "forum": "Forum",
+    "admin": "Admin",
+    "mod": "Modération"
+  },
+  "layout": {
+    "refreshStats": "Actualiser les statistiques",
+    "passkey": "Passkey",
+    "signOut": "Se déconnecter",
+    "dismiss": "Masquer",
+    "p2pProtocol": "Protocole P2P"
+  },
+  "auth": {
+    "defaultSubtitle": "Tracker BitTorrent privé",
+    "usernamePlaceholder": "Saisissez votre nom d'utilisateur",
+    "passwordPlaceholder": "Saisissez votre mot de passe",
+    "status": {
+      "fetchingChallenge": "Récupération du challenge...",
+      "generatingProof": "Génération de la preuve...",
+      "authenticating": "Authentification...",
+      "gettingChallenge": "Récupération du challenge...",
+      "solvingPow": "Résolution de la preuve de travail...",
+      "generatingCredentials": "Génération des identifiants sécurisés..."
+    },
+    "login": {
+      "registrationsClosed": "Les inscriptions sont actuellement fermées. Seuls les membres existants peuvent se connecter.",
+      "signingIn": "Connexion...",
+      "signIn": "Se connecter",
+      "noAccount": "Pas encore de compte ?",
+      "createOne": "Créez-en un",
+      "failed": "Échec de la connexion"
+    },
+    "register": {
+      "closedTitle": "Inscriptions fermées",
+      "closedText": "Les nouvelles inscriptions ne sont pas acceptées pour le moment. Si vous avez une invitation, contactez un administrateur.",
+      "createAdminAccount": "Créer le compte administrateur",
+      "inviteOnlyTitle": "Inscription sur invitation",
+      "createAccount": "Créer un compte",
+      "firstAccountWarning": "Ceci est le premier compte. Il disposera des droits d'administrateur.",
+      "zkeTitle": "Chiffrement à divulgation nulle de connaissance :",
+      "zkeText": "Votre mot de passe n'est jamais envoyé au serveur. Si vous l'oubliez, votre compte ne pourra pas être récupéré.",
+      "inviteCode": "Code d'invitation",
+      "inviteCodePlaceholder": "Saisissez votre code d'invitation",
+      "usernamePlaceholder": "3 à 20 caractères : lettres, chiffres, _ ou -",
+      "passwordPlaceholder": "Au moins 8 caractères",
+      "confirmPassword": "Confirmer le mot de passe",
+      "confirmPasswordPlaceholder": "Saisissez à nouveau votre mot de passe",
+      "panicWarning": "Le mot de passe de panique permet le chiffrement d'urgence de la base de données. Conservez-le en lieu sûr : il ne pourra être ni récupéré ni modifié.",
+      "panicPassword": "Mot de passe de panique",
+      "panicPasswordPlaceholder": "Au moins 12 caractères",
+      "confirmPanicPassword": "Confirmer le mot de passe de panique",
+      "confirmPanicPasswordPlaceholder": "Saisissez à nouveau le mot de passe de panique",
+      "creatingAccount": "Création du compte...",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "signInLink": "Se connecter",
+      "failed": "Échec de l'inscription",
+      "errors": {
+        "passwordMismatch": "Les mots de passe ne correspondent pas",
+        "passwordTooShort": "Le mot de passe doit contenir au moins 8 caractères",
+        "panicMismatch": "Les mots de passe de panique ne correspondent pas",
+        "panicTooShort": "Le mot de passe de panique doit contenir au moins 12 caractères"
+      }
+    }
+  },
+  "home": {
+    "statusBadge": "Tracker en ligne et opérationnel",
+    "heroSubtitle": "Moteur de tracking P2P minimaliste et performant. Parcourez notre base indexée de torrents vérifiés.",
+    "searchPlaceholder": "Rechercher des torrents par nom, tag ou infohash...",
+    "torrentCount": "{count} torrent | {count} torrent | {count} torrents",
+    "peerCount": "{count} pair | {count} pair | {count} pairs",
+    "lowLatency": "Latence ultra-faible",
+    "recentlyIndexed": "Récemment indexés",
+    "browseAll": "Tout parcourir",
+    "features": {
+      "performance": {
+        "title": "Haute performance",
+        "description": "Conçu avec Node.js et Redis pour des temps de réponse inférieurs à la milliseconde et une forte concurrence."
+      },
+      "protocols": {
+        "title": "Multi-protocole",
+        "description": "Prend en charge les protocoles HTTP, UDP et WebSocket pour une compatibilité maximale avec tous les clients BitTorrent."
+      },
+      "openSource": {
+        "title": "Open source",
+        "description": "Entièrement transparent et porté par la communauté. Pensé pour la confidentialité et l'efficacité dans l'écosystème P2P."
+      }
+    }
+  },
+  "searchBar": {
+    "placeholder": "Rechercher...",
+    "clear": "Effacer"
+  },
+  "sidebar": {
+    "categories": "Catégories",
+    "allTorrents": "Tous les torrents"
+  },
+  "report": {
+    "title": "Signaler : {type}",
+    "targetTypes": {
+      "torrent": "torrent",
+      "user": "utilisateur",
+      "post": "message",
+      "comment": "commentaire"
+    },
+    "selectReason": "Choisissez une raison...",
+    "reasons": {
+      "spam": "Spam ou publicité",
+      "fake": "Contenu faux ou trompeur",
+      "copyright": "Violation du droit d'auteur",
+      "inappropriate": "Contenu inapproprié",
+      "harassment": "Harcèlement ou abus",
+      "other": "Autre"
+    },
+    "details": "Détails supplémentaires",
+    "detailsPlaceholder": "Ajoutez tout contexte utile...",
+    "submit": "Envoyer le signalement",
+    "submitted": "Signalement envoyé",
+    "failed": "Échec de l'envoi du signalement"
+  },
+  "mediaIds": {
+    "label": "Identifiants externes",
+    "imdbPlaceholder": "IMDb (tt0133093 ou URL)",
+    "tmdbPlaceholder": "TMDb (603 ou URL)",
+    "help": "Utilisés par Sonarr / Radarr pour identifier les releases. Collez un identifiant ou l'URL de la page."
+  },
+  "editor": {
+    "placeholder": "Commencez à écrire...",
+    "bold": "Gras",
+    "italic": "Italique",
+    "strikethrough": "Barré",
+    "heading1": "Titre 1",
+    "heading2": "Titre 2",
+    "heading3": "Titre 3",
+    "bulletList": "Liste à puces",
+    "numberedList": "Liste numérotée",
+    "quote": "Citation",
+    "codeBlock": "Bloc de code",
+    "horizontalRule": "Ligne horizontale",
+    "textColor": "Couleur du texte",
+    "clearFormatting": "Effacer la mise en forme",
+    "undo": "Annuler",
+    "redo": "Rétablir"
+  },
+  "time": {
+    "justNow": "à l'instant",
+    "minutesAgo": "il y a {count} min",
+    "hoursAgo": "il y a {count} h",
+    "daysAgo": "il y a {count} j",
+    "monthsAgo": "il y a {count} mois",
+    "yearsAgo": "il y a {count} an | il y a {count} ans"
   }
 }
