@@ -972,7 +972,8 @@
     },
     "menu": {
       "open": "Open navigation",
-      "close": "Close navigation"
+      "close": "Close navigation",
+      "label": "Main navigation"
     },
     "search": {
       "trigger": "Search",

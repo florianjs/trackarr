@@ -45,8 +45,10 @@ export default {
         // existing white-on-black controls stay legible in light mode too
         white: token('contrast'),
         black: token('contrast-inv'),
-        // Overlays behind dialogs stay dark in both themes
-        scrim: 'rgb(0 0 0 / <alpha-value>)'
+        // Fixed colors that must not flip: overlays and shadows stay dark,
+        // text on colored fills and uploaded logos sit on real white
+        scrim: 'rgb(0 0 0 / <alpha-value>)',
+        paper: 'rgb(255 255 255 / <alpha-value>)'
       },
       fontFamily: {
         sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
