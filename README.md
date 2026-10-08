@@ -10,8 +10,9 @@ Built with Nuxt 4 • PostgreSQL • Redis
 [![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?style=flat&logo=nuxtdotjs&logoColor=white)](https://nuxt.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
+[![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/bbbkCPkdRk)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](https://florianjs.github.io/trackarr/) • [Live Demo](https://tracker.florianargaud.com/)
+[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](https://florianjs.github.io/trackarr/) • [Live Demo](https://tracker.florianargaud.com/) • [Discord](https://discord.gg/bbbkCPkdRk)
 
 ![Trackarr Homepage](/public/images/image%20copy%203.png)
 
@@ -33,6 +34,7 @@ Built with Nuxt 4 • PostgreSQL • Redis
 | Bonus points earned by seeding & uploading    | Torznab API for Prowlarr, Sonarr & Radarr           |
 | Bonus shop (upload credit, invites, avatars)  | IMDb / TMDb / TheTVDB IDs with ID-based search      |
 | Bounties: request torrents with a points pot  | Personal RSS feeds                                  |
+| Global freeleech (timed or open-ended)        | Torrent moderation queue                            |
 | Forum, comments, reports, invitations, H&R    | English & French UI (more languages welcome)        |
 
 | **Security**                     | **Emergency**                                |
