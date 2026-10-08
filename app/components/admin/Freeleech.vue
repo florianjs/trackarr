@@ -82,7 +82,9 @@ async function save(enabled: boolean) {
       method: 'PUT',
       body: {
         enabled,
-        durationHours: enabled && durationHours.value ? Number(durationHours.value) : null,
+        // Only an empty field means "no end date": 0 is sent as is and refused
+        durationHours:
+          enabled && durationHours.value !== '' ? Number(durationHours.value) : null,
       },
     });
   } catch (err) {

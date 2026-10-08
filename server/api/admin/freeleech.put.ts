@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import { requireAdminSession } from '../../utils/adminAuth';
 import { validateBody } from '../../utils/schemas';
-import { SETTINGS_KEYS, getFreeleechState, setSetting } from '../../utils/settings';
+import { SETTINGS_KEYS, getFreeleechState, setSettings } from '../../utils/settings';
 
 const freeleechSchema = z.object({
   enabled: z.boolean(),
@@ -22,8 +22,12 @@ export default defineEventHandler(async (event) => {
       ? new Date(Date.now() + durationHours * 3600 * 1000).toISOString()
       : '';
 
-  await setSetting(SETTINGS_KEYS.FREELEECH_UNTIL, until);
-  await setSetting(SETTINGS_KEYS.FREELEECH_ENABLED, String(enabled));
+  // Both together: a half-applied stop must never turn a timed freeleech
+  // into an open-ended one
+  await setSettings({
+    [SETTINGS_KEYS.FREELEECH_ENABLED]: String(enabled),
+    [SETTINGS_KEYS.FREELEECH_UNTIL]: until,
+  });
 
   return getFreeleechState();
 });

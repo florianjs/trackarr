@@ -367,20 +367,40 @@ const { user, clear, fetch } = useUserSession();
 const passkey = ref<string | null>(null);
 const bonusPoints = ref<number | null>(null);
 
-// Global freeleech banner, refreshed periodically so it disappears on time
-const freeleech = ref<{ active: boolean; until: string | null } | null>(null);
-async function loadFreeleech() {
-  if (!user.value) return;
-  freeleech.value = await $fetch<{ active: boolean; until: string | null }>(
-    '/api/freeleech'
-  ).catch(() => null);
-}
-let freeleechTimer: ReturnType<typeof setInterval> | undefined;
-onMounted(() => {
-  loadFreeleech();
-  freeleechTimer = setInterval(loadFreeleech, 5 * 60 * 1000);
+// Global freeleech banner. Reloaded when the user changes (sign in/out) and
+// every 5 minutes; the end date is checked locally so it disappears on time.
+type FreeleechBanner = { active: boolean; until: string | null };
+const freeleechState = ref<FreeleechBanner | null>(null);
+const freeleechNow = ref(Date.now());
+const freeleech = computed(() => {
+  const state = freeleechState.value;
+  if (!state) return null;
+  const active = isFreeleechActive(
+    { enabled: state.active, until: state.until },
+    new Date(freeleechNow.value)
+  );
+  return active ? state : null;
 });
-onUnmounted(() => clearInterval(freeleechTimer));
+async function loadFreeleech() {
+  if (!user.value) {
+    freeleechState.value = null;
+    return;
+  }
+  freeleechState.value = await $fetch<FreeleechBanner>('/api/freeleech').catch(
+    () => null
+  );
+}
+let freeleechPoll: ReturnType<typeof setInterval> | undefined;
+let freeleechTick: ReturnType<typeof setInterval> | undefined;
+onMounted(() => {
+  watch(() => user.value?.id, loadFreeleech, { immediate: true });
+  freeleechPoll = setInterval(loadFreeleech, 5 * 60 * 1000);
+  freeleechTick = setInterval(() => (freeleechNow.value = Date.now()), 30 * 1000);
+});
+onUnmounted(() => {
+  clearInterval(freeleechPoll);
+  clearInterval(freeleechTick);
+});
 const router = useRouter();
 
 const showUserMenu = ref(false);

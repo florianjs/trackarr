@@ -114,6 +114,26 @@ export async function setSetting(key: string, value: string): Promise<void> {
 }
 
 /**
+ * Write several settings atomically (all or nothing)
+ */
+export async function setSettings(values: Record<string, string>): Promise<void> {
+  const now = new Date();
+  await db.transaction(async (tx) => {
+    for (const [key, value] of Object.entries(values)) {
+      await tx
+        .insert(settings)
+        .values({ key, value, updatedAt: now })
+        .onConflictDoUpdate({
+          target: settings.key,
+          set: { value, updatedAt: now },
+        });
+    }
+  });
+
+  for (const key of Object.keys(values)) settingsCache.delete(key);
+}
+
+/**
  * Remove a setting so its getter falls back to the default
  */
 export async function deleteSetting(key: string): Promise<void> {
