@@ -7,7 +7,7 @@
     <!-- Earning rules -->
     <div class="card">
       <div class="card-header">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">{{ t('bonus.admin.settings') }}</h3>
+        <h3 class="text-sm font-medium text-text-primary">{{ t('bonus.admin.settings') }}</h3>
       </div>
       <div v-if="settings" class="card-body space-y-4">
         <label class="flex items-center gap-2 text-sm">
@@ -16,7 +16,7 @@
         </label>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <label v-for="field in numberFields" :key="field" class="space-y-1">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t(`bonus.admin.${field}`) }}</span>
+            <span class="text-xs font-bold text-text-muted">{{ t(`bonus.admin.${field}`) }}</span>
             <input v-model.number="settings[field]" type="number" min="0" step="any" class="input w-full !py-2 text-xs font-mono" />
           </label>
         </div>
@@ -27,7 +27,7 @@
     <!-- Shop items -->
     <div class="card">
       <div class="card-header flex items-center justify-between">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">{{ t('bonus.admin.items') }}</h3>
+        <h3 class="text-sm font-medium text-text-primary">{{ t('bonus.admin.items') }}</h3>
         <button class="btn btn-secondary !py-1.5 !px-3 text-xs" @click="editItem()">
           <Icon name="ph:plus-bold" class="mr-1" />{{ t('bonus.admin.addItem') }}
         </button>
@@ -35,38 +35,38 @@
       <div class="card-body space-y-3">
         <!-- Editor -->
         <div v-if="draft" class="p-4 rounded border border-border bg-bg-tertiary/50 space-y-3">
-          <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+          <p class="text-xs font-bold text-text-muted">
             {{ draft.id ? t('bonus.admin.editItem') : t('bonus.admin.addItem') }}
           </p>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <label class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.name') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.name') }}</span>
               <input v-model="draft.name" type="text" maxlength="100" class="input w-full !py-2 text-xs" />
             </label>
             <label class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.type') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.type') }}</span>
               <select v-model="draft.type" class="input w-full !py-2 text-xs">
                 <option v-for="type in itemTypes" :key="type" :value="type">{{ t(`bonus.admin.types.${type}`) }}</option>
               </select>
             </label>
             <label class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.price') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.price') }}</span>
               <input v-model.number="draft.price" type="number" min="1" class="input w-full !py-2 text-xs font-mono" />
             </label>
             <label v-if="draft.type === 'upload_credit'" class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.valueGb') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.valueGb') }}</span>
               <input v-model.number="draft.valueGb" type="number" min="0.1" step="0.1" class="input w-full !py-2 text-xs font-mono" />
             </label>
             <label v-else-if="draft.type === 'invite'" class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.valueInvites') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.valueInvites') }}</span>
               <input v-model.number="draft.valueInvites" type="number" min="1" class="input w-full !py-2 text-xs font-mono" />
             </label>
             <label class="space-y-1 sm:col-span-2">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.description') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.description') }}</span>
               <input v-model="draft.description" type="text" maxlength="500" class="input w-full !py-2 text-xs" />
             </label>
             <label class="space-y-1">
-              <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.sortOrder') }}</span>
+              <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.sortOrder') }}</span>
               <input v-model.number="draft.sortOrder" type="number" min="0" class="input w-full !py-2 text-xs font-mono" />
             </label>
             <label class="flex items-center gap-2 text-sm self-end pb-2">
@@ -102,19 +102,19 @@
     <!-- Grant -->
     <div class="card">
       <div class="card-header">
-        <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">{{ t('bonus.admin.grant') }}</h3>
+        <h3 class="text-sm font-medium text-text-primary">{{ t('bonus.admin.grant') }}</h3>
       </div>
       <div class="card-body grid grid-cols-1 sm:grid-cols-4 gap-3 items-end">
         <label class="space-y-1 sm:col-span-1">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.grantUser') }}</span>
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.grantUser') }}</span>
           <input v-model="grant.userId" type="text" class="input w-full !py-2 text-xs font-mono" />
         </label>
         <label class="space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.grantAmount') }}</span>
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.grantAmount') }}</span>
           <input v-model.number="grant.amount" type="number" class="input w-full !py-2 text-xs font-mono" />
         </label>
         <label class="space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.admin.grantReason') }}</span>
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.admin.grantReason') }}</span>
           <input v-model="grant.reason" type="text" maxlength="200" class="input w-full !py-2 text-xs" />
         </label>
         <button class="btn btn-primary !py-2 text-xs" :disabled="saving || !grant.userId || !grant.amount || !grant.reason.trim()" @click="applyGrant">

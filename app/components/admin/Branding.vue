@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:paint-brush" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.branding.title') }}
         </h3>
@@ -14,17 +14,18 @@
       <!-- Preview -->
       <div class="p-4 bg-bg-tertiary rounded-lg border border-border mb-6">
         <p
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
+          class="text-xs font-bold text-text-muted mb-3"
         >
           {{ t('admin.branding.livePreview') }}
         </p>
         <div class="flex items-center gap-2.5">
           <div
             class="w-7 h-7 rounded-sm flex items-center justify-center overflow-hidden"
+            :class="{ 'bg-white': !(useCustomImage && siteLogoImage) }"
             :style="
               useCustomImage && siteLogoImage
                 ? 'background: repeating-conic-gradient(#808080 0% 25%, #fff 0% 50%) 50% / 8px 8px'
-                : 'background: white'
+                : undefined
             "
           >
             <img
@@ -38,7 +39,7 @@
           </div>
           <div class="flex flex-col leading-none">
             <span
-              class="text-sm tracking-tighter transition-colors"
+              class="text-sm transition-colors"
               :class="{
                 'font-bold': siteNameBold,
                 'font-medium': !siteNameBold,
@@ -46,7 +47,7 @@
               :style="{ color: siteNameColor || '' }"
               v-html="siteName"
             ></span>
-            <span class="text-[10px] text-text-muted font-mono"
+            <span class="text-xs text-text-muted num"
               v-html="siteSubtitle"
             ></span>
           </div>
@@ -119,9 +120,8 @@
         <div class="flex gap-2">
           <button
             @click="useCustomImage = false"
-            class="flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider rounded border transition-colors"
-            :class="
-              !useCustomImage
+            class="flex-1 py-2 px-3 text-xs font-bold rounded border transition-colors"
+            :class="!useCustomImage
                 ? 'bg-white text-black border-white'
                 : 'bg-bg-tertiary border-border text-text-secondary hover:border-white/20'
             "
@@ -130,9 +130,8 @@
           </button>
           <button
             @click="useCustomImage = true"
-            class="flex-1 py-2 px-3 text-xs font-bold uppercase tracking-wider rounded border transition-colors"
-            :class="
-              useCustomImage
+            class="flex-1 py-2 px-3 text-xs font-bold rounded border transition-colors"
+            :class="useCustomImage
                 ? 'bg-white text-black border-white'
                 : 'bg-bg-tertiary border-border text-text-secondary hover:border-white/20'
             "
@@ -166,7 +165,7 @@
         <!-- Common Icons -->
         <div class="mt-4">
           <p
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-2"
+            class="text-xs font-bold text-text-muted mb-2"
           >
             {{ t('admin.branding.quickSelect') }}
           </p>
@@ -208,12 +207,12 @@
           </div>
           <div class="flex flex-col gap-1">
             <span
-              class="text-[10px] text-text-muted font-mono truncate max-w-[200px]"
+              class="text-xs text-text-muted font-mono truncate max-w-[200px]"
               >{{ siteLogoImage }}</span
             >
             <button
               @click="removeImage"
-              class="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 w-fit"
+              class="text-xs text-danger hover:text-danger transition-colors flex items-center gap-1 w-fit"
             >
               <Icon name="ph:trash" /> {{ t('common.remove') }}
             </button>
@@ -226,8 +225,7 @@
           @dragleave="dragOver = false"
           @drop.prevent="handleDrop"
           class="border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer group"
-          :class="
-            dragOver
+          :class="dragOver
               ? 'border-white bg-white/5'
               : 'border-border hover:border-white/30 hover:bg-bg-tertiary/50'
           "
@@ -275,12 +273,12 @@
           </div>
           <div class="flex flex-col gap-1">
             <span
-              class="text-[10px] text-text-muted font-mono truncate max-w-[200px]"
+              class="text-xs text-text-muted font-mono truncate max-w-[200px]"
               >{{ siteFavicon }}</span
             >
             <button
               @click="removeFavicon"
-              class="text-xs text-red-400 hover:text-red-300 transition-colors flex items-center gap-1 w-fit"
+              class="text-xs text-danger hover:text-danger transition-colors flex items-center gap-1 w-fit"
             >
               <Icon name="ph:trash" /> {{ t('common.remove') }}
             </button>
@@ -293,8 +291,7 @@
           @dragleave="dragOverFavicon = false"
           @drop.prevent="handleFaviconDrop"
           class="border-2 border-dashed rounded-lg p-6 text-center transition-colors cursor-pointer group"
-          :class="
-            dragOverFavicon
+          :class="dragOverFavicon
               ? 'border-white bg-white/5'
               : 'border-border hover:border-white/30 hover:bg-bg-tertiary/50'
           "
@@ -327,9 +324,8 @@
       <button
         @click="saveBranding"
         :disabled="loading || saved"
-        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        :class="
-          saved
+        class="w-full text-xs font-bold py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        :class="saved
             ? 'bg-success text-white'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
@@ -353,7 +349,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:text-aa" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.branding.textBranding') }}
         </h3>
@@ -412,7 +408,7 @@
             class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
             :placeholder="`- ${siteName?.replace(/<[^>]*>/g, '') || 'Trackarr'}`"
           />
-          <p class="text-[10px] text-text-muted">
+          <p class="text-xs text-text-muted">
             {{
               t('admin.branding.pageTitleExample', {
                 title:
@@ -452,9 +448,8 @@
       <button
         @click="saveTextBranding"
         :disabled="loadingText || savedText"
-        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        :class="
-          savedText
+        class="w-full text-xs font-bold py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        :class="savedText
             ? 'bg-success text-white'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
@@ -472,131 +467,6 @@
     </div>
   </div>
 
-  <!-- Homepage Content -->
-  <div class="card mt-6">
-    <div class="card-header">
-      <div class="flex items-center gap-2">
-        <Icon name="ph:house" class="text-text-muted" />
-        <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
-        >
-          {{ t('admin.branding.homepageContent') }}
-        </h3>
-      </div>
-    </div>
-    <div class="card-body space-y-6">
-      <!-- Hero Section -->
-      <div class="space-y-4">
-        <p
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
-        >
-          {{ t('admin.branding.heroSection') }}
-        </p>
-
-        <SettingsGroup
-          :label="t('admin.branding.heroTitle')"
-          :description="t('admin.branding.heroTitleDescription')"
-        >
-          <WysiwygEditor
-            v-model="heroTitle"
-            :placeholder="t('admin.branding.heroTitlePlaceholder')"
-            :maxLength="500"
-          />
-        </SettingsGroup>
-
-        <SettingsGroup
-          :label="t('admin.branding.subtitle')"
-          :description="t('admin.branding.heroSubtitleDescription')"
-        >
-          <WysiwygEditor
-            v-model="heroSubtitle"
-            :placeholder="t('admin.branding.heroSubtitlePlaceholder')"
-            :maxLength="1000"
-          />
-        </SettingsGroup>
-
-        <SettingsGroup
-          :label="t('admin.branding.statusBadge')"
-          :description="t('admin.branding.statusBadgeDescription')"
-        >
-          <input
-            v-model="statusBadgeText"
-            type="text"
-            maxlength="100"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            :placeholder="t('admin.branding.statusBadgePlaceholder')"
-          />
-        </SettingsGroup>
-      </div>
-
-      <!-- Feature Boxes -->
-      <div class="space-y-4 pt-4 border-t border-border">
-        <p
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
-        >
-          {{ t('admin.branding.featureBoxes') }}
-        </p>
-
-        <SettingsGroup
-          v-for="(feature, index) in features"
-          :key="index"
-          :label="t('admin.branding.feature', { n: index + 1 })"
-          :description="t('admin.branding.featureDescription')"
-        >
-          <div class="space-y-3">
-            <div>
-              <label
-                class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
-                >{{ t('admin.branding.featureTitle') }}</label
-              >
-              <WysiwygEditor
-                v-model="feature.title"
-                :placeholder="t('admin.branding.featureTitlePlaceholder')"
-                :maxLength="300"
-              />
-            </div>
-            <div>
-              <label
-                class="text-[10px] text-text-muted uppercase tracking-wider mb-1 block"
-                >{{ t('common.description') }}</label
-              >
-              <WysiwygEditor
-                v-model="feature.description"
-                :placeholder="t('admin.branding.featureDescriptionPlaceholder')"
-                :maxLength="1000"
-              />
-            </div>
-          </div>
-        </SettingsGroup>
-      </div>
-
-      <!-- Save Button -->
-      <button
-        @click="saveHomepageContent"
-        :disabled="loadingHomepage || savedHomepage"
-        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        :class="
-          savedHomepage
-            ? 'bg-success text-white'
-            : 'bg-text-primary text-bg-primary hover:opacity-90'
-        "
-      >
-        <Icon
-          v-if="loadingHomepage"
-          name="ph:circle-notch"
-          class="animate-spin"
-        />
-        <Icon v-else-if="savedHomepage" name="ph:check-bold" />
-        {{
-          loadingHomepage
-            ? t('common.saving')
-            : savedHomepage
-              ? t('common.saved')
-              : t('admin.branding.saveHomepageContent')
-        }}
-      </button>
-    </div>
-  </div>
 </template>
 
 <script setup lang="ts">
@@ -631,31 +501,6 @@ const siteRules = ref<string>('');
 const loadingText = ref(false);
 const savedText = ref(false);
 
-// Homepage content
-const heroTitle = ref('Trackarr');
-const heroSubtitle = ref(
-  'High-performance, minimalist P2P tracking engine. Search through our indexed database of verified torrents.'
-);
-const statusBadgeText = ref('Tracker Online & Operational');
-const features = ref([
-  {
-    title: 'High Performance',
-    description:
-      'Built with Node.js and Redis for sub-millisecond response times and high concurrency support.',
-  },
-  {
-    title: 'Multi-Protocol',
-    description:
-      'Supports HTTP, UDP, and WebSocket protocols for maximum compatibility with all BitTorrent clients.',
-  },
-  {
-    title: 'Open Source',
-    description:
-      'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.',
-  },
-]);
-const loadingHomepage = ref(false);
-const savedHomepage = ref(false);
 
 const commonIcons = [
   'ph:broadcast-bold',
@@ -688,15 +533,6 @@ onMounted(async () => {
       pageTitleSuffix: string | null;
       welcomeMessage: string | null;
       siteRules: string | null;
-      heroTitle: string;
-      heroSubtitle: string;
-      statusBadgeText: string;
-      feature1Title: string;
-      feature1Desc: string;
-      feature2Title: string;
-      feature2Desc: string;
-      feature3Title: string;
-      feature3Desc: string;
     }>('/api/admin/settings');
     siteName.value = settings.siteName || 'Trackarr';
     siteLogo.value = settings.siteLogo;
@@ -713,28 +549,6 @@ onMounted(async () => {
     pageTitleSuffix.value = settings.pageTitleSuffix || '';
     welcomeMessage.value = settings.welcomeMessage || '';
     siteRules.value = settings.siteRules || '';
-    // Homepage content
-    heroTitle.value = settings.heroTitle || 'Trackarr';
-    heroSubtitle.value = settings.heroSubtitle || heroSubtitle.value;
-    statusBadgeText.value =
-      settings.statusBadgeText || 'Tracker Online & Operational';
-    features.value = [
-      {
-        title: settings.feature1Title || features.value[0]?.title || '',
-        description:
-          settings.feature1Desc || features.value[0]?.description || '',
-      },
-      {
-        title: settings.feature2Title || features.value[1]?.title || '',
-        description:
-          settings.feature2Desc || features.value[1]?.description || '',
-      },
-      {
-        title: settings.feature3Title || features.value[2]?.title || '',
-        description:
-          settings.feature3Desc || features.value[2]?.description || '',
-      },
-    ];
   } catch (error) {
     console.error('Failed to load branding settings:', error);
   }
@@ -890,34 +704,6 @@ async function saveTextBranding() {
     console.error('Failed to save text branding:', error);
   } finally {
     loadingText.value = false;
-  }
-}
-
-async function saveHomepageContent() {
-  loadingHomepage.value = true;
-  try {
-    await $fetch('/api/admin/settings', {
-      method: 'PUT',
-      body: {
-        heroTitle: heroTitle.value,
-        heroSubtitle: heroSubtitle.value,
-        statusBadgeText: statusBadgeText.value,
-        feature1Title: features.value[0]?.title ?? '',
-        feature1Desc: features.value[0]?.description ?? '',
-        feature2Title: features.value[1]?.title ?? '',
-        feature2Desc: features.value[1]?.description ?? '',
-        feature3Title: features.value[2]?.title ?? '',
-        feature3Desc: features.value[2]?.description ?? '',
-      },
-    });
-    savedHomepage.value = true;
-    setTimeout(() => {
-      savedHomepage.value = false;
-    }, 2000);
-  } catch (error) {
-    console.error('Failed to save homepage content:', error);
-  } finally {
-    loadingHomepage.value = false;
   }
 }
 </script>

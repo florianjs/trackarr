@@ -3,7 +3,7 @@
     <div class="card-header">
       <div class="flex items-center gap-2">
         <Icon name="ph:link-simple-bold" class="text-text-muted" />
-        <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">
+        <h3 class="text-sm font-medium text-text-primary">
           {{ t('admin.footer.title') }}
         </h3>
       </div>
@@ -11,7 +11,7 @@
     <div class="card-body space-y-6">
       <!-- Tagline -->
       <div class="space-y-2">
-        <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+        <p class="text-xs font-bold text-text-muted">
           {{ t('admin.footer.tagline') }}
         </p>
         <p class="text-xs text-text-muted">{{ t('admin.footer.taglineDescription') }}</p>

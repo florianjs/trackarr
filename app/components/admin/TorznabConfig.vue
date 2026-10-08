@@ -5,18 +5,17 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:gear" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.torznabConfig.title') }}
           </h3>
         </div>
         <div class="flex items-center gap-2">
           <span
-            class="px-2 py-1 rounded text-[10px] font-bold uppercase"
-            :class="
-              config?.enabled
+            class="px-2 py-1 rounded text-xs font-bold"
+            :class="config?.enabled
                 ? 'bg-success/20 text-success'
-                : 'bg-red-500/20 text-red-400'
+                : 'bg-danger/20 text-danger'
             "
           >
             {{ config?.enabled ? t('common.enabled') : t('common.disabled') }}
@@ -35,8 +34,7 @@
             @click="toggleEnabled"
             :disabled="saving"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-            :class="
-              config?.enabled
+            :class="config?.enabled
                 ? 'bg-success'
                 : 'bg-bg-tertiary border border-border'
             "
@@ -66,8 +64,7 @@
             @click="toggleLogging"
             :disabled="saving"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors"
-            :class="
-              config?.enableLogging
+            :class="config?.enableLogging
                 ? 'bg-success'
                 : 'bg-bg-tertiary border border-border'
             "

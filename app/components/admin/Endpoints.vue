@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:broadcast-bold" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.endpoints.title') }}
         </h3>
@@ -13,12 +13,12 @@
     <div class="card-body space-y-4">
       <div>
         <label
-          class="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1"
+          class="text-xs font-bold text-text-muted ml-1"
           >{{ t('admin.endpoints.httpAnnounce') }}</label
         >
         <div class="flex items-center gap-2 mt-1">
           <code
-            class="flex-1 text-[10px] font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
+            class="flex-1 text-xs font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
           >
             {{ endpoints.http }}
           </code>
@@ -32,12 +32,12 @@
       </div>
       <div>
         <label
-          class="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1"
+          class="text-xs font-bold text-text-muted ml-1"
           >{{ t('admin.endpoints.udpAnnounce') }}</label
         >
         <div class="flex items-center gap-2 mt-1">
           <code
-            class="flex-1 text-[10px] font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
+            class="flex-1 text-xs font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
           >
             {{ endpoints.udp }}
           </code>
@@ -51,12 +51,12 @@
       </div>
       <div>
         <label
-          class="text-[10px] font-bold text-text-muted uppercase tracking-widest ml-1"
+          class="text-xs font-bold text-text-muted ml-1"
           >WebSocket</label
         >
         <div class="flex items-center gap-2 mt-1">
           <code
-            class="flex-1 text-[10px] font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
+            class="flex-1 text-xs font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
           >
             {{ endpoints.ws }}
           </code>

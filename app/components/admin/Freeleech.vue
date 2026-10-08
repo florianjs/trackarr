@@ -3,12 +3,12 @@
     <div class="card-header">
       <div class="flex items-center gap-2">
         <Icon name="ph:gift-bold" class="text-text-muted" />
-        <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">
+        <h3 class="text-sm font-medium text-text-primary">
           {{ t('freeleech.admin.title') }}
         </h3>
       </div>
       <span
-        class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded"
+        class="text-xs font-bold px-2 py-0.5 rounded"
         :class="state?.active ? 'bg-success/20 text-success' : 'bg-bg-tertiary text-text-muted'"
       >
         {{ statusLabel }}
@@ -19,7 +19,7 @@
 
       <div class="flex flex-wrap items-end gap-3">
         <label class="space-y-1">
-          <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+          <span class="text-xs font-bold text-text-muted">
             {{ t('freeleech.admin.duration') }}
           </span>
           <input
@@ -43,7 +43,7 @@
           {{ t('freeleech.admin.stop') }}
         </button>
       </div>
-      <p class="text-[10px] text-text-muted">{{ t('freeleech.admin.durationHint') }}</p>
+      <p class="text-xs text-text-muted">{{ t('freeleech.admin.durationHint') }}</p>
       <p v-if="error" class="text-xs text-error">{{ error }}</p>
     </div>
   </div>

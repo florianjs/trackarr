@@ -5,13 +5,13 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:warning-bold" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.hnr.title') }}
           </h3>
           <span
             v-if="hnrCount > 0"
-            class="px-2 py-0.5 text-[10px] font-bold bg-error text-white rounded-full"
+            class="px-2 py-0.5 text-xs font-bold bg-error text-white rounded-full"
           >
             {{ hnrCount }} HnR
           </span>
@@ -26,7 +26,7 @@
           <button
             @click="checkHnrs"
             :disabled="isChecking"
-            class="btn btn-secondary !px-3 !py-1 text-[10px]"
+            class="btn btn-secondary !px-3 !py-1 text-xs"
             :title="t('admin.hnr.checkNew')"
           >
             <Icon
@@ -49,7 +49,7 @@
           <div class="flex-1">
             <div class="flex items-center gap-2 mb-1">
               <span
-                class="px-2 py-0.5 text-[10px] font-bold uppercase rounded"
+                class="px-2 py-0.5 text-xs font-bold rounded"
                 :class="getStatusClass(entry)"
               >
                 {{ getStatusLabel(entry) }}
@@ -61,11 +61,11 @@
                 {{ entry.user?.username }}
               </NuxtLink>
             </div>
-            <p class="text-[10px] text-text-muted truncate max-w-md">
+            <p class="text-xs text-text-muted truncate max-w-md">
               {{ entry.torrent?.name }}
             </p>
             <div
-              class="flex items-center gap-4 mt-1 text-[10px] text-text-muted"
+              class="flex items-center gap-4 mt-1 text-xs text-text-muted"
             >
               <span>
                 {{ t('admin.hnr.seedTime') }}
@@ -101,7 +101,7 @@
           </div>
           <span
             v-else-if="entry.isExempt"
-            class="text-[10px] text-text-muted uppercase tracking-wider"
+            class="text-xs text-text-muted"
           >
             {{ t('admin.hnr.exempted') }}
           </span>
@@ -119,7 +119,7 @@
         <button
           @click="page--"
           :disabled="page <= 1"
-          class="btn btn-secondary !px-3 !py-1 text-[10px]"
+          class="btn btn-secondary !px-3 !py-1 text-xs"
         >
           {{ t('common.previous') }}
         </button>
@@ -129,7 +129,7 @@
         <button
           @click="page++"
           :disabled="page >= hnrData.pagination.pages"
-          class="btn btn-secondary !px-3 !py-1 text-[10px]"
+          class="btn btn-secondary !px-3 !py-1 text-xs"
         >
           {{ t('common.next') }}
         </button>

@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:shield-warning" class="text-error" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.panic.title') }}
         </h3>
@@ -21,7 +21,7 @@
         <button
           @click="showConfirmModal = true"
           :disabled="loading"
-          class="w-full bg-error text-white text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-error/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          class="w-full bg-error text-white text-sm font-bold py-3 rounded hover:bg-error/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon name="ph:lock-simple" />
           {{ t('admin.panic.encryptButton') }}
@@ -48,7 +48,7 @@
         <button
           @click="showRestoreModal = true"
           :disabled="loading"
-          class="w-full bg-success text-white text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-success/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          class="w-full bg-success text-white text-sm font-bold py-3 rounded hover:bg-success/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon name="ph:lock-open" />
           {{ t('admin.panic.restoreButton') }}
@@ -86,7 +86,7 @@
           <div class="mb-4">
             <label
               for="panicPasswordEncrypt"
-              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+              class="block text-xs font-medium text-text-muted mb-2"
             >
               {{ t('admin.panic.password') }}
             </label>
@@ -152,7 +152,7 @@
           <div class="mb-4">
             <label
               for="panicPassword"
-              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+              class="block text-xs font-medium text-text-muted mb-2"
             >
               {{ t('admin.panic.password') }}
             </label>

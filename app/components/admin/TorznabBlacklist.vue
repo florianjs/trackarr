@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:prohibit" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.torznabBlacklist.title') }}
           </h3>
@@ -28,7 +28,7 @@
         <!-- IP Blacklist -->
         <div>
           <h4
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
+            class="text-xs font-bold text-text-muted mb-3"
           >
             {{ t('admin.torznabBlacklist.rateLimitedIps') }}
           </h4>
@@ -55,15 +55,15 @@
                 <code class="text-xs font-mono text-text-primary">{{
                   entry.ip
                 }}</code>
-                <p class="text-[10px] text-text-muted mt-0.5">
+                <p class="text-xs text-text-muted mt-0.5">
                   {{ entry.reason }}
                 </p>
               </div>
               <div class="text-right">
-                <span class="text-[10px] text-text-muted">{{
+                <span class="text-xs text-text-muted">{{
                   t('admin.torznabBlacklist.expiresIn')
                 }}</span>
-                <p class="text-xs font-mono text-yellow-400">
+                <p class="text-xs font-mono text-leech">
                   {{ formatTimeRemaining(entry.expiresAt) }}
                 </p>
               </div>
@@ -74,7 +74,7 @@
         <!-- Blocked Users -->
         <div>
           <h4
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
+            class="text-xs font-bold text-text-muted mb-3"
           >
             {{ t('admin.torznabBlacklist.blockedUsers') }}
           </h4>
@@ -101,18 +101,18 @@
                 <code class="text-xs font-mono text-text-primary">{{
                   user.passkey
                 }}</code>
-                <p class="text-[10px] text-text-muted mt-0.5">
+                <p class="text-xs text-text-muted mt-0.5">
                   {{ user.reason }}
                 </p>
               </div>
               <div class="flex items-center gap-2">
-                <span class="text-[10px] text-text-muted">
+                <span class="text-xs text-text-muted">
                   {{ formatRelativeTime(user.blockedAt) }}
                 </span>
                 <button
                   @click="unblockUser(user.blockId)"
                   :disabled="unblocking === user.blockId"
-                  class="px-2 py-1 bg-bg-secondary border border-border rounded text-[10px] hover:border-white/20 transition-colors disabled:opacity-50"
+                  class="px-2 py-1 bg-bg-secondary border border-border rounded text-xs hover:border-white/20 transition-colors disabled:opacity-50"
                 >
                   {{
                     unblocking === user.blockId

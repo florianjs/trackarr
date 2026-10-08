@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:megaphone" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.announcements.title') }}
         </h3>
@@ -51,7 +51,7 @@
             :placeholder="t('admin.announcements.messagePlaceholder')"
           />
           <p
-            class="text-[10px] text-text-muted mt-1.5 text-right absolute bottom-2 right-2"
+            class="text-xs text-text-muted mt-1.5 text-right absolute bottom-2 right-2"
           >
             {{ message.length }}/500
           </p>
@@ -84,7 +84,7 @@
       <!-- Preview -->
       <div v-if="enabled && message" class="pt-6 border-t border-border/50">
         <p
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-4"
+          class="text-xs font-bold text-text-muted mb-4"
         >
           {{ t('admin.announcements.preview') }}
         </p>
@@ -113,9 +113,8 @@
       <button
         @click="saveAnnouncement"
         :disabled="loading || saved"
-        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        :class="
-          saved
+        class="w-full text-xs font-bold py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        :class="saved
             ? 'bg-success text-white'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
@@ -151,21 +150,21 @@ const typeOptions = computed(() => [
 
 const typeStyles = {
   info: {
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/30',
-    text: 'text-blue-400',
+    bg: 'bg-bg-tertiary',
+    border: 'border-border',
+    text: 'text-text-secondary',
     icon: 'ph:info',
   },
   warning: {
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/30',
-    text: 'text-yellow-400',
+    bg: 'bg-leech/10',
+    border: 'border-leech/30',
+    text: 'text-leech',
     icon: 'ph:warning',
   },
   error: {
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/30',
-    text: 'text-red-400',
+    bg: 'bg-danger/10',
+    border: 'border-danger/30',
+    text: 'text-danger',
     icon: 'ph:warning-circle',
   },
 };

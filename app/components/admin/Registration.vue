@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:user-plus" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.registration.title') }}
         </h3>
@@ -21,8 +21,7 @@
             @click="toggleRegistration"
             :disabled="settingsLoading"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
-            :class="
-              registrationOpen
+            :class="registrationOpen
                 ? 'bg-success'
                 : 'bg-bg-tertiary border border-border'
             "
@@ -48,8 +47,7 @@
             @click="toggleInviteEnabled"
             :disabled="settingsLoading"
             class="relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-white/20"
-            :class="
-              inviteEnabled
+            :class="inviteEnabled
                 ? 'bg-accent'
                 : 'bg-bg-tertiary border border-border'
             "
@@ -145,9 +143,8 @@
       <button
         @click="saveSettings"
         :disabled="settingsLoading || saved"
-        class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
-        :class="
-          saved
+        class="w-full text-xs font-bold py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+        :class="saved
             ? 'bg-success text-white'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "

@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:tag-bold" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.categories.title') }}
         </h3>
@@ -15,7 +15,7 @@
       <div class="flex gap-2 mb-6">
         <select
           v-model="parentCategoryId"
-          class="input !py-2 text-xs font-bold uppercase tracking-wider w-48"
+          class="input !py-2 text-xs font-bold w-48"
         >
           <option :value="null">{{ t('admin.categories.rootCategory') }}</option>
           <option
@@ -34,7 +34,7 @@
               ? t('admin.categories.newSubcategoryPlaceholder')
               : t('admin.categories.newCategoryPlaceholder')
           "
-          class="input flex-1 !py-2 text-xs font-bold uppercase tracking-wider"
+          class="input flex-1 !py-2 text-xs font-bold"
           @keyup.enter="addCategory"
         />
         <input
@@ -43,11 +43,11 @@
           :placeholder="t('admin.categories.newznabId')"
           min="1000"
           max="9999"
-          class="input w-28 !py-2 text-xs font-bold tracking-wider"
+          class="input w-28 !py-2 text-xs font-bold"
           :title="t('admin.categories.newznabIdHint')"
         />
         <button
-          class="btn btn-primary !px-6 flex items-center gap-2 uppercase tracking-widest font-bold text-xs"
+          class="btn btn-primary !px-6 flex items-center gap-2 font-bold text-xs"
           :disabled="!newCategoryName.trim() || isAdding"
           @click="addCategory"
         >
@@ -63,12 +63,12 @@
       >
         <Icon name="ph:tag-slash" class="text-3xl text-text-muted mb-2" />
         <p
-          class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-4"
+          class="text-xs font-bold text-text-muted mb-4"
         >
           {{ t('admin.categories.empty') }}
         </p>
         <button
-          class="btn btn-primary !px-4 !py-2 text-xs font-bold uppercase tracking-wider"
+          class="btn btn-primary !px-4 !py-2 text-xs font-bold"
           :disabled="isSeeding"
           @click="seedCategories"
         >
@@ -122,7 +122,7 @@
                   <input
                     v-model="editingName"
                     type="text"
-                    class="input !py-1 !px-2 text-xs font-bold uppercase tracking-wider w-40"
+                    class="input !py-1 !px-2 text-xs font-bold w-40"
                     @keyup.enter="saveEdit(category.id)"
                     @keyup.escape="cancelEdit"
                   />
@@ -132,7 +132,7 @@
                     :placeholder="t('admin.categories.nzId')"
                     min="1000"
                     max="9999"
-                    class="input !py-1 !px-2 text-xs font-bold tracking-wider w-20"
+                    class="input !py-1 !px-2 text-xs font-bold w-20"
                     :title="t('admin.categories.newznabIdTitle')"
                   />
                   <button
@@ -157,17 +157,17 @@
                 <!-- Display Mode -->
                 <template v-else>
                   <p
-                    class="text-xs font-bold text-text-primary uppercase tracking-wider"
+                    class="text-sm font-medium text-text-primary"
                   >
                     {{ category.name }}
                     <span
                       v-if="category.newznabId"
-                      class="text-text-muted font-mono text-[10px] ml-2"
+                      class="text-text-muted font-mono text-xs ml-2"
                     >
                       [{{ category.newznabId }}]
                     </span>
                   </p>
-                  <p class="text-[10px] font-mono text-text-muted">
+                  <p class="text-xs font-mono text-text-muted">
                     {{ category.slug }}
                     <span
                       v-if="category.subcategories?.length"
@@ -231,7 +231,7 @@
                     <input
                       v-model="editingName"
                       type="text"
-                      class="input !py-1 !px-2 text-xs font-bold uppercase tracking-wider w-40"
+                      class="input !py-1 !px-2 text-xs font-bold w-40"
                       @keyup.enter="saveEdit(subcategory.id)"
                       @keyup.escape="cancelEdit"
                     />
@@ -241,7 +241,7 @@
                       :placeholder="t('admin.categories.nzId')"
                       min="1000"
                       max="9999"
-                      class="input !py-1 !px-2 text-xs font-bold tracking-wider w-20"
+                      class="input !py-1 !px-2 text-xs font-bold w-20"
                       :title="t('admin.categories.newznabIdTitle')"
                     />
                     <button
@@ -266,17 +266,17 @@
                   <!-- Display Mode for Subcategory -->
                   <template v-else>
                     <p
-                      class="text-xs font-bold text-text-primary uppercase tracking-wider"
+                      class="text-sm font-medium text-text-primary"
                     >
                       {{ subcategory.name }}
                       <span
                         v-if="subcategory.newznabId"
-                        class="text-text-muted font-mono text-[10px] ml-2"
+                        class="text-text-muted font-mono text-xs ml-2"
                       >
                         [{{ subcategory.newznabId }}]
                       </span>
                     </p>
-                    <p class="text-[10px] font-mono text-text-muted">
+                    <p class="text-xs font-mono text-text-muted">
                       {{ subcategory.slug }}
                     </p>
                   </template>

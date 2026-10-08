@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:chart-bar" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.torznabStats.title') }}
         </h3>
@@ -27,7 +27,7 @@
       <div v-else class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.totalRequests') }}
           </p>
@@ -38,7 +38,7 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.last24h') }}
           </p>
@@ -49,7 +49,7 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.uniqueUsers') }}
           </p>
@@ -60,7 +60,7 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.avgResponseTime') }}
           </p>
@@ -72,7 +72,7 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.searchRequests') }}
           </p>
@@ -83,7 +83,7 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.tvSearches') }}
           </p>
@@ -94,7 +94,7 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.movieSearches') }}
           </p>
@@ -105,13 +105,13 @@
 
         <div class="bg-bg-tertiary border border-border rounded-lg p-4">
           <p
-            class="text-[10px] font-medium uppercase tracking-widest text-text-muted mb-1"
+            class="text-xs font-medium text-text-muted mb-1"
           >
             {{ t('admin.torznabStats.errors') }}
           </p>
           <p
             class="text-2xl font-bold"
-            :class="stats?.errorsCount ? 'text-red-400' : 'text-text-primary'"
+            :class="stats?.errorsCount ? 'text-danger' : 'text-text-primary'"
           >
             {{ formatNumber(stats?.errorsCount || 0) }}
           </p>

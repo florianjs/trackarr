@@ -6,7 +6,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:package" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.system.versionTitle') }}
           </h3>
@@ -17,7 +17,7 @@
         <div class="flex items-center justify-between">
           <div>
             <p class="text-sm font-medium text-text-primary">{{ t('admin.system.currentVersion') }}</p>
-            <p class="text-[10px] text-text-muted mt-0.5">
+            <p class="text-xs text-text-muted mt-0.5">
               {{ t('admin.system.installedVersion') }}
             </p>
           </div>
@@ -61,7 +61,7 @@
             class="inline-flex items-center gap-1 text-xs text-text-muted hover:text-text-primary"
           >
             {{ t('admin.system.viewChangelog') }}
-            <Icon name="ph:arrow-square-out" class="text-[10px]" />
+            <Icon name="ph:arrow-square-out" class="text-xs" />
           </a>
         </div>
 
@@ -81,7 +81,7 @@
         <!-- Update Instructions -->
         <div v-if="showUpdateInstructions" class="space-y-3">
           <p
-            class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
+            class="text-xs font-bold text-text-muted"
           >
             {{ t('admin.system.updateCommands') }}
           </p>
@@ -92,7 +92,7 @@
               class="bg-bg-tertiary border border-border rounded-lg p-3"
             >
               <div class="flex items-center justify-between mb-1">
-                <span class="text-[10px] text-text-muted">
+                <span class="text-xs text-text-muted">
                   {{ t('admin.system.step', { step: cmd.step, description: cmd.description }) }}
                 </span>
                 <button
@@ -109,10 +109,10 @@
             </div>
           </div>
           <div
-            class="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/30 rounded-lg"
+            class="flex items-start gap-2 p-3 bg-leech/10 border border-leech/30 rounded-lg"
           >
-            <Icon name="ph:warning" class="text-yellow-400 mt-0.5" />
-            <div class="text-xs text-yellow-400 space-y-1">
+            <Icon name="ph:warning" class="text-leech mt-0.5" />
+            <div class="text-xs text-leech space-y-1">
               <p>{{ t('admin.system.backupWarning') }}</p>
               <p>{{ t('admin.system.downtimeWarning') }}</p>
             </div>
@@ -121,7 +121,7 @@
 
         <button
           @click="toggleUpdateInstructions"
-          class="w-full bg-bg-tertiary border border-border text-[10px] font-bold uppercase tracking-widest py-2.5 rounded hover:border-white/20 transition-colors flex items-center justify-center gap-2"
+          class="w-full bg-bg-tertiary border border-border text-xs font-bold py-2.5 rounded hover:border-white/20 transition-colors flex items-center justify-center gap-2"
         >
           <Icon name="ph:terminal" />
           {{
@@ -139,7 +139,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:chart-line" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.system.grafanaTitle') }}
           </h3>
@@ -189,10 +189,10 @@
         <!-- Error / Success Messages -->
         <div
           v-if="grafana.error"
-          class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg flex items-center gap-2"
+          class="p-3 bg-danger/10 border border-danger/30 rounded-lg flex items-center gap-2"
         >
-          <Icon name="ph:warning-circle" class="text-red-400" />
-          <p class="text-sm text-red-400">{{ grafana.error }}</p>
+          <Icon name="ph:warning-circle" class="text-danger" />
+          <p class="text-sm text-danger">{{ grafana.error }}</p>
         </div>
 
         <div
@@ -206,7 +206,7 @@
         <button
           @click="changeGrafanaPassword"
           :disabled="grafana.loading || !isGrafanaFormValid"
-          class="w-full bg-text-primary text-bg-primary text-[10px] font-bold uppercase tracking-widest py-2.5 rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          class="w-full bg-text-primary text-bg-primary text-xs font-bold py-2.5 rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon
             v-if="grafana.loading"

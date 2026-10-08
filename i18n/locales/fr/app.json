@@ -454,7 +454,7 @@
   "admin": {
     "layout": {
       "title": "Administration",
-      "liveFeed": "FLUX DU TRACKER EN DIRECT"
+      "liveFeed": "Tracker en direct"
     },
     "nav": {
       "dashboard": {
@@ -520,21 +520,8 @@
       "dropImage": "Déposez une image ou cliquez pour l'envoyer",
       "favicon": "Favicon",
       "faviconDescription": "Envoyez un favicon personnalisé (ICO, PNG, SVG). 1 Mo maximum. Affiché dans les onglets du navigateur.",
-      "feature": "Fonctionnalité {n}",
-      "featureBoxes": "Encarts de fonctionnalités",
-      "featureDescription": "Titre et description de cet encart. Prend en charge le texte enrichi.",
-      "featureDescriptionPlaceholder": "Description de la fonctionnalité...",
-      "featureTitle": "Titre",
-      "featureTitlePlaceholder": "Titre de la fonctionnalité",
       "footerContent": "Contenu du pied de page",
       "footerContentDescription": "Contenu personnalisé du pied de page. Prend en charge le texte enrichi.",
-      "heroSection": "Section d'en-tête",
-      "heroSubtitleDescription": "Une courte description sous le titre. Prend en charge le texte enrichi.",
-      "heroSubtitlePlaceholder": "Moteur de tracking P2P minimaliste et performant...",
-      "heroTitle": "Titre",
-      "heroTitleDescription": "Le titre principal de la page d'accueil. Utilisez le texte enrichi pour personnaliser le style, les couleurs et les polices.",
-      "heroTitlePlaceholder": "Saisissez le titre principal...",
-      "homepageContent": "Contenu de la page d'accueil",
       "icon": "Icône",
       "image": "Image",
       "livePreview": "Aperçu en direct",
@@ -549,7 +536,6 @@
       "pageTitleSuffixDescription": "Texte ajouté à la fin du titre des onglets. Texte brut uniquement.",
       "quickSelect": "Sélection rapide",
       "saveBranding": "Enregistrer l'identité",
-      "saveHomepageContent": "Enregistrer le contenu de l'accueil",
       "saveTextBranding": "Enregistrer les textes",
       "siteName": "Nom du site",
       "siteNameColor": "Couleur du nom du site",
@@ -557,9 +543,6 @@
       "siteRules": "Règles du site",
       "siteRulesDescription": "Règles et conditions affichées aux utilisateurs. Prend entièrement en charge le texte enrichi.",
       "siteRulesPlaceholder": "Saisissez les règles et consignes du site...",
-      "statusBadge": "Badge de statut",
-      "statusBadgeDescription": "Texte affiché dans le badge au-dessus du titre.",
-      "statusBadgePlaceholder": "Tracker en ligne et opérationnel",
       "subtitle": "Sous-titre",
       "subtitleDescription": "Texte sous le nom du site. Laisser vide pour afficher la version. Prend en charge le texte enrichi.",
       "subtitlePlaceholder": "Laisser vide pour afficher le numéro de version",
@@ -567,8 +550,8 @@
       "textBrandingDescription": "Personnalisez les textes affichés sur l'ensemble du site. Utilisez l'éditeur de texte enrichi pour une mise en forme avancée.",
       "title": "Identité du site",
       "uploading": "Envoi en cours...",
-      "welcomeMessage": "Message de bienvenue",
-      "welcomeMessageDescription": "Message en texte enrichi affiché sur la page d'accueil ou le tableau de bord.",
+      "welcomeMessage": "Message de l'équipe",
+      "welcomeMessageDescription": "Affiché en haut du tableau de bord de chaque membre. Laissez vide pour le masquer.",
       "welcomeMessagePlaceholder": "Bienvenue dans notre communauté..."
     },
     "categories": {
