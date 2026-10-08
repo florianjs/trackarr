@@ -15,7 +15,7 @@
       <div class="flex justify-between items-start">
         <div>
           <div
-            class="flex items-center gap-2 text-text-muted text-xs font-mono uppercase tracking-widest mb-2"
+            class="flex items-center gap-2 text-text-muted text-xs mb-2"
           >
             <NuxtLink to="/forum" class="hover:text-white transition-colors"
               >{{ t('forum.title') }}</NuxtLink
@@ -46,7 +46,7 @@
         <div v-if="user?.isAdmin || user?.isModerator" class="flex gap-2">
           <button
             @click="handleTogglePin"
-            class="px-3 py-1.5 bg-bg-secondary border border-border text-[10px] font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+            class="px-3 py-1.5 bg-bg-secondary border border-border text-xs font-bold rounded hover:bg-white/5 transition-colors flex items-center gap-2"
           >
             <Icon
               :name="topic.isPinned ? 'ph:push-pin-slash' : 'ph:push-pin'"
@@ -55,14 +55,14 @@
           </button>
           <button
             @click="handleToggleLock"
-            class="px-3 py-1.5 bg-bg-secondary border border-border text-[10px] font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors flex items-center gap-2"
+            class="px-3 py-1.5 bg-bg-secondary border border-border text-xs font-bold rounded hover:bg-white/5 transition-colors flex items-center gap-2"
           >
             <Icon :name="topic.isLocked ? 'ph:lock-open' : 'ph:lock'" />
             {{ topic.isLocked ? t('forum.topic.unlock') : t('forum.topic.lock') }}
           </button>
           <button
             @click="handleDeleteTopic"
-            class="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 text-[10px] font-bold uppercase tracking-wider rounded hover:bg-red-500/20 transition-colors flex items-center gap-2"
+            class="px-3 py-1.5 bg-red-500/10 border border-red-500/20 text-red-500 text-xs font-bold rounded hover:bg-red-500/20 transition-colors flex items-center gap-2"
           >
             <Icon name="ph:trash" />
             {{ t('common.delete') }}
@@ -81,24 +81,20 @@
           <div
             class="w-full md:w-48 bg-bg-tertiary/30 p-6 border-b md:border-b-0 md:border-r border-border flex flex-row md:flex-col items-center md:items-start gap-4"
           >
-            <div
-              class="w-12 h-12 rounded bg-bg-primary border border-border flex items-center justify-center"
-            >
-              <Icon name="ph:user" class="text-2xl text-text-muted" />
-            </div>
-            <div class="flex-1">
-              <div class="font-bold text-sm truncate">
+            <UserAvatar :name="post.author.username" :url="post.author.avatarUrl" />
+            <div class="flex-1 min-w-0">
+              <NuxtLink :to="`/users/${post.author.id}`" class="block font-medium text-sm truncate hover:underline underline-offset-2">
                 {{ post.author.username }}
-              </div>
+              </NuxtLink>
               <div class="flex flex-wrap gap-1 mt-1">
                 <span
                   v-if="post.author.isAdmin"
-                  class="text-[8px] uppercase tracking-tighter px-1 bg-white/10 rounded text-text-secondary"
+                  class="text-2xs px-1.5 rounded border border-border text-text-secondary"
                   >{{ t('common.admin') }}</span
                 >
                 <span
                   v-if="post.author.isModerator"
-                  class="text-[8px] uppercase tracking-tighter px-1 bg-white/10 rounded text-text-secondary"
+                  class="text-2xs px-1.5 rounded border border-border text-text-secondary"
                   >{{ t('forum.topic.modBadge') }}</span
                 >
               </div>
@@ -108,7 +104,7 @@
           <!-- Post Content -->
           <div class="flex-1 p-6 flex flex-col relative group">
             <div
-              class="text-xs text-text-muted font-mono uppercase tracking-widest mb-4 flex justify-between items-center"
+              class="text-xs text-text-muted mb-3 flex justify-between items-center"
             >
               <span>{{ t('forum.topic.postedOn', { date: formatDate(post.createdAt) }) }}</span>
               <button
@@ -147,7 +143,7 @@
             <button
               @click="handlePostReply"
               :disabled="!replyContent.trim() || posting"
-              class="px-6 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
+              class="px-6 py-2 bg-white text-black text-xs font-bold rounded hover:bg-white/90 transition-colors disabled:opacity-50"
             >
               {{ posting ? t('forum.topic.posting') : t('forum.topic.postReply') }}
             </button>

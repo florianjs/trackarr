@@ -1,12 +1,5 @@
 <template>
-  <div class="max-w-4xl mx-auto">
-    <NuxtLink
-      to="/torrents"
-      class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-text-muted hover:text-white mb-6 transition-colors"
-    >
-      <Icon name="ph:arrow-left-bold" />
-      {{ t('users.profile.backToTorrents') }}
-    </NuxtLink>
+  <div class="max-w-5xl">
 
     <div v-if="pending" class="flex justify-center py-12">
       <Icon
@@ -50,13 +43,13 @@
                 </h1>
                 <span
                   v-if="user.isAdmin"
-                  class="text-[10px] font-bold bg-red-500/20 border border-red-500/30 text-red-400 px-1.5 py-0.5 rounded-sm uppercase tracking-wider"
+                  class="text-xs font-bold border border-border text-text-secondary px-1.5 py-0.5 rounded-sm"
                 >
                   {{ t('common.admin') }}
                 </span>
                 <span
                   v-else-if="user.isModerator"
-                  class="text-[10px] font-bold bg-blue-500/20 border border-blue-500/30 text-blue-400 px-1.5 py-0.5 rounded-sm uppercase tracking-wider"
+                  class="text-xs font-bold border border-border text-text-secondary px-1.5 py-0.5 rounded-sm"
                 >
                   {{ t('users.profile.modBadge') }}
                 </span>
@@ -72,7 +65,7 @@
               <div class="flex flex-wrap gap-6 text-sm">
                 <div>
                   <span
-                    class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-0.5"
+                    class="text-xs font-bold text-text-muted block mb-0.5"
                     >{{ t('users.profile.memberSince') }}</span
                   >
                   <span class="text-text-secondary">{{
@@ -81,7 +74,7 @@
                 </div>
                 <div>
                   <span
-                    class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-0.5"
+                    class="text-xs font-bold text-text-muted block mb-0.5"
                     >{{ t('users.profile.lastSeen') }}</span
                   >
                   <span class="text-text-secondary">{{
@@ -99,7 +92,7 @@
         <div class="card">
           <div class="card-body text-center">
             <span
-              class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
+              class="text-xs font-bold text-text-muted block mb-1"
               >{{ t('common.ratio') }}</span
             >
             <span class="text-2xl font-bold" :class="ratioClass">{{
@@ -110,7 +103,7 @@
         <div class="card">
           <div class="card-body text-center">
             <span
-              class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
+              class="text-xs font-bold text-text-muted block mb-1"
               >{{ t('common.uploaded') }}</span
             >
             <span class="text-2xl font-bold text-green-400">{{
@@ -121,7 +114,7 @@
         <div class="card">
           <div class="card-body text-center">
             <span
-              class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
+              class="text-xs font-bold text-text-muted block mb-1"
               >{{ t('common.downloaded') }}</span
             >
             <span class="text-2xl font-bold text-yellow-400">{{
@@ -132,7 +125,7 @@
         <div class="card">
           <div class="card-body text-center">
             <span
-              class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
+              class="text-xs font-bold text-text-muted block mb-1"
               >{{ t('users.profile.uploads') }}</span
             >
             <span class="text-2xl font-bold text-text-primary">{{
@@ -163,7 +156,7 @@
           <table v-else class="w-full">
             <thead>
               <tr
-                class="text-left text-[10px] font-bold text-text-muted uppercase tracking-widest border-b border-border"
+                class="text-left text-xs font-bold text-text-muted border-b border-border"
               >
                 <th class="px-4 py-3">{{ t('common.name') }}</th>
                 <th class="px-4 py-3 text-right">{{ t('common.size') }}</th>
@@ -184,7 +177,7 @@
                   >
                     {{ torrent.name }}
                   </NuxtLink>
-                  <div class="text-[10px] text-text-muted">
+                  <div class="text-xs text-text-muted">
                     {{ torrent.category?.name || t('users.profile.uncategorized') }}
                   </div>
                 </td>

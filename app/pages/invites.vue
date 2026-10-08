@@ -3,22 +3,22 @@
     <div class="flex items-end justify-between mb-6">
       <div>
         <h2
-          class="text-xl font-bold text-text-primary tracking-tight uppercase"
+          class="text-2xl font-semibold tracking-tight text-text-primary"
         >
           {{ t('invites.title') }}
         </h2>
-        <p class="text-xs text-text-muted font-mono mt-0.5">
+        <p class="text-sm text-text-muted mt-0.5">
           {{ t('invites.subtitle') }}
         </p>
       </div>
       <div class="flex items-center gap-4">
         <div class="text-right">
           <p
-            class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+            class="text-xs font-bold text-text-muted"
           >
             {{ t('invites.remaining') }}
           </p>
-          <p class="text-2xl font-bold text-accent">
+          <p class="text-2xl font-semibold num text-text-primary">
             {{ inviteData?.remaining || 0 }}
           </p>
         </div>
@@ -43,7 +43,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:envelope-simple-bold" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('invites.yourInvites') }}
           </h3>
@@ -69,13 +69,13 @@
                   {{ invite.code }}
                 </code>
                 <span
-                  class="px-2 py-0.5 text-[10px] font-bold uppercase rounded"
+                  class="px-2 py-0.5 text-xs font-bold rounded"
                   :class="getStatusClass(invite)"
                 >
                   {{ getStatusLabel(invite) }}
                 </span>
               </div>
-              <div class="flex items-center gap-4 text-[10px] text-text-muted">
+              <div class="flex items-center gap-4 text-xs text-text-muted">
                 <span> {{ t('invites.createdAt', { date: formatDate(invite.createdAt) }) }} </span>
                 <span v-if="invite.usedByUser">
                   {{ t('invites.usedBy') }}
@@ -110,11 +110,11 @@
             class="w-12 h-12 text-text-muted/30 mx-auto mb-4"
           />
           <p
-            class="text-xs font-bold text-text-muted uppercase tracking-widest mb-2"
+            class="text-xs font-bold text-text-muted mb-2"
           >
             {{ t('invites.empty') }}
           </p>
-          <p class="text-[10px] text-text-muted">
+          <p class="text-xs text-text-muted">
             {{ t('invites.emptyHint') }}
           </p>
         </div>

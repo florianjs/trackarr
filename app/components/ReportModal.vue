@@ -11,7 +11,7 @@
             <div class="flex items-center gap-2">
               <Icon name="ph:flag-bold" class="text-error" />
               <h3
-                class="text-xs font-bold uppercase tracking-wider text-text-primary"
+                class="text-sm font-medium text-text-primary"
               >
                 {{
                   t('report.title', {
@@ -32,7 +32,7 @@
         <div class="card-body space-y-4">
           <div>
             <label
-              class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-2 block"
+              class="text-xs font-bold text-text-muted mb-2 block"
             >
               {{ t('common.reason') }}
             </label>
@@ -58,7 +58,7 @@
           </div>
           <div>
             <label
-              class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-2 block"
+              class="text-xs font-bold text-text-muted mb-2 block"
             >
               {{ t('report.details') }} ({{ t('common.optional') }})
             </label>

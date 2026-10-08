@@ -1,7 +1,7 @@
 <template>
   <div class="max-w-3xl mx-auto space-y-6">
     <div
-      class="flex items-center gap-2 text-text-muted text-xs font-mono uppercase tracking-widest"
+      class="flex items-center gap-2 text-text-muted text-xs"
     >
       <NuxtLink to="/forum" class="hover:text-white transition-colors"
         >{{ t('forum.title') }}</NuxtLink
@@ -15,7 +15,7 @@
     <div class="bg-bg-secondary border border-border rounded-lg p-8 space-y-6">
       <div class="space-y-2">
         <label
-          class="block text-[10px] uppercase tracking-widest text-text-muted font-bold"
+          class="block text-xs text-text-muted font-bold"
           >{{ t('common.category') }}</label
         >
         <select
@@ -31,7 +31,7 @@
 
       <div class="space-y-2">
         <label
-          class="block text-[10px] uppercase tracking-widest text-text-muted font-bold"
+          class="block text-xs text-text-muted font-bold"
           >{{ t('forum.newTopic.topicTitle') }}</label
         >
         <input
@@ -44,7 +44,7 @@
 
       <div class="space-y-2">
         <label
-          class="block text-[10px] uppercase tracking-widest text-text-muted font-bold"
+          class="block text-xs text-text-muted font-bold"
           >{{ t('forum.newTopic.content') }}</label
         >
         <textarea
@@ -57,14 +57,14 @@
       <div class="flex justify-end gap-4 pt-4">
         <button
           @click="router.back()"
-          class="px-6 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
+          class="px-6 py-2 bg-bg-tertiary text-white text-xs font-bold rounded hover:bg-white/5 transition-colors"
         >
           {{ t('common.cancel') }}
         </button>
         <button
           @click="handleSubmit"
           :disabled="!isFormValid || submitting"
-          class="px-8 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
+          class="px-8 py-2 bg-white text-black text-xs font-bold rounded hover:bg-white/90 transition-colors disabled:opacity-50"
         >
           {{ submitting ? t('common.creating') : t('forum.newTopic.submit') }}
         </button>

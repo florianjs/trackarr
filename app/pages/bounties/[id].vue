@@ -1,14 +1,14 @@
 <template>
   <div v-if="bounty" class="space-y-6">
-    <NuxtLink to="/bounties" class="text-[10px] font-bold uppercase tracking-widest text-text-muted hover:text-white inline-flex items-center gap-1">
+    <NuxtLink to="/bounties" class="text-xs font-bold text-text-muted hover:text-white inline-flex items-center gap-1">
       <Icon name="ph:arrow-left-bold" />
       {{ t('bonus.bounties.detail.back') }}
     </NuxtLink>
 
     <div class="flex flex-wrap items-start justify-between gap-4">
       <div class="min-w-0">
-        <h2 class="text-xl font-bold text-text-primary tracking-tight break-words">{{ bounty.title }}</h2>
-        <p class="text-[10px] text-text-muted font-mono mt-1">
+        <h2 class="text-2xl font-semibold tracking-tight text-text-primary break-words">{{ bounty.title }}</h2>
+        <p class="text-sm text-text-muted mt-1">
           {{ t('bonus.bounties.requestedBy', { user: bounty.requester?.username ?? '?' }) }}
           <span v-if="bounty.category"> · {{ bounty.category.name }}</span>
           · {{ new Date(bounty.createdAt).toLocaleString(locale) }}
@@ -18,15 +18,15 @@
           :href="imdbUrl(bounty.imdbId)"
           target="_blank"
           rel="noopener noreferrer"
-          class="inline-flex items-center gap-1 mt-2 text-[10px] font-bold border border-border px-2 py-1 rounded-sm text-text-secondary uppercase tracking-wider hover:text-white"
+          class="inline-flex items-center gap-1 mt-2 text-xs font-bold border border-border px-2 py-1 rounded-sm text-text-secondary hover:text-white"
         >
           IMDb <Icon name="ph:arrow-square-out-bold" />
         </a>
       </div>
       <div class="text-right">
-        <p class="text-[10px] font-bold text-text-muted uppercase tracking-widest">{{ t('bonus.bounties.reward') }}</p>
-        <p class="text-2xl font-bold text-accent font-mono">{{ points(bounty.totalPoints) }}</p>
-        <p class="text-[10px] uppercase tracking-wider text-text-muted">{{ t(`bonus.bounties.status.${bounty.status}`) }}</p>
+        <p class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.reward') }}</p>
+        <p class="text-2xl font-semibold num text-text-primary">{{ points(bounty.totalPoints) }}</p>
+        <p class="text-xs text-text-muted">{{ t(`bonus.bounties.status.${bounty.status}`) }}</p>
       </div>
     </div>
 
@@ -44,13 +44,13 @@
         <!-- Proposed / filled torrent -->
         <div v-if="bounty.filledTorrent" class="card">
           <div class="card-body space-y-3">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+            <p class="text-xs font-bold text-text-muted">
               {{ bounty.status === 'filled' ? t('bonus.bounties.detail.filledBy', { user: bounty.filledBy?.username ?? '?' }) : t('bonus.bounties.detail.proposed') }}
             </p>
             <NuxtLink :to="`/torrents/${bounty.filledTorrent.infoHash}`" class="text-sm font-bold text-text-primary hover:underline break-all">
               {{ bounty.filledTorrent.name }}
             </NuxtLink>
-            <p v-if="bounty.status === 'claimed'" class="text-[10px] text-text-muted font-mono">
+            <p v-if="bounty.status === 'claimed'" class="text-xs text-text-muted">
               {{ t('bonus.bounties.detail.uploader', { user: bounty.filledBy?.username ?? '?' }) }}
             </p>
             <div v-if="bounty.status === 'claimed' && canReview" class="flex gap-2">
@@ -67,8 +67,8 @@
         <!-- Fill -->
         <div v-if="bounty.status === 'open'" class="card">
           <div class="card-body space-y-2">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.bounties.detail.fill') }}</p>
-            <p class="text-[10px] text-text-muted">{{ t('bonus.bounties.detail.fillHint') }}</p>
+            <p class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.detail.fill') }}</p>
+            <p class="text-xs text-text-muted">{{ t('bonus.bounties.detail.fillHint') }}</p>
             <div class="flex gap-2">
               <input v-model="fillHash" type="text" maxlength="40" class="input w-full !py-2 text-xs font-mono" :placeholder="t('bonus.bounties.detail.fillPlaceholder')" />
               <button class="btn btn-primary !py-2 text-xs shrink-0" :disabled="busy || !/^[a-fA-F0-9]{40}$/.test(fillHash.trim())" @click="fill">
@@ -83,7 +83,7 @@
         <!-- Contribute -->
         <div v-if="bounty.status === 'open'" class="card">
           <div class="card-body space-y-2">
-            <p class="text-[10px] font-bold uppercase tracking-widest text-text-muted">{{ t('bonus.bounties.detail.contribute') }}</p>
+            <p class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.detail.contribute') }}</p>
             <div class="flex gap-2">
               <input v-model.number="contribution" type="number" min="1" class="input w-full !py-2 text-xs font-mono" :placeholder="t('bonus.bounties.detail.contributePlaceholder')" />
               <button class="btn btn-secondary !py-2 text-xs shrink-0" :disabled="busy || !(contribution > 0)" @click="contribute">
@@ -95,12 +95,12 @@
 
         <div class="card">
           <div class="card-header">
-            <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">{{ t('bonus.bounties.detail.contributors') }}</h3>
+            <h3 class="text-sm font-medium text-text-primary">{{ t('bonus.bounties.detail.contributors') }}</h3>
           </div>
           <ul class="card-body space-y-2 text-xs">
             <li v-for="c in bounty.contributions" :key="c.id" class="flex justify-between gap-2">
               <span class="truncate">{{ c.user?.username ?? '?' }}</span>
-              <span class="font-mono text-text-muted">{{ points(c.amount) }}</span>
+              <span class="num text-text-muted">{{ points(c.amount) }}</span>
             </li>
           </ul>
         </div>
