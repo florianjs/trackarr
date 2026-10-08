@@ -206,7 +206,7 @@
         v-if="selectedUser"
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
       >
-        <div class="fixed inset-0 bg-black/80" @click="selectedUser = null" />
+        <div class="fixed inset-0 bg-scrim/80" @click="selectedUser = null" />
         <div
           class="relative bg-bg-primary border border-border rounded-lg w-full max-w-3xl max-h-[80vh] overflow-hidden"
         >
@@ -240,7 +240,7 @@
         v-if="confirmAction"
         class="fixed inset-0 z-50 flex items-center justify-center p-4"
       >
-        <div class="fixed inset-0 bg-black/80" @click="confirmAction = null" />
+        <div class="fixed inset-0 bg-scrim/80" @click="confirmAction = null" />
         <div
           class="relative bg-bg-primary border border-border rounded-lg w-full max-w-md p-6"
         >

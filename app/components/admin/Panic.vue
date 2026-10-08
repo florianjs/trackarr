@@ -21,7 +21,7 @@
         <button
           @click="showConfirmModal = true"
           :disabled="loading"
-          class="w-full bg-error text-white text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-error/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          class="w-full bg-error text-paper text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-error/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon name="ph:lock-simple" />
           {{ t('admin.panic.encryptButton') }}
@@ -48,7 +48,7 @@
         <button
           @click="showRestoreModal = true"
           :disabled="loading"
-          class="w-full bg-success text-white text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-success/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
+          class="w-full bg-success text-paper text-sm font-bold uppercase tracking-widest py-3 rounded hover:bg-success/90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
         >
           <Icon name="ph:lock-open" />
           {{ t('admin.panic.restoreButton') }}
@@ -60,7 +60,7 @@
     <Teleport to="body">
       <div
         v-if="showConfirmModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-scrim/80 flex items-center justify-center z-50 p-4"
         @click.self="showConfirmModal = false"
       >
         <div
@@ -114,7 +114,7 @@
             <button
               @click="triggerPanic"
               :disabled="loading || !panicPassword"
-              class="flex-1 bg-error text-white text-sm font-bold py-2.5 rounded hover:bg-error/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              class="flex-1 bg-error text-paper text-sm font-bold py-2.5 rounded hover:bg-error/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Icon
                 v-if="loading"
@@ -132,7 +132,7 @@
     <Teleport to="body">
       <div
         v-if="showRestoreModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-scrim/80 flex items-center justify-center z-50 p-4"
         @click.self="showRestoreModal = false"
       >
         <div
@@ -180,7 +180,7 @@
             <button
               @click="restoreDatabase"
               :disabled="loading || !panicPassword"
-              class="flex-1 bg-success text-white text-sm font-bold py-2.5 rounded hover:bg-success/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              class="flex-1 bg-success text-paper text-sm font-bold py-2.5 rounded hover:bg-success/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Icon
                 v-if="loading"

@@ -950,5 +950,68 @@
       "stop": "Stop freeleech",
       "confirmStop": "Stop the global freeleech now?"
     }
+  },
+  "shell": {
+    "skip": "Skip to content",
+    "groups": {
+      "browse": "Browse",
+      "community": "Community",
+      "account": "My account",
+      "staff": "Staff"
+    },
+    "nav": {
+      "home": "Home",
+      "torrents": "Torrents",
+      "bounties": "Bounties",
+      "forum": "Forum",
+      "shop": "Bonus shop",
+      "invites": "Invitations",
+      "profile": "My profile",
+      "mod": "Moderation",
+      "admin": "Administration"
+    },
+    "menu": {
+      "open": "Open navigation",
+      "close": "Close navigation",
+      "label": "Main navigation"
+    },
+    "search": {
+      "trigger": "Search",
+      "placeholder": "Search torrents, IMDb ID or info hash",
+      "pages": "Pages",
+      "torrents": "Torrents",
+      "seeAll": "Show all results for “{q}”",
+      "empty": "No torrent matches “{q}”",
+      "loading": "Searching…",
+      "close": "Close search",
+      "hint": "to navigate, Enter to open"
+    },
+    "meter": {
+      "uploaded": "Uploaded",
+      "downloaded": "Downloaded",
+      "ratio": "Ratio",
+      "refresh": "Refresh my stats",
+      "label": "Your transfer"
+    },
+    "freeleech": {
+      "pill": "Freeleech",
+      "until": "Freeleech until {time}"
+    },
+    "user": {
+      "open": "Account menu",
+      "passkey": "Passkey",
+      "copy": "Copy passkey",
+      "copied": "Copied",
+      "points": "{n} points",
+      "signOut": "Sign out",
+      "theme": "Theme",
+      "language": "Language"
+    },
+    "theme": {
+      "label": "Theme",
+      "light": "Light",
+      "system": "System",
+      "dark": "Dark"
+    }
   }
 }

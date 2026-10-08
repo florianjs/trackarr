@@ -1,346 +1,104 @@
 <template>
-  <div
-    class="min-h-screen flex flex-col bg-bg-primary text-text-primary selection:bg-white selection:text-black"
-  >
-    <!-- Header -->
-    <header
-      class="sticky top-0 z-50 border-b border-border bg-bg-primary/80 backdrop-blur-md"
+  <div class="min-h-screen bg-bg-primary text-text-primary">
+    <a
+      href="#main"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-2 focus:left-2 focus:z-[70] btn btn-primary"
     >
-      <div
-        class="max-w-[1400px] mx-auto px-4 h-14 flex items-center justify-between"
-      >
-        <NuxtLink to="/" class="flex items-center gap-2.5 group">
-          <div
-            class="w-7 h-7 bg-white rounded-sm flex items-center justify-center transition-transform group-hover:rotate-12 overflow-hidden"
-          >
-            <img
-              v-if="branding?.siteLogoImage"
-              :src="branding.siteLogoImage"
-              alt="Logo"
-              class="w-full h-full object-contain"
-            />
-            <Icon
-              v-else
-              :name="branding?.siteLogo || 'ph:broadcast-bold'"
-              class="text-black text-lg"
-            />
-          </div>
-          <div class="flex flex-col leading-none">
+      {{ t('shell.skip') }}
+    </a>
+
+    <ShellAppSidebar :open="sidebarOpen" :branding="branding ?? null" @close="sidebarOpen = false" />
+
+    <div class="lg:pl-60 min-h-screen flex flex-col">
+      <!-- Top bar -->
+      <header class="sticky top-0 z-20 h-14 shrink-0 flex items-center gap-3 px-4 sm:px-6 border-b border-border bg-bg-primary/90 backdrop-blur">
+        <button
+          type="button"
+          class="p-1.5 -ml-1.5 rounded btn-ghost lg:hidden"
+          :aria-label="t('shell.menu.open')"
+          aria-controls="app-sidebar"
+          :aria-expanded="sidebarOpen"
+          @click="sidebarOpen = true"
+        >
+          <Icon name="ph:list" class="block text-lg" />
+        </button>
+
+        <!-- Search opens the command palette (⌘K or /) -->
+        <button
+          type="button"
+          class="flex-1 max-w-md flex items-center gap-2.5 h-9 px-3 rounded border border-border bg-bg-secondary text-sm text-text-muted hover:border-border-hover transition-colors"
+          @click="paletteOpen = true"
+        >
+          <Icon name="ph:magnifying-glass" aria-hidden="true" />
+          <span class="truncate">
+            <span class="sm:hidden">{{ t('shell.search.trigger') }}</span>
+            <span class="hidden sm:inline">{{ t('shell.search.placeholder') }}</span>
+          </span>
+          <kbd class="hidden md:block ml-auto text-2xs num border border-border rounded px-1.5 py-0.5">{{ shortcut }}</kbd>
+        </button>
+
+        <div class="ml-auto flex items-center gap-2 sm:gap-4">
+          <ClientOnly>
             <span
-              class="text-sm tracking-tighter transition-colors"
-              :class="{
-                'font-bold': branding?.siteNameBold ?? true,
-                'font-medium': !(branding?.siteNameBold ?? true),
-              }"
-              :style="{ color: branding?.siteNameColor || '' }"
-              v-html="branding?.siteName"
-            ></span>
-            <span class="text-[10px] text-text-muted font-mono"
-              v-html="branding?.siteSubtitle"
-            ></span>
-          </div>
-        </NuxtLink>
+              v-if="freeleech"
+              class="inline-flex items-center gap-1.5 h-7 px-2.5 rounded-full bg-free/15 text-free text-xs font-medium"
+              :title="freeleechLabel"
+            >
+              <Icon name="ph:gift" aria-hidden="true" />
+              <span class="hidden sm:inline">{{ freeleechLabel }}</span>
+            </span>
+          </ClientOnly>
 
-        <nav class="flex items-center gap-1">
-          <NuxtLink
-            v-for="link in visibleNavLinks"
-            :key="link.to"
-            :to="link.to"
-            class="px-3 py-1.5 text-xs font-medium rounded transition-all hover:bg-white/5"
-            active-class="bg-white/10 text-white"
-          >
-            <div class="flex items-center gap-2">
-              <Icon :name="link.icon" class="text-base" />
-              <span>{{ t(link.labelKey) }}</span>
-            </div>
-          </NuxtLink>
-        </nav>
-
-        <div class="flex items-center gap-3">
-          <!-- User Stats -->
-          <div
+          <ShellTransferMeter
             v-if="user"
-            class="hidden sm:flex items-center gap-4 px-3 py-1 border-l border-border ml-2"
-          >
-            <div class="flex flex-col items-end leading-tight">
-              <div class="flex items-center gap-1.5">
-                <Icon
-                  name="ph:arrow-up-bold"
-                  class="text-[10px] text-success"
-                />
-                <span class="text-[11px] font-mono text-text-secondary">{{
-                  formatSize(user.uploaded)
-                }}</span>
-              </div>
-              <div class="flex items-center gap-1.5">
-                <Icon
-                  name="ph:arrow-down-bold"
-                  class="text-[10px] text-error"
-                />
-                <span class="text-[11px] font-mono text-text-secondary">{{
-                  formatSize(user.downloaded)
-                }}</span>
-              </div>
-            </div>
-            <div class="flex flex-col items-center leading-tight">
-              <span
-                class="text-[9px] text-text-muted uppercase font-bold tracking-tighter"
-                >{{ t('common.ratio') }}</span
-              >
-              <span :class="['text-xs font-mono font-bold', ratioColor]">
-                {{ calculateRatio(user.uploaded, user.downloaded) }}
-              </span>
-            </div>
-            <button
-              @click="refreshStats"
-              class="p-1 rounded hover:bg-white/5 text-text-muted hover:text-text-secondary transition-colors"
-              :title="t('layout.refreshStats')"
-            >
-              <Icon name="ph:arrows-clockwise" class="text-xs" />
-            </button>
-          </div>
+            class="hidden sm:flex"
+            :uploaded="user.uploaded"
+            :downloaded="user.downloaded"
+            :freeleech="Boolean(freeleech)"
+            @refresh="refreshStats"
+          />
 
-          <!-- Language -->
-          <LanguageSwitcher class="hidden md:inline-flex ml-2" />
-
-          <!-- User Menu -->
-          <div class="relative" ref="userMenuRef">
-            <button
-              @click="toggleUserMenu"
-              class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-white/5 transition-colors"
-            >
-              <div
-                class="w-7 h-7 rounded-full bg-bg-tertiary border border-border flex items-center justify-center overflow-hidden"
-              >
-                <Icon
-                  name="ph:user-circle-light"
-                  class="text-xl text-text-secondary"
-                />
-              </div>
-              <span class="text-sm font-medium">{{ user?.username }}</span>
-              <Icon name="ph:caret-down" class="text-xs text-text-muted" />
-            </button>
-
-            <!-- Dropdown -->
-            <Transition
-              enter-active-class="transition duration-100 ease-out"
-              enter-from-class="transform scale-95 opacity-0"
-              enter-to-class="transform scale-100 opacity-100"
-              leave-active-class="transition duration-75 ease-in"
-              leave-from-class="transform scale-100 opacity-100"
-              leave-to-class="transform scale-95 opacity-0"
-            >
-              <div
-                v-if="showUserMenu"
-                class="absolute right-0 top-full mt-1 w-56 bg-bg-secondary border border-border rounded-lg shadow-xl overflow-hidden z-50"
-              >
-                <div class="px-4 py-3 border-b border-border">
-                  <p class="text-sm font-medium">
-                    {{ user?.username }}
-                  </p>
-                  <div
-                    v-if="user?.isAdmin || user?.isModerator"
-                    class="mt-1 flex gap-1"
-                  >
-                    <span
-                      v-if="user?.isAdmin"
-                      class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 bg-white/10 rounded text-text-secondary"
-                    >
-                      {{ t('common.admin') }}
-                    </span>
-                    <span
-                      v-if="user?.isModerator"
-                      class="text-[10px] uppercase tracking-wider px-1.5 py-0.5 bg-white/10 rounded text-text-secondary"
-                    >
-                      {{ t('common.moderator') }}
-                    </span>
-                  </div>
-                </div>
-                <div class="py-1">
-                  <div class="px-4 py-2">
-                    <p
-                      class="text-[10px] uppercase tracking-wider text-text-muted mb-1"
-                    >
-                      {{ t('layout.passkey') }}
-                    </p>
-                    <code
-                      class="text-xs font-mono text-text-secondary break-all"
-                      >{{ passkey ?? '…' }}</code
-                    >
-                  </div>
-                  <NuxtLink
-                    to="/shop"
-                    class="flex items-center justify-between px-4 py-2 text-xs text-text-secondary hover:text-white hover:bg-bg-tertiary/50 transition-colors"
-                    @click="showUserMenu = false"
-                  >
-                    <span class="flex items-center gap-2">
-                      <Icon name="ph:coins" />
-                      {{ t('bonus.menu.shop') }}
-                    </span>
-                    <span v-if="bonusPoints !== null" class="font-mono text-accent">
-                      {{ t('bonus.points', { n: Math.floor(bonusPoints).toLocaleString(locale) }) }}
-                    </span>
-                  </NuxtLink>
-                </div>
-                <div class="border-t border-border py-2 px-4">
-                  <div class="grid grid-cols-2 gap-2">
-                    <div>
-                      <p
-                        class="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"
-                      >
-                        {{ t('common.uploaded') }}
-                      </p>
-                      <p class="text-xs font-mono text-success">
-                        {{ formatSize(user?.uploaded || 0) }}
-                      </p>
-                    </div>
-                    <div>
-                      <p
-                        class="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"
-                      >
-                        {{ t('common.downloaded') }}
-                      </p>
-                      <p class="text-xs font-mono text-error">
-                        {{ formatSize(user?.downloaded || 0) }}
-                      </p>
-                    </div>
-                    <div class="col-span-2">
-                      <p
-                        class="text-[10px] uppercase tracking-wider text-text-muted mb-0.5"
-                      >
-                        {{ t('common.ratio') }}
-                      </p>
-                      <p class="text-xs font-mono" :class="ratioColor">
-                        {{ calculateRatio(user?.uploaded, user?.downloaded) }}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-                <div class="border-t border-border py-1">
-                  <button
-                    @click="handleLogout"
-                    class="w-full px-4 py-2 text-left text-sm text-red-400 hover:bg-white/5 transition-colors flex items-center gap-2"
-                  >
-                    <Icon name="ph:sign-out" />
-                    {{ t('layout.signOut') }}
-                  </button>
-                </div>
-              </div>
-            </Transition>
-          </div>
+          <ShellUserMenu @logout="handleLogout" />
         </div>
-      </div>
-    </header>
+      </header>
 
-    <!-- Announcement Banner -->
-    <ClientOnly>
-      <Transition
-        enter-active-class="transition duration-200 ease-out"
-        enter-from-class="opacity-0 -translate-y-2"
-        enter-to-class="opacity-100 translate-y-0"
-        leave-active-class="transition duration-150 ease-in"
-        leave-from-class="opacity-100 translate-y-0"
-        leave-to-class="opacity-0 -translate-y-2"
-      >
+      <!-- Announcement -->
+      <ClientOnly>
         <div
-          v-if="
-            announcementReady &&
-            announcement?.enabled &&
-            announcement?.message &&
-            !announcementDismissed
-          "
-          :class="[
-            'border-b',
-            announcementStyles[announcement.type || 'info'].bg,
-            announcementStyles[announcement.type || 'info'].border,
-          ]"
+          v-if="announcementReady && announcement?.enabled && announcement?.message && !announcementDismissed"
+          class="border-b"
+          :class="announcementStyle.box"
+          role="status"
         >
-          <div
-            class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3"
-          >
-            <Icon
-              :name="announcementStyles[announcement.type || 'info'].icon"
-              :class="[
-                'text-lg flex-shrink-0',
-                announcementStyles[announcement.type || 'info'].text,
-              ]"
-            />
-            <p
-              :class="[
-                'text-sm flex-1',
-                announcementStyles[announcement.type || 'info'].text,
-              ]"
-            >
-              {{ announcement.message }}
-            </p>
+          <div class="px-4 sm:px-6 py-2.5 flex items-center gap-3">
+            <Icon :name="announcementStyle.icon" class="text-lg shrink-0" :class="announcementStyle.text" aria-hidden="true" />
+            <p class="text-sm flex-1 text-text-primary">{{ announcement.message }}</p>
             <button
-              @click="dismissAnnouncement"
-              class="p-1 rounded hover:bg-white/10 transition-colors flex-shrink-0"
+              type="button"
+              class="p-1 rounded btn-ghost shrink-0"
               :title="t('layout.dismiss')"
+              :aria-label="t('layout.dismiss')"
+              @click="dismissAnnouncement"
             >
-              <Icon
-                name="ph:x"
-                :class="[
-                  'text-sm',
-                  announcementStyles[announcement.type || 'info'].text,
-                ]"
-              />
+              <Icon name="ph:x" class="block text-sm" />
             </button>
           </div>
         </div>
-      </Transition>
-    </ClientOnly>
+      </ClientOnly>
 
-    <!-- Global freeleech -->
-    <ClientOnly>
-      <div v-if="freeleech?.active" class="border-b border-success/30 bg-success/10">
-        <div class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3">
-          <Icon name="ph:gift" class="text-lg flex-shrink-0 text-success" />
-          <p class="text-sm flex-1 text-success">
-            {{
-              freeleech.until
-                ? t('freeleech.bannerUntil', {
-                    date: new Date(freeleech.until).toLocaleString(locale, {
-                      dateStyle: 'medium',
-                      timeStyle: 'short',
-                    }),
-                  })
-                : t('freeleech.banner')
-            }}
-          </p>
-        </div>
-      </div>
-    </ClientOnly>
+      <main id="main" class="flex-1 w-full max-w-[1240px] px-4 sm:px-6 py-6 lg:py-8">
+        <slot />
+      </main>
 
-    <!-- Main Content -->
-    <main class="flex-grow max-w-[1400px] w-full mx-auto px-4 py-6">
-      <slot />
-    </main>
-
-    <!-- Footer -->
-    <footer class="border-t border-border mt-auto py-6 bg-bg-secondary/30">
-      <div
-        class="max-w-[1400px] mx-auto px-4 flex flex-col md:flex-row justify-between items-center gap-4"
-      >
-        <div
-          class="flex items-center gap-4 text-[10px] text-text-muted font-mono uppercase tracking-widest"
-        >
+      <footer class="border-t border-border px-4 sm:px-6 py-5 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-text-muted">
+        <div class="flex items-center gap-3">
           <span
             class="[&>p]:inline [&>p]:m-0"
-            v-html="
-              branding?.footerText ||
-              `© ${new Date().getFullYear()} ${(branding?.siteName || 'Trackarr')}`
-            "
-          ></span>
-          <template v-if="footerTagline">
-            <span class="w-1 h-1 bg-border rounded-full"></span>
-            <span>{{ footerTagline }}</span>
-          </template>
-          <span class="w-1 h-1 bg-border rounded-full md:hidden"></span>
-          <!-- Header switcher is hidden on small screens -->
-          <LanguageSwitcher class="md:hidden" />
+            v-html="branding?.footerText || `© ${new Date().getFullYear()} ${branding?.siteName || 'Trackarr'}`"
+          />
+          <span v-if="footerTagline" class="text-text-muted/80">{{ footerTagline }}</span>
         </div>
-        <div class="flex gap-6">
+        <div class="flex items-center gap-4">
           <a
             v-for="link in footerLinks"
             :key="link.url"
@@ -349,26 +107,39 @@
             rel="noopener noreferrer"
             :title="link.label"
             :aria-label="link.label"
-            class="text-text-muted hover:text-white transition-colors"
-            ><Icon :name="link.icon" class="text-xl"
-          /></a>
+            class="text-text-muted hover:text-text-primary transition-colors"
+          >
+            <Icon :name="link.icon" class="block text-lg" />
+          </a>
         </div>
-      </div>
-    </footer>
+      </footer>
+    </div>
+
+    <ShellCommandPalette v-model:open="paletteOpen" />
   </div>
 </template>
 
 <script setup lang="ts">
 import type { FooterLink } from '~~/shared/utils/footerLinks';
+
 const { t, locale } = useI18n();
 const { user, clear, fetch } = useUserSession();
+const router = useRouter();
+const route = useRoute();
 
-// Passkey is not part of the client session: fetch it on demand
-const passkey = ref<string | null>(null);
-const bonusPoints = ref<number | null>(null);
+const sidebarOpen = ref(false);
+const paletteOpen = ref(false);
+watch(() => route.fullPath, () => (sidebarOpen.value = false));
 
-// Global freeleech banner. Reloaded when the user changes (sign in/out) and
-// every 5 minutes; the end date is checked locally so it disappears on time.
+const shortcut = ref('Ctrl K');
+onMounted(() => {
+  if (/Mac|iPhone|iPad/.test(navigator.platform)) shortcut.value = '⌘K';
+});
+
+// ---------------------------------------------------------------------------
+// Global freeleech. Reloaded when the user changes (sign in/out) and every
+// 5 minutes; the end date is checked locally so it disappears on time.
+// ---------------------------------------------------------------------------
 type FreeleechBanner = { active: boolean; until: string | null };
 const freeleechState = ref<FreeleechBanner | null>(null);
 const freeleechNow = ref(Date.now());
@@ -380,6 +151,14 @@ const freeleech = computed(() => {
     new Date(freeleechNow.value)
   );
   return active ? state : null;
+});
+const freeleechLabel = computed(() => {
+  if (!freeleech.value?.until) return t('shell.freeleech.pill');
+  const time = new Date(freeleech.value.until).toLocaleString(locale.value, {
+    dateStyle: 'short',
+    timeStyle: 'short',
+  });
+  return t('shell.freeleech.until', { time });
 });
 async function loadFreeleech() {
   if (!user.value) {
@@ -401,12 +180,10 @@ onUnmounted(() => {
   clearInterval(freeleechPoll);
   clearInterval(freeleechTick);
 });
-const router = useRouter();
 
-const showUserMenu = ref(false);
-const userMenuRef = ref<HTMLElement | null>(null);
-
-// Fetch site branding
+// ---------------------------------------------------------------------------
+// Branding, title and favicon
+// ---------------------------------------------------------------------------
 const { data: branding } = await useFetch<{
   siteName: string;
   siteLogo: string;
@@ -434,7 +211,6 @@ const footerTagline = computed(() => {
     : tagline;
 });
 
-// Set dynamic favicon and title template
 useHead({
   titleTemplate: computed(() => {
     const suffix =
@@ -459,7 +235,9 @@ useHead({
   ],
 });
 
-// Fetch announcement
+// ---------------------------------------------------------------------------
+// Announcement (dismissed per message, for the browser session)
+// ---------------------------------------------------------------------------
 const { data: announcement } = await useFetch<{
   enabled: boolean;
   message?: string;
@@ -469,152 +247,49 @@ const { data: announcement } = await useFetch<{
 const announcementDismissed = ref(false);
 const announcementReady = ref(false);
 
-// Simple hash function for announcement message
+const announcementStyles = {
+  info: { box: 'bg-bg-secondary border-border', text: 'text-text-secondary', icon: 'ph:info' },
+  warning: { box: 'bg-leech/10 border-leech/30', text: 'text-leech', icon: 'ph:warning' },
+  error: { box: 'bg-danger/10 border-danger/30', text: 'text-danger', icon: 'ph:warning-circle' },
+};
+const announcementStyle = computed(
+  () => announcementStyles[announcement.value?.type || 'info']
+);
+
 function hashString(str: string): string {
   let hash = 0;
   for (let i = 0; i < str.length; i++) {
-    const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
+    hash = (hash << 5) - hash + str.charCodeAt(i);
     hash = hash & hash;
   }
   return Math.abs(hash).toString(36);
 }
 
-const announcementStyles = {
-  info: {
-    bg: 'bg-blue-500/10',
-    border: 'border-blue-500/30',
-    text: 'text-blue-400',
-    icon: 'ph:info',
-  },
-  warning: {
-    bg: 'bg-yellow-500/10',
-    border: 'border-yellow-500/30',
-    text: 'text-yellow-400',
-    icon: 'ph:warning',
-  },
-  error: {
-    bg: 'bg-red-500/10',
-    border: 'border-red-500/30',
-    text: 'text-red-400',
-    icon: 'ph:warning-circle',
-  },
-};
-
 function dismissAnnouncement() {
   announcementDismissed.value = true;
-  if (import.meta.client && announcement.value?.message) {
-    const messageHash = hashString(announcement.value.message);
-    sessionStorage.setItem(`announcement_dismissed_${messageHash}`, 'true');
+  if (announcement.value?.message) {
+    sessionStorage.setItem(`announcement_dismissed_${hashString(announcement.value.message)}`, 'true');
   }
 }
 
 onMounted(() => {
-  if (import.meta.client && announcement.value?.message) {
-    const messageHash = hashString(announcement.value.message);
+  if (announcement.value?.message) {
     announcementDismissed.value =
-      sessionStorage.getItem(`announcement_dismissed_${messageHash}`) ===
-      'true';
+      sessionStorage.getItem(`announcement_dismissed_${hashString(announcement.value.message)}`) === 'true';
   }
-  // Use nextTick to ensure transition is applied after DOM is ready
-  nextTick(() => {
-    announcementReady.value = true;
-  });
+  nextTick(() => (announcementReady.value = true));
 });
 
-// Refresh user stats from database
+// ---------------------------------------------------------------------------
+// Account
+// ---------------------------------------------------------------------------
 async function refreshStats() {
   await $fetch('/api/auth/status');
   await fetch();
 }
 
-const navLinks = [
-  { to: '/', labelKey: 'nav.dashboard', icon: 'ph:squares-four', adminOnly: false },
-  {
-    to: '/search',
-    labelKey: 'nav.search',
-    icon: 'ph:magnifying-glass',
-    adminOnly: false,
-  },
-  { to: '/torrents', labelKey: 'nav.torrents', icon: 'ph:files', adminOnly: false },
-  {
-    to: '/forum',
-    labelKey: 'nav.forum',
-    icon: 'ph:chat-centered-text',
-    adminOnly: false,
-  },
-  { to: '/shop', labelKey: 'bonus.nav.shop', icon: 'ph:storefront', adminOnly: false },
-  { to: '/bounties', labelKey: 'bonus.nav.bounties', icon: 'ph:target', adminOnly: false },
-  { to: '/admin', labelKey: 'nav.admin', icon: 'ph:shield-check', adminOnly: true },
-  { to: '/mod', labelKey: 'nav.mod', icon: 'ph:shield', modOnly: true },
-];
-
-const visibleNavLinks = computed(() =>
-  navLinks.filter((link) => {
-    if (link.adminOnly && !user.value?.isAdmin) return false;
-    if (link.modOnly && !user.value?.isAdmin && !user.value?.isModerator)
-      return false;
-    return true;
-  })
-);
-
-function toggleUserMenu() {
-  showUserMenu.value = !showUserMenu.value;
-  if (showUserMenu.value && !passkey.value) {
-    $fetch<{ passkey: string }>('/api/auth/passkey')
-      .then((res) => (passkey.value = res.passkey))
-      .catch(() => {});
-  }
-  // Balance changes while seeding: refresh each time the menu opens
-  if (showUserMenu.value) {
-    $fetch<{ enabled: boolean; points: number }>('/api/bonus/me')
-      .then((res) => (bonusPoints.value = res.enabled ? res.points : null))
-      .catch(() => {});
-  }
-}
-
-// Close on outside click
-function handleClickOutside(event: MouseEvent) {
-  if (userMenuRef.value && !userMenuRef.value.contains(event.target as Node)) {
-    showUserMenu.value = false;
-  }
-}
-
-onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
-});
-
-onUnmounted(() => {
-  document.removeEventListener('click', handleClickOutside);
-});
-
 async function handleLogout() {
-  showUserMenu.value = false;
-  passkey.value = null;
   await clear();
   router.push('/auth/login');
 }
-
-function formatSize(bytes: number): string {
-  if (bytes === 0) return '0 B';
-  const units = ['B', 'KB', 'MB', 'GB', 'TB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(1024));
-  return `${(bytes / Math.pow(1024, i)).toFixed(1)} ${units[i]}`;
-}
-
-function calculateRatio(up = 0, down = 0) {
-  if (down === 0) return up > 0 ? '∞' : '0.00';
-  return (up / down).toFixed(2);
-}
-
-const ratioColor = computed(() => {
-  const up = user.value?.uploaded ?? 0;
-  const down = user.value?.downloaded ?? 0;
-  if (down === 0) return up > 0 ? 'text-success' : 'text-text-secondary';
-
-  const ratio = up / down;
-  if (ratio < 0.5) return 'text-error';
-  if (ratio < 1.0) return 'text-warning';
-  return 'text-success';
-});
 </script>
