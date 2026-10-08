@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
     .from(forumPosts)
     .where(eq(forumPosts.topicId, post.topicId));
 
-  if (postCount[0].value <= 1) {
+  if (postCount[0]!.value <= 1) {
     await db.delete(forumTopics).where(eq(forumTopics.id, post.topicId));
     return { message: 'Topic deleted as it was the last post' };
   }

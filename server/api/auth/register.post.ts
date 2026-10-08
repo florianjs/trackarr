@@ -64,7 +64,7 @@ export default defineEventHandler(async (event) => {
 
   // Check if any users exist (setup mode)
   const userCount = await db.select({ count: count() }).from(users);
-  const isFirstUser = userCount[0].count === 0;
+  const isFirstUser = userCount[0]!.count === 0;
 
   // If not first user, check if registration is open or invite code is valid
   let validInvite = null;

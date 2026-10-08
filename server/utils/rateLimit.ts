@@ -201,7 +201,7 @@ async function rateLimitRedis(
       // Calculate retry after based on oldest request in window
       const oldestResult = await redis.zrange(redisKey, 0, 0, 'WITHSCORES');
       const oldestTime =
-        oldestResult.length >= 2 ? parseInt(oldestResult[1]) : now;
+        oldestResult.length >= 2 ? parseInt(oldestResult[1]!) : now;
       const retryAfter = Math.ceil((oldestTime + windowMs - now) / 1000);
 
       return {
