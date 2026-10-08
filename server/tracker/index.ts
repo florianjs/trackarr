@@ -1,7 +1,7 @@
 import { Server as TrackerServer } from 'bittorrent-tracker';
 import { handleAnnounce } from './handlers';
 import { db, schema } from '../db';
-import { getMinRatio } from '../utils/settings';
+import { getFreeleechState, getMinRatio } from '../utils/settings';
 
 let server: TrackerServer | null = null;
 
@@ -144,10 +144,14 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
           // Ratio check. `left` is client supplied: a peer claiming left=0
           // still gets the peer list, so only trust it for peers that really
           // completed this torrent (HnR entry) or uploaded it.
-          const minRatio = await getMinRatio();
+          // Suspended during a global freeleech: downloads do not count anyway
+          const [minRatio, { active: freeleech }] = await Promise.all([
+            getMinRatio(),
+            getFreeleechState(),
+          ]);
           const ratio =
             user.downloaded > 0 ? user.uploaded / user.downloaded : Infinity;
-          if (minRatio > 0 && ratio < minRatio && !isUploader) {
+          if (minRatio > 0 && ratio < minRatio && !isUploader && !freeleech) {
             const claimsSeeder = Number(params.left) === 0;
             const hasSnatched =
               claimsSeeder &&

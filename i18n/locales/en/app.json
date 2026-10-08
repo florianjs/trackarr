@@ -911,5 +911,23 @@
     "daysAgo": "{count}d ago",
     "monthsAgo": "{count}mo ago",
     "yearsAgo": "{count}y ago | {count}y ago"
+  },
+  "freeleech": {
+    "banner": "Freeleech is on: downloads don't count toward your ratio.",
+    "bannerUntil": "Freeleech is on until {date}: downloads don't count toward your ratio.",
+    "admin": {
+      "title": "Global freeleech",
+      "description": "While active, downloaded data is not counted (upload still is) and the minimum ratio is suspended. Torznab reports a download factor of 0.",
+      "active": "Active",
+      "activeUntil": "Active until {date}",
+      "activeForever": "Active, no end date",
+      "inactive": "Inactive",
+      "duration": "Duration (hours)",
+      "durationHint": "Leave empty for no end date.",
+      "start": "Start freeleech",
+      "update": "Update",
+      "stop": "Stop freeleech",
+      "confirmStop": "Stop the global freeleech now?"
+    }
   }
 }

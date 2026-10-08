@@ -15,6 +15,7 @@ import { db, schema } from '../../../db';
 import { getStats } from '../../../redis/cache';
 import { desc, eq, ilike, and, inArray, sql } from 'drizzle-orm';
 import { escapeLike } from '../../../utils/validation';
+import { getFreeleechState } from '../../../utils/settings';
 import { parseImdbId, parseTmdbId, parseTvdbId } from '../../../../shared/utils/mediaIds';
 import { authenticateTorznab, sendTorznabError } from '../utils/auth';
 import {
@@ -327,6 +328,8 @@ async function performSearch(
     offset: query.offset,
   });
 
+  const { active: freeleech } = await getFreeleechState();
+
   // Enrich with stats from Redis
   const items: TorznabItem[] = await Promise.all(
     torrents.map(async (torrent) => {
@@ -347,7 +350,7 @@ async function performSearch(
         leechers: stats.leechers,
         grabs: stats.completed,
         downloadUrl: `${baseUrl}/api/torznab/download?id=${torrent.infoHash}&apikey=${user.passkey}`,
-        downloadVolumeFactor: 1, // Could be enhanced with freeleech support
+        downloadVolumeFactor: freeleech ? 0 : 1,
         uploadVolumeFactor: 1,
         imdbId: torrent.imdbId ?? undefined,
         tmdbId: torrent.tmdbId ?? undefined,
