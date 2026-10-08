@@ -1,5 +1,8 @@
 <template>
-  <div class="min-h-screen bg-bg-primary flex items-center justify-center px-4">
+  <div class="relative min-h-screen bg-bg-primary flex items-center justify-center px-4">
+    <div class="absolute top-4 right-4">
+      <LanguageSwitcher />
+    </div>
     <div class="w-full max-w-md">
       <!-- Logo -->
       <div class="text-center mb-8">
@@ -113,9 +116,6 @@
         </p>
       </div>
 
-      <div class="mt-6 flex justify-center">
-        <LanguageSwitcher />
-      </div>
     </div>
   </div>
 </template>

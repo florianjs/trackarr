@@ -100,6 +100,9 @@
             </button>
           </div>
 
+          <!-- Language -->
+          <LanguageSwitcher class="hidden md:inline-flex ml-2" />
+
           <!-- User Menu -->
           <div class="relative" ref="userMenuRef">
             <button
@@ -331,8 +334,9 @@
           ></span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
           <span>{{ t('layout.p2pProtocol') }}</span>
-          <span class="w-1 h-1 bg-border rounded-full"></span>
-          <LanguageSwitcher />
+          <span class="w-1 h-1 bg-border rounded-full md:hidden"></span>
+          <!-- Header switcher is hidden on small screens -->
+          <LanguageSwitcher class="md:hidden" />
         </div>
         <div class="flex gap-6">
           <a

@@ -1,17 +1,23 @@
 <template>
-  <label class="inline-flex items-center gap-1.5 text-text-muted">
-    <Icon name="ph:translate" class="text-base" />
-    <span class="sr-only">{{ t('common.language') }}</span>
-    <select
-      :value="locale"
-      class="bg-transparent text-[10px] font-mono uppercase tracking-widest focus:outline-none cursor-pointer hover:text-white transition-colors"
-      @change="setLocale(($event.target as HTMLSelectElement).value as typeof locale)"
+  <div
+    class="inline-flex items-center gap-1 rounded border border-border bg-bg-secondary/60 p-0.5"
+    role="group"
+    :aria-label="t('common.language')"
+  >
+    <Icon name="ph:translate" class="text-sm text-text-muted mx-1" aria-hidden="true" />
+    <button
+      v-for="l in locales"
+      :key="l.code"
+      type="button"
+      class="px-2 py-0.5 rounded-sm text-[10px] font-bold font-mono uppercase tracking-widest transition-colors"
+      :class="l.code === locale ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white'"
+      :aria-pressed="l.code === locale"
+      :title="l.name"
+      @click="setLocale(l.code)"
     >
-      <option v-for="l in locales" :key="l.code" :value="l.code" class="bg-bg-secondary">
-        {{ l.name }}
-      </option>
-    </select>
-  </label>
+      {{ l.code }}
+    </button>
+  </div>
 </template>
 
 <script setup lang="ts">
