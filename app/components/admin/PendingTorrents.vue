@@ -145,7 +145,7 @@ const processingId = ref<string | null>(null);
 async function loadPending() {
   isLoading.value = true;
   try {
-    pending.value = (await $fetch('/api/mod/torrents/pending')) as PendingTorrent[];
+    pending.value = await $fetch<PendingTorrent[]>('/api/mod/torrents/pending');
   } catch (error: any) {
     console.error('Failed to load pending torrents:', error);
   } finally {

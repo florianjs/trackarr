@@ -165,6 +165,19 @@
                       >{{ passkey ?? '…' }}</code
                     >
                   </div>
+                  <NuxtLink
+                    to="/shop"
+                    class="flex items-center justify-between px-4 py-2 text-xs text-text-secondary hover:text-white hover:bg-bg-tertiary/50 transition-colors"
+                    @click="showUserMenu = false"
+                  >
+                    <span class="flex items-center gap-2">
+                      <Icon name="ph:coins" />
+                      {{ t('bonus.menu.shop') }}
+                    </span>
+                    <span v-if="bonusPoints !== null" class="font-mono text-accent">
+                      {{ t('bonus.points', { n: Math.floor(bonusPoints).toLocaleString(locale) }) }}
+                    </span>
+                  </NuxtLink>
                 </div>
                 <div class="border-t border-border py-2 px-4">
                   <div class="grid grid-cols-2 gap-2">
@@ -329,11 +342,12 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
+const { t, locale } = useI18n();
 const { user, clear, fetch } = useUserSession();
 
 // Passkey is not part of the client session: fetch it on demand
 const passkey = ref<string | null>(null);
+const bonusPoints = ref<number | null>(null);
 const router = useRouter();
 
 const showUserMenu = ref(false);
@@ -463,6 +477,8 @@ const navLinks = [
     icon: 'ph:chat-centered-text',
     adminOnly: false,
   },
+  { to: '/shop', labelKey: 'bonus.nav.shop', icon: 'ph:storefront', adminOnly: false },
+  { to: '/bounties', labelKey: 'bonus.nav.bounties', icon: 'ph:target', adminOnly: false },
   { to: '/admin', labelKey: 'nav.admin', icon: 'ph:shield-check', adminOnly: true },
   { to: '/mod', labelKey: 'nav.mod', icon: 'ph:shield', modOnly: true },
 ];
@@ -481,6 +497,12 @@ function toggleUserMenu() {
   if (showUserMenu.value && !passkey.value) {
     $fetch<{ passkey: string }>('/api/auth/passkey')
       .then((res) => (passkey.value = res.passkey))
+      .catch(() => {});
+  }
+  // Balance changes while seeding: refresh each time the menu opens
+  if (showUserMenu.value) {
+    $fetch<{ enabled: boolean; points: number }>('/api/bonus/me')
+      .then((res) => (bonusPoints.value = res.enabled ? res.points : null))
       .catch(() => {});
   }
 }

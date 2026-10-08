@@ -124,6 +124,17 @@
       "grantReason": "Raison",
       "grantSubmit": "Appliquer",
       "granted": "Solde mis à jour : {points} pts"
+    },
+    "nav": {
+      "shop": "Boutique",
+      "bounties": "Bounties"
+    },
+    "menu": {
+      "shop": "Boutique bonus"
+    },
+    "adminNav": {
+      "label": "Bonus & boutique",
+      "description": "Règles de gain, articles de la boutique et attribution de points"
     }
   }
 }

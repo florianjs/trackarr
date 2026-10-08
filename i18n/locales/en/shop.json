@@ -124,6 +124,17 @@
       "grantReason": "Reason",
       "grantSubmit": "Apply",
       "granted": "Balance updated: {points} pts"
+    },
+    "nav": {
+      "shop": "Shop",
+      "bounties": "Bounties"
+    },
+    "menu": {
+      "shop": "Bonus shop"
+    },
+    "adminNav": {
+      "label": "Bonus & Shop",
+      "description": "Earning rules, shop items and point grants"
     }
   }
 }

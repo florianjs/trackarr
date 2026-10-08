@@ -32,9 +32,15 @@
           <div class="flex items-start gap-6">
             <!-- Avatar -->
             <div
-              class="w-20 h-20 bg-bg-tertiary rounded-lg flex items-center justify-center border border-border shrink-0"
+              class="w-20 h-20 bg-bg-tertiary rounded-lg flex items-center justify-center border border-border shrink-0 overflow-hidden"
             >
-              <Icon name="ph:user-bold" class="w-10 h-10 text-text-muted" />
+              <img
+                v-if="user.avatarUrl"
+                :src="user.avatarUrl"
+                alt=""
+                class="w-full h-full object-cover"
+              />
+              <Icon v-else name="ph:user-bold" class="w-10 h-10 text-text-muted" />
             </div>
 
             <div class="flex-1 min-w-0">
@@ -235,6 +241,7 @@ interface UserProfile {
   downloaded: number;
   createdAt: string;
   lastSeen: string;
+  avatarUrl: string | null;
   ratio: number | null;
   uploadsCount: number;
 }
