@@ -66,6 +66,15 @@ export async function sendPrivateMessage(senderId: string, recipientId: string, 
     throw createError({ statusCode: 400, message: 'You cannot message yourself' });
   }
 
+  // Covers both entry points: new conversation by username and reply by id
+  const recipient = await db.query.users.findFirst({
+    where: eq(schema.users.id, recipientId),
+    columns: { isBanned: true },
+  });
+  if (!recipient || recipient.isBanned) {
+    throw createError({ statusCode: 404, message: 'No member with this username' });
+  }
+
   const block = await getBlockState(senderId, recipientId);
   if (block.blockedMe) {
     throw createError({ statusCode: 403, message: 'This member does not accept your messages' });
