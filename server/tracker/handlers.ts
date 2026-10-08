@@ -14,6 +14,7 @@ import { createHnrEntry, updateSeedTime } from '../utils/hnr';
 import { createHash } from 'crypto';
 import { computeCredit, getMaxRateBytes } from './credit';
 import { accrueSeedingBonus } from './bonusAccrual';
+import { getFreeleechState } from '../utils/settings';
 
 function hashOwner(passkey: string): string {
   return createHash('sha256').update(`peer-owner:${passkey}`).digest('hex').slice(0, 16);
@@ -137,7 +138,9 @@ export async function handleAnnounce(params: {
     maxRateBytes: getMaxRateBytes(),
   });
   const deltaUploaded = credit.uploaded;
-  const deltaDownloaded = credit.downloaded;
+  // Global freeleech: downloaded data does not count against the ratio
+  const { active: freeleech } = await getFreeleechState();
+  const deltaDownloaded = freeleech ? 0 : credit.downloaded;
 
   // Update user stats if passkey is provided
   if (params.passkey && (deltaUploaded > 0 || deltaDownloaded > 0)) {

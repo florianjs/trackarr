@@ -288,6 +288,27 @@
       </Transition>
     </ClientOnly>
 
+    <!-- Global freeleech -->
+    <ClientOnly>
+      <div v-if="freeleech?.active" class="border-b border-success/30 bg-success/10">
+        <div class="max-w-[1400px] mx-auto px-4 py-2.5 flex items-center gap-3">
+          <Icon name="ph:gift" class="text-lg flex-shrink-0 text-success" />
+          <p class="text-sm flex-1 text-success">
+            {{
+              freeleech.until
+                ? t('freeleech.bannerUntil', {
+                    date: new Date(freeleech.until).toLocaleString(locale, {
+                      dateStyle: 'medium',
+                      timeStyle: 'short',
+                    }),
+                  })
+                : t('freeleech.banner')
+            }}
+          </p>
+        </div>
+      </div>
+    </ClientOnly>
+
     <!-- Main Content -->
     <main class="flex-grow max-w-[1400px] w-full mx-auto px-4 py-6">
       <slot />
@@ -348,6 +369,21 @@ const { user, clear, fetch } = useUserSession();
 // Passkey is not part of the client session: fetch it on demand
 const passkey = ref<string | null>(null);
 const bonusPoints = ref<number | null>(null);
+
+// Global freeleech banner, refreshed periodically so it disappears on time
+const freeleech = ref<{ active: boolean; until: string | null } | null>(null);
+async function loadFreeleech() {
+  if (!user.value) return;
+  freeleech.value = await $fetch<{ active: boolean; until: string | null }>(
+    '/api/freeleech'
+  ).catch(() => null);
+}
+let freeleechTimer: ReturnType<typeof setInterval> | undefined;
+onMounted(() => {
+  loadFreeleech();
+  freeleechTimer = setInterval(loadFreeleech, 5 * 60 * 1000);
+});
+onUnmounted(() => clearInterval(freeleechTimer));
 const router = useRouter();
 
 const showUserMenu = ref(false);

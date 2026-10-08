@@ -2,6 +2,10 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { settings } from '../db/schema';
 import pkg from '../../package.json';
+import {
+  isFreeleechActive,
+  type FreeleechState,
+} from '../../shared/utils/freeleech';
 
 /**
  * Check if HTML content is effectively empty (just empty tags like <p></p> or whitespace)
@@ -55,6 +59,9 @@ export const SETTINGS_KEYS = {
   BONUS_MAX_SEEDING_TORRENTS: 'bonus_max_seeding_torrents',
   BONUS_POINTS_PER_UPLOAD: 'bonus_points_per_upload',
   BOUNTY_MIN_POINTS: 'bounty_min_points',
+  // Global freeleech
+  FREELEECH_ENABLED: 'freeleech_enabled',
+  FREELEECH_UNTIL: 'freeleech_until',
 } as const;
 
 const settingsCache = new Map<
@@ -429,4 +436,22 @@ export async function getBonusSettings(): Promise<BonusSettings> {
     pointsPerUpload: parseNumberSetting(perUpload, 25),
     bountyMinPoints: parseNumberSetting(bountyMin, 100),
   };
+}
+
+// ============================================================================
+// Global freeleech
+// ============================================================================
+
+export async function getFreeleechState(): Promise<
+  FreeleechState & { active: boolean }
+> {
+  const [enabled, until] = await Promise.all([
+    getSetting(SETTINGS_KEYS.FREELEECH_ENABLED),
+    getSetting(SETTINGS_KEYS.FREELEECH_UNTIL),
+  ]);
+  const state: FreeleechState = {
+    enabled: enabled === 'true',
+    until: until || null,
+  };
+  return { ...state, active: isFreeleechActive(state) };
 }

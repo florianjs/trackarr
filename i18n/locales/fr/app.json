@@ -911,5 +911,23 @@
     "daysAgo": "il y a {count} j",
     "monthsAgo": "il y a {count} mois",
     "yearsAgo": "il y a {count} an | il y a {count} ans"
+  },
+  "freeleech": {
+    "banner": "Freeleech actif : le téléchargement ne compte pas dans votre ratio.",
+    "bannerUntil": "Freeleech actif jusqu'au {date} : le téléchargement ne compte pas dans votre ratio.",
+    "admin": {
+      "title": "Freeleech global",
+      "description": "Tant qu'il est actif, le téléchargé n'est pas comptabilisé (l'upload l'est toujours) et le ratio minimum est suspendu. Torznab annonce un facteur de téléchargement de 0.",
+      "active": "Actif",
+      "activeUntil": "Actif jusqu'au {date}",
+      "activeForever": "Actif, sans date de fin",
+      "inactive": "Inactif",
+      "duration": "Durée (heures)",
+      "durationHint": "Laisser vide pour ne pas fixer de fin.",
+      "start": "Lancer le freeleech",
+      "update": "Mettre à jour",
+      "stop": "Arrêter le freeleech",
+      "confirmStop": "Arrêter le freeleech global maintenant ?"
+    }
   }
 }
