@@ -5,7 +5,7 @@
       class="inline-flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-text-muted hover:text-white mb-6 transition-colors"
     >
       <Icon name="ph:arrow-left-bold" />
-      Back to torrents
+      {{ t('users.profile.backToTorrents') }}
     </NuxtLink>
 
     <div v-if="pending" class="flex justify-center py-12">
@@ -21,7 +21,7 @@
           name="ph:user-bold"
           class="w-12 h-12 text-text-muted mx-auto mb-4"
         />
-        <p class="text-text-muted">User not found</p>
+        <p class="text-text-muted">{{ t('users.profile.notFound') }}</p>
       </div>
     </div>
 
@@ -46,13 +46,13 @@
                   v-if="user.isAdmin"
                   class="text-[10px] font-bold bg-red-500/20 border border-red-500/30 text-red-400 px-1.5 py-0.5 rounded-sm uppercase tracking-wider"
                 >
-                  Admin
+                  {{ t('common.admin') }}
                 </span>
                 <span
                   v-else-if="user.isModerator"
                   class="text-[10px] font-bold bg-blue-500/20 border border-blue-500/30 text-blue-400 px-1.5 py-0.5 rounded-sm uppercase tracking-wider"
                 >
-                  Mod
+                  {{ t('users.profile.modBadge') }}
                 </span>
               </div>
 
@@ -60,7 +60,7 @@
                 <div>
                   <span
                     class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-0.5"
-                    >Member since</span
+                    >{{ t('users.profile.memberSince') }}</span
                   >
                   <span class="text-text-secondary">{{
                     formatDate(user.createdAt)
@@ -69,7 +69,7 @@
                 <div>
                   <span
                     class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-0.5"
-                    >Last seen</span
+                    >{{ t('users.profile.lastSeen') }}</span
                   >
                   <span class="text-text-secondary">{{
                     formatAge(user.lastSeen)
@@ -87,7 +87,7 @@
           <div class="card-body text-center">
             <span
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
-              >Ratio</span
+              >{{ t('common.ratio') }}</span
             >
             <span class="text-2xl font-bold" :class="ratioClass">{{
               ratioFormatted
@@ -98,7 +98,7 @@
           <div class="card-body text-center">
             <span
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
-              >Uploaded</span
+              >{{ t('common.uploaded') }}</span
             >
             <span class="text-2xl font-bold text-green-400">{{
               formatSize(user.uploaded)
@@ -109,7 +109,7 @@
           <div class="card-body text-center">
             <span
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
-              >Downloaded</span
+              >{{ t('common.downloaded') }}</span
             >
             <span class="text-2xl font-bold text-yellow-400">{{
               formatSize(user.downloaded)
@@ -120,7 +120,7 @@
           <div class="card-body text-center">
             <span
               class="text-[10px] font-bold text-text-muted uppercase tracking-widest block mb-1"
-              >Uploads</span
+              >{{ t('users.profile.uploads') }}</span
             >
             <span class="text-2xl font-bold text-text-primary">{{
               user.uploadsCount
@@ -132,7 +132,7 @@
       <!-- User's Torrents -->
       <div class="card">
         <div class="card-header flex items-center justify-between">
-          <h2 class="font-bold text-text-primary">Uploaded Torrents</h2>
+          <h2 class="font-bold text-text-primary">{{ t('users.profile.uploadedTorrents') }}</h2>
         </div>
         <div class="card-body !p-0">
           <div v-if="uploadsPending" class="flex justify-center py-8">
@@ -145,17 +145,17 @@
             v-else-if="!uploads?.data?.length"
             class="text-center py-8 text-text-muted text-sm"
           >
-            No uploads yet
+            {{ t('users.profile.noUploads') }}
           </div>
           <table v-else class="w-full">
             <thead>
               <tr
                 class="text-left text-[10px] font-bold text-text-muted uppercase tracking-widest border-b border-border"
               >
-                <th class="px-4 py-3">Name</th>
-                <th class="px-4 py-3 text-right">Size</th>
-                <th class="px-4 py-3 text-center">S/L</th>
-                <th class="px-4 py-3 text-right">Uploaded</th>
+                <th class="px-4 py-3">{{ t('common.name') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('common.size') }}</th>
+                <th class="px-4 py-3 text-center">{{ t('users.profile.seedersLeechers') }}</th>
+                <th class="px-4 py-3 text-right">{{ t('users.profile.uploadedAt') }}</th>
               </tr>
             </thead>
             <tbody>
@@ -172,7 +172,7 @@
                     {{ torrent.name }}
                   </NuxtLink>
                   <div class="text-[10px] text-text-muted">
-                    {{ torrent.category?.name || 'Uncategorized' }}
+                    {{ torrent.category?.name || t('users.profile.uncategorized') }}
                   </div>
                 </td>
                 <td class="px-4 py-3 text-right text-sm text-text-secondary">
@@ -204,7 +204,7 @@
               :disabled="uploadsPage <= 1"
               @click="uploadsPage--"
             >
-              Previous
+              {{ t('common.previous') }}
             </button>
             <span class="flex items-center px-3 text-sm text-text-muted">
               {{ uploadsPage }} / {{ uploads.pagination.pages }}
@@ -214,7 +214,7 @@
               :disabled="uploadsPage >= uploads.pagination.pages"
               @click="uploadsPage++"
             >
-              Next
+              {{ t('common.next') }}
             </button>
           </div>
         </div>
@@ -254,6 +254,7 @@ interface UploadsResponse {
   pagination: { page: number; limit: number; total: number; pages: number };
 }
 
+const { t } = useI18n();
 const route = useRoute();
 const userId = computed(() => route.params.id as string);
 
@@ -290,8 +291,9 @@ const ratioClass = computed(() => {
 
 // Page meta
 useHead({
-  title: user.value?.username
-    ? `${user.value.username} - Profile`
-    : 'User Profile',
+  title: () =>
+    user.value?.username
+      ? t('users.profile.pageTitle', { username: user.value.username })
+      : t('users.profile.pageTitleFallback'),
 });
 </script>

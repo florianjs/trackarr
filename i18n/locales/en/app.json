@@ -304,6 +304,100 @@
     "dropTorrentFile": "Please drop a .torrent file",
     "failed": "Upload failed"
   },
+  "forum": {
+    "title": "Forum",
+    "confirmDeleteTopic": "Are you sure you want to delete this topic?",
+    "index": {
+      "subtitle": "Community discussions and announcements.",
+      "newCategory": "New Category",
+      "lastActivity": "Last Activity",
+      "noTopics": "No topics yet",
+      "editCategory": "Edit category",
+      "deleteCategory": "Delete category",
+      "createTitle": "Create New Category",
+      "editTitle": "Edit Category",
+      "deleteTitle": "Delete Category",
+      "namePlaceholder": "General Discussion",
+      "descriptionPlaceholder": "Talk about anything here...",
+      "order": "Order",
+      "deleteConfirm": "Are you sure you want to delete {name}? This will permanently delete all topics and posts within this category."
+    },
+    "newTopic": {
+      "breadcrumb": "New Topic",
+      "title": "Create New Topic",
+      "selectCategory": "Select a category",
+      "topicTitle": "Title",
+      "titlePlaceholder": "What's on your mind?",
+      "content": "Content",
+      "contentPlaceholder": "Write your post content here...",
+      "submit": "Create Topic"
+    },
+    "category": {
+      "newTopic": "New Topic",
+      "topic": "Topic",
+      "replies": "Replies",
+      "lastPost": "Last Post",
+      "empty": "No topics in this category yet.",
+      "by": "by",
+      "deleteTopic": "Delete Topic"
+    },
+    "topic": {
+      "breadcrumb": "Topic",
+      "pin": "Pin",
+      "unpin": "Unpin",
+      "lock": "Lock",
+      "unlock": "Unlock",
+      "modBadge": "Mod",
+      "postedOn": "Posted on {date}",
+      "deletePost": "Delete Post",
+      "confirmDeletePost": "Are you sure you want to delete this post?",
+      "replyTitle": "Post a Reply",
+      "replyPlaceholder": "Write your reply here...",
+      "posting": "Posting...",
+      "postReply": "Post Reply",
+      "locked": "This topic is locked. You cannot reply."
+    }
+  },
+  "users": {
+    "profile": {
+      "backToTorrents": "Back to torrents",
+      "notFound": "User not found",
+      "modBadge": "Mod",
+      "memberSince": "Member since",
+      "lastSeen": "Last seen",
+      "uploads": "Uploads",
+      "uploadedTorrents": "Uploaded Torrents",
+      "noUploads": "No uploads yet",
+      "seedersLeechers": "S/L",
+      "uploadedAt": "Uploaded",
+      "uncategorized": "Uncategorized",
+      "pageTitle": "{username} - Profile",
+      "pageTitleFallback": "User Profile"
+    }
+  },
+  "invites": {
+    "title": "My Invitations",
+    "subtitle": "Invite new members to the tracker",
+    "remaining": "Invites Remaining",
+    "generate": "Generate Invite",
+    "yourInvites": "Your Invites",
+    "clickToCopy": "Click to copy",
+    "createdAt": "Created: {date}",
+    "usedBy": "Used by:",
+    "expiresAt": "Expires: {date}",
+    "empty": "No invites yet",
+    "emptyHint": "Generate an invite code to share with friends",
+    "status": {
+      "used": "Used",
+      "expired": "Expired"
+    },
+    "toast": {
+      "generated": "Invite code generated!",
+      "generateFailed": "Failed to generate invite",
+      "copied": "Invite code copied to clipboard!",
+      "copyFailed": "Failed to copy code"
+    }
+  },
   "time": {
     "justNow": "just now",
     "minutesAgo": "{count}m ago",

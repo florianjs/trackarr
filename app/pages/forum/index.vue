@@ -2,9 +2,9 @@
   <div class="space-y-6">
     <div class="flex justify-between items-end">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight">Forum</h1>
+        <h1 class="text-2xl font-bold tracking-tight">{{ t('forum.title') }}</h1>
         <p class="text-text-muted text-sm">
-          Community discussions and announcements.
+          {{ t('forum.index.subtitle') }}
         </p>
       </div>
       <div v-if="user?.isAdmin">
@@ -13,7 +13,7 @@
           class="px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors flex items-center gap-2"
         >
           <Icon name="ph:plus-bold" />
-          New Category
+          {{ t('forum.index.newCategory') }}
         </button>
       </div>
     </div>
@@ -48,13 +48,13 @@
               <div
                 class="text-xs font-mono text-text-muted uppercase tracking-widest"
               >
-                Last Activity
+                {{ t('forum.index.lastActivity') }}
               </div>
               <div v-if="category.topics?.[0]" class="text-sm mt-1">
                 {{ formatDate(category.topics[0].updatedAt) }}
               </div>
               <div v-else class="text-sm mt-1 text-text-muted italic">
-                No topics yet
+                {{ t('forum.index.noTopics') }}
               </div>
             </div>
           </div>
@@ -67,14 +67,14 @@
           <button
             @click.prevent="openEditModal(category)"
             class="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded transition-colors"
-            title="Edit category"
+            :title="t('forum.index.editCategory')"
           >
             <Icon name="ph:pencil-bold" class="text-sm" />
           </button>
           <button
             @click.prevent="confirmDelete(category)"
             class="p-2 text-text-muted hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
-            title="Delete category"
+            :title="t('forum.index.deleteCategory')"
           >
             <Icon name="ph:trash-bold" class="text-sm" />
           </button>
@@ -90,35 +90,35 @@
       <div
         class="bg-bg-secondary border border-border rounded-lg w-full max-w-md p-6 space-y-4"
       >
-        <h3 class="text-lg font-bold">Create New Category</h3>
+        <h3 class="text-lg font-bold">{{ t('forum.index.createTitle') }}</h3>
         <div class="space-y-4">
           <div>
             <label
               class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
-              >Name</label
+              >{{ t('common.name') }}</label
             >
             <input
               v-model="newCategory.name"
               type="text"
               class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white/40 transition-colors"
-              placeholder="General Discussion"
+              :placeholder="t('forum.index.namePlaceholder')"
             />
           </div>
           <div>
             <label
               class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
-              >Description</label
+              >{{ t('common.description') }}</label
             >
             <textarea
               v-model="newCategory.description"
               class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white/40 transition-colors h-24 resize-none"
-              placeholder="Talk about anything here..."
+              :placeholder="t('forum.index.descriptionPlaceholder')"
             ></textarea>
           </div>
           <div>
             <label
               class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
-              >Order</label
+              >{{ t('forum.index.order') }}</label
             >
             <input
               v-model.number="newCategory.order"
@@ -132,14 +132,14 @@
             @click="showCreateCategory = false"
             class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
           >
-            Cancel
+            {{ t('common.cancel') }}
           </button>
           <button
             @click="handleCreateCategory"
             :disabled="creating"
             class="flex-1 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
           >
-            {{ creating ? 'Creating...' : 'Create' }}
+            {{ creating ? t('common.creating') : t('common.create') }}
           </button>
         </div>
       </div>
@@ -153,12 +153,12 @@
       <div
         class="bg-bg-secondary border border-border rounded-lg w-full max-w-md p-6 space-y-4"
       >
-        <h3 class="text-lg font-bold">Edit Category</h3>
+        <h3 class="text-lg font-bold">{{ t('forum.index.editTitle') }}</h3>
         <div class="space-y-4">
           <div>
             <label
               class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
-              >Name</label
+              >{{ t('common.name') }}</label
             >
             <input
               v-model="editCategory.name"
@@ -169,7 +169,7 @@
           <div>
             <label
               class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
-              >Description</label
+              >{{ t('common.description') }}</label
             >
             <textarea
               v-model="editCategory.description"
@@ -179,7 +179,7 @@
           <div>
             <label
               class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
-              >Order</label
+              >{{ t('forum.index.order') }}</label
             >
             <input
               v-model.number="editCategory.order"
@@ -193,14 +193,14 @@
             @click="showEditCategory = false"
             class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
           >
-            Cancel
+            {{ t('common.cancel') }}
           </button>
           <button
             @click="handleUpdateCategory"
             :disabled="updating"
             class="flex-1 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
           >
-            {{ updating ? 'Saving...' : 'Save' }}
+            {{ updating ? t('common.saving') : t('common.save') }}
           </button>
         </div>
       </div>
@@ -214,26 +214,25 @@
       <div
         class="bg-bg-secondary border border-border rounded-lg w-full max-w-md p-6 space-y-4"
       >
-        <h3 class="text-lg font-bold text-red-400">Delete Category</h3>
-        <p class="text-text-muted text-sm">
-          Are you sure you want to delete
-          <strong class="text-white">{{ categoryToDelete?.name }}</strong
-          >? This will permanently delete all topics and posts within this
-          category.
-        </p>
+        <h3 class="text-lg font-bold text-red-400">{{ t('forum.index.deleteTitle') }}</h3>
+        <i18n-t keypath="forum.index.deleteConfirm" tag="p" class="text-text-muted text-sm">
+          <template #name>
+            <strong class="text-white">{{ categoryToDelete?.name }}</strong>
+          </template>
+        </i18n-t>
         <div class="flex gap-3 pt-2">
           <button
             @click="showDeleteConfirm = false"
             class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
           >
-            Cancel
+            {{ t('common.cancel') }}
           </button>
           <button
             @click="handleDeleteCategory"
             :disabled="deleting"
             class="flex-1 px-4 py-2 bg-red-500 text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-red-600 transition-colors disabled:opacity-50"
           >
-            {{ deleting ? 'Deleting...' : 'Delete' }}
+            {{ deleting ? t('common.deleting') : t('common.delete') }}
           </button>
         </div>
       </div>
@@ -250,6 +249,7 @@ interface ForumCategory {
   topics?: { updatedAt: string }[];
 }
 
+const { t, locale } = useI18n();
 const { user } = useUserSession();
 const {
   data: categories,
@@ -356,7 +356,7 @@ async function handleDeleteCategory() {
 }
 
 function formatDate(date: string) {
-  return new Date(date).toLocaleDateString('en-US', {
+  return new Date(date).toLocaleDateString(locale.value, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',

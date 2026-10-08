@@ -304,6 +304,100 @@
     "dropTorrentFile": "Veuillez déposer un fichier .torrent",
     "failed": "Échec de l'upload"
   },
+  "forum": {
+    "title": "Forum",
+    "confirmDeleteTopic": "Voulez-vous vraiment supprimer ce sujet ?",
+    "index": {
+      "subtitle": "Discussions et annonces de la communauté.",
+      "newCategory": "Nouvelle catégorie",
+      "lastActivity": "Dernière activité",
+      "noTopics": "Aucun sujet pour le moment",
+      "editCategory": "Modifier la catégorie",
+      "deleteCategory": "Supprimer la catégorie",
+      "createTitle": "Créer une catégorie",
+      "editTitle": "Modifier la catégorie",
+      "deleteTitle": "Supprimer la catégorie",
+      "namePlaceholder": "Discussions générales",
+      "descriptionPlaceholder": "Parlez de tout et de rien ici...",
+      "order": "Ordre",
+      "deleteConfirm": "Voulez-vous vraiment supprimer {name} ? Tous les sujets et messages de cette catégorie seront définitivement supprimés."
+    },
+    "newTopic": {
+      "breadcrumb": "Nouveau sujet",
+      "title": "Créer un sujet",
+      "selectCategory": "Choisissez une catégorie",
+      "topicTitle": "Titre",
+      "titlePlaceholder": "À quoi pensez-vous ?",
+      "content": "Contenu",
+      "contentPlaceholder": "Rédigez votre message ici...",
+      "submit": "Créer le sujet"
+    },
+    "category": {
+      "newTopic": "Nouveau sujet",
+      "topic": "Sujet",
+      "replies": "Réponses",
+      "lastPost": "Dernier message",
+      "empty": "Aucun sujet dans cette catégorie pour le moment.",
+      "by": "par",
+      "deleteTopic": "Supprimer le sujet"
+    },
+    "topic": {
+      "breadcrumb": "Sujet",
+      "pin": "Épingler",
+      "unpin": "Désépingler",
+      "lock": "Verrouiller",
+      "unlock": "Déverrouiller",
+      "modBadge": "Modo",
+      "postedOn": "Publié le {date}",
+      "deletePost": "Supprimer le message",
+      "confirmDeletePost": "Voulez-vous vraiment supprimer ce message ?",
+      "replyTitle": "Répondre",
+      "replyPlaceholder": "Rédigez votre réponse ici...",
+      "posting": "Publication...",
+      "postReply": "Publier la réponse",
+      "locked": "Ce sujet est verrouillé. Vous ne pouvez pas y répondre."
+    }
+  },
+  "users": {
+    "profile": {
+      "backToTorrents": "Retour aux torrents",
+      "notFound": "Utilisateur introuvable",
+      "modBadge": "Modo",
+      "memberSince": "Membre depuis",
+      "lastSeen": "Vu pour la dernière fois",
+      "uploads": "Uploads",
+      "uploadedTorrents": "Torrents uploadés",
+      "noUploads": "Aucun upload pour le moment",
+      "seedersLeechers": "S/L",
+      "uploadedAt": "Ajouté",
+      "uncategorized": "Sans catégorie",
+      "pageTitle": "{username} - Profil",
+      "pageTitleFallback": "Profil utilisateur"
+    }
+  },
+  "invites": {
+    "title": "Mes invitations",
+    "subtitle": "Invitez de nouveaux membres sur le tracker",
+    "remaining": "Invitations restantes",
+    "generate": "Générer une invitation",
+    "yourInvites": "Vos invitations",
+    "clickToCopy": "Cliquer pour copier",
+    "createdAt": "Créée le : {date}",
+    "usedBy": "Utilisée par :",
+    "expiresAt": "Expire le : {date}",
+    "empty": "Aucune invitation pour le moment",
+    "emptyHint": "Générez un code d'invitation à partager avec vos amis",
+    "status": {
+      "used": "Utilisée",
+      "expired": "Expirée"
+    },
+    "toast": {
+      "generated": "Code d'invitation généré !",
+      "generateFailed": "Impossible de générer l'invitation",
+      "copied": "Code d'invitation copié dans le presse-papiers !",
+      "copyFailed": "Impossible de copier le code"
+    }
+  },
   "time": {
     "justNow": "à l'instant",
     "minutesAgo": "il y a {count} min",
