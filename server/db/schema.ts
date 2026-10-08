@@ -666,6 +666,70 @@ export type ShopItem = typeof shopItems.$inferSelect;
 export type Bounty = typeof bounties.$inferSelect;
 export type BountyContribution = typeof bountyContributions.$inferSelect;
 
+// ============================================================================
+// Private messages
+// ============================================================================
+
+/** One conversation per pair of users (pairKey = sorted ids) */
+export const conversations = pgTable('conversations', {
+  id: text('id').primaryKey(),
+  pairKey: text('pair_key').notNull().unique(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  lastMessageAt: timestamp('last_message_at').defaultNow().notNull(),
+});
+
+export const conversationMembers = pgTable(
+  'conversation_members',
+  {
+    conversationId: text('conversation_id')
+      .notNull()
+      .references(() => conversations.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    lastReadAt: timestamp('last_read_at'),
+    // Hidden for this member until a newer message arrives
+    hiddenAt: timestamp('hidden_at'),
+  },
+  (table) => [
+    uniqueIndex('conversation_members_pk').on(table.conversationId, table.userId),
+    index('conversation_members_user_idx').on(table.userId),
+  ]
+);
+
+export const privateMessages = pgTable(
+  'private_messages',
+  {
+    id: text('id').primaryKey(),
+    conversationId: text('conversation_id')
+      .notNull()
+      .references(() => conversations.id, { onDelete: 'cascade' }),
+    senderId: text('sender_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    body: text('body').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('private_messages_conv_idx').on(table.conversationId, table.createdAt)]
+);
+
+export const userBlocks = pgTable(
+  'user_blocks',
+  {
+    blockerId: text('blocker_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    blockedId: text('blocked_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex('user_blocks_pk').on(table.blockerId, table.blockedId)]
+);
+
+export type Conversation = typeof conversations.$inferSelect;
+export type PrivateMessage = typeof privateMessages.$inferSelect;
+
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
 

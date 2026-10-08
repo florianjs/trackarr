@@ -60,6 +60,13 @@
                 >
                   {{ t('users.profile.modBadge') }}
                 </span>
+                <NuxtLink
+                  v-if="me && me.id !== user.id"
+                  :to="{ path: '/messages', query: { to: user.username } }"
+                  class="btn btn-secondary ml-auto"
+                >
+                  <Icon name="ph:chat-circle-text" aria-hidden="true" />{{ t('messages.sendMessage') }}
+                </NuxtLink>
               </div>
 
               <div class="flex flex-wrap gap-6 text-sm">
@@ -262,6 +269,7 @@ interface UploadsResponse {
 }
 
 const { t } = useI18n();
+const { user: me } = useUserSession();
 const route = useRoute();
 const userId = computed(() => route.params.id as string);
 

@@ -1,0 +1,30 @@
+{
+  "messages": {
+    "title": "Messages",
+    "new": "Nouveau message",
+    "empty": "Aucune conversation pour l'instant.",
+    "emptyHint": "Lancez-en une depuis le profil d'un membre ou avec Nouveau message.",
+    "you": "Vous : ",
+    "select": "Choisissez une conversation ou commencez-en une nouvelle.",
+    "to": "À",
+    "toPlaceholder": "Nom d'utilisateur du membre",
+    "bodyPlaceholder": "Écrire un message…",
+    "send": "Envoyer",
+    "sending": "Envoi…",
+    "sendHint": "Entrée pour envoyer, Maj+Entrée pour aller à la ligne",
+    "loadEarlier": "Charger les messages précédents",
+    "back": "Retour aux conversations",
+    "profile": "Voir le profil",
+    "block": "Bloquer ce membre",
+    "unblock": "Débloquer ce membre",
+    "hide": "Masquer la conversation",
+    "confirmBlock": "Bloquer {name} ? Ce membre ne pourra plus vous envoyer de messages.",
+    "confirmHide": "Masquer cette conversation ? Elle réapparaîtra si un nouveau message arrive.",
+    "youBlocked": "Vous avez bloqué ce membre. Débloquez-le pour répondre.",
+    "blockedYou": "Ce membre n'accepte pas vos messages.",
+    "deletedUser": "Membre supprimé",
+    "nav": "Messages",
+    "sendMessage": "Envoyer un message",
+    "unreadCount": "aucune conversation non lue | 1 conversation non lue | {n} conversations non lues"
+  }
+}

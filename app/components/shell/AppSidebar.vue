@@ -61,6 +61,11 @@
                 :class="isActive(item) ? 'text-text-primary' : 'text-text-muted group-hover:text-text-secondary'"
               />
               <span class="truncate">{{ t(item.label) }}</span>
+              <span
+                v-if="item.badge === 'messages' && unread > 0"
+                class="ml-auto num text-2xs min-w-[1.25rem] h-5 px-1.5 rounded-full bg-white text-black flex items-center justify-center"
+                :aria-label="t('messages.unreadCount', { n: unread }, unread)"
+              >{{ unread > 99 ? '99+' : unread }}</span>
             </NuxtLink>
           </li>
         </ul>
@@ -79,6 +84,7 @@ interface NavItem {
   label: string;
   icon: string;
   exact?: boolean;
+  badge?: 'messages';
 }
 interface NavGroup {
   label: string;
@@ -102,6 +108,7 @@ const { t } = useI18n();
 const route = useRoute();
 const { user } = useUserSession();
 const appVersion = useRuntimeConfig().public.appVersion;
+const { count: unread } = useUnreadMessages();
 
 const groups = computed<NavGroup[]>(() => [
   {
@@ -119,6 +126,7 @@ const groups = computed<NavGroup[]>(() => [
   {
     label: 'shell.groups.account',
     items: [
+      { to: '/messages', label: 'messages.nav', icon: 'ph:chat-circle-text', badge: 'messages' },
       { to: '/shop', label: 'shell.nav.shop', icon: 'ph:coins' },
       { to: '/invites', label: 'shell.nav.invites', icon: 'ph:envelope-simple' },
       ...(user.value ? [{ to: `/users/${user.value.id}`, label: 'shell.nav.profile', icon: 'ph:user' }] : []),
