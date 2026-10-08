@@ -991,7 +991,8 @@
     },
     "menu": {
       "open": "Ouvrir la navigation",
-      "close": "Fermer la navigation"
+      "close": "Fermer la navigation",
+      "label": "Navigation principale"
     },
     "search": {
       "trigger": "Rechercher",

@@ -330,7 +330,7 @@
         class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         :class="
           saved
-            ? 'bg-success text-white'
+            ? 'bg-success text-paper'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
       >
@@ -455,7 +455,7 @@
         class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         :class="
           savedText
-            ? 'bg-success text-white'
+            ? 'bg-success text-paper'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
       >
@@ -577,7 +577,7 @@
         class="w-full text-[10px] font-bold uppercase tracking-widest py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         :class="
           savedHomepage
-            ? 'bg-success text-white'
+            ? 'bg-success text-paper'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
       >
