@@ -10,6 +10,8 @@ import {
   getAuthSubtitle,
   getFooterText,
   getPageTitleSuffix,
+  getFooterLinks,
+  getFooterTagline,
 } from '../utils/settings';
 import { sanitizeRichText } from '../utils/sanitize';
 
@@ -29,6 +31,10 @@ export default defineEventHandler(async () => {
   const authSubtitle = await getAuthSubtitle();
   const footerText = await getFooterText();
   const pageTitleSuffix = await getPageTitleSuffix();
+  const [footerLinks, footerTagline] = await Promise.all([
+    getFooterLinks(),
+    getFooterTagline(),
+  ]);
 
   // Rich text fields are rendered with v-html: sanitize on the way out so
   // values stored before sanitization was added are covered too.
@@ -44,5 +50,7 @@ export default defineEventHandler(async () => {
     authSubtitle: sanitizeRichText(authSubtitle),
     footerText: sanitizeRichText(footerText),
     pageTitleSuffix, // Rendered as text in <title>, never as HTML
+    footerLinks, // Validated: known icons, http(s)/mailto URLs only
+    footerTagline, // Plain text; null = default, '' = hidden
   };
 });
