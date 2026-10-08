@@ -14,7 +14,10 @@ Built with Nuxt 4 • PostgreSQL • Redis
 
 [Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](https://florianjs.github.io/trackarr/) • [Live Demo](https://tracker.florianargaud.com/) • [Discord](https://discord.gg/bbbkCPkdRk)
 
-![Trackarr Homepage](/public/images/image%20copy%203.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="public/images/dashboard.png">
+  <img alt="Trackarr member dashboard" src="public/images/dashboard-light.png">
+</picture>
 
 </div>
 
@@ -36,6 +39,7 @@ Built with Nuxt 4 • PostgreSQL • Redis
 | Bounties: request torrents with a points pot  | Personal RSS feeds                                  |
 | Global freeleech (timed or open-ended)        | Torrent moderation queue                            |
 | Forum, comments, reports, invitations, H&R    | English & French UI (more languages welcome)        |
+| Private messages between members, with blocks | Light & dark themes, ⌘K command palette             |
 
 | **Security**                     | **Emergency**                                |
 | -------------------------------- | -------------------------------------------- |
@@ -240,8 +244,8 @@ docker compose logs -f app
 
 **Open [http://localhost:3000](http://localhost:3000)**
 
-![Torrent List](/public/images/image.png)
-![Torrent Details](/public/images/image%20copy%202.png)
+![Torrent list with category filters](public/images/torrents.png)
+![Torrent page with swarm stats and comments](public/images/torrent.png)
 
 ---
 
@@ -373,7 +377,11 @@ npx drizzle-kit studio   # Database GUI
 
 **Translations**: strings live in `i18n/locales/<code>/*.json`. To add a language, copy `i18n/locales/en/`, translate it, and declare the locale in `nuxt.config.ts` (`i18n.locales`).
 
-![User Profile](/public/images/image%20copy%204.png)
+| Private messages | Admin dashboard |
+| --- | --- |
+| ![Private messages](public/images/messages.png) | ![Admin dashboard](public/images/admin.png) |
+
+![User profile](public/images/profile.png)
 
 ---
 
