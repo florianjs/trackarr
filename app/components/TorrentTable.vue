@@ -2,106 +2,54 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th class="w-1/2">{{ t('common.name') }}</th>
-        <th v-if="!compact">{{ t('common.category') }}</th>
-        <th v-if="!compact">{{ t('torrents.table.hash') }}</th>
-        <th class="text-center w-16">
-          <div class="flex items-center justify-center gap-1" :title="t('common.seeders')">
-            <Icon name="ph:arrow-up-bold" class="text-success" />
-            <span>{{ t('torrents.table.seedersShort') }}</span>
-          </div>
+        <th>{{ t('common.name') }}</th>
+        <th class="text-right hidden sm:table-cell">{{ t('common.size') }}</th>
+        <th class="text-right" :title="t('common.seeders')">
+          <span class="text-seed" aria-hidden="true">↑</span><span class="sr-only">{{ t('common.seeders') }}</span>
         </th>
-        <th class="text-center w-16">
-          <div class="flex items-center justify-center gap-1" :title="t('common.leechers')">
-            <Icon name="ph:arrow-down-bold" class="text-warning" />
-            <span>{{ t('torrents.table.leechersShort') }}</span>
-          </div>
+        <th class="text-right" :title="t('common.leechers')">
+          <span class="text-leech" aria-hidden="true">↓</span><span class="sr-only">{{ t('common.leechers') }}</span>
         </th>
-        <th v-if="!compact" class="text-center w-16">
-          <div class="flex items-center justify-center gap-1" :title="t('common.completed')">
-            <Icon name="ph:check-bold" class="text-text-secondary" />
-            <span>{{ t('torrents.table.completedShort') }}</span>
-          </div>
+        <th class="text-right hidden md:table-cell" :title="t('common.completed')">
+          <Icon name="ph:check" class="inline-block align-[-2px]" aria-hidden="true" /><span class="sr-only">{{ t('common.completed') }}</span>
         </th>
-        <th v-if="!compact">{{ t('common.size') }}</th>
-        <th class="text-right w-16">{{ t('torrents.table.age') }}</th>
-        <th v-if="admin" class="w-12"></th>
+        <th class="text-right hidden md:table-cell">{{ t('torrents.table.age') }}</th>
+        <th v-if="canDelete" class="w-10"><span class="sr-only">{{ t('common.delete') }}</span></th>
       </tr>
     </thead>
     <tbody>
-      <tr v-if="torrents.length === 0">
-        <td
-          :colspan="(compact ? 4 : 8) + (admin ? 1 : 0)"
-          class="text-center text-text-muted py-8"
-        >
-          {{ t('torrents.table.empty') }}
-        </td>
-      </tr>
-      <tr
-        v-for="torrent in torrents"
-        :key="torrent.id"
-        class="cursor-pointer"
-        @click="navigateTo(`/torrents/${torrent.infoHash}`)"
-      >
-        <td>
-          <div class="flex items-center gap-2">
-            <Icon
-              name="ph:file-zip"
-              class="text-text-muted text-base shrink-0"
-            />
+      <tr v-for="torrent in torrents" :key="torrent.id" class="group">
+        <td class="max-w-0 w-full">
+          <div class="flex items-center gap-2 min-w-0">
+            <NuxtLink
+              :to="`/torrents/${torrent.infoHash}`"
+              class="truncate text-text-primary hover:underline underline-offset-2"
+            >{{ torrent.name }}</NuxtLink>
             <span
-              class="text-text-primary hover:text-white transition-colors font-medium truncate max-w-[300px] lg:max-w-[500px]"
-              >{{ torrent.name }}</span
-            >
+              v-if="torrent.isApproved === false"
+              class="shrink-0 text-2xs px-1.5 rounded bg-leech/15 text-leech"
+            >{{ t('torrents.table.pending') }}</span>
           </div>
+          <p class="text-xs text-text-muted truncate">
+            <span v-if="torrent.category">{{ categoryPath(torrent.category) }}</span>
+            <span v-if="torrent.category && torrent.tags?.length">, </span>
+            <span v-if="torrent.tags?.length">{{ torrent.tags.map((tag) => tag.name).join(', ') }}</span>
+          </p>
         </td>
-        <td v-if="!compact">
-          <span
-            v-if="torrent.category"
-            class="text-[10px] bg-bg-tertiary border border-border px-1.5 py-0.5 rounded-sm text-text-secondary uppercase font-bold tracking-wider"
-          >
-            {{ getCategoryDisplayName(torrent.category) }}
-          </span>
-          <span v-else class="text-xs text-text-muted">—</span>
-        </td>
-        <td v-if="!compact">
-          <code
-            class="truncate-hash text-text-muted bg-bg-tertiary/50 px-1 rounded"
-            :title="torrent.infoHash"
-          >
-            {{ torrent.infoHash.slice(0, 8) }}...{{
-              torrent.infoHash.slice(-4)
-            }}
-          </code>
-        </td>
-        <td class="text-center">
-          <span class="stat-badge stat-seeders">
-            <Icon name="ph:arrow-up-bold" class="text-[8px]" />
-            {{ torrent.stats.seeders }}
-          </span>
-        </td>
-        <td class="text-center">
-          <span class="stat-badge stat-leechers">
-            <Icon name="ph:arrow-down-bold" class="text-[8px]" />
-            {{ torrent.stats.leechers }}
-          </span>
-        </td>
-        <td v-if="!compact" class="text-center text-text-secondary font-mono">
-          {{ torrent.stats.completed }}
-        </td>
-        <td v-if="!compact" class="text-text-secondary font-mono text-[10px]">
-          {{ formatSize(torrent.size) }}
-        </td>
-        <td class="text-right text-text-muted text-[10px] font-mono">
-          {{ formatAge(torrent.createdAt) }}
-        </td>
-        <td v-if="admin" class="text-center">
+        <td class="num text-right text-text-secondary whitespace-nowrap hidden sm:table-cell">{{ formatSize(torrent.size) }}</td>
+        <td class="num text-right" :class="torrent.stats.seeders > 0 ? 'text-seed' : 'text-text-muted'">{{ torrent.stats.seeders }}</td>
+        <td class="num text-right" :class="torrent.stats.leechers > 0 ? 'text-leech' : 'text-text-muted'">{{ torrent.stats.leechers }}</td>
+        <td class="num text-right text-text-secondary hidden md:table-cell">{{ torrent.stats.completed }}</td>
+        <td class="num text-right text-text-muted whitespace-nowrap hidden md:table-cell">{{ formatAge(torrent.createdAt) }}</td>
+        <td v-if="canDelete" class="text-right">
           <button
-            class="text-text-muted hover:text-error transition-colors p-1.5 rounded hover:bg-error/10"
+            type="button"
+            class="p-1 rounded text-text-muted hover:text-danger hover:bg-danger/10 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
             :title="t('torrents.table.deleteTorrent')"
-            @click.stop="deleteTorrent(torrent)"
+            :aria-label="t('torrents.table.deleteTorrent')"
+            @click="deleteTorrent(torrent)"
           >
-            <Icon name="ph:trash" class="text-base" />
+            <Icon name="ph:trash" class="block" />
           </button>
         </td>
       </tr>
@@ -110,60 +58,47 @@
 </template>
 
 <script setup lang="ts">
-const { t } = useI18n();
+interface CategoryRef {
+  id: string;
+  name: string;
+  parentId?: string | null;
+}
 
-interface TorrentWithStats {
+export interface TorrentRow {
   id: string;
   infoHash: string;
   name: string;
   size: number;
   createdAt: string;
-  category?: {
-    id: string;
-    name: string;
-    slug: string;
-  };
-  stats: {
-    seeders: number;
-    leechers: number;
-    completed: number;
-  };
+  isApproved?: boolean;
+  category?: CategoryRef | null;
+  tags?: { id: string; name: string }[];
+  stats: { seeders: number; leechers: number; completed: number };
 }
-
-const { data: categories } = await useFetch('/api/categories');
 
 const props = defineProps<{
-  torrents: TorrentWithStats[];
-  compact?: boolean;
-  admin?: boolean;
+  torrents: TorrentRow[];
+  categories?: { id: string; name: string }[];
+  canDelete?: boolean;
 }>();
 
-const emit = defineEmits<{
-  deleted: [infoHash: string];
-}>();
+const emit = defineEmits<{ deleted: [infoHash: string] }>();
+const { t } = useI18n();
 
-function getCategoryDisplayName(category) {
-  let displayName = category.name;
-
-  const parent = categories.value.find(
-    (cat) => cat.id === category.parentId
-  );
-
-  if (parent) {
-    displayName = `${parent.name}/${displayName}`;
-  }
-
-  return displayName;
+/** "Movies / UHD" when the category has a parent */
+function categoryPath(category: CategoryRef): string {
+  const parent = category.parentId
+    ? props.categories?.find((c) => c.id === category.parentId)
+    : undefined;
+  return parent ? `${parent.name} / ${category.name}` : category.name;
 }
 
-async function deleteTorrent(torrent: TorrentWithStats) {
+async function deleteTorrent(torrent: TorrentRow) {
   if (!confirm(t('torrents.table.confirmDelete', { name: torrent.name }))) return;
-
   try {
-    await fetch(`/api/torrents/${torrent.infoHash}`, { method: 'DELETE' });
+    await $fetch(`/api/torrents/${torrent.infoHash}`, { method: 'DELETE' });
     emit('deleted', torrent.infoHash);
-  } catch (err) {
-    console.error('Delete failed:', err);
+  } catch {
     alert(t('torrents.table.deleteFailed'));
   }
 }

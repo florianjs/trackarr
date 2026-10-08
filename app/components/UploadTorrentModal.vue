@@ -15,7 +15,7 @@
           <div class="flex items-center gap-2">
             <Icon name="ph:upload-simple-bold" class="text-text-muted" />
             <h3
-              class="text-xs font-bold uppercase tracking-widest text-text-primary"
+              class="text-xs font-bold text-text-primary"
             >
               {{ t('upload.title') }}
             </h3>
@@ -57,11 +57,11 @@
                   />
                 </div>
                 <p
-                  class="text-xs font-bold uppercase tracking-wider text-text-secondary"
+                  class="text-xs font-bold text-text-secondary"
                 >
                   {{ t('upload.dropFile') }}
                 </p>
-                <p class="text-[10px] text-text-muted mt-1 font-mono">
+                <p class="text-xs text-text-muted mt-1 font-mono">
                   {{ t('upload.orBrowse') }}
                 </p>
               </div>
@@ -79,7 +79,7 @@
                 >
                   {{ selectedFile.name }}
                 </p>
-                <p class="text-[10px] text-text-muted mt-1 font-mono uppercase">
+                <p class="text-xs text-text-muted mt-1 font-mono">
                   {{ formatSize(selectedFile.size) }}
                 </p>
               </div>
@@ -88,7 +88,7 @@
             <!-- Personal announce URL (#42) -->
             <div class="space-y-2">
               <label
-                class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+                class="text-xs font-medium text-text-muted ml-1"
                 >{{ t('upload.announceUrlLabel') }}</label
               >
               <div class="flex gap-2">
@@ -110,7 +110,7 @@
                   <Icon :name="announceCopied ? 'ph:check-bold' : 'ph:copy-bold'" />
                 </button>
               </div>
-              <p class="text-[10px] text-text-muted ml-1">
+              <p class="text-xs text-text-muted ml-1">
                 {{ t('upload.announceHint') }}
               </p>
             </div>
@@ -118,7 +118,7 @@
             <!-- Custom name (#42) -->
             <div class="space-y-2">
               <label
-                class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+                class="text-xs font-medium text-text-muted ml-1"
                 >{{ t('upload.displayName') }}</label
               >
               <input
@@ -133,12 +133,12 @@
             <!-- Category Select -->
             <div class="space-y-2">
               <label
-                class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+                class="text-xs font-medium text-text-muted ml-1"
                 >{{ t('common.category') }}</label
               >
               <select
                 v-model="selectedCategoryId"
-                class="input w-full !py-2 text-xs font-bold uppercase tracking-wider"
+                class="input w-full !py-2 text-xs font-bold"
               >
                 <option value="">{{ t('upload.selectCategory') }}</option>
                 <option v-for="cat in getFlattenedCategories(categories)" :key="cat.id" :value="cat.id">
@@ -153,12 +153,12 @@
             <div class="space-y-2">
               <div class="flex items-center justify-between ml-1">
                 <label
-                  class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
+                  class="text-xs font-medium text-text-muted"
                   >{{ t('markdown.descriptionLabel') }}</label
                 >
                 <button
                   type="button"
-                  class="text-[10px] font-bold uppercase tracking-widest transition-colors"
+                  class="text-xs font-medium transition-colors"
                   :class="
                     isPreview
                       ? 'text-white'
@@ -252,14 +252,14 @@
                   class="prose prose-invert prose-xs max-w-none description-preview"
                   v-html="renderedDescription"
                 ></div>
-                <div v-else class="text-text-muted italic text-[10px]">
+                <div v-else class="text-text-muted italic text-xs">
                   {{ t('markdown.nothingToPreview') }}
                 </div>
               </div>
             </div>
 
             <button
-              class="btn btn-primary w-full !py-2.5 flex items-center justify-center gap-2 uppercase tracking-widest font-bold text-xs"
+              class="btn btn-primary w-full !py-2.5 flex items-center justify-center gap-2 font-bold text-xs"
               :disabled="!selectedFile || isUploading"
               @click="upload"
             >
@@ -286,11 +286,11 @@
               />
               <div>
                 <p
-                  class="text-xs font-bold text-success uppercase tracking-wider"
+                  class="text-xs font-bold text-success"
                 >
                   {{ result.message }}
                 </p>
-                <p class="text-[10px] text-text-muted mt-1 font-mono">
+                <p class="text-xs text-text-muted mt-1 font-mono">
                   {{ t('upload.successHint') }}
                 </p>
               </div>
@@ -301,7 +301,7 @@
             >
               <div class="flex justify-between items-center">
                 <span
-                  class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                  class="text-xs font-medium text-text-muted"
                   >{{ t('common.name') }}</span
                 >
                 <span
@@ -311,17 +311,17 @@
               </div>
               <div class="flex justify-between items-center">
                 <span
-                  class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                  class="text-xs font-medium text-text-muted"
                   >{{ t('torrents.table.hash') }}</span
                 >
                 <code
-                  class="text-[10px] text-text-secondary font-mono bg-bg-primary px-1.5 py-0.5 rounded border border-border"
+                  class="text-xs text-text-secondary font-mono bg-bg-primary px-1.5 py-0.5 rounded border border-border"
                   >{{ result.data.infoHash.slice(0, 12) }}...</code
                 >
               </div>
               <div class="flex justify-between items-center">
                 <span
-                  class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                  class="text-xs font-medium text-text-muted"
                   >{{ t('common.size') }}</span
                 >
                 <span class="text-xs font-mono text-text-primary">{{
@@ -332,13 +332,13 @@
 
             <div class="flex gap-2">
               <button
-                class="btn btn-secondary flex-1 text-[10px] font-bold uppercase tracking-widest"
+                class="btn btn-secondary flex-1 text-xs font-medium"
                 @click="close"
               >
                 {{ t('common.close') }}
               </button>
               <button
-                class="btn btn-primary flex-1 text-[10px] font-bold uppercase tracking-widest"
+                class="btn btn-primary flex-1 text-xs font-medium"
                 @click="navigateTo(`/torrents/${result.data.infoHash}`)"
               >
                 {{ t('upload.viewDetails') }}
@@ -437,7 +437,7 @@ function getFlattenedCategories(
 
     if (category.subcategories) {
       result = result.concat(
-        getFlattenedCategories(category.subcategories, prefix + '╚=> ')
+        getFlattenedCategories(category.subcategories, prefix + category.name + ' / ')
       );
     }
   }

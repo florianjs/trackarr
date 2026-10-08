@@ -233,19 +233,29 @@
       "empty": "Aucun torrent trouvé",
       "deleteTorrent": "Supprimer le torrent",
       "confirmDelete": "Supprimer « {name} » ?",
-      "deleteFailed": "Échec de la suppression du torrent"
+      "deleteFailed": "Échec de la suppression du torrent",
+      "pending": "En attente"
     },
     "list": {
-      "title": "Index des torrents",
-      "indexedCount": "aucun objet indexé dans la base | un objet indexé dans la base | {count} objets indexés dans la base",
+      "title": "Torrents",
+      "indexedCount": "Aucun torrent | 1 torrent | {count} torrents",
       "searchPlaceholder": "Rechercher par nom ou hash...",
       "upload": "Uploader",
       "noResults": "Aucun résultat",
       "noResultsHint": "La recherche ne correspond à aucun torrent indexé.",
-      "resetFilters": "Réinitialiser les filtres"
+      "resetFilters": "Réinitialiser les filtres",
+      "sort": "Trier",
+      "sortNewest": "Plus récents",
+      "sortOldest": "Plus anciens",
+      "sortLargest": "Plus gros",
+      "sortSmallest": "Plus petits",
+      "sortName": "Nom",
+      "noMatch": "Aucun torrent ne correspond à ces filtres.",
+      "previous": "Page précédente",
+      "next": "Page suivante"
     },
     "detail": {
-      "backToIndex": "Retour à l'index",
+      "backToIndex": "Tous les torrents",
       "object": "Objet",
       "copyHash": "Copier le hash",
       "download": "Télécharger",
@@ -262,7 +272,17 @@
       "confirmDeleteTitle": "Confirmer la suppression",
       "confirmDeleteText": "Voulez-vous vraiment supprimer ce torrent ? Cette action est irréversible.",
       "notFound": "Torrent introuvable",
-      "deleteFailed": "Échec de la suppression du torrent"
+      "deleteFailed": "Échec de la suppression du torrent",
+      "uploadedBy": "uploadé par {user}",
+      "report": "Signaler ce torrent",
+      "swarm": "Swarm",
+      "comments": "Aucun commentaire | 1 commentaire | {n} commentaires",
+      "commentPlaceholder": "Ajouter un commentaire…",
+      "postComment": "Publier",
+      "commentFailed": "Impossible de publier le commentaire.",
+      "confirmDeleteComment": "Supprimer ce commentaire ?",
+      "details": "Détails",
+      "commentDeleteFailed": "Impossible de supprimer le commentaire."
     }
   },
   "search": {

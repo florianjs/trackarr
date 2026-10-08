@@ -233,19 +233,29 @@
       "empty": "No torrents found",
       "deleteTorrent": "Delete torrent",
       "confirmDelete": "Delete \"{name}\"?",
-      "deleteFailed": "Failed to delete torrent"
+      "deleteFailed": "Failed to delete torrent",
+      "pending": "Pending"
     },
     "list": {
-      "title": "Torrent Index",
-      "indexedCount": "no object indexed in database | one object indexed in database | {count} objects indexed in database",
+      "title": "Torrents",
+      "indexedCount": "No torrent | 1 torrent | {count} torrents",
       "searchPlaceholder": "Search by name or hash...",
       "upload": "Upload",
       "noResults": "No results found",
       "noResultsHint": "The search query did not match any indexed torrents.",
-      "resetFilters": "Reset Filters"
+      "resetFilters": "Reset Filters",
+      "sort": "Sort",
+      "sortNewest": "Newest",
+      "sortOldest": "Oldest",
+      "sortLargest": "Largest",
+      "sortSmallest": "Smallest",
+      "sortName": "Name",
+      "noMatch": "No torrent matches these filters.",
+      "previous": "Previous page",
+      "next": "Next page"
     },
     "detail": {
-      "backToIndex": "Back to index",
+      "backToIndex": "All torrents",
       "object": "Object",
       "copyHash": "Copy Hash",
       "download": "Download",
@@ -262,7 +272,17 @@
       "confirmDeleteTitle": "Confirm Delete",
       "confirmDeleteText": "Are you sure you want to delete this torrent? This action cannot be undone.",
       "notFound": "Torrent not found",
-      "deleteFailed": "Failed to delete torrent"
+      "deleteFailed": "Failed to delete torrent",
+      "uploadedBy": "uploaded by {user}",
+      "report": "Report this torrent",
+      "swarm": "Swarm",
+      "comments": "No comments | 1 comment | {n} comments",
+      "commentPlaceholder": "Add a comment…",
+      "postComment": "Post comment",
+      "commentFailed": "Could not post the comment.",
+      "confirmDeleteComment": "Delete this comment?",
+      "details": "Details",
+      "commentDeleteFailed": "Could not delete the comment."
     }
   },
   "search": {

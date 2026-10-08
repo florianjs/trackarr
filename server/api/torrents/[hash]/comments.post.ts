@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../../../db';
 import { torrents, torrentComments } from '../../../db/schema';
 import { requireAuthSession } from '../../../utils/adminAuth';
+import { rateLimit, RATE_LIMITS } from '../../../utils/rateLimit';
 import {
   validateParam,
   validateBody,
@@ -11,6 +12,7 @@ import {
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
+  await rateLimit(event, RATE_LIMITS.mutation);
 
   // Validate hash parameter
   const hash = validateParam(event, 'hash', infoHashSchema);
@@ -23,7 +25,15 @@ export default defineEventHandler(async (event) => {
     where: eq(torrents.infoHash, hash.toLowerCase()),
   });
 
-  if (!torrent) {
+  // Pending torrents are only visible to their uploader and staff
+  const canSee =
+    torrent &&
+    (torrent.isApproved ||
+      torrent.uploaderId === session.user.id ||
+      session.user.isAdmin ||
+      session.user.isModerator);
+
+  if (!torrent || !canSee) {
     throw createError({
       statusCode: 404,
       message: 'Torrent not found',
