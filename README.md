@@ -6,12 +6,12 @@
 
 Built with Nuxt 4 • PostgreSQL • Redis
 
-[![Node.js](https://img.shields.io/badge/Node.js-20+-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
+[![Node.js](https://img.shields.io/badge/Node.js-22+-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?style=flat&logo=nuxtdotjs&logoColor=white)](https://nuxt.com/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](#-tech-stack) • [Live Demo](https://tracker.florianargaud.com/)
+[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](https://florianjs.github.io/trackarr/) • [Live Demo](https://tracker.florianargaud.com/)
 
 ![Trackarr Homepage](/public/images/image%20copy%203.png)
 
@@ -25,15 +25,22 @@ Built with Nuxt 4 • PostgreSQL • Redis
 | ----------------------------------- | --------------------------------- |
 | Zero-Knowledge Authentication       | Redis-powered sub-ms peer lookups |
 | Proof of Work anti-abuse            | PostgreSQL with full-text search  |
-| Private torrents (DHT/PEX disabled) | HTTP & WebSocket announce support |
+| Private torrents (DHT/PEX disabled) | HTTP announce with passkeys       |
 | Ratio tracking & enforcement        | Optimized for high concurrency    |
 
-| **Security**              | **Emergency**                                |
-| ------------------------- | -------------------------------------------- |
-| Distributed rate limiting | **Panic Mode** — Instant database encryption |
-| Auto IP blacklisting      | AES-256-GCM protected data                   |
-| SQL/XSS attack detection  | Full restoration with master password        |
-| SHA-256 hashed IPs        | Unrecoverable without password               |
+| **Community**                                 | **Automation**                                      |
+| --------------------------------------------- | --------------------------------------------------- |
+| Bonus points earned by seeding & uploading    | Torznab API for Prowlarr, Sonarr & Radarr           |
+| Bonus shop (upload credit, invites, avatars)  | IMDb / TMDb / TheTVDB IDs with ID-based search      |
+| Bounties: request torrents with a points pot  | Personal RSS feeds                                  |
+| Forum, comments, reports, invitations, H&R    | English & French UI (more languages welcome)        |
+
+| **Security**                     | **Emergency**                                |
+| -------------------------------- | -------------------------------------------- |
+| Distributed rate limiting        | **Panic Mode** — Instant database encryption |
+| Auto IP blacklisting             | AES-256-GCM protected data                   |
+| Sanitized user content (XSS)     | Full restoration with the panic password     |
+| Hashed peer IPs in logs & stats  | Unrecoverable without password               |
 
 ---
 
@@ -100,8 +107,10 @@ Trackarr uses a **Zero-Knowledge** authentication system: the server **never see
 
 - **Password never transmitted** — Only cryptographic proofs
 - **PBKDF2 with 100k iterations** — Brute-force resistant
-- **Unique challenge per login** — Prevents replay attacks
+- **Unique, single-use challenge per login** — Prevents replay attacks
 - **Proof of Work** — Stops automated registration attacks
+
+> **Limitation**: the stored verifier is enough to compute a valid proof. Someone who obtains a copy of the database can log in as any user without knowing their password, so database backups must be protected like password files. Moving to a PAKE (SRP / OPAQUE) is planned.
 
 ---
 
@@ -141,16 +150,18 @@ The **Panic Button** allows administrators to **instantly encrypt all sensitive 
 **How it works:**
 
 1. **First admin** sets a **Panic Password** during registration (min. 12 chars)
-2. Panic password is hashed and stored securely (never in plaintext)
-3. **Activation**: Admin → Settings → Panic → Type `ENCRYPT_ALL_DATA`
-4. **Restoration**: Enter the original Panic Password
+2. Only a hash of the panic password is stored, never the password itself
+3. **Activation**: Admin → Settings → Panic → confirm and enter the Panic Password
+4. **Restoration**: enter the Panic Password (works without being logged in, rate limited)
+
+The encryption key is derived from the panic password itself, so the database alone is not enough to decrypt the data. Encryption and restoration each run in a single transaction: a failure leaves the database unchanged.
 
 **Encryption details:**
 | Component | Algorithm |
 |-----------|-----------|
-| Key Derivation | scrypt (32 bytes) |
+| Key Derivation | scrypt (32 bytes) from the panic password, random salt |
 | Encryption | AES-256-GCM |
-| IV | 16 bytes random (per session) |
+| IV | 12 bytes random, unique per encrypted value |
 
 > **WARNING**: Without the Panic Password, encrypted data is **permanently lost**. There is no recovery mechanism.
 
@@ -160,7 +171,7 @@ The **Panic Button** allows administrators to **instantly encrypt all sensitive 
 
 ### Prerequisites
 
-- **Node.js** 20+ • **Docker** & Docker Compose • **npm**
+- **Node.js** 22+ • **Docker** & Docker Compose • **npm**
 
 #### DNS Configuration (Required before installation)
 
@@ -199,8 +210,8 @@ The installer will:
 
 > **Monitoring**: After installation, Grafana is accessible at `https://monitoring.your-domain.com/grafana`
 >
-> Default credentials: `admin` / `admin` (you'll be prompted to change on first login)
-> Having issues with the password ? Just launch :
+> Credentials: user `admin`, with a random password generated by the installer (shown at the end of the install, saved in `CREDENTIALS.txt` and as `GRAFANA_ADMIN_PASSWORD` in `.env`).
+> Lost it? Reset it with:
 
 ```bash
 cd /opt/trackarr
@@ -211,7 +222,7 @@ docker exec -it trackarr-grafana grafana cli admin reset-admin-password <new-pas
 
 ### Option 2: Development with Docker
 
-> Databases are only exposed to the container network for security.
+> PostgreSQL is published on `127.0.0.1:5432` only (not reachable from other machines). Without `IP_HASH_SECRET`, development uses a random secret per process.
 
 ```bash
 # Clone repository
@@ -240,20 +251,23 @@ docker compose logs -f app
 
 | Layer              | Protection                                                 |
 | ------------------ | ---------------------------------------------------------- |
-| **Authentication** | ZKE, PoW anti-abuse, session encryption, CSRF protection   |
+| **Authentication** | ZKE, PoW anti-abuse, sealed sessions (7 days), SameSite cookies, roles checked in DB on every request |
 | **Database**       | SCRAM-SHA-256 auth, TLS, prepared statements, pool limits  |
 | **Redis**          | Password auth, command restrictions, memory limits         |
-| **Network**        | Rate limiting, auto IP bans, attack pattern detection      |
-| **Privacy**        | SHA-256 hashed IPs, no raw IP persistence, minimal logging |
+| **Network**        | Rate limiting, auto IP bans, proxy headers trusted only from `TRUSTED_PROXIES` |
+| **Content**        | Sanitized Markdown & rich text, sandboxed uploads, passkey-protected RSS & scrape |
+| **Privacy**        | Hashed IPs in peer stats & logs, passkeys stripped from access logs. The last login IP is kept per user for IP bans, and peer IPs live in Redis while a peer is active. |
 
 ### Rate Limits
 
 | Endpoint   | Limit   | Ban on Abuse                    |
 | ---------- | ------- | ------------------------------- |
-| Public API | 100/min | 100+ req/10s → auto-block       |
-| Mutations  | 10/min  | Progressive penalties           |
-| Auth       | 5/5min  | IP blacklisted after violations |
-| Tracker    | 200/min | Distributed sliding window      |
+| Public API   | 100/min  | 100+ req/10s → auto-block       |
+| Mutations    | 10/min   | Progressive penalties           |
+| Login        | 10/5min  | Temporary block, no blacklist   |
+| Registration | 5/5min   | IP blacklisted after violations |
+| Panic restore| 5/5min   | IP blacklisted after violations |
+| Tracker      | 200/min  | Distributed sliding window      |
 
 ### Production Security Checklist
 
@@ -275,11 +289,12 @@ docker compose logs -f app
 
 | Layer    | Technology                          | Purpose                             |
 | -------- | ----------------------------------- | ----------------------------------- |
-| Frontend | Nuxt 3, Vue 3, Tailwind CSS         | SSR, Composition API                |
+| Frontend | Nuxt 4, Vue 3, Tailwind CSS         | SSR, Composition API                |
+| i18n     | @nuxtjs/i18n                        | English & French UI                 |
 | Backend  | Nitro Server Engine                 | API routes, middleware              |
 | Database | PostgreSQL 16 + Drizzle ORM         | Data persistence, full-text search  |
 | Cache    | Redis 7                             | Peer lists, sessions, rate limiting |
-| P2P      | bittorrent-tracker                  | HTTP & WebSocket announces          |
+| P2P      | bittorrent-tracker                  | HTTP announces (UDP & WebSocket disabled) |
 | Crypto   | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption          |
 | Monitor  | Prometheus + Grafana                | Metrics, dashboards, alerting       |
 
@@ -313,7 +328,9 @@ docker compose -f docker-compose.prod.yml down
 docker compose -f docker-compose.prod.yml up -d --build
 ```
 
-> **Note**: This will rebuild the containers with the latest code. Your data (PostgreSQL, Redis) is persisted in Docker volumes and will not be affected.
+> **Note**: This will rebuild the containers with the latest code. Your data (PostgreSQL, Redis) is persisted in Docker volumes and will not be affected. Schema changes are applied automatically at startup.
+>
+> **Upgrading from 0.5.x to 0.6.x?** Follow the steps in the [v0.6.0 release notes](https://github.com/florianjs/trackarr/releases/tag/v0.6.0) (rotate `NUXT_SESSION_PASSWORD`, new required secrets, RSS now needs a passkey).
 
 ### Troubleshooting
 
@@ -347,11 +364,12 @@ docker compose -f docker-compose.prod.yml logs -f app  # App only
 ```bash
 npm run dev              # Start dev server (HMR)
 npm run build            # Production build
+npm test                 # Unit & security tests (Vitest)
 npx drizzle-kit push     # Push schema changes
 npx drizzle-kit studio   # Database GUI
 ```
 
-![Forum](/public/images/image%20copy%203.png)
+**Translations**: strings live in `i18n/locales/<code>/*.json`. To add a language, copy `i18n/locales/en/`, translate it, and declare the locale in `nuxt.config.ts` (`i18n.locales`).
 
 ![User Profile](/public/images/image%20copy%204.png)
 
@@ -388,6 +406,9 @@ Trackarr is built on the shoulders of giants. We'd like to thank the following o
 | [Vitest](https://vitest.dev)                                           | Testing framework           |
 | [Pinia](https://pinia.vuejs.org)                                       | State management            |
 | [Zod](https://zod.dev)                                                 | Schema validation           |
+| [Nuxt i18n](https://i18n.nuxtjs.org)                                   | Internationalization        |
+| [DOMPurify](https://github.com/cure53/DOMPurify)                       | HTML sanitization           |
+| [sanitize-html](https://github.com/apostrophecms/sanitize-html)        | Server-side HTML sanitization |
 
 ---
 
