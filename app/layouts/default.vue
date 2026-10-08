@@ -297,6 +297,8 @@
           ></span>
           <span class="w-1 h-1 bg-border rounded-full"></span>
           <span>P2P PROTOCOL</span>
+          <span class="w-1 h-1 bg-border rounded-full"></span>
+          <LanguageSwitcher />
         </div>
         <div class="flex gap-6">
           <a

@@ -10,7 +10,25 @@ export default defineNuxtConfig({
     '@nuxtjs/tailwindcss',
     '@nuxt/icon',
     'nuxt-auth-utils',
+    '@nuxtjs/i18n',
   ],
+
+  // Translations live in i18n/locales/<code>/*.json, one file per area so
+  // features can add strings without conflicting (issue #43)
+  i18n: {
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', language: 'en-US', name: 'English', files: ['en/app.json', 'en/shop.json'] },
+      { code: 'fr', language: 'fr-FR', name: 'Français', files: ['fr/app.json', 'fr/shop.json'] },
+    ],
+    detectBrowserLanguage: {
+      useCookie: true,
+      cookieKey: 'trackarr_locale',
+      redirectOn: 'root',
+      fallbackLocale: 'en',
+    },
+  },
 
   typescript: {
     strict: true,
