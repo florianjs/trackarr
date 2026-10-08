@@ -11,7 +11,7 @@
           </h3>
           <span
             v-if="hnrCount > 0"
-            class="px-2 py-0.5 text-[10px] font-bold bg-error text-white rounded-full"
+            class="px-2 py-0.5 text-[10px] font-bold bg-error text-paper rounded-full"
           >
             {{ hnrCount }} HnR
           </span>
