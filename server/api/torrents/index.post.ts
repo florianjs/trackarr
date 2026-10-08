@@ -3,7 +3,7 @@ import { randomUUID } from 'crypto';
 import parseTorrent from 'parse-torrent';
 import { z } from 'zod';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
-import { stripAnnounceUrls } from '../../utils/torrentFile';
+import { normalizeTorrent, type NormalizedTorrent } from '../../utils/torrentFile';
 
 // readMultipartFormData buffers the whole body: reject oversized requests first
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
@@ -97,7 +97,19 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const infoHash = parsed.infoHash.toLowerCase();
+  // Store a private, announce-free copy. Its info hash is what clients will
+  // announce, so it must be the one saved in the DB (see issue #49).
+  let normalized: NormalizedTorrent;
+  try {
+    normalized = normalizeTorrent(file.data);
+  } catch {
+    throw createError({
+      statusCode: 400,
+      message: 'Invalid torrent file',
+    });
+  }
+
+  const infoHash = normalized.infoHash;
   const name = parsed.name || file.filename || 'Unknown';
 
   // Calculate total size
@@ -151,7 +163,7 @@ export default defineEventHandler(async (event) => {
     name,
     size: totalSize,
     description: description || null,
-    torrentData: stripAnnounceUrls(file.data, infoHash),
+    torrentData: normalized.data,
     uploaderId: user.id, // Set uploader from authenticated user
     categoryId: categoryId || null,
     isActive: true,
@@ -193,12 +205,19 @@ export default defineEventHandler(async (event) => {
     magnetLink: generateMagnetLink(infoHash, name),
   };
 
+  // The uploaded file has no personal announce URL (and a different hash if
+  // it was not private): the uploader must seed the file served by the site.
+  const seedHint = normalized.madePrivate
+    ? ' The private flag was added, so the info hash changed: download the .torrent from the site and seed that file.'
+    : ' Download the .torrent from the site to seed it with your passkey.';
+
   return {
     success: true,
-    message: canBypassModeration
-      ? 'Torrent created successfully'
-      : 'Torrent uploaded and pending moderation approval',
-    data: torrent,
+    message:
+      (canBypassModeration
+        ? 'Torrent created successfully.'
+        : 'Torrent uploaded and pending moderation approval.') + seedHint,
+    data: { ...torrent, madePrivate: normalized.madePrivate },
   };
 });
 

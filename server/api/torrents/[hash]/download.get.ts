@@ -70,10 +70,10 @@ export default defineEventHandler(async (event) => {
     decoded['announce-list'] = [[Buffer.from(personalizedUrl)]];
   }
 
-  // Set private flag to 1
-  if (decoded.info) {
-    decoded.info.private = 1;
-  }
+  // Never touch the info dict here: changing it (e.g. the private flag)
+  // changes the info hash, and clients would announce a hash unknown to the
+  // tracker ("Torrent not found or inactive", issue #49). Uploads are made
+  // private when stored.
 
   const personalizedData = bencode.encode(decoded);
 

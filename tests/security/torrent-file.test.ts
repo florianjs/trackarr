@@ -1,16 +1,16 @@
 import { describe, it, expect } from 'vitest';
 import { createHash } from 'crypto';
 import bencode from 'bencode';
-import { stripAnnounceUrls } from '../../server/utils/torrentFile';
+import { normalizeTorrent } from '../../server/utils/torrentFile';
 
-function makeTorrent() {
-  const info = {
+function makeTorrent(isPrivate: boolean) {
+  const info: Record<string, unknown> = {
     name: 'file.bin',
     'piece length': 16384,
     pieces: Buffer.alloc(20),
     length: 1,
-    private: 1,
   };
+  if (isPrivate) info.private = 1;
   const data = Buffer.from(
     bencode.encode({
       announce: 'http://tracker/announce?passkey=uploadersecret',
@@ -22,27 +22,37 @@ function makeTorrent() {
   return { data, infoHash };
 }
 
-describe('stripAnnounceUrls', () => {
-  it('removes the uploader passkey and keeps the info hash', () => {
-    const { data, infoHash } = makeTorrent();
-    const stripped = stripAnnounceUrls(data, infoHash);
+function hashOf(data: Buffer): string {
+  const decoded = bencode.decode(data);
+  return createHash('sha1').update(bencode.encode(decoded.info)).digest('hex');
+}
 
-    expect(stripped.toString('latin1')).not.toContain('uploadersecret');
-    const decoded = bencode.decode(stripped);
-    const hash = createHash('sha1')
-      .update(bencode.encode(decoded.info))
-      .digest('hex');
-    expect(hash).toBe(infoHash);
+describe('normalizeTorrent', () => {
+  it('removes the uploader passkey', () => {
+    const { data } = makeTorrent(true);
+    const normalized = normalizeTorrent(data);
+    expect(normalized.data.toString('latin1')).not.toContain('uploadersecret');
   });
 
-  it('returns the original bytes when the hash would change', () => {
-    const { data } = makeTorrent();
-    const stripped = stripAnnounceUrls(data, 'f'.repeat(40));
-    expect(stripped.equals(data)).toBe(true);
+  it('keeps the info hash of an already private torrent', () => {
+    const { data, infoHash } = makeTorrent(true);
+    const normalized = normalizeTorrent(data);
+    expect(normalized.madePrivate).toBe(false);
+    expect(normalized.infoHash).toBe(infoHash);
   });
 
-  it('returns the original bytes for garbage input', () => {
-    const garbage = Buffer.from('not bencode');
-    expect(stripAnnounceUrls(garbage, 'a'.repeat(40)).equals(garbage)).toBe(true);
+  it('makes public torrents private and returns the matching hash (issue #49)', () => {
+    const { data, infoHash } = makeTorrent(false);
+    const normalized = normalizeTorrent(data);
+
+    expect(normalized.madePrivate).toBe(true);
+    expect(bencode.decode(normalized.data).info.private).toBe(1);
+    expect(normalized.infoHash).not.toBe(infoHash);
+    // The stored hash is the one clients will announce with the served file
+    expect(hashOf(normalized.data)).toBe(normalized.infoHash);
+  });
+
+  it('rejects files without an info dictionary', () => {
+    expect(() => normalizeTorrent(Buffer.from(bencode.encode({ a: 1 })))).toThrow();
   });
 });
