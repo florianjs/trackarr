@@ -2,7 +2,7 @@
   <div class="space-y-6">
     <div class="flex justify-between items-end">
       <div>
-        <h1 class="text-2xl font-bold tracking-tight">{{ t('forum.title') }}</h1>
+        <h1 class="text-2xl font-semibold tracking-tight">{{ t('forum.title') }}</h1>
         <p class="text-text-muted text-sm">
           {{ t('forum.index.subtitle') }}
         </p>
@@ -10,7 +10,7 @@
       <div v-if="user?.isAdmin">
         <button
           @click="showCreateCategory = true"
-          class="px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors flex items-center gap-2"
+          class="btn btn-primary"
         >
           <Icon name="ph:plus-bold" />
           {{ t('forum.index.newCategory') }}
@@ -26,57 +26,43 @@
       ></div>
     </div>
 
-    <div v-else class="space-y-4">
+    <div v-else class="card divide-y divide-border">
       <div
         v-for="category in categories"
         :key="category.id"
-        class="bg-bg-secondary border border-border rounded-lg overflow-hidden group hover:border-white/20 transition-colors"
+        class="group flex items-center gap-4 px-4 py-4 hover:bg-bg-hover/50 transition-colors"
       >
-        <NuxtLink :to="`/forum/category/${category.id}`" class="block p-6">
-          <div class="flex justify-between items-start">
-            <div>
-              <h2
-                class="text-lg font-bold group-hover:text-white transition-colors"
-              >
-                {{ category.name }}
-              </h2>
-              <p class="text-text-muted text-sm mt-1">
-                {{ category.description }}
-              </p>
-            </div>
-            <div class="text-right">
-              <div
-                class="text-xs font-mono text-text-muted uppercase tracking-widest"
-              >
-                {{ t('forum.index.lastActivity') }}
-              </div>
-              <div v-if="category.topics?.[0]" class="text-sm mt-1">
-                {{ formatDate(category.topics[0].updatedAt) }}
-              </div>
-              <div v-else class="text-sm mt-1 text-text-muted italic">
-                {{ t('forum.index.noTopics') }}
-              </div>
-            </div>
+        <NuxtLink :to="`/forum/category/${category.id}`" class="flex-1 min-w-0 flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-6">
+          <div class="flex-1 min-w-0">
+            <h2 class="text-base font-medium text-text-primary">{{ category.name }}</h2>
+            <p v-if="category.description" class="text-sm text-text-muted truncate">{{ category.description }}</p>
+          </div>
+          <div class="sm:w-64 sm:text-right min-w-0">
+            <template v-if="category.topics?.[0]">
+              <p class="text-sm text-text-secondary truncate">{{ category.topics[0].title }}</p>
+              <p class="text-xs text-text-muted">{{ formatAge(category.topics[0].updatedAt) }}</p>
+            </template>
+            <p v-else class="text-sm text-text-muted">{{ t('forum.index.noTopics') }}</p>
           </div>
         </NuxtLink>
-        <!-- Admin Actions -->
-        <div
-          v-if="user?.isAdmin"
-          class="flex justify-end gap-2 px-6 pb-4 -mt-2"
-        >
+        <div v-if="user?.isAdmin" class="flex gap-1 shrink-0">
           <button
-            @click.prevent="openEditModal(category)"
-            class="p-2 text-text-muted hover:text-white hover:bg-white/10 rounded transition-colors"
+            type="button"
+            class="p-1.5 rounded btn-ghost"
             :title="t('forum.index.editCategory')"
+            :aria-label="t('forum.index.editCategory')"
+            @click="openEditModal(category)"
           >
-            <Icon name="ph:pencil-bold" class="text-sm" />
+            <Icon name="ph:pencil-simple" class="block text-sm" />
           </button>
           <button
-            @click.prevent="confirmDelete(category)"
-            class="p-2 text-text-muted hover:text-red-400 hover:bg-red-400/10 rounded transition-colors"
+            type="button"
+            class="p-1.5 rounded text-text-muted hover:text-danger hover:bg-danger/10"
             :title="t('forum.index.deleteCategory')"
+            :aria-label="t('forum.index.deleteCategory')"
+            @click="confirmDelete(category)"
           >
-            <Icon name="ph:trash-bold" class="text-sm" />
+            <Icon name="ph:trash" class="block text-sm" />
           </button>
         </div>
       </div>
@@ -94,7 +80,7 @@
         <div class="space-y-4">
           <div>
             <label
-              class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
+              class="block text-xs text-text-muted mb-1.5 font-bold"
               >{{ t('common.name') }}</label
             >
             <input
@@ -106,7 +92,7 @@
           </div>
           <div>
             <label
-              class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
+              class="block text-xs text-text-muted mb-1.5 font-bold"
               >{{ t('common.description') }}</label
             >
             <textarea
@@ -117,7 +103,7 @@
           </div>
           <div>
             <label
-              class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
+              class="block text-xs text-text-muted mb-1.5 font-bold"
               >{{ t('forum.index.order') }}</label
             >
             <input
@@ -130,14 +116,14 @@
         <div class="flex gap-3 pt-2">
           <button
             @click="showCreateCategory = false"
-            class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
+            class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold rounded hover:bg-white/5 transition-colors"
           >
             {{ t('common.cancel') }}
           </button>
           <button
             @click="handleCreateCategory"
             :disabled="creating"
-            class="flex-1 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
+            class="flex-1 px-4 py-2 bg-white text-black text-xs font-bold rounded hover:bg-white/90 transition-colors disabled:opacity-50"
           >
             {{ creating ? t('common.creating') : t('common.create') }}
           </button>
@@ -157,7 +143,7 @@
         <div class="space-y-4">
           <div>
             <label
-              class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
+              class="block text-xs text-text-muted mb-1.5 font-bold"
               >{{ t('common.name') }}</label
             >
             <input
@@ -168,7 +154,7 @@
           </div>
           <div>
             <label
-              class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
+              class="block text-xs text-text-muted mb-1.5 font-bold"
               >{{ t('common.description') }}</label
             >
             <textarea
@@ -178,7 +164,7 @@
           </div>
           <div>
             <label
-              class="block text-[10px] uppercase tracking-widest text-text-muted mb-1.5 font-bold"
+              class="block text-xs text-text-muted mb-1.5 font-bold"
               >{{ t('forum.index.order') }}</label
             >
             <input
@@ -191,14 +177,14 @@
         <div class="flex gap-3 pt-2">
           <button
             @click="showEditCategory = false"
-            class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
+            class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold rounded hover:bg-white/5 transition-colors"
           >
             {{ t('common.cancel') }}
           </button>
           <button
             @click="handleUpdateCategory"
             :disabled="updating"
-            class="flex-1 px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors disabled:opacity-50"
+            class="flex-1 px-4 py-2 bg-white text-black text-xs font-bold rounded hover:bg-white/90 transition-colors disabled:opacity-50"
           >
             {{ updating ? t('common.saving') : t('common.save') }}
           </button>
@@ -223,14 +209,14 @@
         <div class="flex gap-3 pt-2">
           <button
             @click="showDeleteConfirm = false"
-            class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-white/5 transition-colors"
+            class="flex-1 px-4 py-2 bg-bg-tertiary text-white text-xs font-bold rounded hover:bg-white/5 transition-colors"
           >
             {{ t('common.cancel') }}
           </button>
           <button
             @click="handleDeleteCategory"
             :disabled="deleting"
-            class="flex-1 px-4 py-2 bg-red-500 text-white text-xs font-bold uppercase tracking-wider rounded hover:bg-red-600 transition-colors disabled:opacity-50"
+            class="flex-1 px-4 py-2 bg-red-500 text-white text-xs font-bold rounded hover:bg-red-600 transition-colors disabled:opacity-50"
           >
             {{ deleting ? t('common.deleting') : t('common.delete') }}
           </button>

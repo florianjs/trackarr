@@ -15,7 +15,7 @@
       <div class="flex justify-between items-end">
         <div>
           <div
-            class="flex items-center gap-2 text-text-muted text-xs font-mono uppercase tracking-widest mb-2"
+            class="flex items-center gap-2 text-text-muted text-xs mb-2"
           >
             <NuxtLink to="/forum" class="hover:text-white transition-colors"
               >{{ t('forum.title') }}</NuxtLink
@@ -29,7 +29,7 @@
         <div>
           <NuxtLink
             :to="`/forum/new-topic?categoryId=${category.id}`"
-            class="px-4 py-2 bg-white text-black text-xs font-bold uppercase tracking-wider rounded hover:bg-white/90 transition-colors flex items-center gap-2"
+            class="px-4 py-2 bg-white text-black text-xs font-bold rounded hover:bg-white/90 transition-colors flex items-center gap-2"
           >
             <Icon name="ph:plus-bold" />
             {{ t('forum.category.newTopic') }}
@@ -41,7 +41,7 @@
         class="bg-bg-secondary border border-border rounded-lg overflow-hidden"
       >
         <div
-          class="grid grid-cols-12 px-6 py-3 border-b border-border bg-bg-tertiary/50 text-[10px] uppercase tracking-widest font-bold text-text-muted"
+          class="grid grid-cols-12 px-6 py-3 border-b border-border bg-bg-tertiary/50 text-xs font-bold text-text-muted"
         >
           <div class="col-span-7">{{ t('forum.category.topic') }}</div>
           <div class="col-span-2 text-center">{{ t('forum.category.replies') }}</div>
@@ -104,7 +104,7 @@
               </div>
             </div>
           </div>
-          <div class="col-span-2 text-center font-mono text-sm">
+          <div class="col-span-2 text-center num text-sm">
             {{ topic.replyCount }}
           </div>
           <div class="col-span-3 text-right">

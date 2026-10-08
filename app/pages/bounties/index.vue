@@ -2,10 +2,10 @@
   <div class="space-y-6">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h2 class="text-xl font-bold text-text-primary tracking-tight uppercase">
+        <h2 class="text-2xl font-semibold tracking-tight text-text-primary">
           {{ t('bonus.bounties.title') }}
         </h2>
-        <p class="text-xs text-text-muted font-mono mt-0.5">
+        <p class="text-sm text-text-muted mt-0.5">
           {{ t('bonus.bounties.subtitle') }}
         </p>
       </div>
@@ -19,7 +19,7 @@
     <div v-if="showForm" class="card">
       <div class="card-body space-y-3">
         <div class="space-y-1">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1">
+          <label class="text-xs font-bold text-text-muted ml-1">
             {{ t('bonus.bounties.form.title') }}
           </label>
           <input
@@ -31,7 +31,7 @@
           />
         </div>
         <div class="space-y-1">
-          <label class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1">
+          <label class="text-xs font-bold text-text-muted ml-1">
             {{ t('bonus.bounties.form.description') }}
           </label>
           <textarea
@@ -44,13 +44,13 @@
         </div>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1">
+            <label class="text-xs font-bold text-text-muted ml-1">
               {{ t('bonus.bounties.form.imdb') }}
             </label>
             <input v-model="form.imdbId" type="text" class="input w-full !py-2 text-xs font-mono" placeholder="tt0133093" />
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1">
+            <label class="text-xs font-bold text-text-muted ml-1">
               {{ t('bonus.bounties.form.category') }}
             </label>
             <select v-model="form.categoryId" class="input w-full !py-2 text-xs">
@@ -59,13 +59,13 @@
             </select>
           </div>
           <div class="space-y-1">
-            <label class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1">
+            <label class="text-xs font-bold text-text-muted ml-1">
               {{ t('bonus.bounties.form.points') }}
             </label>
             <input v-model.number="form.points" type="number" :min="minPoints" class="input w-full !py-2 text-xs font-mono" />
           </div>
         </div>
-        <p class="text-[10px] text-text-muted">
+        <p class="text-xs text-text-muted">
           {{ t('bonus.bounties.form.pointsHint', { min: minPoints }) }}
         </p>
         <p v-if="formError" class="text-xs text-error">{{ formError }}</p>
@@ -85,7 +85,7 @@
       <button
         v-for="s in statuses"
         :key="s"
-        class="text-[10px] font-bold uppercase tracking-widest px-3 py-1.5 rounded border transition-colors"
+        class="text-xs font-bold px-3 py-1.5 rounded border transition-colors"
         :class="status === s ? 'border-white/30 text-white bg-bg-secondary' : 'border-border text-text-muted hover:text-white'"
         @click="status = s"
       >
@@ -110,18 +110,18 @@
             class="flex items-center justify-between gap-4 py-3 hover:bg-bg-tertiary/30 px-2 -mx-2 rounded transition-colors"
           >
             <div class="min-w-0">
-              <p class="text-sm font-bold text-text-primary truncate">{{ b.title }}</p>
-              <p class="text-[10px] text-text-muted font-mono mt-0.5">
+              <p class="text-sm font-medium text-text-primary truncate">{{ b.title }}</p>
+              <p class="text-sm text-text-muted mt-0.5">
                 {{ t('bonus.bounties.requestedBy', { user: b.requester?.username ?? '?' }) }}
                 <span v-if="b.category"> · {{ b.category.name }}</span>
                 · {{ new Date(b.createdAt).toLocaleDateString(locale) }}
               </p>
             </div>
             <div class="text-right shrink-0">
-              <p class="text-sm font-bold font-mono text-accent">
+              <p class="text-sm font-medium num text-text-primary">
                 {{ t('bonus.points', { n: Math.floor(b.totalPoints).toLocaleString(locale) }) }}
               </p>
-              <p class="text-[10px] uppercase tracking-wider text-text-muted">
+              <p class="text-xs text-text-muted">
                 {{ t(`bonus.bounties.status.${b.status}`) }}
               </p>
             </div>

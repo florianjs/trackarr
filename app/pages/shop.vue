@@ -2,25 +2,25 @@
   <div class="space-y-6">
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
-        <h2 class="text-xl font-bold text-text-primary tracking-tight uppercase">
+        <h2 class="text-2xl font-semibold tracking-tight text-text-primary">
           {{ t('bonus.shop.title') }}
         </h2>
-        <p class="text-xs text-text-muted font-mono mt-0.5">
+        <p class="text-sm text-text-muted mt-0.5">
           {{ t('bonus.shop.subtitle') }}
         </p>
       </div>
       <div class="flex items-center gap-6">
         <div class="text-right">
-          <p class="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+          <p class="text-xs font-bold text-text-muted">
             {{ t('bonus.shop.seedingNow') }}
           </p>
           <p class="text-2xl font-bold text-text-primary">{{ me?.seedingNow ?? 0 }}</p>
         </div>
         <div class="text-right">
-          <p class="text-[10px] font-bold text-text-muted uppercase tracking-widest">
+          <p class="text-xs font-bold text-text-muted">
             {{ t('bonus.shop.balance') }}
           </p>
-          <p class="text-2xl font-bold text-accent">{{ formatPoints(me?.points ?? 0) }}</p>
+          <p class="text-2xl font-semibold num text-text-primary">{{ formatPoints(me?.points ?? 0) }}</p>
         </div>
       </div>
     </div>
@@ -44,7 +44,7 @@
           <div class="card-header">
             <div class="flex items-center gap-2">
               <Icon name="ph:storefront-bold" class="text-text-muted" />
-              <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">
+              <h3 class="text-sm font-medium text-text-primary">
                 {{ t('bonus.shop.items') }}
               </h3>
             </div>
@@ -58,16 +58,16 @@
               >
                 <div>
                   <p class="text-sm font-bold text-text-primary">{{ item.name }}</p>
-                  <p class="text-[11px] text-accent font-mono mt-0.5">{{ itemEffect(item) }}</p>
+                  <p class="text-xs text-text-secondary num mt-0.5">{{ itemEffect(item) }}</p>
                   <p v-if="item.description" class="text-xs text-text-muted mt-2">
                     {{ item.description }}
                   </p>
                 </div>
                 <div class="flex items-center justify-between">
-                  <span class="text-sm font-bold font-mono">{{ formatPoints(item.price) }}</span>
+                  <span class="text-sm font-medium num">{{ formatPoints(item.price) }}</span>
                   <span
                     v-if="item.type === 'gif_avatar' && me.canUseGifAvatar"
-                    class="text-[10px] font-bold uppercase tracking-wider text-success"
+                    class="text-xs font-bold text-success"
                   >
                     {{ t('bonus.shop.owned') }}
                   </span>
@@ -94,7 +94,7 @@
             <div class="card-header">
               <div class="flex items-center gap-2">
                 <Icon name="ph:coins-bold" class="text-text-muted" />
-                <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">
+                <h3 class="text-sm font-medium text-text-primary">
                   {{ t('bonus.shop.howToEarn') }}
                 </h3>
               </div>
@@ -102,7 +102,7 @@
             <ul class="card-body space-y-2 text-xs text-text-secondary">
               <li v-if="me.rules.pointsPerSeedDay > 0">
                 {{ t('bonus.shop.earnSeed', { points: me.rules.pointsPerSeedDay, max: me.rules.maxSeedingTorrents }) }}
-                <span class="block text-[10px] text-text-muted">{{ t('bonus.shop.earnSeedNote') }}</span>
+                <span class="block text-xs text-text-muted">{{ t('bonus.shop.earnSeedNote') }}</span>
               </li>
               <li v-if="me.rules.pointsPerUpload > 0">
                 {{ t('bonus.shop.earnUpload', { points: me.rules.pointsPerUpload }) }}
@@ -120,7 +120,7 @@
             <div class="card-header">
               <div class="flex items-center gap-2">
                 <Icon name="ph:user-circle-bold" class="text-text-muted" />
-                <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">
+                <h3 class="text-sm font-medium text-text-primary">
                   {{ t('bonus.avatar.title') }}
                 </h3>
               </div>
@@ -144,7 +144,7 @@
                     {{ t('bonus.avatar.remove') }}
                   </button>
                 </div>
-                <p class="text-[10px] text-text-muted">
+                <p class="text-xs text-text-muted">
                   {{ me.canUseGifAvatar ? t('bonus.avatar.hintGif') : t('bonus.avatar.hint') }}
                 </p>
                 <input
@@ -165,7 +165,7 @@
         <div class="card-header">
           <div class="flex items-center gap-2">
             <Icon name="ph:clock-counter-clockwise-bold" class="text-text-muted" />
-            <h3 class="text-xs font-bold uppercase tracking-wider text-text-primary">
+            <h3 class="text-sm font-medium text-text-primary">
               {{ t('bonus.shop.history') }}
             </h3>
           </div>
@@ -174,12 +174,12 @@
           <table v-if="me.transactions.length" class="w-full text-xs">
             <tbody>
               <tr v-for="tx in me.transactions" :key="tx.id" class="border-b border-border last:border-0">
-                <td class="py-2 text-text-muted font-mono whitespace-nowrap pr-4">{{ formatDateTime(tx.createdAt) }}</td>
+                <td class="py-2 text-text-muted num whitespace-nowrap pr-4">{{ formatDateTime(tx.createdAt) }}</td>
                 <td class="py-2 pr-4">
                   <span class="font-bold">{{ txLabel(tx.type) }}</span>
                   <span v-if="tx.description" class="text-text-muted"> · {{ tx.description }}</span>
                 </td>
-                <td class="py-2 text-right font-mono font-bold" :class="tx.amount >= 0 ? 'text-success' : 'text-error'">
+                <td class="py-2 text-right num font-medium" :class="tx.amount >= 0 ? 'text-success' : 'text-error'">
                   {{ tx.amount >= 0 ? '+' : '' }}{{ formatPoints(tx.amount) }}
                 </td>
               </tr>

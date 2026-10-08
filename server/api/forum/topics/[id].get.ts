@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
         columns: {
           id: true,
           username: true,
+          avatarUrl: true,
           isAdmin: true,
           isModerator: true,
         },
@@ -35,6 +36,7 @@ export default defineEventHandler(async (event) => {
             columns: {
               id: true,
               username: true,
+          avatarUrl: true,
               isAdmin: true,
               isModerator: true,
             },
