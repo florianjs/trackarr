@@ -84,6 +84,51 @@
               </div>
             </div>
 
+            <!-- Personal announce URL (#42) -->
+            <div class="space-y-2">
+              <label
+                class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+                >Your announce URL</label
+              >
+              <div class="flex gap-2">
+                <input
+                  :value="announceUrl ?? 'Loading…'"
+                  type="text"
+                  readonly
+                  class="input w-full !py-2 text-xs font-mono"
+                  aria-label="Announce URL"
+                  @focus="($event.target as HTMLInputElement).select()"
+                />
+                <button
+                  type="button"
+                  class="btn btn-secondary !py-2 !px-3 text-xs shrink-0"
+                  :disabled="!announceUrl"
+                  :title="announceCopied ? 'Copied' : 'Copy announce URL'"
+                  @click="copyAnnounce"
+                >
+                  <Icon :name="announceCopied ? 'ph:check-bold' : 'ph:copy-bold'" />
+                </button>
+              </div>
+              <p class="text-[10px] text-text-muted ml-1">
+                Keep it private: it contains your passkey.
+              </p>
+            </div>
+
+            <!-- Custom name (#42) -->
+            <div class="space-y-2">
+              <label
+                class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+                >Display name (optional)</label
+              >
+              <input
+                v-model="customName"
+                type="text"
+                maxlength="255"
+                class="input w-full !py-2 text-xs"
+                placeholder="Defaults to the name inside the .torrent"
+              />
+            </div>
+
             <!-- Category Select -->
             <div class="space-y-2">
               <label
@@ -100,6 +145,8 @@
                 </option>
               </select>
             </div>
+
+            <MediaIdsFields v-model="mediaIds" />
 
             <!-- Description -->
             <div class="space-y-2">
@@ -336,6 +383,39 @@ const isUploading = ref(false);
 const result = ref<TorrentResult | null>(null);
 const error = ref<string | null>(null);
 const copied = ref(false);
+const customName = ref('');
+const mediaIds = ref({ imdbId: '', tmdbId: '', tvdbId: '' });
+const announceUrl = ref<string | null>(null);
+const announceCopied = ref(false);
+const config = useRuntimeConfig();
+
+// Passkey is not in the client session: fetch it when the modal opens
+watch(
+  () => props.isOpen,
+  async (open) => {
+    if (!open || announceUrl.value) return;
+    try {
+      const { passkey } = await $fetch<{ passkey: string }>('/api/auth/passkey');
+      const url = new URL(config.public.trackerHttpUrl as string);
+      url.searchParams.set('passkey', passkey);
+      announceUrl.value = url.toString();
+    } catch {
+      announceUrl.value = null;
+    }
+  },
+  { immediate: true }
+);
+
+async function copyAnnounce() {
+  if (!announceUrl.value) return;
+  try {
+    await navigator.clipboard.writeText(announceUrl.value);
+    announceCopied.value = true;
+    setTimeout(() => (announceCopied.value = false), 2000);
+  } catch {
+    error.value = 'Failed to copy to clipboard';
+  }
+}
 
 const { data: categories } = await useFetch('/api/categories');
 
@@ -373,6 +453,8 @@ function reset() {
   selectedFile.value = null;
   selectedCategoryId.value = '';
   description.value = '';
+  customName.value = '';
+  mediaIds.value = { imdbId: '', tmdbId: '', tvdbId: '' };
   isPreview.value = false;
   result.value = null;
   error.value = null;
@@ -482,6 +564,12 @@ async function upload() {
     }
     if (description.value) {
       formData.append('description', description.value);
+    }
+    if (customName.value.trim()) {
+      formData.append('name', customName.value.trim());
+    }
+    for (const [key, value] of Object.entries(mediaIds.value)) {
+      if (value.trim()) formData.append(key, value.trim());
     }
 
     const response = await $fetch<TorrentResult>('/api/torrents', {

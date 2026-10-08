@@ -27,13 +27,28 @@
             <h2 class="text-2xl font-bold text-text-primary tracking-tight">
               {{ torrent.name }}
             </h2>
-            <!-- Category Badge -->
-            <div v-if="torrent.category" class="mt-2">
+            <!-- Category Badge + external database links (#47) -->
+            <div
+              v-if="torrent.category || externalLinks.length"
+              class="mt-2 flex flex-wrap items-center gap-2"
+            >
               <span
+                v-if="torrent.category"
                 class="text-[10px] font-bold bg-bg-tertiary border border-border px-2 py-1 rounded-sm text-text-secondary uppercase tracking-wider"
               >
                 {{ torrent.category.name }}
               </span>
+              <a
+                v-for="link in externalLinks"
+                :key="link.label"
+                :href="link.href"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-[10px] font-bold border border-border px-2 py-1 rounded-sm text-text-secondary uppercase tracking-wider hover:text-white hover:border-white/30 transition-colors inline-flex items-center gap-1"
+              >
+                {{ link.label }}
+                <Icon name="ph:arrow-square-out-bold" />
+              </a>
             </div>
           </div>
           <div class="flex items-center gap-2 flex-wrap">
@@ -305,6 +320,7 @@ interface Category {
   id: string;
   name: string;
   slug: string;
+  newznabId?: number | null;
 }
 
 interface TorrentDetail {
@@ -316,6 +332,9 @@ interface TorrentDetail {
   uploaderId: string | null;
   categoryId: string | null;
   category: Category | null;
+  imdbId: string | null;
+  tmdbId: number | null;
+  tvdbId: number | null;
   createdAt: string;
   stats: {
     seeders: number;
@@ -362,7 +381,25 @@ const editableTorrent = computed(() => ({
   name: torrent.value?.name || '',
   description: torrent.value?.description || null,
   categoryId: torrent.value?.categoryId || null,
+  imdbId: torrent.value?.imdbId ?? null,
+  tmdbId: torrent.value?.tmdbId ?? null,
+  tvdbId: torrent.value?.tvdbId ?? null,
 }));
+
+const externalLinks = computed(() => {
+  const t = torrent.value;
+  if (!t) return [];
+  const links: { label: string; href: string }[] = [];
+  if (t.imdbId) links.push({ label: 'IMDb', href: imdbUrl(t.imdbId) });
+  if (t.tmdbId) {
+    // Torznab TV categories are 5000-5999
+    const newznabId = t.category?.newznabId ?? 0;
+    const kind = t.tvdbId || (newznabId >= 5000 && newznabId < 6000) ? 'tv' : 'movie';
+    links.push({ label: 'TMDb', href: tmdbUrl(t.tmdbId, kind) });
+  }
+  if (t.tvdbId) links.push({ label: 'TheTVDB', href: tvdbUrl(t.tvdbId) });
+  return links;
+});
 
 const renderedDescription = computed(() => {
   return renderMarkdown(torrent.value?.description);
