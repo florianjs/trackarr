@@ -281,7 +281,8 @@
       "postComment": "Post comment",
       "commentFailed": "Could not post the comment.",
       "confirmDeleteComment": "Delete this comment?",
-      "details": "Details"
+      "details": "Details",
+      "commentDeleteFailed": "Could not delete the comment."
     }
   },
   "search": {

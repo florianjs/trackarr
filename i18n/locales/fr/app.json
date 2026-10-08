@@ -281,7 +281,8 @@
       "postComment": "Publier",
       "commentFailed": "Impossible de publier le commentaire.",
       "confirmDeleteComment": "Supprimer ce commentaire ?",
-      "details": "Détails"
+      "details": "Détails",
+      "commentDeleteFailed": "Impossible de supprimer le commentaire."
     }
   },
   "search": {
