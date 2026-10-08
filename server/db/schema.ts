@@ -99,10 +99,17 @@ export const torrents = pgTable(
     categoryId: text('category_id').references(() => categories.id),
     isActive: boolean('is_active').default(true).notNull(),
     isApproved: boolean('is_approved').default(false).notNull(),
+    // External media database IDs (Sonarr/Radarr matching, issue #47)
+    imdbId: text('imdb_id'), // e.g. tt0133093
+    tmdbId: integer('tmdb_id'),
+    tvdbId: integer('tvdb_id'),
     createdAt: timestamp('created_at').defaultNow().notNull(),
   },
   (table) => [
     uniqueIndex('torrents_info_hash_idx').on(table.infoHash),
+    index('torrents_imdb_idx').on(table.imdbId),
+    index('torrents_tmdb_idx').on(table.tmdbId),
+    index('torrents_tvdb_idx').on(table.tvdbId),
     index('torrents_uploader_idx').on(table.uploaderId),
     index('torrents_category_idx').on(table.categoryId),
     index('torrents_name_trgm_idx').using(

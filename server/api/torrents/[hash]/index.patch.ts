@@ -9,8 +9,15 @@ import { torrents, categories } from '../../../db/schema';
 import { requireAuthSession } from '../../../utils/adminAuth';
 import { rateLimit, RATE_LIMITS } from '../../../utils/rateLimit';
 import { z } from 'zod';
+import { parseMediaIds } from '../../../../shared/utils/mediaIds';
+
+const mediaIdSchema = z.union([z.string().max(200), z.number()]).nullable().optional();
 
 const patchSchema = z.object({
+  name: z.string().trim().min(1).max(255).optional(),
+  imdbId: mediaIdSchema,
+  tmdbId: mediaIdSchema,
+  tvdbId: mediaIdSchema,
   description: z.string().max(10000).nullable().optional(),
   categoryId: z.union([z.uuid(), z.literal('')]).nullable().optional(),
 });
@@ -61,7 +68,14 @@ export default defineEventHandler(async (event) => {
   if (!parsedBody.success) {
     throw createError({ statusCode: 400, message: 'Invalid request body' });
   }
-  const { description, categoryId } = parsedBody.data;
+  const { description, categoryId, name } = parsedBody.data;
+  const media = parseMediaIds(parsedBody.data);
+  if (media.invalid.length > 0) {
+    throw createError({
+      statusCode: 400,
+      message: `Invalid ${media.invalid.join(', ')}`,
+    });
+  }
 
   // Validate categoryId if provided
   if (categoryId !== undefined && categoryId !== null && categoryId !== '') {
@@ -79,9 +93,17 @@ export default defineEventHandler(async (event) => {
 
   // Build update object
   const updateData: {
+    name?: string;
     description?: string | null;
     categoryId?: string | null;
-  } = {};
+    imdbId?: string | null;
+    tmdbId?: number | null;
+    tvdbId?: number | null;
+  } = { ...media.ids };
+
+  if (name !== undefined) {
+    updateData.name = name;
+  }
 
   if (description !== undefined) {
     updateData.description = description || null;
@@ -116,6 +138,9 @@ export default defineEventHandler(async (event) => {
       description: updated!.description,
       categoryId: updated!.categoryId,
       category: updated!.category,
+      imdbId: updated!.imdbId,
+      tmdbId: updated!.tmdbId,
+      tvdbId: updated!.tvdbId,
     },
   };
 });

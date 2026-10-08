@@ -4,10 +4,12 @@ import parseTorrent from 'parse-torrent';
 import { z } from 'zod';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 import { normalizeTorrent, type NormalizedTorrent } from '../../utils/torrentFile';
+import { parseMediaIds } from '../../../shared/utils/mediaIds';
 
 // readMultipartFormData buffers the whole body: reject oversized requests first
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
 const MAX_DESCRIPTION_LENGTH = 10000;
+const MAX_NAME_LENGTH = 255;
 const tagIdsSchema = z.array(z.uuid()).max(20);
 
 export default defineEventHandler(async (event) => {
@@ -45,11 +47,34 @@ export default defineEventHandler(async (event) => {
     .find((f) => f.name === 'description')
     ?.data.toString();
   const tagsRaw = formData.find((f) => f.name === 'tags')?.data.toString();
+  const field = (name: string) =>
+    formData.find((f) => f.name === name)?.data.toString();
+  // Optional display name replacing the one embedded in the file (#42)
+  const customName = field('name')?.trim();
+  const media = parseMediaIds({
+    imdbId: field('imdbId'),
+    tmdbId: field('tmdbId'),
+    tvdbId: field('tvdbId'),
+  });
 
   if (!file || !file.data) {
     throw createError({
       statusCode: 400,
       message: 'No .torrent file found in request',
+    });
+  }
+
+  if (media.invalid.length > 0) {
+    throw createError({
+      statusCode: 400,
+      message: `Invalid ${media.invalid.join(', ')}`,
+    });
+  }
+
+  if (customName && customName.length > MAX_NAME_LENGTH) {
+    throw createError({
+      statusCode: 400,
+      message: `Name too long (max ${MAX_NAME_LENGTH} characters)`,
     });
   }
 
@@ -110,7 +135,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const infoHash = normalized.infoHash;
-  const name = parsed.name || file.filename || 'Unknown';
+  const name = customName || parsed.name || file.filename || 'Unknown';
 
   // Calculate total size
   let totalSize = 0;
@@ -164,6 +189,7 @@ export default defineEventHandler(async (event) => {
     size: totalSize,
     description: description || null,
     torrentData: normalized.data,
+    ...media.ids,
     uploaderId: user.id, // Set uploader from authenticated user
     categoryId: categoryId || null,
     isActive: true,

@@ -30,18 +30,21 @@
 
         <!-- Body -->
         <div class="p-6 space-y-6">
-          <!-- Torrent Name (read-only) -->
+          <!-- Torrent Name -->
           <div class="space-y-2">
             <label
               class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
               >Torrent Name</label
             >
-            <div
-              class="input w-full !py-2 text-xs font-medium bg-bg-tertiary/50 text-text-secondary cursor-not-allowed"
-            >
-              {{ torrent.name }}
-            </div>
+            <input
+              v-model="name"
+              type="text"
+              maxlength="255"
+              class="input w-full !py-2 text-xs font-medium"
+            />
           </div>
+
+          <MediaIdsFields v-model="mediaIds" />
 
           <!-- Category Select -->
           <div class="space-y-2">
@@ -224,6 +227,9 @@ interface TorrentData {
   name: string;
   description: string | null;
   categoryId: string | null;
+  imdbId: string | null;
+  tmdbId: number | null;
+  tvdbId: number | null;
 }
 
 const props = defineProps<{
@@ -238,6 +244,19 @@ const emit = defineEmits<{
 
 const textareaRef = ref<HTMLTextAreaElement | null>(null);
 const selectedCategoryId = ref('');
+const name = ref('');
+const mediaIds = ref({ imdbId: '', tmdbId: '', tvdbId: '' });
+
+function loadForm(torrent: TorrentData) {
+  selectedCategoryId.value = torrent.categoryId || '';
+  description.value = torrent.description || '';
+  name.value = torrent.name;
+  mediaIds.value = {
+    imdbId: torrent.imdbId ?? '',
+    tmdbId: torrent.tmdbId?.toString() ?? '',
+    tvdbId: torrent.tvdbId?.toString() ?? '',
+  };
+}
 const description = ref('');
 const isPreview = ref(false);
 const isSaving = ref(false);
@@ -253,10 +272,7 @@ const renderedDescription = computed(() => {
 watch(
   () => props.torrent,
   (torrent) => {
-    if (torrent) {
-      selectedCategoryId.value = torrent.categoryId || '';
-      description.value = torrent.description || '';
-    }
+    if (torrent) loadForm(torrent);
   },
   { immediate: true }
 );
@@ -266,8 +282,7 @@ watch(
   () => props.isOpen,
   (isOpen) => {
     if (isOpen && props.torrent) {
-      selectedCategoryId.value = props.torrent.categoryId || '';
-      description.value = props.torrent.description || '';
+      loadForm(props.torrent);
       isPreview.value = false;
       error.value = null;
     }
@@ -372,8 +387,10 @@ async function save() {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
+        name: name.value.trim() || undefined,
         description: description.value,
         categoryId: selectedCategoryId.value || null,
+        ...mediaIds.value,
       }),
     }).then(async (res) => {
       if (!res.ok) {

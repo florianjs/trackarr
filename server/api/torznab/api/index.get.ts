@@ -13,8 +13,9 @@ import type { H3Event } from 'h3';
 import { z } from 'zod';
 import { db, schema } from '../../../db';
 import { getStats } from '../../../redis/cache';
-import { desc, eq, ilike, and, inArray } from 'drizzle-orm';
+import { desc, eq, ilike, and, inArray, sql } from 'drizzle-orm';
 import { escapeLike } from '../../../utils/validation';
+import { parseImdbId, parseTmdbId, parseTvdbId } from '../../../../shared/utils/mediaIds';
 import { authenticateTorznab, sendTorznabError } from '../utils/auth';
 import {
   buildCapsXml,
@@ -53,6 +54,7 @@ const torznabQuerySchema = z.object({
   tvdbid: z.string().optional(),
   // Movie search params
   imdbid: z.string().optional(),
+  tmdbid: z.string().optional(),
 });
 
 export default defineEventHandler(async (event) => {
@@ -205,8 +207,10 @@ async function handleTvSearch(
   query: z.infer<typeof torznabQuerySchema>,
   user: { passkey: string }
 ) {
-  // Build search query with season/episode
-  let searchQuery = query.q || '';
+  // Build search query with season/episode. With a database ID the title
+  // text is redundant (and often formatted differently): match the ID instead.
+  const hasId = Boolean(query.tvdbid || query.imdbid || query.tmdbid);
+  let searchQuery = hasId ? '' : query.q || '';
 
   if (query.season) {
     // Format: S01 or S1
@@ -243,15 +247,8 @@ async function handleMovieSearch(
   query: z.infer<typeof torznabQuerySchema>,
   user: { passkey: string }
 ) {
-  let searchQuery = query.q || '';
-
-  // IMDB ID support - for now, just include it in search
-  // Full support would require IMDB field in torrents table
-  if (query.imdbid) {
-    // Clean IMDB ID format (tt1234567 -> 1234567)
-    const imdbNum = query.imdbid.replace(/^tt/i, '');
-    searchQuery += ` ${imdbNum}`;
-  }
+  // With a database ID, match the ID column instead of the title text
+  const searchQuery = query.imdbid || query.tmdbid ? '' : query.q || '';
 
   // Force Movie categories if none specified
   if (!query.cat) {
@@ -283,6 +280,22 @@ async function performSearch(
       conditions.push(
         and(...terms.map((term) => ilike(schema.torrents.name, `%${escapeLike(term)}%`)))
       );
+    }
+  }
+
+  // External database IDs (#47). An unparsable ID matches nothing rather
+  // than falling back to every torrent.
+  const idFilters = [
+    [query.imdbid, parseImdbId(query.imdbid), schema.torrents.imdbId],
+    [query.tmdbid, parseTmdbId(query.tmdbid), schema.torrents.tmdbId],
+    [query.tvdbid, parseTvdbId(query.tvdbid), schema.torrents.tvdbId],
+  ] as const;
+  for (const [raw, parsed, column] of idFilters) {
+    if (!raw) continue;
+    if (parsed === null) {
+      conditions.push(sql`false`);
+    } else {
+      conditions.push(eq(column, parsed));
     }
   }
 
@@ -336,6 +349,9 @@ async function performSearch(
         downloadUrl: `${baseUrl}/api/torznab/download?id=${torrent.infoHash}&apikey=${user.passkey}`,
         downloadVolumeFactor: 1, // Could be enhanced with freeleech support
         uploadVolumeFactor: 1,
+        imdbId: torrent.imdbId ?? undefined,
+        tmdbId: torrent.tmdbId ?? undefined,
+        tvdbId: torrent.tvdbId ?? undefined,
       };
     })
   );
