@@ -1,4 +1,4 @@
-import { count, eq, and, isNull } from 'drizzle-orm';
+import { count, eq, and, isNull, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { users, bannedIps, invitations } from '../../db/schema';
 import { generateToken } from '../../utils/crypto';
@@ -11,6 +11,11 @@ import {
 } from '../../utils/settings';
 import { validateBody, registerSchema } from '../../utils/schemas';
 import { verifyPoWSolution } from '../../utils/pow';
+import { getClientIP, protectEndpoint } from '../../utils/rateLimit';
+
+// Serializes registrations so the first-user (admin) check and invite
+// consumption cannot race.
+const REGISTER_LOCK_ID = 7_202_601;
 
 /**
  * POST /api/auth/register
@@ -18,6 +23,8 @@ import { verifyPoWSolution } from '../../utils/pow';
  * Server never receives password - only verifier and salt
  */
 export default defineEventHandler(async (event) => {
+  await protectEndpoint(event, 'auth');
+
   // Validate request body with Zod
   const body = await validateBody(event, registerSchema);
 
@@ -36,10 +43,8 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if IP is banned
-  const ip =
-    event.node.req.headers['x-forwarded-for'] ||
-    event.node.req.socket.remoteAddress;
-  const clientIp = Array.isArray(ip) ? ip[0] : ip;
+  const ip = getClientIP(event);
+  const clientIp = ip === 'unknown' ? null : ip;
 
   if (clientIp) {
     const isBanned = await db
@@ -139,30 +144,53 @@ export default defineEventHandler(async (event) => {
     panicPasswordHash = await hashPassword(body.panicPassword);
   }
 
-  await db.insert(users).values({
-    id: userId,
-    username: body.username,
-    authSalt: body.authSalt,
-    authVerifier: body.authVerifier,
-    passkey,
-    isAdmin: isFirstUser,
-    isModerator: false,
-    lastIp: clientIp,
-    uploaded: starterUpload,
-    invitesRemaining: isFirstUser ? 10 : defaultInvites,
-    panicPasswordHash,
-  });
+  await db.transaction(async (tx) => {
+    await tx.execute(sql`select pg_advisory_xact_lock(${REGISTER_LOCK_ID})`);
 
-  // Mark invite as used if registration was via invite
-  if (validInvite) {
-    await db
-      .update(invitations)
-      .set({
-        usedBy: userId,
-        usedAt: new Date(),
-      })
-      .where(eq(invitations.id, validInvite.id));
-  }
+    // Re-check under the lock: another request may have completed setup
+    const [current] = await tx.select({ count: count() }).from(users);
+    if ((current!.count === 0) !== isFirstUser) {
+      throw createError({
+        statusCode: 409,
+        message: 'Registration state changed. Please try again.',
+      });
+    }
+
+    await tx.insert(users).values({
+      id: userId,
+      username: body.username,
+      authSalt: body.authSalt,
+      authVerifier: body.authVerifier,
+      passkey,
+      isAdmin: isFirstUser,
+      isModerator: false,
+      lastIp: clientIp,
+      uploaded: starterUpload,
+      invitesRemaining: isFirstUser ? 10 : defaultInvites,
+      panicPasswordHash,
+    });
+
+    // Consume the invite only if still unused: one code, one account
+    if (validInvite) {
+      const consumed = await tx
+        .update(invitations)
+        .set({
+          usedBy: userId,
+          usedAt: new Date(),
+        })
+        .where(
+          and(eq(invitations.id, validInvite.id), isNull(invitations.usedBy))
+        )
+        .returning({ id: invitations.id });
+
+      if (consumed.length === 0) {
+        throw createError({
+          statusCode: 400,
+          message: 'Invalid invite code',
+        });
+      }
+    }
+  });
 
   // If first user, close registration by default
   if (isFirstUser) {
@@ -174,7 +202,6 @@ export default defineEventHandler(async (event) => {
     user: {
       id: userId,
       username: body.username,
-      passkey,
       isAdmin: isFirstUser,
       isModerator: false,
       uploaded: starterUpload,

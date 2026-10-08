@@ -3,7 +3,7 @@ import { asc, isNull } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  await requireUserSession(event);
+  await requireAuthSession(event);
 
   // Fetch all categories with their subcategories
   const allCategories = await db.query.categories.findMany({

@@ -5,7 +5,7 @@ import { isInviteEnabled } from '../../utils/settings';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
   rateLimit(event, RATE_LIMITS.mutation);
 
   // Check if invites are enabled

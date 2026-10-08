@@ -1,9 +1,11 @@
 import { eq } from 'drizzle-orm';
-import { createHash } from 'crypto';
+import { createHash, timingSafeEqual } from 'crypto';
 import { db } from '../../db';
 import { users, bannedIps } from '../../db/schema';
 import { validateBody, loginSchema } from '../../utils/schemas';
 import { redis } from '../../redis/client';
+import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
+import { getClientIP, protectEndpoint } from '../../utils/rateLimit';
 
 /**
  * POST /api/auth/login
@@ -11,28 +13,30 @@ import { redis } from '../../redis/client';
  * User proves knowledge of password without sending it
  */
 export default defineEventHandler(async (event) => {
+  await protectEndpoint(event, 'login');
+
   // Validate request body with Zod (now expects username, challenge, proof)
   const body = await validateBody(event, loginSchema);
 
-  // Verify challenge is valid and get associated user ID
-  const userId = await redis.get(`login:${body.challenge}`);
+  // Atomically consume the challenge: a concurrent request cannot reuse it
+  const userId = await redis.getdel(`login:${body.challenge}`);
   if (!userId) {
     throw createError({
       statusCode: 401,
       message: 'Invalid or expired challenge',
     });
   }
-  
-  // Delete challenge immediately to prevent reuse
-  await redis.del(`login:${body.challenge}`);
-  
-  // Find user by ID from challenge
-  const user = await db
-    .select()
-    .from(users)
-    .where(eq(users.id, userId))
-    .limit(1)
-    .then((r) => r[0]);
+
+  // Unknown usernames get a decoy challenge: fail exactly like a bad password
+  const user =
+    userId === FAKE_CHALLENGE_MARKER
+      ? undefined
+      : await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1)
+          .then((r) => r[0]);
 
   if (!user || user.username !== body.username) {
     throw createError({
@@ -50,10 +54,8 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if IP is banned
-  const ip =
-    event.node.req.headers['x-forwarded-for'] ||
-    event.node.req.socket.remoteAddress;
-  const clientIp = Array.isArray(ip) ? ip[0] : ip;
+  const ip = getClientIP(event);
+  const clientIp = ip === 'unknown' ? null : ip;
 
   if (clientIp) {
     const isIpBanned = await db
@@ -82,9 +84,13 @@ export default defineEventHandler(async (event) => {
   
   const expectedProof = createHash('sha256')
     .update(user.authVerifier + body.challenge)
-    .digest('hex');
+    .digest();
+  const providedProof = Buffer.from(body.proof, 'hex');
 
-  if (body.proof !== expectedProof) {
+  if (
+    providedProof.length !== expectedProof.length ||
+    !timingSafeEqual(providedProof, expectedProof)
+  ) {
     throw createError({
       statusCode: 401,
       message: 'Invalid credentials',
@@ -102,7 +108,6 @@ export default defineEventHandler(async (event) => {
     user: {
       id: user.id,
       username: user.username,
-      passkey: user.passkey,
       isAdmin: user.isAdmin,
       isModerator: user.isModerator,
       uploaded: user.uploaded,

@@ -3,23 +3,37 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
 
+export const authUserColumns = {
+  isBanned: users.isBanned,
+  isAdmin: users.isAdmin,
+  isModerator: users.isModerator,
+  passkey: users.passkey,
+};
+
+export interface AuthUserState {
+  isBanned: boolean;
+  isAdmin: boolean;
+  isModerator: boolean;
+  passkey: string;
+}
+
 /**
  * Require user authentication and check for bans
  */
 export async function requireAuthSession(event: H3Event) {
   const session = await requireUserSession(event);
 
-  // Skip DB check if already verified by middleware
-  if (event.context.authChecked) {
-    return session;
-  }
+  // Roles come from the DB, never from the cookie: a demoted admin keeps an
+  // old sealed cookie with isAdmin=true. Reuse the middleware lookup if done.
+  let dbUser = event.context.authUser as AuthUserState | undefined;
 
-  // Check DB for ban status to ensure banned users are immediately blocked
-  const [dbUser] = await db
-    .select({ isBanned: users.isBanned })
-    .from(users)
-    .where(eq(users.id, session.user.id))
-    .limit(1);
+  if (!dbUser) {
+    [dbUser] = await db
+      .select(authUserColumns)
+      .from(users)
+      .where(eq(users.id, session.user.id))
+      .limit(1);
+  }
 
   if (!dbUser || dbUser.isBanned) {
     await clearUserSession(event);
@@ -29,10 +43,20 @@ export async function requireAuthSession(event: H3Event) {
     });
   }
 
-  // Mark as checked
-  event.context.authChecked = true;
+  event.context.authUser = dbUser;
+  session.user.isAdmin = dbUser.isAdmin;
+  session.user.isModerator = dbUser.isModerator;
 
   return session;
+}
+
+/**
+ * Require authentication and return the user's current tracker passkey.
+ * The passkey is read from the DB, never stored in the client-visible session.
+ */
+export async function requireUserPasskey(event: H3Event): Promise<string> {
+  await requireAuthSession(event);
+  return (event.context.authUser as AuthUserState).passkey;
 }
 
 /**

@@ -4,12 +4,23 @@
  * Returns fake data for non-existent users to prevent enumeration
  */
 import { eq } from 'drizzle-orm';
-import { randomBytes } from 'crypto';
+import { createHmac, randomBytes } from 'crypto';
 import { db } from '../../db';
 import { users } from '../../db/schema';
 import { redis } from '../../redis/client';
+import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
 
 const CHALLENGE_TTL = 300; // 5 minutes
+
+// Fake salts must be stable per username, otherwise two calls reveal whether
+// the account exists (real salts never change).
+function fakeSaltFor(username: string): string {
+  const secret =
+    process.env.NUXT_SESSION_PASSWORD || process.env.IP_HASH_SECRET || '';
+  return createHmac('sha256', `fake-salt:${secret}`)
+    .update(username.toLowerCase())
+    .digest('base64');
+}
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -37,9 +48,13 @@ export default defineEventHandler(async (event) => {
   if (!user || !user.authSalt) {
     // Return fake salt to prevent username enumeration
     // Timing attack mitigation: always do the same work
-    const fakeSalt = randomBytes(32).toString('base64');
-    await redis.set(`login:fake:${challenge}`, '1', 'EX', CHALLENGE_TTL);
-    return { salt: fakeSalt, challenge };
+    await redis.set(
+      `login:${challenge}`,
+      FAKE_CHALLENGE_MARKER,
+      'EX',
+      CHALLENGE_TTL
+    );
+    return { salt: fakeSaltFor(username), challenge };
   }
   
   // Store challenge with user ID association

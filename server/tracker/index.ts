@@ -36,7 +36,9 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
     udp: false, // Disabled for private tracker (UDP doesn't support passkeys easily)
     ws: false, // Disabled: requires node-datachannel native build
     stats: true,
-    trustProxy: true,
+    // Only trust X-Forwarded-For when a reverse proxy rewrites it (Caddy in
+    // prod). Set TRACKER_TRUST_PROXY=false when the port is exposed directly.
+    trustProxy: process.env.TRACKER_TRUST_PROXY !== 'false',
     filter: (
       infoHashRaw: string,
       params: any,

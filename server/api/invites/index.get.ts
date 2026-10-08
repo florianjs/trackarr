@@ -2,7 +2,7 @@ import { db, schema } from '../../db';
 import { eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
 
   const invites = await db.query.invitations.findMany({
     where: eq(schema.invitations.createdBy, user.id),

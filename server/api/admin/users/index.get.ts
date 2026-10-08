@@ -1,19 +1,20 @@
 import { db } from '~~/server/db';
 import { users } from '~~/server/db/schema';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
+import { escapeLike } from '~~/server/utils/validation';
 import { ilike } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
-  await requireModeratorSession(event);
+  const session = await requireModeratorSession(event);
   const query = getQuery(event);
-  const search = query.search as string;
+  const search = typeof query.search === 'string' ? query.search.trim() : '';
 
-  if (!search) {
+  if (!search || search.length > 50) {
     return [];
   }
 
   const results = await db.query.users.findMany({
-    where: ilike(users.username, `%${search}%`),
+    where: ilike(users.username, `%${escapeLike(search)}%`),
     limit: 10,
     columns: {
       id: true,
@@ -26,6 +27,11 @@ export default defineEventHandler(async (event) => {
       createdAt: true,
     },
   });
+
+  // Raw IPs are admin-only
+  if (!session.user.isAdmin) {
+    return results.map(({ lastIp: _lastIp, ...rest }) => rest);
+  }
 
   return results;
 });

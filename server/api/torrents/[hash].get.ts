@@ -5,7 +5,7 @@ import { validateParam, infoHashSchema } from '../../utils/schemas';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  await requireUserSession(event);
+  await requireAuthSession(event);
 
   // Validate info hash parameter
   const infoHash = validateParam(event, 'hash', infoHashSchema);

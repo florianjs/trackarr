@@ -1,5 +1,5 @@
 import { createHash, randomBytes } from 'crypto';
-import { readSecret } from './secrets';
+import { readOptionalSecret } from './secrets';
 
 /**
  * IP Hashing Utilities
@@ -10,11 +10,36 @@ import { readSecret } from './secrets';
 
 // Generate a daily salt based on date
 // This allows peer matching within a day but prevents long-term IP tracking
+// Known placeholder shipped in old .env.example files: IPv4 hashes made with a
+// public secret can be reversed by brute force in seconds.
+const PLACEHOLDER_IP_HASH_SECRET = 'trackarr-default-secret-change-me';
+let devIpHashSecret: string | null = null;
+
+function getIpHashSecret(): string {
+  const secret = readOptionalSecret('IP_HASH_SECRET');
+
+  if (process.env.NODE_ENV === 'production') {
+    if (!secret || secret === PLACEHOLDER_IP_HASH_SECRET || secret.length < 32) {
+      throw new Error(
+        'IP_HASH_SECRET must be set to a random value of at least 32 characters'
+      );
+    }
+    return secret;
+  }
+
+  if (secret) return secret;
+
+  // Development without a secret: random per process, never a shared default
+  if (!devIpHashSecret) {
+    devIpHashSecret = randomBytes(32).toString('hex');
+    console.warn('[Security] IP_HASH_SECRET not set, using a random dev secret');
+  }
+  return devIpHashSecret;
+}
+
 function getDailySalt(): string {
   const date = new Date().toISOString().slice(0, 10); // YYYY-MM-DD
-  // Read IP hash secret from Docker secret or environment variable (required, no default)
-  const secret = readSecret('IP_HASH_SECRET');
-  return `${secret}:${date}`;
+  return `${getIpHashSecret()}:${date}`;
 }
 
 /**
@@ -62,3 +87,9 @@ export function secureCompare(a: string, b: string): boolean {
   }
   return result === 0;
 }
+
+/**
+ * Value stored for login challenges issued to unknown usernames.
+ * Not a valid user id, so login fails like a wrong password.
+ */
+export const FAKE_CHALLENGE_MARKER = 'fake';

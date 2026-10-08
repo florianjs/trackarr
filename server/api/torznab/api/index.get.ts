@@ -14,6 +14,7 @@ import { z } from 'zod';
 import { db, schema } from '../../../db';
 import { getStats } from '../../../redis/cache';
 import { desc, eq, ilike, and, inArray } from 'drizzle-orm';
+import { escapeLike } from '../../../utils/validation';
 import { authenticateTorznab, sendTorznabError } from '../utils/auth';
 import {
   buildCapsXml,
@@ -280,7 +281,7 @@ async function performSearch(
     const terms = query.q.split(/\s+/).filter((t) => t.length > 0);
     if (terms.length > 0) {
       conditions.push(
-        and(...terms.map((term) => ilike(schema.torrents.name, `%${term}%`)))
+        and(...terms.map((term) => ilike(schema.torrents.name, `%${escapeLike(term)}%`)))
       );
     }
   }

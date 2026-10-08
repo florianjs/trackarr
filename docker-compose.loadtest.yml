@@ -28,7 +28,7 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret-not-for-production}
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
     ports:
       - "3000:3000"   # Nuxt app

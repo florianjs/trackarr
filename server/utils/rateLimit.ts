@@ -5,6 +5,11 @@
  */
 
 import { redis } from '../redis/client';
+import {
+  getClientIPOptions,
+  normalizeIP,
+  resolveClientIP,
+} from './clientIp';
 
 // ============================================================================
 // Types & Configuration
@@ -61,31 +66,16 @@ export interface RateLimitOptions {
 // ============================================================================
 
 /**
- * Extract client IP with proxy support
+ * Extract client IP, honouring proxy headers only from trusted proxies
  */
 export function getClientIP(event: any): string {
-  // Check trusted proxy headers
-  const cfConnectingIP = getHeader(event, 'cf-connecting-ip');
-  if (cfConnectingIP) return cfConnectingIP;
-
-  const realIP = getHeader(event, 'x-real-ip');
-  if (realIP) return realIP;
-
-  const forwarded = getHeader(event, 'x-forwarded-for');
-  if (forwarded) return forwarded.split(',')[0].trim();
-
-  // Fallback to direct connection IP
-  return event.node?.req?.socket?.remoteAddress || 'unknown';
-}
-
-/**
- * Normalize IP address (handle IPv6-mapped IPv4)
- */
-function normalizeIP(ip: string): string {
-  if (ip.startsWith('::ffff:')) {
-    return ip.slice(7);
-  }
-  return ip;
+  return resolveClientIP(
+    {
+      remoteAddress: event.node?.req?.socket?.remoteAddress,
+      headers: event.node?.req?.headers ?? {},
+    },
+    getClientIPOptions()
+  );
 }
 
 // ============================================================================
@@ -395,6 +385,9 @@ export const RATE_LIMITS = {
 
   // Auth endpoints - strict to prevent brute force
   auth: { windowSec: 300, maxRequests: 5, prefix: 'auth', progressive: true },
+
+  // Login attempts - strict, without auto-blacklist (shared IPs, typos)
+  login: { windowSec: 300, maxRequests: 10, prefix: 'login' },
 
   // Search - moderate
   search: { windowSec: 60, maxRequests: 30, prefix: 'search' },

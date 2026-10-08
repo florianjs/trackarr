@@ -5,7 +5,7 @@ import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
 
   // Rate limit uploads
   rateLimit(event, RATE_LIMITS.mutation);

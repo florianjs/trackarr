@@ -7,7 +7,7 @@ const paramsSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  await requireUserSession(event);
+  await requireAuthSession(event);
 
   const params = paramsSchema.parse(getRouterParams(event));
 

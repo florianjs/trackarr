@@ -7,7 +7,7 @@ import { redis } from '../../../redis/client';
 
 export default defineEventHandler(async (event) => {
   // Admin only
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
   if (!user.isAdmin) {
     throw createError({ statusCode: 403, message: 'Admin only' });
   }

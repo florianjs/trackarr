@@ -11,7 +11,7 @@ const reportSchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
   rateLimit(event, RATE_LIMITS.mutation);
 
   const body = await readBody(event);

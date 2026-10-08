@@ -56,3 +56,5 @@ documentation/
 .dev-downloads/	
 .publishignore
 .scripts/publish-public.sh
+# Internal working notes
+.ignore/
