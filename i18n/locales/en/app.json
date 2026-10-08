@@ -1012,5 +1012,41 @@
       "system": "System",
       "dark": "Dark"
     }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Good morning, {name}",
+      "afternoon": "Good afternoon, {name}",
+      "evening": "Good evening, {name}",
+      "neutral": "Hello, {name}"
+    },
+    "memberSince": "Member since {date}",
+    "browse": "Browse torrents",
+    "upload": "Upload a torrent",
+    "account": "Your account",
+    "seeding": "Seeding",
+    "leeching": "not leeching | leeching 1 torrent | leeching {n} torrents",
+    "points": "Bonus points",
+    "spendPoints": "Spend them in the shop",
+    "hnr": "Hit & run",
+    "hnrNone": "Nothing to catch up on",
+    "hnrWarning": "Keep seeding to clear them",
+    "latest": "New torrents",
+    "seeAll": "See all",
+    "columns": {
+      "name": "Name",
+      "size": "Size",
+      "seeders": "Seeders",
+      "leechers": "Leechers",
+      "age": "Added"
+    },
+    "noTorrents": "No torrents yet.",
+    "uploadFirst": "Upload the first one",
+    "bounties": "Open bounties",
+    "noBounties": "No open bounty.",
+    "requestTorrent": "Request a torrent",
+    "forum": "Latest on the forum",
+    "noTopics": "No topic yet.",
+    "startTopic": "Start one"
   }
 }

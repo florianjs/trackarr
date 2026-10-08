@@ -52,8 +52,8 @@
           <ShellTransferMeter
             v-if="user"
             class="hidden sm:flex"
-            :uploaded="user.uploaded"
-            :downloaded="user.downloaded"
+            :uploaded="transfer?.uploaded ?? user.uploaded"
+            :downloaded="transfer?.downloaded ?? user.downloaded"
             :freeleech="Boolean(freeleech)"
             @refresh="refreshStats"
           />
@@ -283,10 +283,24 @@ onMounted(() => {
 // ---------------------------------------------------------------------------
 // Account
 // ---------------------------------------------------------------------------
+// Live upload/download for the meter: the sealed session only holds the
+// values from sign-in, so read them from the database
+const transfer = ref<{ uploaded: number; downloaded: number } | null>(null);
 async function refreshStats() {
-  await $fetch('/api/auth/status');
+  const status = await $fetch<{ user: { uploaded: number; downloaded: number } | null }>(
+    '/api/auth/status'
+  ).catch(() => null);
+  transfer.value = status?.user
+    ? { uploaded: status.user.uploaded, downloaded: status.user.downloaded }
+    : null;
   await fetch();
 }
+let transferPoll: ReturnType<typeof setInterval> | undefined;
+onMounted(() => {
+  refreshStats();
+  transferPoll = setInterval(refreshStats, 5 * 60 * 1000);
+});
+onUnmounted(() => clearInterval(transferPoll));
 
 async function handleLogout() {
   await clear();

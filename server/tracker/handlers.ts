@@ -14,6 +14,7 @@ import { createHnrEntry, updateSeedTime } from '../utils/hnr';
 import { createHash } from 'crypto';
 import { computeCredit, getMaxRateBytes } from './credit';
 import { computeSeedingBonus } from './bonusAccrual';
+import { recordUserPeer, removeUserPeer } from '../redis/userActivity';
 import { getTrackerTorrent, getTrackerUser, markSnatched } from './lookups';
 import { getFreeleechState } from '../utils/settings';
 
@@ -183,6 +184,7 @@ export async function handleAnnounce(params: {
   if (event === 'stopped') {
     // Remove peer from swarm
     await removePeer(infoHash, peerId);
+    if (user) await removeUserPeer(user.id, infoHash);
     return;
   }
 
@@ -196,6 +198,7 @@ export async function handleAnnounce(params: {
     left: params.left,
     isSeeder: seeding,
   });
+  if (user) await recordUserPeer(user.id, infoHash, seeding);
 
   // Track completed downloads
   if (event === 'completed') {
