@@ -1,22 +1,94 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+/* Self-hosted fonts (the CSP only allows same-origin fonts) */
+@import '@fontsource/ibm-plex-sans/400.css';
+@import '@fontsource/ibm-plex-sans/500.css';
+@import '@fontsource/ibm-plex-sans/600.css';
+@import '@fontsource/ibm-plex-mono/400.css';
+@import '@fontsource/ibm-plex-mono/500.css';
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/*
+ * Theme tokens as RGB channels (see tailwind.config.ts).
+ * Light by default, dark when the system prefers it, and an explicit
+ * data-theme on <html> (user choice) wins over the system.
+ */
 @layer base {
+  :root {
+    color-scheme: light;
+    --bg: 243 244 246;
+    --surface: 255 255 255;
+    --raised: 247 248 250;
+    --hover: 236 238 241;
+    --line: 220 223 228;
+    --line-strong: 195 200 208;
+    --ink: 26 28 32;
+    --ink-2: 79 85 94;
+    --ink-3: 107 113 123;
+    --seed: 29 133 86;
+    --leech: 168 107 12;
+    --free: 91 71 214;
+    --danger: 194 58 51;
+    --contrast: 26 28 32;
+    --contrast-inv: 255 255 255;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      color-scheme: dark;
+      --bg: 23 24 27;
+      --surface: 31 33 37;
+      --raised: 40 42 47;
+      --hover: 46 48 54;
+      --line: 51 54 60;
+      --line-strong: 70 74 82;
+      --ink: 236 234 229;
+      --ink-2: 167 166 161;
+      --ink-3: 132 133 127;
+      --seed: 76 183 130;
+      --leech: 226 162 62;
+      --free: 155 138 247;
+      --danger: 230 98 91;
+      --contrast: 245 244 240;
+      --contrast-inv: 23 24 27;
+    }
+  }
+
+  :root[data-theme='dark'] {
+    color-scheme: dark;
+    --bg: 23 24 27;
+    --surface: 31 33 37;
+    --raised: 40 42 47;
+    --hover: 46 48 54;
+    --line: 51 54 60;
+    --line-strong: 70 74 82;
+    --ink: 236 234 229;
+    --ink-2: 167 166 161;
+    --ink-3: 132 133 127;
+    --seed: 76 183 130;
+    --leech: 226 162 62;
+    --free: 155 138 247;
+    --danger: 230 98 91;
+    --contrast: 245 244 240;
+    --contrast-inv: 23 24 27;
+  }
+
   html {
     @apply antialiased;
+    font-feature-settings: 'ss02';
   }
 
   body {
-    @apply bg-bg-primary text-text-primary font-sans selection:bg-white selection:text-black;
-    background-image: radial-gradient(
-      circle at 2px 2px,
-      #1a1a1a 1px,
-      transparent 0
-    );
-    background-size: 40px 40px;
+    @apply bg-bg-primary text-text-primary font-sans text-sm leading-6;
+  }
+
+  ::selection {
+    @apply bg-free/25 text-text-primary;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-free/60 ring-offset-1 ring-offset-bg-primary;
   }
 
   /* Custom scrollbar */
@@ -25,7 +97,7 @@
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-bg-secondary;
+    @apply bg-transparent;
   }
 
   ::-webkit-scrollbar-thumb {
@@ -35,80 +107,98 @@
   ::-webkit-scrollbar-thumb:hover {
     @apply bg-border-hover;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
-  /* Card component */
+  /* Panels: flat surface, one radius, no glow */
   .card {
-    @apply bg-bg-secondary/80 backdrop-blur-sm border border-border rounded-md transition-all duration-200 hover:border-border-hover;
+    @apply bg-bg-secondary border border-border rounded-md;
   }
 
   .card-header {
-    @apply px-3 py-2 border-b border-border flex items-center justify-between;
+    @apply px-4 py-2.5 border-b border-border flex items-center justify-between gap-3;
   }
 
   .card-body {
-    @apply p-3;
+    @apply p-4;
   }
 
-  /* Button styles */
+  /* Buttons */
   .btn {
-    @apply px-3 py-1.5 rounded text-sm font-medium transition-all duration-200 active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none;
+    @apply inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded text-sm font-medium transition-colors disabled:opacity-50 disabled:pointer-events-none;
   }
 
   .btn-primary {
-    @apply bg-white text-black hover:bg-gray-200 shadow-[0_0_15px_rgba(255,255,255,0.1)];
+    @apply bg-white text-black hover:bg-white/85;
   }
 
   .btn-secondary {
     @apply bg-bg-tertiary text-text-primary border border-border hover:bg-bg-hover hover:border-border-hover;
   }
 
-  /* Input styles */
-  .input {
-    @apply bg-bg-tertiary/50 border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-white/30 focus:bg-bg-tertiary transition-all;
+  .btn-ghost {
+    @apply text-text-secondary hover:text-text-primary hover:bg-bg-hover;
   }
 
-  /* Table styles */
+  /* Inputs */
+  .input {
+    @apply bg-bg-tertiary border border-border rounded px-3 py-1.5 text-sm text-text-primary placeholder-text-muted transition-colors hover:border-border-hover focus:outline-none focus:border-free/60 focus:ring-2 focus:ring-free/20;
+  }
+
+  /* Tables */
   .data-table {
-    @apply w-full text-xs border-separate border-spacing-0;
+    @apply w-full text-sm border-separate border-spacing-0;
   }
 
   .data-table th {
-    @apply text-left text-text-muted font-semibold px-3 py-2 border-b border-border bg-bg-secondary/50 uppercase tracking-wider;
+    @apply text-left text-xs font-medium text-text-muted px-3 py-2 border-b border-border;
   }
 
   .data-table td {
-    @apply px-3 py-2 border-b border-border/50;
+    @apply px-3 py-2 border-b border-border/60;
   }
 
   .data-table tr:last-child td {
     @apply border-b-0;
   }
 
-  .data-table tr:hover td {
-    @apply bg-white/[0.02];
+  .data-table tbody tr:hover td {
+    @apply bg-bg-hover/60;
   }
 
-  /* Stat badge */
+  /* Swarm counters */
   .stat-badge {
-    @apply inline-flex items-center gap-1 px-1.5 py-0.5 rounded-sm text-[10px] font-mono font-bold uppercase;
+    @apply inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-xs font-mono tabular-nums;
   }
 
   .stat-seeders {
-    @apply text-success bg-success/5 border border-success/20;
+    @apply text-seed bg-seed/10;
   }
 
   .stat-leechers {
-    @apply text-warning bg-warning/5 border border-warning/20;
+    @apply text-leech bg-leech/10;
   }
 
   .btn-search {
-    @apply p-1.5 text-text-muted hover:text-white transition-colors;
+    @apply p-1.5 text-text-muted hover:text-text-primary transition-colors;
   }
 }
 
 @layer utilities {
+  /* Numbers that should line up: sizes, ratios, counts */
+  .num {
+    @apply font-mono tabular-nums;
+  }
+
   .truncate-hash {
     @apply font-mono text-2xs;
     max-width: 120px;

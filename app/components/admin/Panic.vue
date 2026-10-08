@@ -60,7 +60,7 @@
     <Teleport to="body">
       <div
         v-if="showConfirmModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-scrim/80 flex items-center justify-center z-50 p-4"
         @click.self="showConfirmModal = false"
       >
         <div
@@ -132,7 +132,7 @@
     <Teleport to="body">
       <div
         v-if="showRestoreModal"
-        class="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4"
+        class="fixed inset-0 bg-scrim/80 flex items-center justify-center z-50 p-4"
         @click.self="showRestoreModal = false"
       >
         <div

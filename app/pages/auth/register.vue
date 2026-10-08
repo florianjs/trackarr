@@ -73,7 +73,7 @@
           class="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded"
         >
           <p class="text-amber-400 text-sm">
-            <Icon name="ph:warning" class="inline mr-1" />
+            <Icon name="ph:warning" class="inline-block align-[-2px] mr-1" />
             {{ t('auth.register.firstAccountWarning') }}
           </p>
         </div>
@@ -81,7 +81,7 @@
         <!-- ZKE Warning -->
         <div class="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded">
           <p class="text-red-400 text-sm">
-            <Icon name="ph:shield-warning" class="inline mr-1" />
+            <Icon name="ph:shield-warning" class="inline-block align-[-2px] mr-1" />
             <strong>{{ t('auth.register.zkeTitle') }}</strong>
             {{ t('auth.register.zkeText') }}
           </p>
@@ -175,7 +175,7 @@
               class="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded"
             >
               <p class="text-red-400 text-sm">
-                <Icon name="ph:shield-warning" class="inline mr-1" />
+                <Icon name="ph:shield-warning" class="inline-block align-[-2px] mr-1" />
                 {{ t('auth.register.panicWarning') }}
               </p>
             </div>

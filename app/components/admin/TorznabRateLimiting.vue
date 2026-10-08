@@ -132,7 +132,7 @@
         class="flex items-center justify-between border-t border-border pt-4"
       >
         <p class="text-xs text-text-muted">
-          <Icon name="ph:info" class="inline mr-1" />
+          <Icon name="ph:info" class="inline-block align-[-2px] mr-1" />
           {{ t('admin.torznabRateLimit.immediateNote') }}
         </p>
         <button

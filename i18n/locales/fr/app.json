@@ -950,5 +950,67 @@
       "stop": "Arrêter le freeleech",
       "confirmStop": "Arrêter le freeleech global maintenant ?"
     }
+  },
+  "shell": {
+    "skip": "Aller au contenu",
+    "groups": {
+      "browse": "Parcourir",
+      "community": "Communauté",
+      "account": "Mon compte",
+      "staff": "Équipe"
+    },
+    "nav": {
+      "home": "Accueil",
+      "torrents": "Torrents",
+      "bounties": "Bounties",
+      "forum": "Forum",
+      "shop": "Boutique bonus",
+      "invites": "Invitations",
+      "profile": "Mon profil",
+      "mod": "Modération",
+      "admin": "Administration"
+    },
+    "menu": {
+      "open": "Ouvrir la navigation",
+      "close": "Fermer la navigation"
+    },
+    "search": {
+      "trigger": "Rechercher",
+      "placeholder": "Rechercher un torrent, un ID IMDb ou un info hash",
+      "pages": "Pages",
+      "torrents": "Torrents",
+      "seeAll": "Voir tous les résultats pour « {q} »",
+      "empty": "Aucun torrent ne correspond à « {q} »",
+      "loading": "Recherche…",
+      "close": "Fermer la recherche",
+      "hint": "pour naviguer, Entrée pour ouvrir"
+    },
+    "meter": {
+      "uploaded": "Envoyé",
+      "downloaded": "Reçu",
+      "ratio": "Ratio",
+      "refresh": "Actualiser mes stats",
+      "label": "Vos transferts"
+    },
+    "freeleech": {
+      "pill": "Freeleech",
+      "until": "Freeleech jusqu'à {time}"
+    },
+    "user": {
+      "open": "Menu du compte",
+      "passkey": "Passkey",
+      "copy": "Copier la passkey",
+      "copied": "Copiée",
+      "points": "{n} points",
+      "signOut": "Se déconnecter",
+      "theme": "Thème",
+      "language": "Langue"
+    },
+    "theme": {
+      "label": "Thème",
+      "light": "Clair",
+      "system": "Système",
+      "dark": "Sombre"
+    }
   }
 }

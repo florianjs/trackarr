@@ -85,7 +85,7 @@
     <!-- Create Category Modal -->
     <div
       v-if="showCreateCategory"
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-scrim/80 backdrop-blur-sm"
     >
       <div
         class="bg-bg-secondary border border-border rounded-lg w-full max-w-md p-6 space-y-4"
@@ -148,7 +148,7 @@
     <!-- Edit Category Modal -->
     <div
       v-if="showEditCategory"
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-scrim/80 backdrop-blur-sm"
     >
       <div
         class="bg-bg-secondary border border-border rounded-lg w-full max-w-md p-6 space-y-4"
@@ -209,7 +209,7 @@
     <!-- Delete Confirmation Modal -->
     <div
       v-if="showDeleteConfirm"
-      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm"
+      class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-scrim/80 backdrop-blur-sm"
     >
       <div
         class="bg-bg-secondary border border-border rounded-lg w-full max-w-md p-6 space-y-4"
