@@ -55,7 +55,16 @@
 			roll_keep 10
 			roll_keep_for 720h
 		}
-		format json
+		format filter {
+			wrap json
+			fields {
+				# Passkeys travel in query strings: keep them out of access logs
+				request>uri query {
+					delete passkey
+					delete apikey
+				}
+			}
+		}
 	}
 }
 
@@ -78,7 +87,16 @@
 			roll_size 100mb
 			roll_keep 5
 		}
-		format json
+		format filter {
+			wrap json
+			fields {
+				# Passkeys travel in query strings: keep them out of access logs
+				request>uri query {
+					delete passkey
+					delete apikey
+				}
+			}
+		}
 	}
 }
 

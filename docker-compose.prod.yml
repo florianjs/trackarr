@@ -63,18 +63,18 @@ services:
     environment:
       NODE_ENV: production
       # Session secret (required by nuxt-auth-utils)
-      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET}
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET:?NUXT_SESSION_SECRET is required}
       # Database connection (SSL disabled for internal Docker network)
-      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@pgbouncer:6432/${DB_NAME:-trackarr}?sslmode=disable
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:?DB_PASSWORD is required}@pgbouncer:6432/${DB_NAME:-trackarr}?sslmode=disable
       DB_HOST: pgbouncer
       DB_PORT: 6432
       DB_USER: ${DB_USER:-tracker}
-      DB_PASSWORD: ${DB_PASSWORD:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       DB_NAME: ${DB_NAME:-trackarr}
       DB_SSL: "false"
       # Redis connection
       REDIS_URL: redis://redis:6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       # Tracker announce URLs (displayed in admin dashboard)
@@ -82,7 +82,7 @@ services:
       TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
       TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
       # Security: Secret for hashing peer IPs
-      IP_HASH_SECRET: ${IP_HASH_SECRET}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
       # Debug mode for verbose tracker logging
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
     expose:
@@ -141,7 +141,7 @@ services:
       - no-new-privileges:true
     environment:
       POSTGRES_USER: ${DB_USER:-tracker}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-tracker}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       POSTGRES_DB: ${DB_NAME:-trackarr}
       POSTGRES_HOST_AUTH_METHOD: scram-sha-256
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
@@ -196,10 +196,10 @@ services:
     container_name: trackarr-pgbouncer
     restart: always
     environment:
-      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/${DB_NAME:-trackarr}
       DB_HOST: postgres
       DB_USER: ${DB_USER:-tracker}
-      DB_PASSWORD: ${DB_PASSWORD:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
       AUTH_TYPE: scram-sha-256
       POOL_MODE: transaction
       DEFAULT_POOL_SIZE: 20
@@ -247,7 +247,7 @@ services:
       --save 900 1
       --save 300 10
       --save 60 10000
-      --requirepass ${REDIS_PASSWORD}
+      --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
       --maxmemory 512mb
       --maxmemory-policy allkeys-lru
       --tcp-keepalive 300
@@ -269,7 +269,7 @@ services:
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD}", "ping"]
+      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:?REDIS_PASSWORD is required}", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
@@ -321,7 +321,7 @@ services:
     restart: always
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
       GF_USERS_ALLOW_SIGN_UP: "false"
       GF_SERVER_ROOT_URL: "https://${MONITORING_DOMAIN:-monitoring.localhost}/grafana/"
       GF_SERVER_SERVE_FROM_SUB_PATH: "true"
@@ -374,7 +374,7 @@ services:
     container_name: trackarr-postgres-exporter
     restart: always
     environment:
-      DATA_SOURCE_NAME: "postgresql://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}?sslmode=disable"
+      DATA_SOURCE_NAME: "postgresql://${DB_USER:-tracker}:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/${DB_NAME:-trackarr}?sslmode=disable"
     expose:
       - "9187"
     networks:
@@ -393,7 +393,7 @@ services:
     restart: always
     environment:
       REDIS_ADDR: redis://redis:6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
     expose:
       - "9121"
     networks:
