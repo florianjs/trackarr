@@ -14,8 +14,13 @@ import { createHnrEntry, updateSeedTime } from '../utils/hnr';
 import { createHash } from 'crypto';
 import { computeCredit, getMaxRateBytes } from './credit';
 import { computeSeedingBonus } from './bonusAccrual';
+import { recordUserPeer, removeUserPeer } from '../redis/userActivity';
 import { getTrackerTorrent, getTrackerUser, markSnatched } from './lookups';
 import { getFreeleechState } from '../utils/settings';
+
+function logActivityError(err: unknown) {
+  console.error('[Activity] User peer tracking failed:', err);
+}
 
 function hashOwner(passkey: string): string {
   return createHash('sha256').update(`peer-owner:${passkey}`).digest('hex').slice(0, 16);
@@ -183,6 +188,8 @@ export async function handleAnnounce(params: {
   if (event === 'stopped') {
     // Remove peer from swarm
     await removePeer(infoHash, peerId);
+    // Dashboard counter only: never fail the announce over it
+    if (user) await removeUserPeer(user.id, infoHash).catch(logActivityError);
     return;
   }
 
@@ -196,6 +203,7 @@ export async function handleAnnounce(params: {
     left: params.left,
     isSeeder: seeding,
   });
+  if (user) await recordUserPeer(user.id, infoHash, seeding).catch(logActivityError);
 
   // Track completed downloads
   if (event === 'completed') {

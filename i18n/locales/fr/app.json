@@ -1013,5 +1013,41 @@
       "system": "Système",
       "dark": "Sombre"
     }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Bonjour, {name}",
+      "afternoon": "Bon après-midi, {name}",
+      "evening": "Bonsoir, {name}",
+      "neutral": "Bonjour, {name}"
+    },
+    "memberSince": "Membre depuis {date}",
+    "browse": "Parcourir les torrents",
+    "upload": "Uploader un torrent",
+    "account": "Votre compte",
+    "seeding": "En seed",
+    "leeching": "aucun en leech | 1 torrent en leech | {n} torrents en leech",
+    "points": "Points bonus",
+    "spendPoints": "À dépenser dans la boutique",
+    "hnr": "Hit & run",
+    "hnrNone": "Rien à rattraper",
+    "hnrWarning": "Continuez à seeder pour les effacer",
+    "latest": "Nouveaux torrents",
+    "seeAll": "Tout voir",
+    "columns": {
+      "name": "Nom",
+      "size": "Taille",
+      "seeders": "Seeders",
+      "leechers": "Leechers",
+      "age": "Ajouté"
+    },
+    "noTorrents": "Aucun torrent pour l'instant.",
+    "uploadFirst": "Uploadez le premier",
+    "bounties": "Bounties ouverts",
+    "noBounties": "Aucun bounty ouvert.",
+    "requestTorrent": "Demander un torrent",
+    "forum": "Derniers sujets du forum",
+    "noTopics": "Aucun sujet pour l'instant.",
+    "startTopic": "Lancer la discussion"
   }
 }
