@@ -17,11 +17,12 @@
             <h3
               class="text-xs font-bold uppercase tracking-widest text-text-primary"
             >
-              Edit Torrent
+              {{ t('edit.title') }}
             </h3>
           </div>
           <button
             class="text-text-muted hover:text-white transition-colors"
+            :aria-label="t('common.close')"
             @click="close"
           >
             <Icon name="ph:x-bold" />
@@ -34,7 +35,7 @@
           <div class="space-y-2">
             <label
               class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
-              >Torrent Name</label
+              >{{ t('edit.torrentName') }}</label
             >
             <input
               v-model="name"
@@ -50,13 +51,13 @@
           <div class="space-y-2">
             <label
               class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
-              >Category</label
+              >{{ t('common.category') }}</label
             >
             <select
               v-model="selectedCategoryId"
               class="input w-full !py-2 text-xs font-bold uppercase tracking-wider"
             >
-              <option value="">No category</option>
+              <option value="">{{ t('edit.noCategory') }}</option>
               <option
                 v-for="cat in getFlattenedCategories(categories || [])"
                 :key="cat.id"
@@ -72,7 +73,7 @@
             <div class="flex items-center justify-between ml-1">
               <label
                 class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
-                >Description (Markdown)</label
+                >{{ t('markdown.descriptionLabel') }}</label
               >
               <button
                 type="button"
@@ -82,7 +83,7 @@
                 "
                 @click="isPreview = !isPreview"
               >
-                {{ isPreview ? 'Edit' : 'Preview' }}
+                {{ isPreview ? t('common.edit') : t('markdown.preview') }}
               </button>
             </div>
 
@@ -94,7 +95,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="Bold"
+                  :title="t('markdown.bold')"
                   @click="insertMarkdown('bold')"
                 >
                   <Icon name="ph:text-b-bold" />
@@ -102,7 +103,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="Italic"
+                  :title="t('markdown.italic')"
                   @click="insertMarkdown('italic')"
                 >
                   <Icon name="ph:text-italic-bold" />
@@ -111,7 +112,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="Link"
+                  :title="t('markdown.link')"
                   @click="insertMarkdown('link')"
                 >
                   <Icon name="ph:link-bold" />
@@ -119,7 +120,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="Image"
+                  :title="t('markdown.image')"
                   @click="insertMarkdown('image')"
                 >
                   <Icon name="ph:image-bold" />
@@ -128,7 +129,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="List"
+                  :title="t('markdown.list')"
                   @click="insertMarkdown('list')"
                 >
                   <Icon name="ph:list-bullets-bold" />
@@ -136,7 +137,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="Quote"
+                  :title="t('markdown.quote')"
                   @click="insertMarkdown('quote')"
                 >
                   <Icon name="ph:quotes-bold" />
@@ -144,7 +145,7 @@
                 <button
                   type="button"
                   class="toolbar-btn"
-                  title="Code"
+                  :title="t('markdown.code')"
                   @click="insertMarkdown('code')"
                 >
                   <Icon name="ph:code-bold" />
@@ -155,7 +156,7 @@
                 v-model="description"
                 rows="6"
                 class="input w-full !py-2 text-xs font-medium resize-none rounded-t-none"
-                placeholder="Enter torrent description, images, etc..."
+                :placeholder="t('markdown.descriptionPlaceholder')"
               ></textarea>
             </div>
 
@@ -169,7 +170,7 @@
                 v-html="renderedDescription"
               ></div>
               <div v-else class="text-text-muted italic text-[10px]">
-                Nothing to preview
+                {{ t('markdown.nothingToPreview') }}
               </div>
             </div>
           </div>
@@ -193,7 +194,7 @@
               :disabled="isSaving"
               @click="close"
             >
-              Cancel
+              {{ t('common.cancel') }}
             </button>
             <button
               class="btn btn-primary flex-1 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
@@ -205,7 +206,7 @@
                 name="ph:circle-notch"
                 class="animate-spin"
               />
-              <span>{{ isSaving ? 'Saving...' : 'Save Changes' }}</span>
+              <span>{{ isSaving ? t('common.saving') : t('common.saveChanges') }}</span>
             </button>
           </div>
         </div>
@@ -215,6 +216,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 
 interface Category {
   id: string;
@@ -328,37 +330,37 @@ function insertMarkdown(type: string) {
     case 'bold':
       before = '**';
       after = '**';
-      placeholder = 'bold text';
+      placeholder = t('markdown.placeholders.bold');
       break;
     case 'italic':
       before = '*';
       after = '*';
-      placeholder = 'italic text';
+      placeholder = t('markdown.placeholders.italic');
       break;
     case 'link':
       before = '[';
       after = '](url)';
-      placeholder = 'link text';
+      placeholder = t('markdown.placeholders.link');
       break;
     case 'image':
       before = '![';
       after = '](url)';
-      placeholder = 'alt text';
+      placeholder = t('markdown.placeholders.image');
       break;
     case 'list':
       before = '\n- ';
       after = '';
-      placeholder = 'list item';
+      placeholder = t('markdown.placeholders.list');
       break;
     case 'quote':
       before = '\n> ';
       after = '';
-      placeholder = 'quote';
+      placeholder = t('markdown.placeholders.quote');
       break;
     case 'code':
       before = '`';
       after = '`';
-      placeholder = 'code';
+      placeholder = t('markdown.placeholders.code');
       break;
   }
 
@@ -395,7 +397,7 @@ async function save() {
     }).then(async (res) => {
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
-        throw new Error(data.message || 'Failed to save changes');
+        throw new Error(data.message || t('edit.saveFailed'));
       }
       return res.json();
     });
@@ -404,7 +406,7 @@ async function save() {
     close();
   } catch (err: unknown) {
     const fetchError = err as { message?: string };
-    error.value = fetchError.message || 'Failed to save changes';
+    error.value = fetchError.message || t('edit.saveFailed');
   } finally {
     isSaving.value = false;
   }

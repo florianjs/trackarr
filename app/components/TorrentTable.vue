@@ -2,29 +2,29 @@
   <table class="data-table">
     <thead>
       <tr>
-        <th class="w-1/2">Name</th>
-        <th v-if="!compact">Category</th>
-        <th v-if="!compact">Hash</th>
+        <th class="w-1/2">{{ t('common.name') }}</th>
+        <th v-if="!compact">{{ t('common.category') }}</th>
+        <th v-if="!compact">{{ t('torrents.table.hash') }}</th>
         <th class="text-center w-16">
-          <div class="flex items-center justify-center gap-1" title="Seeders">
+          <div class="flex items-center justify-center gap-1" :title="t('common.seeders')">
             <Icon name="ph:arrow-up-bold" class="text-success" />
-            <span>S</span>
+            <span>{{ t('torrents.table.seedersShort') }}</span>
           </div>
         </th>
         <th class="text-center w-16">
-          <div class="flex items-center justify-center gap-1" title="Leechers">
+          <div class="flex items-center justify-center gap-1" :title="t('common.leechers')">
             <Icon name="ph:arrow-down-bold" class="text-warning" />
-            <span>L</span>
+            <span>{{ t('torrents.table.leechersShort') }}</span>
           </div>
         </th>
         <th v-if="!compact" class="text-center w-16">
-          <div class="flex items-center justify-center gap-1" title="Completed">
+          <div class="flex items-center justify-center gap-1" :title="t('common.completed')">
             <Icon name="ph:check-bold" class="text-text-secondary" />
-            <span>C</span>
+            <span>{{ t('torrents.table.completedShort') }}</span>
           </div>
         </th>
-        <th v-if="!compact">Size</th>
-        <th class="text-right w-16">Age</th>
+        <th v-if="!compact">{{ t('common.size') }}</th>
+        <th class="text-right w-16">{{ t('torrents.table.age') }}</th>
         <th v-if="admin" class="w-12"></th>
       </tr>
     </thead>
@@ -34,7 +34,7 @@
           :colspan="(compact ? 4 : 8) + (admin ? 1 : 0)"
           class="text-center text-text-muted py-8"
         >
-          No torrents found
+          {{ t('torrents.table.empty') }}
         </td>
       </tr>
       <tr
@@ -98,7 +98,7 @@
         <td v-if="admin" class="text-center">
           <button
             class="text-text-muted hover:text-error transition-colors p-1.5 rounded hover:bg-error/10"
-            title="Delete torrent"
+            :title="t('torrents.table.deleteTorrent')"
             @click.stop="deleteTorrent(torrent)"
           >
             <Icon name="ph:trash" class="text-base" />
@@ -110,6 +110,8 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
+
 interface TorrentWithStats {
   id: string;
   infoHash: string;
@@ -155,14 +157,14 @@ function getCategoryDisplayName(category) {
 }
 
 async function deleteTorrent(torrent: TorrentWithStats) {
-  if (!confirm(`Delete "${torrent.name}"?`)) return;
+  if (!confirm(t('torrents.table.confirmDelete', { name: torrent.name }))) return;
 
   try {
     await fetch(`/api/torrents/${torrent.infoHash}`, { method: 'DELETE' });
     emit('deleted', torrent.infoHash);
   } catch (err) {
     console.error('Delete failed:', err);
-    alert('Failed to delete torrent');
+    alert(t('torrents.table.deleteFailed'));
   }
 }
 </script>

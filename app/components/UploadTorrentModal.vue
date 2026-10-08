@@ -17,11 +17,12 @@
             <h3
               class="text-xs font-bold uppercase tracking-widest text-text-primary"
             >
-              Upload Torrent
+              {{ t('upload.title') }}
             </h3>
           </div>
           <button
             class="text-text-muted hover:text-white transition-colors"
+            :aria-label="t('common.close')"
             @click="close"
           >
             <Icon name="ph:x-bold" />
@@ -58,10 +59,10 @@
                 <p
                   class="text-xs font-bold uppercase tracking-wider text-text-secondary"
                 >
-                  Drop .torrent file
+                  {{ t('upload.dropFile') }}
                 </p>
                 <p class="text-[10px] text-text-muted mt-1 font-mono">
-                  or click to browse filesystem
+                  {{ t('upload.orBrowse') }}
                 </p>
               </div>
               <div v-else class="flex flex-col items-center">
@@ -88,29 +89,29 @@
             <div class="space-y-2">
               <label
                 class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
-                >Your announce URL</label
+                >{{ t('upload.announceUrlLabel') }}</label
               >
               <div class="flex gap-2">
                 <input
-                  :value="announceUrl ?? 'Loading…'"
+                  :value="announceUrl ?? t('common.loading')"
                   type="text"
                   readonly
                   class="input w-full !py-2 text-xs font-mono"
-                  aria-label="Announce URL"
+                  :aria-label="t('upload.announceUrl')"
                   @focus="($event.target as HTMLInputElement).select()"
                 />
                 <button
                   type="button"
                   class="btn btn-secondary !py-2 !px-3 text-xs shrink-0"
                   :disabled="!announceUrl"
-                  :title="announceCopied ? 'Copied' : 'Copy announce URL'"
+                  :title="announceCopied ? t('common.copied') : t('upload.copyAnnounce')"
                   @click="copyAnnounce"
                 >
                   <Icon :name="announceCopied ? 'ph:check-bold' : 'ph:copy-bold'" />
                 </button>
               </div>
               <p class="text-[10px] text-text-muted ml-1">
-                Keep it private: it contains your passkey.
+                {{ t('upload.announceHint') }}
               </p>
             </div>
 
@@ -118,14 +119,14 @@
             <div class="space-y-2">
               <label
                 class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
-                >Display name (optional)</label
+                >{{ t('upload.displayName') }}</label
               >
               <input
                 v-model="customName"
                 type="text"
                 maxlength="255"
                 class="input w-full !py-2 text-xs"
-                placeholder="Defaults to the name inside the .torrent"
+                :placeholder="t('upload.displayNamePlaceholder')"
               />
             </div>
 
@@ -133,13 +134,13 @@
             <div class="space-y-2">
               <label
                 class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
-                >Category</label
+                >{{ t('common.category') }}</label
               >
               <select
                 v-model="selectedCategoryId"
                 class="input w-full !py-2 text-xs font-bold uppercase tracking-wider"
               >
-                <option value="">Select a category...</option>
+                <option value="">{{ t('upload.selectCategory') }}</option>
                 <option v-for="cat in getFlattenedCategories(categories)" :key="cat.id" :value="cat.id">
                   {{ cat.name }}
                 </option>
@@ -153,7 +154,7 @@
               <div class="flex items-center justify-between ml-1">
                 <label
                   class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
-                  >Description (Markdown)</label
+                  >{{ t('markdown.descriptionLabel') }}</label
                 >
                 <button
                   type="button"
@@ -165,7 +166,7 @@
                   "
                   @click="isPreview = !isPreview"
                 >
-                  {{ isPreview ? 'Edit' : 'Preview' }}
+                  {{ isPreview ? t('common.edit') : t('markdown.preview') }}
                 </button>
               </div>
 
@@ -177,7 +178,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="Bold"
+                    :title="t('markdown.bold')"
                     @click="insertMarkdown('bold')"
                   >
                     <Icon name="ph:text-b-bold" />
@@ -185,7 +186,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="Italic"
+                    :title="t('markdown.italic')"
                     @click="insertMarkdown('italic')"
                   >
                     <Icon name="ph:text-italic-bold" />
@@ -194,7 +195,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="Link"
+                    :title="t('markdown.link')"
                     @click="insertMarkdown('link')"
                   >
                     <Icon name="ph:link-bold" />
@@ -202,7 +203,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="Image"
+                    :title="t('markdown.image')"
                     @click="insertMarkdown('image')"
                   >
                     <Icon name="ph:image-bold" />
@@ -211,7 +212,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="List"
+                    :title="t('markdown.list')"
                     @click="insertMarkdown('list')"
                   >
                     <Icon name="ph:list-bullets-bold" />
@@ -219,7 +220,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="Quote"
+                    :title="t('markdown.quote')"
                     @click="insertMarkdown('quote')"
                   >
                     <Icon name="ph:quotes-bold" />
@@ -227,7 +228,7 @@
                   <button
                     type="button"
                     class="toolbar-btn"
-                    title="Code"
+                    :title="t('markdown.code')"
                     @click="insertMarkdown('code')"
                   >
                     <Icon name="ph:code-bold" />
@@ -238,7 +239,7 @@
                   v-model="description"
                   rows="6"
                   class="input w-full !py-2 text-xs font-medium resize-none rounded-t-none"
-                  placeholder="Enter torrent description, images, etc..."
+                  :placeholder="t('markdown.descriptionPlaceholder')"
                 ></textarea>
               </div>
 
@@ -252,7 +253,7 @@
                   v-html="renderedDescription"
                 ></div>
                 <div v-else class="text-text-muted italic text-[10px]">
-                  Nothing to preview
+                  {{ t('markdown.nothingToPreview') }}
                 </div>
               </div>
             </div>
@@ -269,7 +270,7 @@
               />
               <Icon v-else name="ph:rocket-launch-bold" />
               <span>{{
-                isUploading ? 'Processing...' : 'Initialize Upload'
+                isUploading ? t('upload.processing') : t('upload.submit')
               }}</span>
             </button>
           </div>
@@ -290,7 +291,7 @@
                   {{ result.message }}
                 </p>
                 <p class="text-[10px] text-text-muted mt-1 font-mono">
-                  The object has been successfully indexed.
+                  {{ t('upload.successHint') }}
                 </p>
               </div>
             </div>
@@ -301,7 +302,7 @@
               <div class="flex justify-between items-center">
                 <span
                   class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                  >Name</span
+                  >{{ t('common.name') }}</span
                 >
                 <span
                   class="text-xs font-medium text-text-primary truncate ml-4"
@@ -311,7 +312,7 @@
               <div class="flex justify-between items-center">
                 <span
                   class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                  >Hash</span
+                  >{{ t('torrents.table.hash') }}</span
                 >
                 <code
                   class="text-[10px] text-text-secondary font-mono bg-bg-primary px-1.5 py-0.5 rounded border border-border"
@@ -321,7 +322,7 @@
               <div class="flex justify-between items-center">
                 <span
                   class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
-                  >Size</span
+                  >{{ t('common.size') }}</span
                 >
                 <span class="text-xs font-mono text-text-primary">{{
                   formatSize(result.data.size)
@@ -334,13 +335,13 @@
                 class="btn btn-secondary flex-1 text-[10px] font-bold uppercase tracking-widest"
                 @click="close"
               >
-                Close
+                {{ t('common.close') }}
               </button>
               <button
                 class="btn btn-primary flex-1 text-[10px] font-bold uppercase tracking-widest"
                 @click="navigateTo(`/torrents/${result.data.infoHash}`)"
               >
-                View Details
+                {{ t('upload.viewDetails') }}
               </button>
             </div>
           </div>
@@ -351,6 +352,7 @@
 </template>
 
 <script setup lang="ts">
+const { t } = useI18n();
 
 interface TorrentResult {
   success: boolean;
@@ -413,7 +415,7 @@ async function copyAnnounce() {
     announceCopied.value = true;
     setTimeout(() => (announceCopied.value = false), 2000);
   } catch {
-    error.value = 'Failed to copy to clipboard';
+    error.value = t('upload.copyFailed');
   }
 }
 
@@ -477,37 +479,37 @@ function insertMarkdown(type: string) {
     case 'bold':
       before = '**';
       after = '**';
-      placeholder = 'bold text';
+      placeholder = t('markdown.placeholders.bold');
       break;
     case 'italic':
       before = '*';
       after = '*';
-      placeholder = 'italic text';
+      placeholder = t('markdown.placeholders.italic');
       break;
     case 'link':
       before = '[';
       after = '](url)';
-      placeholder = 'link text';
+      placeholder = t('markdown.placeholders.link');
       break;
     case 'image':
       before = '![';
       after = '](url)';
-      placeholder = 'alt text';
+      placeholder = t('markdown.placeholders.image');
       break;
     case 'list':
       before = '\n- ';
       after = '';
-      placeholder = 'list item';
+      placeholder = t('markdown.placeholders.list');
       break;
     case 'quote':
       before = '\n> ';
       after = '';
-      placeholder = 'quote';
+      placeholder = t('markdown.placeholders.quote');
       break;
     case 'code':
       before = '`';
       after = '`';
-      placeholder = 'code';
+      placeholder = t('markdown.placeholders.code');
       break;
   }
 
@@ -536,7 +538,7 @@ function handleFileSelect(e: Event) {
     selectedFile.value = file;
     error.value = null;
   } else {
-    error.value = 'Please select a .torrent file';
+    error.value = t('upload.selectTorrentFile');
   }
 }
 
@@ -546,7 +548,7 @@ function handleDrop(e: DragEvent) {
     selectedFile.value = file;
     error.value = null;
   } else {
-    error.value = 'Please drop a .torrent file';
+    error.value = t('upload.dropTorrentFile');
   }
 }
 
@@ -582,7 +584,7 @@ async function upload() {
   } catch (err: unknown) {
     const fetchError = err as { data?: { message?: string }; message?: string };
     error.value =
-      fetchError.data?.message || fetchError.message || 'Upload failed';
+      fetchError.data?.message || fetchError.message || t('upload.failed');
   } finally {
     isUploading.value = false;
   }
@@ -598,7 +600,7 @@ async function copyMagnet() {
       copied.value = false;
     }, 2000);
   } catch {
-    error.value = 'Failed to copy to clipboard';
+    error.value = t('upload.copyFailed');
   }
 }
 
