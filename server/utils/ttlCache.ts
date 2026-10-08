@@ -6,6 +6,10 @@
  */
 export class TtlCache<K, V> {
   private entries = new Map<K, { value: V; expiresAt: number }>();
+  private pending = new Map<K, Promise<V>>();
+  // Bumped by delete/clear: a load started before an invalidation must not
+  // write its (possibly stale) result back afterwards
+  private generation = 0;
 
   constructor(
     private readonly ttlMs: number,
@@ -43,27 +47,34 @@ export class TtlCache<K, V> {
     const pending = this.pending.get(key);
     if (pending) return pending;
 
+    const generation = this.generation;
     const promise = load()
       .then((value) => {
-        this.set(key, value);
+        if (generation === this.generation) this.set(key, value);
         return value;
       })
-      .finally(() => this.pending.delete(key));
+      .finally(() => {
+        if (this.pending.get(key) === promise) this.pending.delete(key);
+      });
     this.pending.set(key, promise);
     return promise;
   }
 
   delete(key: K): void {
+    this.generation++;
     this.entries.delete(key);
+    this.pending.delete(key);
   }
 
   clear(): void {
+    this.generation++;
     this.entries.clear();
+    // Callers arriving after the invalidation start a fresh load
+    this.pending.clear();
   }
 
   get size(): number {
     return this.entries.size;
   }
 
-  private pending = new Map<K, Promise<V>>();
 }

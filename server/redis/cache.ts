@@ -1,14 +1,12 @@
 import { redis } from './client';
 import { hashIP } from '../utils/crypto';
 import { TtlCache } from '../utils/ttlCache';
+import { PEER_TTL, countPeers } from './peerCount';
 
 // Keys
 const PEER_KEY = (infoHash: string) => `peers:${infoHash}`;
 const STATS_KEY = (infoHash: string) => `stats:${infoHash}`;
 const GLOBAL_STATS_KEY = 'tracker:stats';
-
-// TTL: 30 minutes for peers (standard announce interval is 30 min)
-const PEER_TTL = 1800;
 
 // ============================================================================
 // Peer Types
@@ -140,21 +138,6 @@ export interface TorrentStats {
 const STATS_CACHE_MS = 10_000;
 const statsCache = new TtlCache<string, TorrentStats>(STATS_CACHE_MS, 100_000);
 
-function countPeers(raw: Record<string, string>, now: number) {
-  let seeders = 0;
-  let leechers = 0;
-  for (const json of Object.values(raw)) {
-    try {
-      const peer = JSON.parse(json) as PeerData;
-      if (now - peer.updatedAt >= PEER_TTL * 1000) continue; // Stale
-      if (peer.isSeeder) seeders++;
-      else leechers++;
-    } catch {
-      // Invalid entry: cleaned up by getPeers
-    }
-  }
-  return { seeders, leechers };
-}
 
 async function withSwarmFallback(
   infoHash: string,
@@ -182,13 +165,14 @@ export async function getStatsMany(
   infoHashes: string[]
 ): Promise<Map<string, TorrentStats>> {
   const result = new Map<string, TorrentStats>();
-  const missing: string[] = [];
+  const missingSet = new Set<string>();
 
   for (const hash of infoHashes) {
     const cached = statsCache.get(hash);
     if (cached) result.set(hash, cached);
-    else if (!missing.includes(hash)) missing.push(hash);
+    else missingSet.add(hash);
   }
+  const missing = [...missingSet];
 
   if (missing.length > 0) {
     const pipeline = redis.pipeline();
@@ -199,18 +183,41 @@ export async function getStatsMany(
     const replies = (await pipeline.exec()) ?? [];
     const now = Date.now();
 
+    // Each reply is [error, value]: never cache counts built from a failure
+    const failure = replies.find(([err]) => err)?.[0];
+    if (failure || replies.length !== missing.length * 2) {
+      throw failure ?? new Error('Incomplete Redis pipeline reply');
+    }
+
+    // Departed peers that never sent "stopped" stay in the hash while active
+    // peers keep refreshing its TTL: delete them as we find them
+    const cleanup = redis.pipeline();
+    let hasCleanup = false;
+
     await Promise.all(
       missing.map(async (hash, i) => {
-        const peers = (replies[i * 2]?.[1] as Record<string, string> | null) ?? {};
-        const completedRaw = replies[i * 2 + 1]?.[1] as string | null;
+        const peers = (replies[i * 2]![1] as Record<string, string> | null) ?? {};
+        const completedRaw = replies[i * 2 + 1]![1] as string | null;
+        const { seeders, leechers, stale } = countPeers(peers, now);
+        if (stale.length > 0) {
+          cleanup.hdel(PEER_KEY(hash), ...stale);
+          hasCleanup = true;
+        }
         const stats = await withSwarmFallback(hash, {
-          ...countPeers(peers, now),
+          seeders,
+          leechers,
           completed: parseInt(completedRaw || '0', 10),
         });
         statsCache.set(hash, stats);
         result.set(hash, stats);
       })
     );
+
+    if (hasCleanup) {
+      await cleanup.exec().catch((err) =>
+        console.error('[Redis] Stale peer cleanup failed:', err)
+      );
+    }
   }
 
   return result;

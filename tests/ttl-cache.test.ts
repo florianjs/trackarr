@@ -52,3 +52,35 @@ describe('TtlCache', () => {
     expect(loads).toBe(1);
   });
 });
+
+describe('TtlCache invalidation during a load', () => {
+  function deferred<T>() {
+    let resolve!: (v: T) => void;
+    const promise = new Promise<T>((r) => (resolve = r));
+    return { promise, resolve };
+  }
+
+  it('does not cache a result loaded before clear()', async () => {
+    const cache = new TtlCache<string, string>(1000);
+    const slow = deferred<string>();
+    const first = cache.getOrLoad('user', () => slow.promise);
+
+    cache.clear(); // e.g. the user was banned while the row was being read
+    const second = cache.getOrLoad('user', async () => 'banned');
+
+    slow.resolve('not banned');
+    expect(await first).toBe('not banned'); // the original caller still gets its answer
+    expect(await second).toBe('banned'); // later callers do not share the stale load
+    expect(cache.get('user')).toBe('banned');
+  });
+
+  it('does not cache a result loaded before delete()', async () => {
+    const cache = new TtlCache<string, string>(1000);
+    const slow = deferred<string>();
+    const first = cache.getOrLoad('k', () => slow.promise);
+    cache.delete('k');
+    slow.resolve('old');
+    await first;
+    expect(cache.get('k')).toBeUndefined();
+  });
+});
