@@ -1,6 +1,6 @@
 import { db, schema } from '~~/server/db';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
   await requireModeratorSession(event);
@@ -15,16 +15,21 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Find and delete the torrent
+  // Only pending torrents can be rejected: approved ones go through delete
   const [deletedTorrent] = await db
     .delete(schema.torrents)
-    .where(eq(schema.torrents.infoHash, hash.toLowerCase()))
-    .returning();
+    .where(
+      and(
+        eq(schema.torrents.infoHash, hash.toLowerCase()),
+        eq(schema.torrents.isApproved, false)
+      )
+    )
+    .returning({ id: schema.torrents.id });
 
   if (!deletedTorrent) {
     throw createError({
       statusCode: 404,
-      message: 'Torrent not found',
+      message: 'Pending torrent not found',
     });
   }
 
@@ -36,6 +41,9 @@ export default defineEventHandler(async (event) => {
   return {
     success: true,
     message: 'Torrent rejected and deleted',
-    reason: body?.reason || 'No reason provided',
+    reason:
+      typeof body?.reason === 'string' && body.reason
+        ? body.reason.slice(0, 500)
+        : 'No reason provided',
   };
 });

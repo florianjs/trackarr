@@ -16,10 +16,9 @@ export default defineEventHandler(async (event) => {
     await db.execute('SELECT 1');
     checks.postgres = { status: 'ok', latency: Date.now() - dbStart };
   } catch (error) {
-    checks.postgres = {
-      status: 'error',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
+    // Public endpoint: log details, never expose connection errors
+    console.error('[Health] PostgreSQL check failed:', error);
+    checks.postgres = { status: 'error' };
   }
 
   // Check Redis
@@ -28,10 +27,8 @@ export default defineEventHandler(async (event) => {
     await redis.ping();
     checks.redis = { status: 'ok', latency: Date.now() - redisStart };
   } catch (error) {
-    checks.redis = {
-      status: 'error',
-      error: error instanceof Error ? error.message : 'Unknown error',
-    };
+    console.error('[Health] Redis check failed:', error);
+    checks.redis = { status: 'error' };
   }
 
   const allHealthy = Object.values(checks).every((c) => c.status === 'ok');

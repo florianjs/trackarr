@@ -41,9 +41,10 @@ export default defineEventHandler(async (event) => {
         });
       }
 
+      console.error('[Grafana] Password update failed:', errorText);
       throw createError({
         statusCode: response.status,
-        message: `Grafana API error: ${errorText}`,
+        message: 'Grafana API error',
       });
     }
 
