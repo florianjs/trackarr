@@ -90,7 +90,7 @@ const SEED_CATEGORIES = [
 ];
 
 export default defineEventHandler(async (event) => {
-  rateLimit(event, RATE_LIMITS.admin);
+  await rateLimit(event, RATE_LIMITS.admin);
   await requireAdminSession(event);
 
   // Check if categories already exist

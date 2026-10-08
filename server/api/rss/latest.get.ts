@@ -1,6 +1,8 @@
 import { db, schema } from '../../db';
 import { getStats } from '../../redis/cache';
-import { desc, eq } from 'drizzle-orm';
+import { and, desc, eq } from 'drizzle-orm';
+import { requireFeedAccess } from '../../utils/feedAuth';
+import { cdata } from '../../utils/validation';
 import { z } from 'zod';
 
 const querySchema = z.object({
@@ -12,10 +14,15 @@ const querySchema = z.object({
  * RSS feed for latest torrents
  */
 export default defineEventHandler(async (event) => {
+  await requireFeedAccess(event);
   const query = querySchema.parse(getQuery(event));
 
   const torrents = await db.query.torrents.findMany({
-    where: eq(schema.torrents.isActive, true),
+    where: and(
+      eq(schema.torrents.isActive, true),
+      eq(schema.torrents.isApproved, true)
+    ),
+    columns: { torrentData: false },
     with: {
       category: true,
       uploader: {
@@ -51,7 +58,7 @@ export default defineEventHandler(async (event) => {
   });
 
   setHeader(event, 'Content-Type', 'application/rss+xml; charset=utf-8');
-  setHeader(event, 'Cache-Control', 'public, max-age=300'); // 5min cache
+  setHeader(event, 'Cache-Control', 'private, max-age=300'); // 5min cache
   return rss;
 });
 
@@ -86,7 +93,7 @@ function buildRSSFeed(feed: RSSFeed): string {
     <item>
       <title>${escapeXml(item.title)}</title>
       <link>${escapeXml(item.link)}</link>
-      <description><![CDATA[${item.description}]]></description>
+      <description>${cdata(item.description)}</description>
       ${item.category ? `<category>${escapeXml(item.category)}</category>` : ''}
       <pubDate>${item.pubDate}</pubDate>
       <guid isPermaLink="false">${escapeXml(item.guid)}</guid>

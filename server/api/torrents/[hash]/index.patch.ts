@@ -8,10 +8,16 @@ import { db } from '../../../db';
 import { torrents, categories } from '../../../db/schema';
 import { requireAuthSession } from '../../../utils/adminAuth';
 import { rateLimit, RATE_LIMITS } from '../../../utils/rateLimit';
+import { z } from 'zod';
+
+const patchSchema = z.object({
+  description: z.string().max(10000).nullable().optional(),
+  categoryId: z.union([z.uuid(), z.literal('')]).nullable().optional(),
+});
 
 export default defineEventHandler(async (event) => {
   // Rate limit mutations
-  rateLimit(event, RATE_LIMITS.mutation);
+  await rateLimit(event, RATE_LIMITS.mutation);
 
   // Require authentication
   const { user } = await requireAuthSession(event);
@@ -51,8 +57,11 @@ export default defineEventHandler(async (event) => {
   }
 
   // Read body
-  const body = await readBody(event);
-  const { description, categoryId } = body || {};
+  const parsedBody = patchSchema.safeParse(await readBody(event));
+  if (!parsedBody.success) {
+    throw createError({ statusCode: 400, message: 'Invalid request body' });
+  }
+  const { description, categoryId } = parsedBody.data;
 
   // Validate categoryId if provided
   if (categoryId !== undefined && categoryId !== null && categoryId !== '') {

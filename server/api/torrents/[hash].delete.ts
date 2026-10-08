@@ -12,7 +12,7 @@ import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 
 export default defineEventHandler(async (event) => {
   // Rate limit mutations
-  rateLimit(event, RATE_LIMITS.mutation);
+  await rateLimit(event, RATE_LIMITS.mutation);
 
   // Require authentication
   const { user } = await requireAuthSession(event);

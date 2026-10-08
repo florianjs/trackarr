@@ -1,6 +1,6 @@
 import { db } from '~~/server/db';
 import { forumPosts, forumTopics } from '~~/server/db/schema';
-import { eq, count } from 'drizzle-orm';
+import { and, eq, count, ne } from 'drizzle-orm';
 import { requireAuthSession } from '~~/server/utils/adminAuth';
 
 export default defineEventHandler(async (event) => {
@@ -43,6 +43,23 @@ export default defineEventHandler(async (event) => {
   });
 
   if (firstPost?.id === id) {
+    // Deleting the first post removes the whole topic: authors may only do
+    // that while nobody else has replied
+    if (!isModerator) {
+      const [otherReplies] = await db
+        .select({ value: count() })
+        .from(forumPosts)
+        .where(
+          and(eq(forumPosts.topicId, post.topicId), ne(forumPosts.authorId, session.user.id))
+        );
+      if (otherReplies!.value > 0) {
+        throw createError({
+          statusCode: 403,
+          message: 'Cannot delete a topic that has replies from other users',
+        });
+      }
+    }
+
     // If it's the first post, delete the whole topic
     await db.delete(forumTopics).where(eq(forumTopics.id, post.topicId));
     return { message: 'Topic deleted (first post removed)' };

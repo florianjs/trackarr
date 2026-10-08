@@ -46,6 +46,13 @@ export default defineEventHandler(async (event) => {
       setHeader(event, 'Content-Type', mimeTypes[ext]);
     }
 
+    // Uploaded SVGs can carry scripts: never let them run on our origin
+    setHeader(event, 'X-Content-Type-Options', 'nosniff');
+    setHeader(
+      event,
+      'Content-Security-Policy',
+      "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox"
+    );
     setHeader(event, 'Content-Length', stats.size);
     setHeader(event, 'Cache-Control', 'public, max-age=86400, immutable');
 

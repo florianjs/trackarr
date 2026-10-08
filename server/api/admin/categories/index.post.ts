@@ -7,7 +7,7 @@ import { validateBody, adminCategorySchema } from '../../../utils/schemas';
 
 export default defineEventHandler(async (event) => {
   // Rate limit admin endpoints
-  rateLimit(event, RATE_LIMITS.admin);
+  await rateLimit(event, RATE_LIMITS.admin);
 
   // Require admin authentication
   await requireAdminSession(event);

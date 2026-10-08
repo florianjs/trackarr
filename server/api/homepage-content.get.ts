@@ -9,6 +9,7 @@ import {
   getFeature3Title,
   getFeature3Desc,
 } from '../utils/settings';
+import { sanitizeRichText } from '../utils/sanitize';
 
 /**
  * GET /api/homepage-content
@@ -25,14 +26,15 @@ export default defineEventHandler(async () => {
   const feature3Title = await getFeature3Title();
   const feature3Desc = await getFeature3Desc();
 
+  // Rendered with v-html for anonymous visitors: sanitize on the way out
   return {
-    heroTitle,
-    heroSubtitle,
+    heroTitle: sanitizeRichText(heroTitle),
+    heroSubtitle: sanitizeRichText(heroSubtitle),
     statusBadgeText,
     features: [
-      { title: feature1Title, description: feature1Desc },
-      { title: feature2Title, description: feature2Desc },
-      { title: feature3Title, description: feature3Desc },
+      { title: sanitizeRichText(feature1Title), description: sanitizeRichText(feature1Desc) },
+      { title: sanitizeRichText(feature2Title), description: sanitizeRichText(feature2Desc) },
+      { title: sanitizeRichText(feature3Title), description: sanitizeRichText(feature3Desc) },
     ],
   };
 });

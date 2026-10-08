@@ -1,14 +1,29 @@
 import { db, schema } from '../../db';
 import { randomUUID } from 'crypto';
 import parseTorrent from 'parse-torrent';
+import { z } from 'zod';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
+import { stripAnnounceUrls } from '../../utils/torrentFile';
+
+// readMultipartFormData buffers the whole body: reject oversized requests first
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
+const MAX_DESCRIPTION_LENGTH = 10000;
+const tagIdsSchema = z.array(z.uuid()).max(20);
 
 export default defineEventHandler(async (event) => {
   // Require authentication
   const { user } = await requireAuthSession(event);
 
   // Rate limit uploads
-  rateLimit(event, RATE_LIMITS.mutation);
+  await rateLimit(event, RATE_LIMITS.mutation);
+
+  const contentLength = Number(getHeader(event, 'content-length') || 0);
+  if (!contentLength) {
+    throw createError({ statusCode: 411, message: 'Content-Length required' });
+  }
+  if (contentLength > MAX_UPLOAD_BYTES) {
+    throw createError({ statusCode: 413, message: 'Upload too large (max 5MB)' });
+  }
 
   // Read multipart form data
   const formData = await readMultipartFormData(event);
@@ -36,6 +51,32 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
       message: 'No .torrent file found in request',
     });
+  }
+
+  if (description && description.length > MAX_DESCRIPTION_LENGTH) {
+    throw createError({
+      statusCode: 400,
+      message: `Description too long (max ${MAX_DESCRIPTION_LENGTH} characters)`,
+    });
+  }
+
+  if (categoryId && !z.uuid().safeParse(categoryId).success) {
+    throw createError({ statusCode: 400, message: 'Invalid category' });
+  }
+
+  let tagIds: string[] = [];
+  if (tagsRaw) {
+    let raw: unknown;
+    try {
+      raw = JSON.parse(tagsRaw);
+    } catch {
+      raw = null;
+    }
+    const parsedTags = tagIdsSchema.safeParse(raw);
+    if (!parsedTags.success) {
+      throw createError({ statusCode: 400, message: 'Invalid tags' });
+    }
+    tagIds = parsedTags.data;
   }
 
   // Parse the torrent file
@@ -70,6 +111,8 @@ export default defineEventHandler(async (event) => {
   // Check if torrent already exists
   const existing = await db.query.torrents.findFirst({
     where: (t, { eq }) => eq(t.infoHash, infoHash),
+    // Raw .torrent blob embeds the uploader's announce URL (passkey)
+    columns: { torrentData: false },
   });
 
   if (existing) {
@@ -108,7 +151,7 @@ export default defineEventHandler(async (event) => {
     name,
     size: totalSize,
     description: description || null,
-    torrentData: Buffer.from(file.data),
+    torrentData: stripAnnounceUrls(file.data, infoHash),
     uploaderId: user.id, // Set uploader from authenticated user
     categoryId: categoryId || null,
     isActive: true,
@@ -125,20 +168,17 @@ export default defineEventHandler(async (event) => {
     updatedAt: now,
   });
 
-  // Add tags if provided
-  if (tagsRaw) {
+  // Add tags if provided (unknown tag ids are ignored)
+  if (tagIds.length > 0) {
     try {
-      const tagIds = JSON.parse(tagsRaw) as string[];
-      if (Array.isArray(tagIds) && tagIds.length > 0) {
-        await db.insert(schema.torrentTags).values(
-          tagIds.map((tagId) => ({
-            torrentId: id,
-            tagId,
-          }))
-        );
-      }
+      await db.insert(schema.torrentTags).values(
+        tagIds.map((tagId) => ({
+          torrentId: id,
+          tagId,
+        }))
+      );
     } catch {
-      // Ignore invalid tags JSON
+      // Ignore tags that do not exist
     }
   }
 

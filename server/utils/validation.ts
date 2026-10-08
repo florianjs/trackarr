@@ -123,3 +123,10 @@ export function validateCategoryName(name: unknown): string {
 export function escapeLike(value: string): string {
   return value.replace(/[\\%_]/g, (c) => `\\${c}`);
 }
+
+/**
+ * Wrap text in CDATA, splitting any "]]>" so content cannot close the section
+ */
+export function cdata(value: string): string {
+  return `<![CDATA[${value.replace(/]]>/g, ']]]]><![CDATA[>')}]]>`;
+}

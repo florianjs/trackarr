@@ -3,6 +3,8 @@
  * Utilities for building XML responses conforming to Torznab specification
  */
 
+import { cdata } from '../../../utils/validation';
+
 const escapeXml = (str: string): string =>
   str
     .replace(/&/g, '&amp;')
@@ -151,7 +153,7 @@ export function buildSearchXml(feed: TorznabFeed): string {
       <comments>${escapeXml(item.commentsUrl)}</comments>
       <pubDate>${item.pubDate.toUTCString()}</pubDate>
       <size>${item.size}</size>
-      <description><![CDATA[${item.description ?? ''}]]></description>
+      <description>${cdata(item.description ?? '')}</description>
       ${item.categoryName ? `<category>${escapeXml(item.categoryName)}</category>` : ''}
 ${attrs.join('\n')}
       <enclosure url="${escapeXml(item.downloadUrl)}" length="${item.size}" type="application/x-bittorrent"/>

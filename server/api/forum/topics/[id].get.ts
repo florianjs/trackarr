@@ -3,6 +3,8 @@ import { forumTopics, forumPosts } from '~~/server/db/schema';
 import { eq, asc } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
+  await requireAuthSession(event);
+
   const id = getRouterParam(event, 'id');
 
   if (!id) {
@@ -26,6 +28,8 @@ export default defineEventHandler(async (event) => {
       },
       posts: {
         orderBy: [asc(forumPosts.createdAt)],
+        // Hard cap until the endpoint is paginated
+        limit: 500,
         with: {
           author: {
             columns: {

@@ -144,10 +144,12 @@
         </div>
       </div>
       <div class="card-body !p-6">
-        <div
-          class="prose prose-invert prose-xs max-w-none description-content"
-          v-html="renderedDescription"
-        ></div>
+        <ClientOnly>
+          <div
+            class="prose prose-invert prose-xs max-w-none description-content"
+            v-html="renderedDescription"
+          ></div>
+        </ClientOnly>
       </div>
     </div>
 
@@ -289,7 +291,6 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked';
 
 interface Peer {
   id: string;
@@ -364,8 +365,7 @@ const editableTorrent = computed(() => ({
 }));
 
 const renderedDescription = computed(() => {
-  if (!torrent.value?.description) return '';
-  return marked.parse(torrent.value.description);
+  return renderMarkdown(torrent.value?.description);
 });
 
 if (error.value || !torrent.value) {

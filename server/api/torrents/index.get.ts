@@ -63,6 +63,8 @@ export default defineEventHandler(async (event) => {
   // Get torrents with optional search
   const torrents = await db.query.torrents.findMany({
     where: whereClause,
+    // Raw .torrent blob embeds the uploader's announce URL (passkey)
+    columns: { torrentData: false },
     with: {
       category: true,
     },

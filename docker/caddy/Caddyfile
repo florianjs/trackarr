@@ -41,6 +41,9 @@
 
 	# Serve Uploaded Files
 	handle_path /uploads/* {
+		# Uploaded SVGs can carry scripts: never let them run on our origin
+		header Content-Security-Policy "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox"
+		header X-Content-Type-Options "nosniff"
 		root * /srv/uploads
 		file_server
 	}

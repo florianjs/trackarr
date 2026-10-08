@@ -1,5 +1,5 @@
 import { db, schema } from '../../../db';
-import { eq, desc, sql } from 'drizzle-orm';
+import { and, eq, desc, sql } from 'drizzle-orm';
 import { getStats } from '../../../redis/cache';
 import { z } from 'zod';
 
@@ -13,7 +13,7 @@ const querySchema = z.object({
 });
 
 export default defineEventHandler(async (event) => {
-  await requireAuthSession(event);
+  const { user: viewer } = await requireAuthSession(event);
 
   const params = paramsSchema.parse(getRouterParams(event));
   const query = querySchema.parse(getQuery(event));
@@ -34,8 +34,20 @@ export default defineEventHandler(async (event) => {
   }
 
   // Get user's uploads
+  // Pending torrents stay visible only to their uploader and staff
+  const canSeePending =
+    viewer.id === params.id || viewer.isAdmin || viewer.isModerator;
+  const where = canSeePending
+    ? eq(schema.torrents.uploaderId, params.id)
+    : and(
+        eq(schema.torrents.uploaderId, params.id),
+        eq(schema.torrents.isApproved, true)
+      );
+
   const torrents = await db.query.torrents.findMany({
-    where: eq(schema.torrents.uploaderId, params.id),
+    where,
+    // Raw .torrent blob embeds the uploader's announce URL (passkey)
+    columns: { torrentData: false },
     with: {
       category: true,
     },
@@ -48,7 +60,7 @@ export default defineEventHandler(async (event) => {
   const countResult = await db
     .select({ count: sql<number>`count(*)::int` })
     .from(schema.torrents)
-    .where(eq(schema.torrents.uploaderId, params.id));
+    .where(where);
 
   const total = countResult[0]?.count || 0;
 
