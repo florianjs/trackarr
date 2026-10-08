@@ -84,9 +84,7 @@ export const torrentQuerySchema = z.object({
   limit: z.coerce.number().int().positive().max(100).default(20),
   categoryId: z.uuid().optional(),
   search: z.string().max(255).optional(),
-  sortBy: z
-    .enum(['uploaded', 'name', 'size', 'seeders', 'leechers'])
-    .default('uploaded'),
+  sortBy: z.enum(['uploaded', 'name', 'size']).default('uploaded'),
   order: z.enum(['asc', 'desc']).default('desc'),
 });
 

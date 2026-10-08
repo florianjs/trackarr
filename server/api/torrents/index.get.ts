@@ -1,6 +1,6 @@
 import { db, schema } from '../../db';
 import { getStatsMany } from '../../redis/cache';
-import { desc, eq, ilike, sql, and, or } from 'drizzle-orm';
+import { asc, desc, eq, ilike, sql, and, or } from 'drizzle-orm';
 import { validateQuery, torrentQuerySchema } from '../../utils/schemas';
 import { escapeLike } from '../../utils/validation';
 
@@ -48,7 +48,7 @@ export default defineEventHandler(async (event) => {
     // add category and subcategories filter
     const subcategories = await db.query.categories.findMany({
       where: eq(schema.categories.parentId, query.categoryId),
-      select: { id: true },
+      columns: { id: true },
     });
     conditions.push(
       or(
@@ -60,6 +60,15 @@ export default defineEventHandler(async (event) => {
 
   const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
+  // Seeders/leechers live in Redis and cannot be sorted in SQL
+  const sortColumn =
+    query.sortBy === 'name'
+      ? schema.torrents.name
+      : query.sortBy === 'size'
+        ? schema.torrents.size
+        : schema.torrents.createdAt;
+  const orderBy = query.order === 'asc' ? asc(sortColumn) : desc(sortColumn);
+
   // Get torrents with optional search
   const torrents = await db.query.torrents.findMany({
     where: whereClause,
@@ -67,8 +76,9 @@ export default defineEventHandler(async (event) => {
     columns: { torrentData: false },
     with: {
       category: true,
+      torrentTags: { with: { tag: { columns: { id: true, name: true } } } },
     },
-    orderBy: [desc(schema.torrents.createdAt)],
+    orderBy: [orderBy],
     limit: query.limit,
     offset,
   });
@@ -88,8 +98,10 @@ export default defineEventHandler(async (event) => {
   const enriched = await Promise.all(
     torrents.map(async (torrent) => {
       const stats = statsByHash.get(torrent.infoHash)!;
+      const { torrentTags, ...rest } = torrent;
       return {
-        ...torrent,
+        ...rest,
+        tags: torrentTags.map((tt) => tt.tag),
         stats: {
           seeders: stats.seeders,
           leechers: stats.leechers,

@@ -17,6 +17,7 @@ export default defineEventHandler(async (event) => {
     columns: { torrentData: false },
     with: {
       category: true,
+      uploader: { columns: { id: true, username: true } },
       torrentTags: {
         with: {
           tag: true,

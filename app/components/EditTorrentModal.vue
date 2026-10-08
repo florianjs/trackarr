@@ -15,7 +15,7 @@
           <div class="flex items-center gap-2">
             <Icon name="ph:pencil-simple-bold" class="text-text-muted" />
             <h3
-              class="text-xs font-bold uppercase tracking-widest text-text-primary"
+              class="text-xs font-bold text-text-primary"
             >
               {{ t('edit.title') }}
             </h3>
@@ -34,7 +34,7 @@
           <!-- Torrent Name -->
           <div class="space-y-2">
             <label
-              class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+              class="text-xs font-medium text-text-muted ml-1"
               >{{ t('edit.torrentName') }}</label
             >
             <input
@@ -50,12 +50,12 @@
           <!-- Category Select -->
           <div class="space-y-2">
             <label
-              class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+              class="text-xs font-medium text-text-muted ml-1"
               >{{ t('common.category') }}</label
             >
             <select
               v-model="selectedCategoryId"
-              class="input w-full !py-2 text-xs font-bold uppercase tracking-wider"
+              class="input w-full !py-2 text-xs font-bold"
             >
               <option value="">{{ t('edit.noCategory') }}</option>
               <option
@@ -72,12 +72,12 @@
           <div class="space-y-2">
             <div class="flex items-center justify-between ml-1">
               <label
-                class="text-[10px] font-bold uppercase tracking-widest text-text-muted"
+                class="text-xs font-medium text-text-muted"
                 >{{ t('markdown.descriptionLabel') }}</label
               >
               <button
                 type="button"
-                class="text-[10px] font-bold uppercase tracking-widest transition-colors"
+                class="text-xs font-medium transition-colors"
                 :class="
                   isPreview ? 'text-white' : 'text-text-muted hover:text-white'
                 "
@@ -169,7 +169,7 @@
                 class="prose prose-invert prose-xs max-w-none description-preview"
                 v-html="renderedDescription"
               ></div>
-              <div v-else class="text-text-muted italic text-[10px]">
+              <div v-else class="text-text-muted italic text-xs">
                 {{ t('markdown.nothingToPreview') }}
               </div>
             </div>
@@ -190,14 +190,14 @@
           <!-- Actions -->
           <div class="flex gap-2">
             <button
-              class="btn btn-secondary flex-1 text-[10px] font-bold uppercase tracking-widest"
+              class="btn btn-secondary flex-1 text-xs font-medium"
               :disabled="isSaving"
               @click="close"
             >
               {{ t('common.cancel') }}
             </button>
             <button
-              class="btn btn-primary flex-1 text-[10px] font-bold uppercase tracking-widest flex items-center justify-center gap-2"
+              class="btn btn-primary flex-1 text-xs font-medium flex items-center justify-center gap-2"
               :disabled="isSaving"
               @click="save"
             >
@@ -302,7 +302,7 @@ function getFlattenedCategories(
 
     if (category.subcategories) {
       result = result.concat(
-        getFlattenedCategories(category.subcategories, prefix + '╚=> ')
+        getFlattenedCategories(category.subcategories, prefix + category.name + ' / ')
       );
     }
   }

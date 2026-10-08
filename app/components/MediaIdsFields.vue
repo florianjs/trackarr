@@ -1,7 +1,7 @@
 <template>
   <div class="space-y-2">
     <label
-      class="text-[10px] font-bold uppercase tracking-widest text-text-muted ml-1"
+      class="text-xs font-medium text-text-muted ml-1"
       >{{ t('mediaIds.label') }} ({{ t('common.optional') }})</label
     >
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -29,7 +29,7 @@
         aria-label="TheTVDB ID"
       />
     </div>
-    <p class="text-[10px] text-text-muted ml-1">
+    <p class="text-xs text-text-muted ml-1">
       {{ t('mediaIds.help') }}
     </p>
   </div>
