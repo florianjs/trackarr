@@ -49,6 +49,12 @@ export const SETTINGS_KEYS = {
   FEATURE_2_DESC: 'feature_2_desc',
   FEATURE_3_TITLE: 'feature_3_title',
   FEATURE_3_DESC: 'feature_3_desc',
+  // Bonus points & shop (issue #48)
+  BONUS_ENABLED: 'bonus_enabled',
+  BONUS_POINTS_PER_SEED_DAY: 'bonus_points_per_seed_day',
+  BONUS_MAX_SEEDING_TORRENTS: 'bonus_max_seeding_torrents',
+  BONUS_POINTS_PER_UPLOAD: 'bonus_points_per_upload',
+  BOUNTY_MIN_POINTS: 'bounty_min_points',
 } as const;
 
 const settingsCache = new Map<
@@ -383,4 +389,44 @@ export async function getFeature3Desc(): Promise<string> {
     value ||
     'Fully transparent and community-driven. Designed for privacy and efficiency in the P2P ecosystem.'
   );
+}
+
+// ============================================================================
+// Bonus points (issue #48)
+// ============================================================================
+
+export interface BonusSettings {
+  enabled: boolean;
+  /** Points per seeded torrent per 24h of seeding */
+  pointsPerSeedDay: number;
+  /** Max torrents earning seeding points at the same time */
+  maxSeedingTorrents: number;
+  /** Points when an upload gets approved */
+  pointsPerUpload: number;
+  /** Minimum points to open a bounty (contributions: at least 1) */
+  bountyMinPoints: number;
+}
+
+function parseNumberSetting(value: string | null, fallback: number): number {
+  const n = value === null ? NaN : Number(value);
+  return Number.isFinite(n) && n >= 0 ? n : fallback;
+}
+
+export async function getBonusSettings(): Promise<BonusSettings> {
+  const [enabled, perSeedDay, maxSeeding, perUpload, bountyMin] =
+    await Promise.all([
+      getSetting(SETTINGS_KEYS.BONUS_ENABLED),
+      getSetting(SETTINGS_KEYS.BONUS_POINTS_PER_SEED_DAY),
+      getSetting(SETTINGS_KEYS.BONUS_MAX_SEEDING_TORRENTS),
+      getSetting(SETTINGS_KEYS.BONUS_POINTS_PER_UPLOAD),
+      getSetting(SETTINGS_KEYS.BOUNTY_MIN_POINTS),
+    ]);
+
+  return {
+    enabled: enabled !== 'false', // On by default
+    pointsPerSeedDay: parseNumberSetting(perSeedDay, 10),
+    maxSeedingTorrents: Math.floor(parseNumberSetting(maxSeeding, 100)),
+    pointsPerUpload: parseNumberSetting(perUpload, 25),
+    bountyMinPoints: parseNumberSetting(bountyMin, 100),
+  };
 }

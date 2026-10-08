@@ -1,1 +1,140 @@
-{}
+{
+  "bonus": {
+    "points": "{n} pts",
+    "disabled": "The bonus system is currently disabled.",
+    "shop": {
+      "title": "Bonus Shop",
+      "subtitle": "Spend the points you earn by seeding",
+      "balance": "Your balance",
+      "seedingNow": "Torrents earning now",
+      "howToEarn": "How to earn points",
+      "earnSeed": "{points} pts per torrent per day of seeding (max {max} torrents at once)",
+      "earnSeedNote": "Only torrents you uploaded or fully downloaded count.",
+      "earnUpload": "{points} pts when one of your uploads is approved",
+      "earnBounty": "Fill a bounty to receive its reward",
+      "items": "Items",
+      "noItems": "No items on sale yet.",
+      "buy": "Buy",
+      "owned": "Owned",
+      "confirmBuy": "Buy \"{name}\" for {price} points?",
+      "bought": "Purchased: {name}",
+      "notEnough": "Not enough points",
+      "itemUpload": "+{size} upload credit",
+      "itemInvite": "no invite | +1 invite | +{count} invites",
+      "itemGifAvatar": "Unlocks animated avatars (GIF, WebP, APNG)",
+      "history": "History",
+      "noHistory": "No transactions yet."
+    },
+    "tx": {
+      "upload": "Upload approved",
+      "purchase": "Purchase",
+      "bounty_create": "Bounty opened",
+      "bounty_contribute": "Bounty contribution",
+      "bounty_reward": "Bounty reward",
+      "bounty_refund": "Bounty refund",
+      "admin": "Adjustment"
+    },
+    "avatar": {
+      "title": "Avatar",
+      "upload": "Upload avatar",
+      "remove": "Remove",
+      "hint": "PNG, JPEG or WebP, max 512KB.",
+      "hintGif": "PNG, JPEG, WebP or animated GIF/WebP/APNG, max 2MB.",
+      "updated": "Avatar updated",
+      "removed": "Avatar removed",
+      "confirmRemove": "Remove your avatar?"
+    },
+    "bounties": {
+      "title": "Bounties",
+      "subtitle": "Request torrents that are not on the tracker yet",
+      "new": "New bounty",
+      "search": "Search bounties…",
+      "status": {
+        "all": "All",
+        "open": "Open",
+        "claimed": "Pending review",
+        "filled": "Filled",
+        "cancelled": "Cancelled"
+      },
+      "empty": "No bounties here.",
+      "reward": "Reward",
+      "requestedBy": "Requested by {user}",
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "e.g. The Matrix (1999) 2160p UHD BluRay",
+        "description": "Details",
+        "descriptionPlaceholder": "Edition, quality, language, subtitles…",
+        "imdb": "IMDb (optional)",
+        "category": "Category (optional)",
+        "points": "Initial reward",
+        "pointsHint": "Minimum {min} points, taken from your balance now and refunded if you cancel.",
+        "submit": "Open bounty",
+        "cancel": "Cancel"
+      },
+      "detail": {
+        "back": "All bounties",
+        "contributors": "Contributors",
+        "contribute": "Add points",
+        "contributePlaceholder": "Points",
+        "fill": "Fill this bounty",
+        "fillHint": "Paste the info hash of an approved torrent on the tracker. Its uploader gets the reward once the requester accepts.",
+        "fillPlaceholder": "Info hash (40 hex characters)",
+        "fillSubmit": "Submit",
+        "proposed": "Proposed torrent",
+        "uploader": "Uploaded by {user}",
+        "accept": "Accept and pay",
+        "reject": "Reject",
+        "cancelBounty": "Cancel bounty",
+        "confirmCancel": "Cancel this bounty? All contributions will be refunded.",
+        "confirmAccept": "Accept this torrent? The reward will be paid to its uploader.",
+        "filledBy": "Filled by {user}"
+      }
+    },
+    "admin": {
+      "title": "Bonus & shop",
+      "settings": "Earning rules",
+      "enabled": "Enable bonus system",
+      "pointsPerSeedDay": "Points per torrent per day of seeding",
+      "maxSeedingTorrents": "Max torrents earning at once",
+      "pointsPerUpload": "Points per approved upload",
+      "bountyMinPoints": "Minimum points to open a bounty",
+      "save": "Save",
+      "saved": "Saved",
+      "items": "Shop items",
+      "addItem": "Add item",
+      "editItem": "Edit item",
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "types": {
+        "upload_credit": "Upload credit",
+        "invite": "Invites",
+        "gif_avatar": "Animated avatar"
+      },
+      "price": "Price (points)",
+      "valueGb": "Upload credit (GB)",
+      "valueInvites": "Number of invites",
+      "active": "On sale",
+      "sortOrder": "Order",
+      "delete": "Delete",
+      "confirmDelete": "Delete \"{name}\"?",
+      "grant": "Grant or remove points",
+      "grantUser": "User ID",
+      "grantAmount": "Amount (negative to remove)",
+      "grantReason": "Reason",
+      "grantSubmit": "Apply",
+      "granted": "Balance updated: {points} pts"
+    },
+    "nav": {
+      "shop": "Shop",
+      "bounties": "Bounties"
+    },
+    "menu": {
+      "shop": "Bonus shop"
+    },
+    "adminNav": {
+      "label": "Bonus & Shop",
+      "description": "Earning rules, shop items and point grants"
+    }
+  }
+}

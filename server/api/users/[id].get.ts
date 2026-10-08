@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
       downloaded: true,
       createdAt: true,
       lastSeen: true,
+      avatarUrl: true,
     },
   });
 

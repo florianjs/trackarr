@@ -139,6 +139,12 @@ const menuItems = computed(() => [
     icon: 'ph:gear',
     description: t('admin.nav.settings.description'),
   },
+  {
+    label: t('bonus.adminNav.label'),
+    path: '/admin/bonus',
+    icon: 'ph:coins',
+    description: t('bonus.adminNav.description'),
+  },
 ]);
 
 const currentItem = computed(
