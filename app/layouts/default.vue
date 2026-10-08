@@ -224,14 +224,17 @@ useHead({
       rel: 'icon',
       type: computed(() => {
         const url = branding.value?.siteFavicon;
-        if (!url) return 'image/x-icon';
+        if (!url) return 'image/svg+xml';
         if (url.endsWith('.svg')) return 'image/svg+xml';
         if (url.endsWith('.png')) return 'image/png';
         if (url.endsWith('.webp')) return 'image/webp';
         return 'image/x-icon';
       }),
-      href: computed(() => branding.value?.siteFavicon || '/favicon.ico'),
+      href: computed(() => branding.value?.siteFavicon || '/favicon.svg'),
     },
+    // Fallback for browsers without SVG favicons, and the home screen icon
+    { rel: 'alternate icon', href: '/favicon.ico', sizes: 'any' },
+    { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
   ],
 });
 
