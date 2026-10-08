@@ -9,8 +9,7 @@
           :key="range.value"
           @click="selectedRange = range.value"
           class="px-3 py-1.5 text-xs font-medium rounded-md transition-all"
-          :class="
-            selectedRange === range.value
+          :class="selectedRange === range.value
               ? 'bg-white/10 text-text-primary'
               : 'text-text-muted hover:text-text-secondary'
           "
@@ -24,7 +23,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <div class="bg-bg-secondary p-4 rounded-lg border border-border">
         <h3
-          class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
+          class="text-sm font-bold text-text-primary mb-4"
         >
           {{ t('admin.charts.growth') }}
         </h3>
@@ -34,7 +33,7 @@
       </div>
       <div class="bg-bg-secondary p-4 rounded-lg border border-border">
         <h3
-          class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
+          class="text-sm font-bold text-text-primary mb-4"
         >
           {{ t('admin.charts.peersSeeders') }}
         </h3>
@@ -44,7 +43,7 @@
       </div>
       <div class="bg-bg-secondary p-4 rounded-lg border border-border">
         <h3
-          class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
+          class="text-sm font-bold text-text-primary mb-4"
         >
           {{ t('admin.charts.redisMemoryUsage') }}
         </h3>
@@ -54,7 +53,7 @@
       </div>
       <div class="bg-bg-secondary p-4 rounded-lg border border-border">
         <h3
-          class="text-sm font-bold text-text-primary mb-4 uppercase tracking-wider"
+          class="text-sm font-bold text-text-primary mb-4"
         >
           {{ t('admin.charts.databaseSize') }}
         </h3>
@@ -92,6 +91,31 @@ ChartJS.register(
 );
 
 const { t } = useI18n();
+const { preference } = useTheme();
+
+// Chart.js draws on canvas, so it needs concrete colors: read the theme tokens
+const tokens = ref<Record<string, string>>({});
+function readTokens() {
+  const style = getComputedStyle(document.documentElement);
+  tokens.value = Object.fromEntries(
+    ['ink', 'ink-2', 'ink-3', 'line', 'seed', 'leech'].map((name) => [
+      name,
+      style.getPropertyValue(`--${name}`).trim(),
+    ])
+  );
+}
+function color(name: string, alpha = 1): string {
+  const channels = tokens.value[name];
+  return channels ? `rgb(${channels} / ${alpha})` : 'transparent';
+}
+let media: MediaQueryList | undefined;
+onMounted(() => {
+  readTokens();
+  media = window.matchMedia('(prefers-color-scheme: dark)');
+  media.addEventListener('change', readTokens);
+});
+onBeforeUnmount(() => media?.removeEventListener('change', readTokens));
+watch(preference, () => nextTick(readTokens));
 
 const props = defineProps<{
   history: any[];
@@ -143,17 +167,17 @@ const formatDate = (date: string) => {
   });
 };
 
-const chartOptions = {
+const chartOptions = computed(() => ({
   responsive: true,
   maintainAspectRatio: false,
   scales: {
     y: {
       beginAtZero: true,
       grid: {
-        color: 'rgba(255, 255, 255, 0.05)',
+        color: color('line', 0.6),
       },
       ticks: {
-        color: '#94a3b8',
+        color: color('ink-3'),
         font: { size: 10 },
       },
     },
@@ -162,7 +186,7 @@ const chartOptions = {
         display: false,
       },
       ticks: {
-        color: '#94a3b8',
+        color: color('ink-3'),
         font: { size: 10 },
         maxTicksLimit: 8,
       },
@@ -173,7 +197,7 @@ const chartOptions = {
       display: true,
       position: 'top' as const,
       labels: {
-        color: '#f8fafc',
+        color: color('ink-2'),
         font: { size: 11 },
         usePointStyle: true,
       },
@@ -183,7 +207,7 @@ const chartOptions = {
       intersect: false,
     },
   },
-};
+}));
 
 const growthData = computed(() => ({
   labels: filteredHistory.value.map((h) => formatDate(h.createdAt)),
@@ -191,16 +215,16 @@ const growthData = computed(() => ({
     {
       label: t('admin.charts.users'),
       data: filteredHistory.value.map((h) => h.usersCount),
-      borderColor: '#3b82f6',
-      backgroundColor: 'rgba(59, 130, 246, 0.1)',
+      borderColor: color('ink'),
+      backgroundColor: color('ink', 0.05),
       fill: true,
       tension: 0.4,
     },
     {
       label: t('admin.charts.torrents'),
       data: filteredHistory.value.map((h) => h.torrentsCount),
-      borderColor: '#10b981',
-      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      borderColor: color('ink-3'),
+      backgroundColor: color('ink-3', 0.05),
       fill: true,
       tension: 0.4,
     },
@@ -213,16 +237,16 @@ const peersData = computed(() => ({
     {
       label: t('admin.charts.peers'),
       data: filteredHistory.value.map((h) => h.peersCount),
-      borderColor: '#f59e0b',
-      backgroundColor: 'rgba(245, 158, 11, 0.1)',
+      borderColor: color('leech'),
+      backgroundColor: color('leech', 0.05),
       fill: true,
       tension: 0.4,
     },
     {
       label: t('common.seeders'),
       data: filteredHistory.value.map((h) => h.seedersCount),
-      borderColor: '#8b5cf6',
-      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+      borderColor: color('seed'),
+      backgroundColor: color('seed', 0.05),
       fill: true,
       tension: 0.4,
     },
@@ -237,8 +261,8 @@ const redisData = computed(() => ({
       data: filteredHistory.value.map((h) =>
         Number((h.redisMemoryUsage / 1024 / 1024).toFixed(2))
       ),
-      borderColor: '#ef4444',
-      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+      borderColor: color('ink'),
+      backgroundColor: color('ink', 0.05),
       fill: true,
       tension: 0.4,
     },
@@ -253,8 +277,8 @@ const dbData = computed(() => ({
       data: filteredHistory.value.map((h) =>
         Number((h.dbSize / 1024 / 1024).toFixed(2))
       ),
-      borderColor: '#06b6d4',
-      backgroundColor: 'rgba(6, 182, 212, 0.1)',
+      borderColor: color('ink'),
+      backgroundColor: color('ink', 0.05),
       fill: true,
       tension: 0.4,
     },

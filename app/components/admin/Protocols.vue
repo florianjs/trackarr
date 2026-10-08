@@ -3,7 +3,7 @@
     <div class="card-header">
       <div class="flex items-center gap-2">
         <Icon name="ph:plug-connect" class="text-text-muted" />
-        <h3 class="text-xs font-bold uppercase tracking-wider">{{ t('admin.protocols.title') }}</h3>
+        <h3 class="text-xs font-bold">{{ t('admin.protocols.title') }}</h3>
       </div>
     </div>
     <div class="card-body">
@@ -13,20 +13,19 @@
           :key="proto"
           class="flex items-center justify-between"
         >
-          <span class="text-xs text-text-secondary font-mono uppercase">{{
+          <span class="text-xs text-text-secondary font-mono">{{
             proto
           }}</span>
           <div class="flex items-center gap-2">
             <span
-              class="text-[10px] font-bold"
+              class="text-xs font-bold"
               :class="active ? 'text-success' : 'text-text-muted'"
             >
               {{ active ? t('common.active') : t('common.inactive') }}
             </span>
             <div
               class="w-1.5 h-1.5 rounded-full"
-              :class="
-                active
+              :class="active
                   ? 'bg-success shadow-[0_0_8px_rgba(34,197,94,0.5)]'
                   : 'bg-bg-tertiary'
               "

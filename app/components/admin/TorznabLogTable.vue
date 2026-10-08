@@ -4,32 +4,32 @@
       <thead v-if="!compact">
         <tr class="border-b border-border">
           <th
-            class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+            class="text-left text-xs font-bold text-text-muted py-2 px-2"
           >
             {{ t('admin.torznabLogs.time') }}
           </th>
           <th
-            class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+            class="text-left text-xs font-bold text-text-muted py-2 px-2"
           >
             {{ t('common.user') }}
           </th>
           <th
-            class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+            class="text-left text-xs font-bold text-text-muted py-2 px-2"
           >
             {{ t('admin.torznabLogs.function') }}
           </th>
           <th
-            class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+            class="text-left text-xs font-bold text-text-muted py-2 px-2"
           >
             {{ t('admin.torznabLogs.query') }}
           </th>
           <th
-            class="text-center text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+            class="text-center text-xs font-bold text-text-muted py-2 px-2"
           >
             {{ t('admin.torznabLogs.results') }}
           </th>
           <th
-            class="text-right text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+            class="text-right text-xs font-bold text-text-muted py-2 px-2"
           >
             {{ t('admin.torznabLogs.duration') }}
           </th>
@@ -51,7 +51,7 @@
           v-for="(log, index) in logs"
           :key="index"
           class="border-b border-border/50"
-          :class="log.error && 'bg-red-500/5'"
+          :class="log.error && 'bg-danger/5'"
         >
           <td class="py-2 px-2">
             <span class="text-xs text-text-muted font-mono">
@@ -60,14 +60,14 @@
           </td>
           <td class="py-2 px-2">
             <code
-              class="text-[10px] font-mono text-text-muted bg-bg-tertiary px-1 py-0.5 rounded"
+              class="text-xs font-mono text-text-muted bg-bg-tertiary px-1 py-0.5 rounded"
             >
               {{ log.passkey }}
             </code>
           </td>
           <td class="py-2 px-2">
             <span
-              class="px-1.5 py-0.5 rounded text-[10px] font-medium"
+              class="px-1.5 py-0.5 rounded text-xs font-medium"
               :class="getFunctionClass(log.function)"
             >
               {{ log.function }}
@@ -84,7 +84,7 @@
           <td class="py-2 px-2 text-center">
             <span
               v-if="log.error"
-              class="text-xs text-red-400"
+              class="text-xs text-danger"
               :title="log.error"
             >
               {{ t('common.error') }}
@@ -146,15 +146,15 @@ function formatTime(timestamp: number): string {
 function getFunctionClass(func: string): string {
   switch (func) {
     case 'search':
-      return 'bg-blue-500/20 text-blue-400';
+      return 'bg-bg-tertiary text-text-secondary';
     case 'tvsearch':
-      return 'bg-purple-500/20 text-purple-400';
+      return 'bg-bg-tertiary text-text-primary';
     case 'movie':
       return 'bg-pink-500/20 text-pink-400';
     case 'caps':
       return 'bg-gray-500/20 text-gray-400';
     case 'download':
-      return 'bg-green-500/20 text-green-400';
+      return 'bg-seed/20 text-seed';
     default:
       return 'bg-gray-500/20 text-gray-400';
   }
@@ -162,7 +162,7 @@ function getFunctionClass(func: string): string {
 
 function getResponseTimeClass(time: number): string {
   if (time < 100) return 'text-success';
-  if (time < 500) return 'text-yellow-400';
-  return 'text-red-400';
+  if (time < 500) return 'text-leech';
+  return 'text-danger';
 }
 </script>

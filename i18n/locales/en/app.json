@@ -455,7 +455,7 @@
   "admin": {
     "layout": {
       "title": "Administration",
-      "liveFeed": "LIVE TRACKER FEED"
+      "liveFeed": "Live tracker feed"
     },
     "nav": {
       "dashboard": {
@@ -521,21 +521,8 @@
       "dropImage": "Drop image or click to upload",
       "favicon": "Favicon",
       "faviconDescription": "Upload a custom favicon (ICO, PNG, SVG). Max 1MB. Shown in browser tabs.",
-      "feature": "Feature {n}",
-      "featureBoxes": "Feature Boxes",
-      "featureDescription": "Title and description for this feature card. Supports rich text.",
-      "featureDescriptionPlaceholder": "Feature description...",
-      "featureTitle": "Title",
-      "featureTitlePlaceholder": "Feature title",
       "footerContent": "Footer Content",
       "footerContentDescription": "Custom footer content. Supports rich text formatting.",
-      "heroSection": "Hero Section",
-      "heroSubtitleDescription": "A short description below the title. Supports rich text.",
-      "heroSubtitlePlaceholder": "High-performance, minimalist P2P tracking engine...",
-      "heroTitle": "Title",
-      "heroTitleDescription": "The main headline on the homepage. Use rich text for custom styling, colors, and fonts.",
-      "heroTitlePlaceholder": "Enter hero title...",
-      "homepageContent": "Homepage Content",
       "icon": "Icon",
       "image": "Image",
       "livePreview": "Live Preview",
@@ -550,7 +537,6 @@
       "pageTitleSuffixDescription": "Text appended to browser tab titles. Plain text only.",
       "quickSelect": "Quick Select",
       "saveBranding": "Save Branding",
-      "saveHomepageContent": "Save Homepage Content",
       "saveTextBranding": "Save Text Branding",
       "siteName": "Site Name",
       "siteNameColor": "Site Name Color",
@@ -558,9 +544,6 @@
       "siteRules": "Site Rules",
       "siteRulesDescription": "Rules and terms displayed to users. Supports full rich text.",
       "siteRulesPlaceholder": "Enter site rules and guidelines...",
-      "statusBadge": "Status Badge",
-      "statusBadgeDescription": "Text shown in the pill badge above the title.",
-      "statusBadgePlaceholder": "Tracker Online & Operational",
       "subtitle": "Subtitle",
       "subtitleDescription": "Text below site name. Leave empty to show version. Supports rich text.",
       "subtitlePlaceholder": "Leave empty for version number",
@@ -568,8 +551,8 @@
       "textBrandingDescription": "Customize text that appears throughout the site. Use the rich text editor for advanced formatting.",
       "title": "Site Branding",
       "uploading": "Uploading...",
-      "welcomeMessage": "Welcome Message",
-      "welcomeMessageDescription": "Rich text message displayed on the homepage or dashboard.",
+      "welcomeMessage": "Note from the staff",
+      "welcomeMessageDescription": "Shown at the top of every member's dashboard. Leave empty to hide it.",
       "welcomeMessagePlaceholder": "Welcome to our tracker community..."
     },
     "categories": {

@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:users-bold" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.users.title') }}
         </h3>
@@ -16,11 +16,11 @@
           v-model="userSearchQuery"
           type="text"
           :placeholder="t('admin.users.searchPlaceholder')"
-          class="input flex-1 !py-2 text-xs font-bold uppercase tracking-wider"
+          class="input flex-1 !py-2 text-xs font-bold"
           @keyup.enter="searchUsers"
         />
         <button
-          class="btn btn-primary !px-6 flex items-center gap-2 uppercase tracking-widest font-bold text-xs"
+          class="btn btn-primary !px-6 flex items-center gap-2 font-bold text-xs"
           :disabled="!userSearchQuery.trim() || isSearching"
           @click="searchUsers"
         >
@@ -42,16 +42,16 @@
         >
           <div>
             <p
-              class="text-xs font-bold text-text-primary uppercase tracking-wider"
+              class="text-sm font-medium text-text-primary"
             >
               {{ u.username }}
             </p>
-            <p class="text-[10px] font-mono text-text-muted">
+            <p class="text-xs font-mono text-text-muted">
               ID: {{ u.id.substring(0, 8) }}...
             </p>
             <p
               v-if="u.lastIp"
-              class="text-[8px] font-mono text-text-muted/50 mt-0.5"
+              class="text-2xs font-mono text-text-muted/50 mt-0.5"
             >
               IP: {{ u.lastIp }}
             </p>
@@ -59,14 +59,13 @@
           <div class="flex items-center gap-4">
             <div class="flex items-center gap-2">
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                class="text-xs font-bold text-text-muted"
                 >{{ t('admin.users.ban') }}</label
               >
               <button
                 @click="toggleBan(u)"
                 class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="
-                  u.isBanned ? 'bg-error' : 'bg-bg-primary border border-border'
+                :class="u.isBanned ? 'bg-error' : 'bg-bg-primary border border-border'
                 "
               >
                 <span
@@ -77,13 +76,13 @@
             </div>
             <div v-if="user?.isAdmin && roles.length > 0" class="flex items-center gap-2">
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                class="text-xs font-bold text-text-muted"
                 >{{ t('common.role') }}</label
               >
               <select
                 :value="u.roleId || ''"
                 @change="assignRole(u, ($event.target as HTMLSelectElement).value)"
-                class="bg-bg-primary border border-border rounded px-2 py-1 text-[10px] font-bold text-text-primary focus:outline-none focus:border-accent-primary"
+                class="bg-bg-primary border border-border rounded px-2 py-1 text-sm font-medium text-text-primary focus:outline-none focus:border-accent-primary"
               >
                 <option value="">{{ t('admin.users.noRole') }}</option>
                 <option v-for="role in roles" :key="role.id" :value="role.id">
@@ -93,14 +92,13 @@
             </div>
             <div v-if="user?.isAdmin" class="flex items-center gap-2">
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                class="text-xs font-bold text-text-muted"
                 >{{ t('admin.users.mod') }}</label
               >
               <button
                 @click="toggleUserRole(u, 'isModerator')"
                 class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="
-                  u.isModerator
+                :class="u.isModerator
                     ? 'bg-success'
                     : 'bg-bg-primary border border-border'
                 "
@@ -113,14 +111,13 @@
             </div>
             <div v-if="user?.isAdmin" class="flex items-center gap-2">
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                class="text-xs font-bold text-text-muted"
                 >{{ t('common.admin') }}</label
               >
               <button
                 @click="toggleUserRole(u, 'isAdmin')"
                 class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="
-                  u.isAdmin
+                :class="u.isAdmin
                     ? 'bg-success'
                     : 'bg-bg-primary border border-border'
                 "
@@ -139,7 +136,7 @@
         class="text-center py-8 border border-dashed border-border rounded bg-bg-primary/30"
       >
         <p
-          class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+          class="text-xs font-bold text-text-muted"
         >
           {{ t('admin.users.empty') }}
         </p>

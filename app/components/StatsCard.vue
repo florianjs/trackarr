@@ -14,12 +14,12 @@
       </div>
       <div class="flex-1 min-w-0">
         <p
-          class="text-[10px] text-text-muted uppercase tracking-widest font-bold truncate"
+          class="text-xs text-text-muted truncate"
         >
           {{ title }}
         </p>
         <p
-          class="text-lg font-mono font-bold mt-0.5 leading-none"
+          class="text-lg num font-semibold mt-0.5 leading-none"
           :class="{
             'text-success': variant === 'success',
             'text-warning': variant === 'warning',

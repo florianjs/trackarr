@@ -5,13 +5,13 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:flag-bold" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.reports.title') }}
           </h3>
           <span
             v-if="pendingCount > 0"
-            class="px-2 py-0.5 text-[10px] font-bold bg-error text-paper rounded-full"
+            class="px-2 py-0.5 text-xs font-bold bg-error text-paper rounded-full"
           >
             {{ pendingCount }}
           </span>
@@ -37,24 +37,24 @@
             <div class="flex-1">
               <div class="flex items-center gap-2 mb-1">
                 <span
-                  class="px-2 py-0.5 text-[10px] font-bold uppercase rounded"
+                  class="px-2 py-0.5 text-xs font-bold rounded"
                   :class="getStatusClass(report.status)"
                 >
                   {{ statusLabel(report.status) }}
                 </span>
                 <span
-                  class="px-2 py-0.5 text-[10px] font-mono bg-bg-primary rounded border border-border"
+                  class="px-2 py-0.5 text-xs font-mono bg-bg-primary rounded border border-border"
                 >
                   {{ report.targetType }}
                 </span>
               </div>
-              <p class="text-xs font-bold text-text-primary mb-1">
+              <p class="text-sm font-medium text-text-primary mb-1">
                 {{ report.reason }}
               </p>
-              <p v-if="report.details" class="text-[10px] text-text-muted mb-2">
+              <p v-if="report.details" class="text-xs text-text-muted mb-2">
                 {{ report.details }}
               </p>
-              <div class="flex items-center gap-4 text-[10px] text-text-muted">
+              <div class="flex items-center gap-4 text-xs text-text-muted">
                 <span>
                   {{ t('admin.reports.by') }}
                   <span class="font-mono">{{ report.reporter?.username }}</span>
@@ -95,7 +95,7 @@
         <button
           @click="page--"
           :disabled="page <= 1"
-          class="btn btn-secondary !px-3 !py-1 text-[10px]"
+          class="btn btn-secondary !px-3 !py-1 text-xs"
         >
           {{ t('common.previous') }}
         </button>
@@ -105,7 +105,7 @@
         <button
           @click="page++"
           :disabled="page >= reports.pagination.pages"
-          class="btn btn-secondary !px-3 !py-1 text-[10px]"
+          class="btn btn-secondary !px-3 !py-1 text-xs"
         >
           {{ t('common.next') }}
         </button>

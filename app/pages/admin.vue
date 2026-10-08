@@ -5,7 +5,7 @@
       <div class="sticky top-24 space-y-1">
         <div class="px-3 mb-4">
           <h2
-            class="text-xs font-bold text-text-muted uppercase tracking-widest"
+            class="text-xs font-bold text-text-muted"
           >
             {{ t('admin.layout.title') }}
           </h2>
@@ -30,7 +30,7 @@
 
         <div class="mt-8 px-3">
           <div
-            class="flex items-center gap-2 text-[10px] font-mono text-text-muted bg-bg-secondary px-2 py-1.5 rounded border border-border"
+            class="flex items-center gap-2 text-xs text-text-muted bg-bg-secondary px-2 py-1.5 rounded border border-border"
           >
             <span class="relative flex h-2 w-2">
               <span
@@ -50,11 +50,11 @@
     <main class="flex-1 min-w-0">
       <div class="mb-6">
         <h1
-          class="text-2xl font-bold text-text-primary tracking-tight uppercase"
+          class="text-2xl font-semibold tracking-tight text-text-primary"
         >
           {{ currentTitle }}
         </h1>
-        <p class="text-xs text-text-muted font-mono mt-1">
+        <p class="text-sm text-text-muted mt-1">
           {{ currentDescription }}
         </p>
       </div>

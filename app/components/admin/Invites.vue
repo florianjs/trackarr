@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:envelope-simple-bold" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.invites.title') }}
           </h3>
@@ -16,7 +16,7 @@
       <!-- Generate Unique Codes Section -->
       <div class="mb-6 p-3 rounded border border-accent/30 bg-accent/5">
         <h4
-          class="text-[10px] font-bold uppercase tracking-widest text-accent mb-3"
+          class="text-xs font-bold text-accent mb-3"
         >
           {{ t('admin.invites.generateTitle') }}
         </h4>
@@ -56,12 +56,12 @@
           class="p-2 rounded bg-bg-primary border border-border"
         >
           <div class="flex items-center justify-between mb-2">
-            <span class="text-[10px] font-bold uppercase tracking-widest text-text-muted">
+            <span class="text-xs font-bold text-text-muted">
               {{ t('admin.invites.generatedCodes') }}
             </span>
             <button
               @click="copyAllCodes"
-              class="text-[10px] text-accent hover:underline"
+              class="text-xs text-accent hover:underline"
             >
               {{ t('admin.invites.copyAll') }}
             </button>
@@ -71,7 +71,7 @@
               v-for="code in generatedCodes"
               :key="code"
               @click="copyCode(code)"
-              class="px-2 py-0.5 text-[10px] font-mono bg-bg-tertiary rounded border border-border cursor-pointer hover:border-accent/50"
+              class="px-2 py-0.5 text-xs font-mono bg-bg-tertiary rounded border border-border cursor-pointer hover:border-accent/50"
               :title="t('admin.invites.clickToCopy')"
             >
               {{ code }}
@@ -83,7 +83,7 @@
       <!-- Grant Invites Form -->
       <div class="mb-6 p-3 rounded border border-border bg-bg-tertiary/50">
         <h4
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
+          class="text-xs font-bold text-text-muted mb-3"
         >
           {{ t('admin.invites.grantTitle') }}
         </h4>
@@ -134,13 +134,13 @@
                 {{ invite.code }}
               </code>
               <span
-                class="px-2 py-0.5 text-[10px] font-bold uppercase rounded"
+                class="px-2 py-0.5 text-xs font-bold rounded"
                 :class="getInviteStatusClass(invite)"
               >
                 {{ getInviteStatus(invite) }}
               </span>
             </div>
-            <div class="flex items-center gap-4 text-[10px] text-text-muted">
+            <div class="flex items-center gap-4 text-xs text-text-muted">
               <span>
                 {{ t('admin.invites.createdBy') }}
                 <span class="font-mono">{{ invite.creator?.username }}</span>
@@ -174,7 +174,7 @@
         <button
           @click="page--"
           :disabled="page <= 1"
-          class="btn btn-secondary !px-3 !py-1 text-[10px]"
+          class="btn btn-secondary !px-3 !py-1 text-xs"
         >
           {{ t('common.previous') }}
         </button>
@@ -184,7 +184,7 @@
         <button
           @click="page++"
           :disabled="page >= invites.pagination.pages"
-          class="btn btn-secondary !px-3 !py-1 text-[10px]"
+          class="btn btn-secondary !px-3 !py-1 text-xs"
         >
           {{ t('common.next') }}
         </button>

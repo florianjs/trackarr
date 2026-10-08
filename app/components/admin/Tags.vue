@@ -5,14 +5,14 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:tag-bold" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('common.tags') }}
           </h3>
         </div>
         <button
           @click="showAddModal = true"
-          class="btn btn-primary !px-3 !py-1 text-[10px]"
+          class="btn btn-primary !px-3 !py-1 text-xs"
         >
           <Icon name="ph:plus-bold" class="mr-1" />
           {{ t('admin.tags.add') }}
@@ -31,7 +31,7 @@
             :style="{ backgroundColor: tag.color }"
           ></span>
           <span
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ tag.name }}
           </span>
@@ -58,7 +58,7 @@
         <div class="card w-full max-w-md">
           <div class="card-header">
             <h3
-              class="text-xs font-bold uppercase tracking-wider text-text-primary"
+              class="text-sm font-medium text-text-primary"
             >
               {{ t('admin.tags.addTitle') }}
             </h3>
@@ -66,7 +66,7 @@
           <div class="card-body space-y-4">
             <div>
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 block"
+                class="text-xs font-bold text-text-muted mb-1 block"
               >
                 {{ t('common.name') }}
               </label>
@@ -79,7 +79,7 @@
             </div>
             <div>
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 block"
+                class="text-xs font-bold text-text-muted mb-1 block"
               >
                 {{ t('admin.tags.slug') }}
               </label>
@@ -92,7 +92,7 @@
             </div>
             <div>
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest mb-1 block"
+                class="text-xs font-bold text-text-muted mb-1 block"
               >
                 {{ t('admin.tags.color') }}
               </label>

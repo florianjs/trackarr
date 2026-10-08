@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:gauge" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.torznabRateLimit.title') }}
         </h3>
@@ -32,7 +32,7 @@
             t('admin.torznabRateLimit.seconds')
           }}</span>
           <div class="flex-1" />
-          <span class="text-[10px] text-text-muted font-mono">
+          <span class="text-xs text-text-muted font-mono">
             = {{ formatDuration(localWindow) }}
           </span>
         </div>
@@ -66,7 +66,7 @@
               }"
             />
           </div>
-          <div class="flex justify-between mt-1 text-[10px] text-text-muted">
+          <div class="flex justify-between mt-1 text-xs text-text-muted">
             <span>{{ t('admin.torznabRateLimit.strict') }}</span>
             <span>{{ t('admin.torznabRateLimit.generous') }}</span>
           </div>
@@ -101,7 +101,7 @@
               }"
             />
           </div>
-          <div class="flex justify-between mt-1 text-[10px] text-text-muted">
+          <div class="flex justify-between mt-1 text-xs text-text-muted">
             <span>{{ t('admin.torznabRateLimit.strict') }}</span>
             <span>{{ t('admin.torznabRateLimit.generous') }}</span>
           </div>
@@ -111,7 +111,7 @@
       <!-- Presets -->
       <div class="border-t border-border pt-4">
         <p
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
+          class="text-xs font-bold text-text-muted mb-3"
         >
           {{ t('admin.torznabRateLimit.presets') }}
         </p>
@@ -138,7 +138,7 @@
         <button
           @click="saveChanges"
           :disabled="!hasChanges || saving"
-          class="px-4 py-2 bg-text-primary text-bg-primary text-xs font-bold uppercase tracking-widest rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
+          class="px-4 py-2 bg-text-primary text-bg-primary text-xs font-bold rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center gap-2"
         >
           <Icon v-if="saving" name="ph:circle-notch" class="animate-spin" />
           {{ saving ? t('common.saving') : t('common.saveChanges') }}

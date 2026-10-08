@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:users" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.torznabUsers.title') }}
           </h3>
@@ -46,32 +46,32 @@
           <thead>
             <tr class="border-b border-border">
               <th
-                class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+                class="text-left text-xs font-bold text-text-muted py-2 px-2"
               >
                 {{ t('common.user') }}
               </th>
               <th
-                class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+                class="text-left text-xs font-bold text-text-muted py-2 px-2"
               >
                 {{ t('admin.torznabUsers.passkey') }}
               </th>
               <th
-                class="text-center text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+                class="text-center text-xs font-bold text-text-muted py-2 px-2"
               >
                 {{ t('admin.torznabUsers.requests') }}
               </th>
               <th
-                class="text-center text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+                class="text-center text-xs font-bold text-text-muted py-2 px-2"
               >
                 {{ t('admin.torznabUsers.rateLimits') }}
               </th>
               <th
-                class="text-left text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+                class="text-left text-xs font-bold text-text-muted py-2 px-2"
               >
                 {{ t('admin.torznabUsers.lastRequest') }}
               </th>
               <th
-                class="text-right text-[10px] font-bold uppercase tracking-widest text-text-muted py-2 px-2"
+                class="text-right text-xs font-bold text-text-muted py-2 px-2"
               >
                 {{ t('common.actions') }}
               </th>
@@ -104,7 +104,7 @@
               </td>
               <td class="py-3 px-2">
                 <code
-                  class="text-[11px] font-mono text-text-muted bg-bg-tertiary px-1.5 py-0.5 rounded"
+                  class="text-xs font-mono text-text-muted bg-bg-tertiary px-1.5 py-0.5 rounded"
                 >
                   {{ user.passkeyMasked }}
                 </code>
@@ -117,7 +117,7 @@
               <td class="py-3 px-2 text-center">
                 <span
                   v-if="(user.apiStats?.rateLimitHits || 0) > 0"
-                  class="px-1.5 py-0.5 rounded text-[10px] font-medium bg-yellow-500/20 text-yellow-400"
+                  class="px-1.5 py-0.5 rounded text-xs font-medium bg-leech/20 text-leech"
                 >
                   {{ t('admin.torznabUsers.hits', user.apiStats?.rateLimitHits ?? 0) }}
                 </span>
@@ -143,14 +143,14 @@
                   </button>
                   <button
                     @click="confirmResetPasskey(user)"
-                    class="p-1.5 text-text-muted hover:text-yellow-400 hover:bg-bg-tertiary rounded transition-colors"
+                    class="p-1.5 text-text-muted hover:text-leech hover:bg-bg-tertiary rounded transition-colors"
                     :title="t('admin.torznabUsers.resetPasskeyTitle')"
                   >
                     <Icon name="ph:key" class="text-sm" />
                   </button>
                   <button
                     @click="confirmBlockUser(user)"
-                    class="p-1.5 text-text-muted hover:text-red-400 hover:bg-bg-tertiary rounded transition-colors"
+                    class="p-1.5 text-text-muted hover:text-danger hover:bg-bg-tertiary rounded transition-colors"
                     :title="t('admin.torznabUsers.blockTitle')"
                   >
                     <Icon name="ph:prohibit" class="text-sm" />
@@ -261,10 +261,9 @@
               @click="executeAction"
               :disabled="actionLoading"
               class="px-4 py-2 rounded text-sm font-medium flex items-center gap-2"
-              :class="
-                confirmAction.variant === 'danger'
-                  ? 'bg-red-500 text-white'
-                  : 'bg-yellow-500 text-black'
+              :class="confirmAction.variant === 'danger'
+                  ? 'bg-danger text-paper'
+                  : 'bg-leech text-black'
               "
             >
               <Icon

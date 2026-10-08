@@ -5,7 +5,7 @@
       <div class="sticky top-24 space-y-1">
         <div class="px-3 mb-4">
           <h2
-            class="text-xs font-bold text-text-muted uppercase tracking-widest"
+            class="text-xs font-bold text-text-muted"
           >
             {{ t('mod.layout.title') }}
           </h2>
@@ -34,11 +34,11 @@
     <main class="flex-1 min-w-0">
       <div class="mb-6">
         <h1
-          class="text-2xl font-bold text-text-primary tracking-tight uppercase"
+          class="text-2xl font-semibold tracking-tight text-text-primary"
         >
           {{ currentTitle }}
         </h1>
-        <p class="text-xs text-text-muted font-mono mt-1">
+        <p class="text-sm text-text-muted mt-1">
           {{ currentDescription }}
         </p>
       </div>

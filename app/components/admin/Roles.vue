@@ -4,7 +4,7 @@
       <div class="flex items-center gap-2">
         <Icon name="ph:user-circle-gear-bold" class="text-text-muted" />
         <h3
-          class="text-xs font-bold uppercase tracking-wider text-text-primary"
+          class="text-sm font-medium text-text-primary"
         >
           {{ t('admin.roles.title') }}
         </h3>
@@ -14,7 +14,7 @@
       <!-- Create new role form -->
       <div class="mb-6 p-4 bg-bg-tertiary/50 rounded border border-border">
         <h4
-          class="text-[10px] font-bold uppercase tracking-widest text-text-muted mb-3"
+          class="text-xs font-bold text-text-muted mb-3"
         >
           {{ t('admin.roles.createTitle') }}
         </h4>
@@ -26,7 +26,7 @@
             class="input flex-1 min-w-[150px] !py-2 text-xs"
           />
           <div class="flex items-center gap-2">
-            <label class="text-[10px] font-bold text-text-muted uppercase"
+            <label class="text-xs font-bold text-text-muted"
               >{{ t('admin.roles.color') }}</label
             >
             <input
@@ -36,22 +36,20 @@
             />
           </div>
           <div class="flex items-center gap-2">
-            <label class="text-[10px] font-bold text-text-muted uppercase"
+            <label class="text-xs font-bold text-text-muted"
               >{{ t('admin.roles.skipModeration') }}</label
             >
             <button
               @click="newRole.canUploadWithoutModeration = !newRole.canUploadWithoutModeration"
               class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-              :class="
-                newRole.canUploadWithoutModeration
+              :class="newRole.canUploadWithoutModeration
                   ? 'bg-success'
                   : 'bg-bg-primary border border-border'
               "
             >
               <span
                 class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
-                :class="
-                  newRole.canUploadWithoutModeration
+                :class="newRole.canUploadWithoutModeration
                     ? 'translate-x-5'
                     : 'translate-x-1'
                 "
@@ -61,7 +59,7 @@
           <button
             @click="createRole"
             :disabled="!newRole.name.trim() || isCreating"
-            class="btn btn-primary !px-4 flex items-center gap-2 uppercase tracking-widest font-bold text-xs"
+            class="btn btn-primary !px-4 flex items-center gap-2 font-bold text-xs"
           >
             <Icon
               v-if="isCreating"
@@ -88,11 +86,11 @@
             />
             <div>
               <p
-                class="text-xs font-bold text-text-primary uppercase tracking-wider"
+                class="text-sm font-medium text-text-primary"
               >
                 {{ role.name }}
               </p>
-              <p class="text-[10px] text-text-muted">
+              <p class="text-xs text-text-muted">
                 <span v-if="role.canUploadWithoutModeration" class="text-success"
                   >{{ t('admin.roles.canBypass') }}</span
                 >
@@ -105,22 +103,20 @@
           <div class="flex items-center gap-3">
             <div class="flex items-center gap-2">
               <label
-                class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+                class="text-xs font-bold text-text-muted"
                 >{{ t('admin.roles.skipMod') }}</label
               >
               <button
                 @click="togglePermission(role)"
                 class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="
-                  role.canUploadWithoutModeration
+                :class="role.canUploadWithoutModeration
                     ? 'bg-success'
                     : 'bg-bg-primary border border-border'
                 "
               >
                 <span
                   class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
-                  :class="
-                    role.canUploadWithoutModeration
+                  :class="role.canUploadWithoutModeration
                       ? 'translate-x-5'
                       : 'translate-x-1'
                   "
@@ -142,7 +138,7 @@
         class="text-center py-8 border border-dashed border-border rounded bg-bg-primary/30"
       >
         <p
-          class="text-[10px] font-bold text-text-muted uppercase tracking-widest"
+          class="text-xs font-bold text-text-muted"
         >
           {{ t('admin.roles.empty') }}
         </p>

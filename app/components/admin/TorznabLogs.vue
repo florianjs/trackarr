@@ -5,13 +5,13 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:list" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.torznabLogs.title') }}
           </h3>
         </div>
         <div class="flex items-center gap-2">
-          <span class="text-[10px] text-text-muted">
+          <span class="text-xs text-text-muted">
             {{ t('admin.torznabLogs.totalRequests', data?.total || 0) }}
           </span>
           <button

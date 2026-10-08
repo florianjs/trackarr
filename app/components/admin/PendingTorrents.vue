@@ -5,7 +5,7 @@
         <div class="flex items-center gap-2">
           <Icon name="ph:clock-bold" class="text-text-muted" />
           <h3
-            class="text-xs font-bold uppercase tracking-wider text-text-primary"
+            class="text-sm font-medium text-text-primary"
           >
             {{ t('admin.pending.title') }}
           </h3>
@@ -39,7 +39,7 @@
                 {{ torrent.name }}
               </NuxtLink>
               <div
-                class="flex flex-wrap items-center gap-3 mt-2 text-[10px] text-text-muted"
+                class="flex flex-wrap items-center gap-3 mt-2 text-xs text-text-muted"
               >
                 <span class="flex items-center gap-1">
                   <Icon name="ph:user-bold" />
@@ -69,7 +69,7 @@
               <button
                 @click="approve(torrent)"
                 :disabled="processingId === torrent.id"
-                class="btn btn-primary !px-3 !py-1.5 flex items-center gap-1 text-xs uppercase tracking-wider font-bold"
+                class="btn btn-primary !px-3 !py-1.5 flex items-center gap-1 text-xs font-bold"
               >
                 <Icon
                   v-if="processingId === torrent.id"
@@ -82,7 +82,7 @@
               <button
                 @click="reject(torrent)"
                 :disabled="processingId === torrent.id"
-                class="btn !px-3 !py-1.5 flex items-center gap-1 text-xs uppercase tracking-wider font-bold bg-error/10 text-error hover:bg-error/20 border border-error/30"
+                class="btn !px-3 !py-1.5 flex items-center gap-1 text-xs font-bold bg-error/10 text-error hover:bg-error/20 border border-error/30"
               >
                 <Icon name="ph:x-bold" />
                 <span>{{ t('common.reject') }}</span>
@@ -100,11 +100,11 @@
           class="w-12 h-12 text-success/50 mx-auto mb-3"
         />
         <p
-          class="text-xs font-bold text-text-muted uppercase tracking-widest"
+          class="text-xs font-bold text-text-muted"
         >
           {{ t('admin.pending.empty') }}
         </p>
-        <p class="text-[10px] text-text-muted/70 mt-1">
+        <p class="text-xs text-text-muted/70 mt-1">
           {{ t('admin.pending.allModerated') }}
         </p>
       </div>
