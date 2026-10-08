@@ -12,7 +12,7 @@
         @mousedown.self="close"
       >
         <div
-          class="w-full max-w-xl card shadow-2xl shadow-black/20 overflow-hidden"
+          class="w-full max-w-xl card shadow-2xl shadow-scrim/20 overflow-hidden"
           role="dialog"
           aria-modal="true"
           :aria-label="t('shell.search.trigger')"
@@ -153,19 +153,24 @@ const sections = computed(() => {
 
 const items = computed(() => sections.value.flatMap((s) => s.items));
 
+// Bumped on every new search and on reset, so late answers are dropped
+let requestId = 0;
+
 watch(debounced, async (q) => {
   active.value = 0;
+  const id = ++requestId;
   const term = q.trim();
   if (term.length < 2) {
     torrents.value = [];
+    loading.value = false;
     return;
   }
   loading.value = true;
   const res = await $fetch<{ data: TorrentHit[] }>('/api/torrents', {
     query: { search: term, limit: 6 },
   }).catch(() => ({ data: [] as TorrentHit[] }));
-  // Ignore answers to an older query
-  if (term === query.value.trim()) torrents.value = res.data;
+  if (id !== requestId || term !== query.value.trim()) return;
+  torrents.value = res.data;
   loading.value = false;
 });
 
@@ -184,13 +189,22 @@ function close() {
   open.value = false;
 }
 
+// Focus moves into the palette on open and back to where it was on close
+let returnFocus: HTMLElement | null = null;
+
 watch(open, async (isOpen) => {
+  requestId++;
+  loading.value = false;
   if (isOpen) {
+    returnFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     query.value = '';
     torrents.value = [];
     active.value = 0;
     await nextTick();
     input.value?.focus();
+  } else {
+    returnFocus?.focus();
+    returnFocus = null;
   }
 });
 

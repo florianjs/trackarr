@@ -143,7 +143,12 @@ const showUploadModal = ref(false);
 const search = ref(typeof route.query.search === 'string' ? route.query.search : '');
 const searchDebounced = refDebounced(search, 300);
 const categoryId = ref(typeof route.query.categoryId === 'string' ? route.query.categoryId : '');
-const sort = ref(typeof route.query.sort === 'string' ? route.query.sort : 'uploaded:desc');
+const SORT_OPTIONS: readonly string[] = ['uploaded:desc', 'uploaded:asc', 'size:desc', 'size:asc', 'name:asc'];
+const sort = ref(
+  typeof route.query.sort === 'string' && SORT_OPTIONS.includes(route.query.sort)
+    ? route.query.sort
+    : 'uploaded:desc'
+);
 const page = ref(Number(route.query.page) > 1 ? Number(route.query.page) : 1);
 
 watch([searchDebounced, categoryId, sort], () => (page.value = 1));

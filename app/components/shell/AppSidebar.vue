@@ -10,13 +10,16 @@
   <aside
     id="app-sidebar"
     class="fixed inset-y-0 left-0 z-50 w-60 flex flex-col bg-bg-secondary border-r border-border transition-transform lg:translate-x-0 lg:z-30"
-    :class="open ? 'translate-x-0' : '-translate-x-full'"
-    :aria-label="t('shell.menu.open')"
+    :class="open ? 'translate-x-0' : '-translate-x-full invisible lg:visible'"
+    :aria-label="t('shell.menu.label')"
   >
     <!-- Brand -->
     <div class="h-14 shrink-0 flex items-center gap-2.5 px-4 border-b border-border">
       <NuxtLink to="/" class="flex items-center gap-2.5 min-w-0" @click="emit('close')">
-        <span class="w-7 h-7 shrink-0 rounded bg-white flex items-center justify-center overflow-hidden">
+        <span
+          class="w-7 h-7 shrink-0 rounded flex items-center justify-center overflow-hidden"
+          :class="branding?.siteLogoImage ? 'bg-paper' : 'bg-white'"
+        >
           <img
             v-if="branding?.siteLogoImage"
             :src="branding.siteLogoImage"

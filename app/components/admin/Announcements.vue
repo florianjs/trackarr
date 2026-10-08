@@ -115,7 +115,7 @@
         :disabled="loading || saved"
         class="w-full text-xs font-bold py-2.5 rounded transition-all disabled:opacity-50 flex items-center justify-center gap-2"
         :class="saved
-            ? 'bg-success text-white'
+            ? 'bg-success text-paper'
             : 'bg-text-primary text-bg-primary hover:opacity-90'
         "
       >
