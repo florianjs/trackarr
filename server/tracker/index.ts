@@ -5,6 +5,66 @@ import { getMinRatio } from '../utils/settings';
 
 let server: TrackerServer | null = null;
 
+type ScrapeCallback = (err: Error | null, response?: unknown) => void;
+interface ScrapeCapableServer {
+  _onScrape: (params: Record<string, unknown>, cb: ScrapeCallback) => void;
+}
+
+/**
+ * bittorrent-tracker answers /scrape without running the announce filter, and
+ * a scrape without info_hash lists every swarm. On a private tracker, require
+ * a valid passkey and explicit hashes, and only report approved torrents.
+ */
+function restrictScrape(tracker: TrackerServer): void {
+  const target = tracker as unknown as ScrapeCapableServer;
+  const originalOnScrape = target._onScrape.bind(tracker);
+
+  target._onScrape = (params, cb) => {
+    const passkey = params.passkey;
+    const hashes = params.info_hash;
+
+    if (typeof passkey !== 'string' || !passkey) {
+      return cb(new Error('Passkey required'));
+    }
+    if (!Array.isArray(hashes) || hashes.length === 0) {
+      return cb(new Error('info_hash required'));
+    }
+    if (hashes.length > 100) {
+      return cb(new Error('Too many info_hash values'));
+    }
+
+    (async () => {
+      const user = await db.query.users.findFirst({
+        where: (u, { eq }) => eq(u.passkey, passkey),
+        columns: { id: true, isBanned: true },
+      });
+      if (!user || user.isBanned) {
+        return cb(new Error('Invalid passkey'));
+      }
+
+      const requested = hashes.map((h) => String(h).toLowerCase());
+      const allowed = await db.query.torrents.findMany({
+        where: (t, { and, eq, inArray }) =>
+          and(
+            inArray(t.infoHash, requested),
+            eq(t.isActive, true),
+            eq(t.isApproved, true)
+          ),
+        columns: { infoHash: true },
+      });
+      const allowedSet = new Set(allowed.map((t) => t.infoHash));
+
+      originalOnScrape(
+        { ...params, info_hash: requested.filter((h) => allowedSet.has(h)) },
+        cb
+      );
+    })().catch((err) => {
+      console.error('[Tracker] Scrape error:', err);
+      cb(new Error('Internal tracker error'));
+    });
+  };
+}
+
 // Debug mode for verbose tracker logging (set TRACKER_DEBUG=true in .env)
 const TRACKER_DEBUG = process.env.TRACKER_DEBUG === 'true';
 
@@ -67,27 +127,43 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
             return cb(new Error('User is banned'));
           }
 
-          // Ratio check
+          const torrent = await db.query.torrents.findFirst({
+            where: (t, { eq, and }) =>
+              and(eq(t.infoHash, infoHash), eq(t.isActive, true)),
+            columns: { id: true, isApproved: true, uploaderId: true },
+          });
+
+          const isStaff = user.isAdmin || user.isModerator;
+          const isUploader = torrent?.uploaderId === user.id;
+
+          // Pending torrents: only the uploader (to start seeding) and staff
+          if (!torrent || (!torrent.isApproved && !isUploader && !isStaff)) {
+            return cb(new Error('Torrent not found or inactive'));
+          }
+
+          // Ratio check. `left` is client supplied: a peer claiming left=0
+          // still gets the peer list, so only trust it for peers that really
+          // completed this torrent (HnR entry) or uploaded it.
           const minRatio = await getMinRatio();
-          if (minRatio > 0 && params.left > 0) {
-            const ratio =
-              user.downloaded > 0 ? user.uploaded / user.downloaded : Infinity;
-            if (ratio < minRatio) {
+          const ratio =
+            user.downloaded > 0 ? user.uploaded / user.downloaded : Infinity;
+          if (minRatio > 0 && ratio < minRatio && !isUploader) {
+            const claimsSeeder = Number(params.left) === 0;
+            const hasSnatched =
+              claimsSeeder &&
+              (await db.query.hnrTracking.findFirst({
+                where: (h, { eq, and }) =>
+                  and(eq(h.userId, user.id), eq(h.torrentId, torrent.id)),
+                columns: { id: true },
+              }));
+
+            if (!hasSnatched) {
               return cb(
                 new Error(
                   `Low ratio (${ratio.toFixed(2)} < ${minRatio}). Download disabled.`
                 )
               );
             }
-          }
-
-          const torrent = await db.query.torrents.findFirst({
-            where: (t, { eq, and }) =>
-              and(eq(t.infoHash, infoHash), eq(t.isActive, true)),
-          });
-
-          if (!torrent) {
-            return cb(new Error('Torrent not found or inactive'));
           }
 
           cb(null);
@@ -98,6 +174,8 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
       })();
     },
   });
+
+  restrictScrape(server);
 
   // ============================================================================
   // Event Handlers
