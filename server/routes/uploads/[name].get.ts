@@ -40,6 +40,7 @@ export default defineEventHandler(async (event) => {
       jpeg: 'image/jpeg',
       svg: 'image/svg+xml',
       webp: 'image/webp',
+      gif: 'image/gif',
     };
 
     if (ext && mimeTypes[ext]) {

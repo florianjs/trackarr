@@ -1,5 +1,6 @@
 import { db, schema } from '~~/server/db';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
+import { awardUploadBonus } from '~~/server/utils/bonus';
 import { eq } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
@@ -24,6 +25,7 @@ export default defineEventHandler(async (event) => {
       infoHash: schema.torrents.infoHash,
       name: schema.torrents.name,
       isApproved: schema.torrents.isApproved,
+      uploaderId: schema.torrents.uploaderId,
     });
 
   if (!approvedTorrent) {
@@ -32,6 +34,10 @@ export default defineEventHandler(async (event) => {
       message: 'Torrent not found',
     });
   }
+
+  await awardUploadBonus(db, approvedTorrent).catch((err) =>
+    console.error('[Bonus] Upload bonus failed:', err)
+  );
 
   return {
     success: true,

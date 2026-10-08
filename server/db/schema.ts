@@ -8,6 +8,7 @@ import {
   index,
   uniqueIndex,
   customType,
+  doublePrecision,
 } from 'drizzle-orm/pg-core';
 import { relations, sql } from 'drizzle-orm';
 
@@ -39,6 +40,10 @@ export const users = pgTable(
     downloaded: bigint('downloaded', { mode: 'number' }).default(0).notNull(),
     invitesRemaining: integer('invites_remaining').default(0).notNull(),
     panicPasswordHash: text('panic_password_hash'), // Only set for first admin
+    // Bonus points & profile (issue #48)
+    bonusPoints: doublePrecision('bonus_points').default(0).notNull(),
+    avatarUrl: text('avatar_url'),
+    canUseGifAvatar: boolean('can_use_gif_avatar').default(false).notNull(),
     createdAt: timestamp('created_at').defaultNow().notNull(),
     lastSeen: timestamp('last_seen').defaultNow().notNull(),
   },
@@ -536,6 +541,128 @@ export type NewTorrentTag = typeof torrentTags.$inferInsert;
 
 export type HnrTracking = typeof hnrTracking.$inferSelect;
 export type NewHnrTracking = typeof hnrTracking.$inferInsert;
+
+// ============================================================================
+// Bonus points, shop & bounties (issue #48)
+// ============================================================================
+
+/**
+ * Ledger of every non-seeding bonus point movement (seeding accrues on each
+ * announce and is not logged row by row).
+ */
+export const bonusTransactions = pgTable(
+  'bonus_transactions',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    amount: doublePrecision('amount').notNull(), // Positive = credit
+    type: text('type').notNull(), // upload | purchase | bounty_* | admin
+    description: text('description'),
+    refId: text('ref_id'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('bonus_tx_user_idx').on(table.userId, table.createdAt)]
+);
+
+export const shopItems = pgTable('shop_items', {
+  id: text('id').primaryKey(),
+  name: text('name').notNull(),
+  description: text('description'),
+  type: text('type').notNull(), // upload_credit | gif_avatar | invite
+  price: integer('price').notNull(),
+  // upload_credit: bytes; invite: number of invites; gif_avatar: unused
+  value: bigint('value', { mode: 'number' }).default(0).notNull(),
+  isActive: boolean('is_active').default(true).notNull(),
+  sortOrder: integer('sort_order').default(0).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const bounties = pgTable(
+  'bounties',
+  {
+    id: text('id').primaryKey(),
+    title: text('title').notNull(),
+    description: text('description'),
+    imdbId: text('imdb_id'),
+    categoryId: text('category_id').references(() => categories.id, {
+      onDelete: 'set null',
+    }),
+    requesterId: text('requester_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    status: text('status').default('open').notNull(), // open | claimed | filled | cancelled
+    totalPoints: doublePrecision('total_points').default(0).notNull(),
+    filledTorrentId: text('filled_torrent_id').references(() => torrents.id, {
+      onDelete: 'set null',
+    }),
+    filledById: text('filled_by_id').references(() => users.id, {
+      onDelete: 'set null',
+    }),
+    claimedAt: timestamp('claimed_at'),
+    filledAt: timestamp('filled_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('bounties_status_idx').on(table.status, table.createdAt)]
+);
+
+export const bountyContributions = pgTable(
+  'bounty_contributions',
+  {
+    id: text('id').primaryKey(),
+    bountyId: text('bounty_id')
+      .notNull()
+      .references(() => bounties.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    amount: doublePrecision('amount').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('bounty_contrib_bounty_idx').on(table.bountyId)]
+);
+
+export const bountiesRelations = relations(bounties, ({ one, many }) => ({
+  requester: one(users, {
+    fields: [bounties.requesterId],
+    references: [users.id],
+    relationName: 'bountyRequester',
+  }),
+  filledBy: one(users, {
+    fields: [bounties.filledById],
+    references: [users.id],
+    relationName: 'bountyFiller',
+  }),
+  filledTorrent: one(torrents, {
+    fields: [bounties.filledTorrentId],
+    references: [torrents.id],
+  }),
+  category: one(categories, {
+    fields: [bounties.categoryId],
+    references: [categories.id],
+  }),
+  contributions: many(bountyContributions),
+}));
+
+export const bountyContributionsRelations = relations(
+  bountyContributions,
+  ({ one }) => ({
+    bounty: one(bounties, {
+      fields: [bountyContributions.bountyId],
+      references: [bounties.id],
+    }),
+    user: one(users, {
+      fields: [bountyContributions.userId],
+      references: [users.id],
+    }),
+  })
+);
+
+export type BonusTransaction = typeof bonusTransactions.$inferSelect;
+export type ShopItem = typeof shopItems.$inferSelect;
+export type Bounty = typeof bounties.$inferSelect;
+export type BountyContribution = typeof bountyContributions.$inferSelect;
 
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;

@@ -13,6 +13,7 @@ import { sql, eq } from 'drizzle-orm';
 import { createHnrEntry, updateSeedTime } from '../utils/hnr';
 import { createHash } from 'crypto';
 import { computeCredit, getMaxRateBytes } from './credit';
+import { accrueSeedingBonus } from './bonusAccrual';
 
 function hashOwner(passkey: string): string {
   return createHash('sha256').update(`peer-owner:${passkey}`).digest('hex').slice(0, 16);
@@ -191,6 +192,13 @@ export async function handleAnnounce(params: {
     const timeSinceLastAnnounce = Math.floor(
       (Date.now() - previousPeer.updatedAt) / 1000
     );
+
+    // Bonus points for seeding (issue #48); never block the announce on it
+    await accrueSeedingBonus({
+      passkey: params.passkey,
+      infoHash,
+      elapsedSeconds: timeSinceLastAnnounce,
+    }).catch((err) => console.error('[Bonus] Seeding accrual failed:', err));
     if (timeSinceLastAnnounce > 0 && timeSinceLastAnnounce < 3600) {
       // Max 1 hour per announce
       const user = await db.query.users.findFirst({

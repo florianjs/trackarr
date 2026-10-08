@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 import { normalizeTorrent, type NormalizedTorrent } from '../../utils/torrentFile';
 import { parseMediaIds } from '../../../shared/utils/mediaIds';
+import { awardUploadBonus } from '../../utils/bonus';
 
 // readMultipartFormData buffers the whole body: reject oversized requests first
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
@@ -205,6 +206,12 @@ export default defineEventHandler(async (event) => {
     completed: 0,
     updatedAt: now,
   });
+
+  if (canBypassModeration) {
+    await awardUploadBonus(db, { id, uploaderId: user.id, name }).catch((err) =>
+      console.error('[Bonus] Upload bonus failed:', err)
+    );
+  }
 
   // Add tags if provided (unknown tag ids are ignored)
   if (tagIds.length > 0) {
