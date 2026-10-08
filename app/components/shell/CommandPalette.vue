@@ -109,6 +109,7 @@ const pages = computed(() => [
   { key: 'torrents', label: t('shell.nav.torrents'), icon: 'ph:files', to: '/torrents' },
   { key: 'bounties', label: t('shell.nav.bounties'), icon: 'ph:target', to: '/bounties' },
   { key: 'forum', label: t('shell.nav.forum'), icon: 'ph:chats-circle', to: '/forum' },
+  { key: 'messages', label: t('messages.nav'), icon: 'ph:chat-circle-text', to: '/messages' },
   { key: 'shop', label: t('shell.nav.shop'), icon: 'ph:coins', to: '/shop' },
   { key: 'invites', label: t('shell.nav.invites'), icon: 'ph:envelope-simple', to: '/invites' },
   ...(user.value?.isAdmin || user.value?.isModerator

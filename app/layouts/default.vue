@@ -302,6 +302,16 @@ onMounted(() => {
 });
 onUnmounted(() => clearInterval(transferPoll));
 
+// Unread private messages (sidebar badge): every minute and on navigation
+const { refresh: refreshUnread } = useUnreadMessages();
+let unreadPoll: ReturnType<typeof setInterval> | undefined;
+onMounted(() => {
+  refreshUnread();
+  unreadPoll = setInterval(refreshUnread, 60 * 1000);
+});
+onUnmounted(() => clearInterval(unreadPoll));
+watch(() => route.path, () => import.meta.client && refreshUnread());
+
 async function handleLogout() {
   await clear();
   router.push('/auth/login');

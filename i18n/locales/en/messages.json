@@ -1,0 +1,30 @@
+{
+  "messages": {
+    "title": "Messages",
+    "new": "New message",
+    "empty": "No conversation yet.",
+    "emptyHint": "Start one from a member's profile or with New message.",
+    "you": "You: ",
+    "select": "Select a conversation or start a new one.",
+    "to": "To",
+    "toPlaceholder": "Member username",
+    "bodyPlaceholder": "Write a message…",
+    "send": "Send",
+    "sending": "Sending…",
+    "sendHint": "Enter to send, Shift+Enter for a new line",
+    "loadEarlier": "Load earlier messages",
+    "back": "Back to conversations",
+    "profile": "View profile",
+    "block": "Block this member",
+    "unblock": "Unblock this member",
+    "hide": "Hide conversation",
+    "confirmBlock": "Block {name}? They will no longer be able to send you messages.",
+    "confirmHide": "Hide this conversation? It comes back if a new message arrives.",
+    "youBlocked": "You blocked this member. Unblock them to reply.",
+    "blockedYou": "This member does not accept your messages.",
+    "deletedUser": "Deleted member",
+    "nav": "Messages",
+    "sendMessage": "Send a message",
+    "unreadCount": "no unread conversation | 1 unread conversation | {n} unread conversations"
+  }
+}
