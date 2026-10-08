@@ -1,5 +1,6 @@
 import { redis } from './client';
 import { hashIP } from '../utils/crypto';
+import { TtlCache } from '../utils/ttlCache';
 
 // Keys
 const PEER_KEY = (infoHash: string) => `peers:${infoHash}`;
@@ -115,18 +116,6 @@ export async function getPeers(infoHash: string): Promise<PeerData[]> {
   return peers;
 }
 
-/**
- * Get peer count for a torrent (seeders + leechers)
- */
-export async function getPeerCount(
-  infoHash: string
-): Promise<{ seeders: number; leechers: number }> {
-  const peers = await getPeers(infoHash);
-  return {
-    seeders: peers.filter((p) => p.isSeeder).length,
-    leechers: peers.filter((p) => !p.isSeeder).length,
-  };
-}
 
 // ============================================================================
 // Stats Operations
@@ -140,39 +129,99 @@ export async function incrementCompleted(infoHash: string): Promise<number> {
   return redis.hincrby(key, 'completed', 1);
 }
 
-/**
- * Get cached stats for a torrent
- * Falls back to tracker's internal swarm data if Redis cache is empty
- */
-export async function getStats(
-  infoHash: string
-): Promise<{ seeders: number; leechers: number; completed: number }> {
-  const [peerCount, completedRaw] = await Promise.all([
-    getPeerCount(infoHash),
-    redis.hget(STATS_KEY(infoHash), 'completed'),
-  ]);
+export interface TorrentStats {
+  seeders: number;
+  leechers: number;
+  completed: number;
+}
 
+// Counting peers reads and parses the whole swarm hash: cache the result
+// briefly. Lists, Torznab and every announce ask for these counts.
+const STATS_CACHE_MS = 10_000;
+const statsCache = new TtlCache<string, TorrentStats>(STATS_CACHE_MS, 100_000);
+
+function countPeers(raw: Record<string, string>, now: number) {
+  let seeders = 0;
+  let leechers = 0;
+  for (const json of Object.values(raw)) {
+    try {
+      const peer = JSON.parse(json) as PeerData;
+      if (now - peer.updatedAt >= PEER_TTL * 1000) continue; // Stale
+      if (peer.isSeeder) seeders++;
+      else leechers++;
+    } catch {
+      // Invalid entry: cleaned up by getPeers
+    }
+  }
+  return { seeders, leechers };
+}
+
+async function withSwarmFallback(
+  infoHash: string,
+  stats: TorrentStats
+): Promise<TorrentStats> {
   // If no peers in Redis, try tracker's internal swarm data
-  // This is more reliable as it reflects real-time state
-  if (peerCount.seeders === 0 && peerCount.leechers === 0) {
+  if (stats.seeders === 0 && stats.leechers === 0) {
     try {
       const { getSwarmStats } = await import('../tracker');
       const swarmStats = getSwarmStats(infoHash);
       if (swarmStats.seeders > 0 || swarmStats.leechers > 0) {
-        return {
-          ...swarmStats,
-          completed: parseInt(completedRaw || '0', 10),
-        };
+        return { ...swarmStats, completed: stats.completed };
       }
     } catch {
       // Tracker not available, continue with Redis data
     }
   }
+  return stats;
+}
 
-  return {
-    ...peerCount,
-    completed: parseInt(completedRaw || '0', 10),
-  };
+/**
+ * Get stats for several torrents in one Redis round trip (cached per torrent)
+ */
+export async function getStatsMany(
+  infoHashes: string[]
+): Promise<Map<string, TorrentStats>> {
+  const result = new Map<string, TorrentStats>();
+  const missing: string[] = [];
+
+  for (const hash of infoHashes) {
+    const cached = statsCache.get(hash);
+    if (cached) result.set(hash, cached);
+    else if (!missing.includes(hash)) missing.push(hash);
+  }
+
+  if (missing.length > 0) {
+    const pipeline = redis.pipeline();
+    for (const hash of missing) {
+      pipeline.hgetall(PEER_KEY(hash));
+      pipeline.hget(STATS_KEY(hash), 'completed');
+    }
+    const replies = (await pipeline.exec()) ?? [];
+    const now = Date.now();
+
+    await Promise.all(
+      missing.map(async (hash, i) => {
+        const peers = (replies[i * 2]?.[1] as Record<string, string> | null) ?? {};
+        const completedRaw = replies[i * 2 + 1]?.[1] as string | null;
+        const stats = await withSwarmFallback(hash, {
+          ...countPeers(peers, now),
+          completed: parseInt(completedRaw || '0', 10),
+        });
+        statsCache.set(hash, stats);
+        result.set(hash, stats);
+      })
+    );
+  }
+
+  return result;
+}
+
+/**
+ * Get stats for a torrent (cached for a few seconds)
+ */
+export async function getStats(infoHash: string): Promise<TorrentStats> {
+  const stats = await getStatsMany([infoHash]);
+  return stats.get(infoHash)!;
 }
 
 // ============================================================================

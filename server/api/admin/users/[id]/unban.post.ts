@@ -3,6 +3,8 @@ import { db } from '~~/server/db';
 import { users, bannedIps } from '~~/server/db/schema';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
 import { validateParam, uuidSchema } from '~~/server/utils/schemas';
+import { invalidateTrackerUsers } from '~~/server/tracker/lookups';
+import { invalidateBannedIps } from '~~/server/utils/bannedIps';
 
 export default defineEventHandler(async (event) => {
   const session = await requireModeratorSession(event);
@@ -35,6 +37,10 @@ export default defineEventHandler(async (event) => {
   if (user.lastIp) {
     await db.delete(bannedIps).where(eq(bannedIps.ip, user.lastIp));
   }
+
+  // Tracker caches the row for a few seconds
+  invalidateTrackerUsers();
+  invalidateBannedIps();
 
   return { success: true };
 });

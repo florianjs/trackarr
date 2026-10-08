@@ -1,5 +1,5 @@
 import { db, schema } from '../../db';
-import { getStats } from '../../redis/cache';
+import { getStatsMany } from '../../redis/cache';
 import { desc, eq, ilike, sql, and, or } from 'drizzle-orm';
 import { validateQuery, torrentQuerySchema } from '../../utils/schemas';
 import { escapeLike } from '../../utils/validation';
@@ -82,9 +82,12 @@ export default defineEventHandler(async (event) => {
   const total = countResult[0]?.count || 0;
 
   // Enrich with live stats from Redis
+  // One Redis round trip for every torrent of the page
+  const statsByHash = await getStatsMany(torrents.map((torrent) => torrent.infoHash));
+
   const enriched = await Promise.all(
     torrents.map(async (torrent) => {
-      const stats = await getStats(torrent.infoHash);
+      const stats = statsByHash.get(torrent.infoHash)!;
       return {
         ...torrent,
         stats: {

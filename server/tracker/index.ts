@@ -2,6 +2,7 @@ import { Server as TrackerServer } from 'bittorrent-tracker';
 import { handleAnnounce } from './handlers';
 import { db, schema } from '../db';
 import { getFreeleechState, getMinRatio } from '../utils/settings';
+import { getTrackerTorrent, getTrackerUser, hasSnatched } from './lookups';
 
 let server: TrackerServer | null = null;
 
@@ -34,10 +35,7 @@ function restrictScrape(tracker: TrackerServer): void {
     }
 
     (async () => {
-      const user = await db.query.users.findFirst({
-        where: (u, { eq }) => eq(u.passkey, passkey),
-        columns: { id: true, isBanned: true },
-      });
+      const user = await getTrackerUser(passkey);
       if (!user || user.isBanned) {
         return cb(new Error('Invalid passkey'));
       }
@@ -115,9 +113,7 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
       // Async validation
       (async () => {
         try {
-          const user = await db.query.users.findFirst({
-            where: (u, { eq }) => eq(u.passkey, passkey),
-          });
+          const user = await getTrackerUser(passkey);
 
           if (!user) {
             return cb(new Error('Invalid passkey'));
@@ -127,11 +123,8 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
             return cb(new Error('User is banned'));
           }
 
-          const torrent = await db.query.torrents.findFirst({
-            where: (t, { eq, and }) =>
-              and(eq(t.infoHash, infoHash), eq(t.isActive, true)),
-            columns: { id: true, isApproved: true, uploaderId: true },
-          });
+          const found = await getTrackerTorrent(infoHash);
+          const torrent = found?.isActive ? found : null;
 
           const isStaff = user.isAdmin || user.isModerator;
           const isUploader = torrent?.uploaderId === user.id;
@@ -153,15 +146,10 @@ export function initTracker(config: TrackerConfig = {}): TrackerServer {
             user.downloaded > 0 ? user.uploaded / user.downloaded : Infinity;
           if (minRatio > 0 && ratio < minRatio && !isUploader && !freeleech) {
             const claimsSeeder = Number(params.left) === 0;
-            const hasSnatched =
-              claimsSeeder &&
-              (await db.query.hnrTracking.findFirst({
-                where: (h, { eq, and }) =>
-                  and(eq(h.userId, user.id), eq(h.torrentId, torrent.id)),
-                columns: { id: true },
-              }));
+            const snatched =
+              claimsSeeder && (await hasSnatched(user.id, torrent.id));
 
-            if (!hasSnatched) {
+            if (!snatched) {
               return cb(
                 new Error(
                   `Low ratio (${ratio.toFixed(2)} < ${minRatio}). Download disabled.`

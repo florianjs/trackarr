@@ -13,7 +13,8 @@ import { sql, eq } from 'drizzle-orm';
 import { createHnrEntry, updateSeedTime } from '../utils/hnr';
 import { createHash } from 'crypto';
 import { computeCredit, getMaxRateBytes } from './credit';
-import { accrueSeedingBonus } from './bonusAccrual';
+import { computeSeedingBonus } from './bonusAccrual';
+import { getTrackerTorrent, getTrackerUser, markSnatched } from './lookups';
 import { getFreeleechState } from '../utils/settings';
 
 function hashOwner(passkey: string): string {
@@ -142,15 +143,41 @@ export async function handleAnnounce(params: {
   const { active: freeleech } = await getFreeleechState();
   const deltaDownloaded = freeleech ? 0 : credit.downloaded;
 
-  // Update user stats if passkey is provided
-  if (params.passkey && (deltaUploaded > 0 || deltaDownloaded > 0)) {
+  // The filter already validated passkey and torrent; these lookups are
+  // cached, so they cost no extra query on the hot path
+  const [user, torrent] = params.passkey
+    ? await Promise.all([getTrackerUser(params.passkey), getTrackerTorrent(infoHash)])
+    : [null, null];
+
+  const seeding = isSeeder(params.left);
+  const elapsedSeconds = previousPeer
+    ? Math.floor((Date.now() - previousPeer.updatedAt) / 1000)
+    : 0;
+
+  // Bonus points for seeding (issue #48); never block the announce on it
+  const bonusPoints =
+    user && torrent && seeding && previousPeer
+      ? await computeSeedingBonus({
+          userId: user.id,
+          infoHash,
+          torrent,
+          elapsedSeconds,
+        }).catch((err) => {
+          console.error('[Bonus] Seeding accrual failed:', err);
+          return 0;
+        })
+      : 0;
+
+  // One write for upload, download and bonus points
+  if (user && (deltaUploaded > 0 || deltaDownloaded > 0 || bonusPoints > 0)) {
     await db
       .update(schema.users)
       .set({
         uploaded: sql`${schema.users.uploaded} + ${deltaUploaded}`,
         downloaded: sql`${schema.users.downloaded} + ${deltaDownloaded}`,
+        bonusPoints: sql`${schema.users.bonusPoints} + ${bonusPoints}`,
       })
-      .where(eq(schema.users.passkey, params.passkey));
+      .where(eq(schema.users.id, user.id));
   }
 
   if (event === 'stopped') {
@@ -167,7 +194,7 @@ export async function handleAnnounce(params: {
     uploaded: params.uploaded,
     downloaded: params.downloaded,
     left: params.left,
-    isSeeder: isSeeder(params.left),
+    isSeeder: seeding,
   });
 
   // Track completed downloads
@@ -175,47 +202,15 @@ export async function handleAnnounce(params: {
     await incrementCompleted(infoHash);
 
     // Create HnR tracking entry
-    if (params.passkey) {
-      const user = await db.query.users.findFirst({
-        where: eq(schema.users.passkey, params.passkey),
-        columns: { id: true },
-      });
-      const torrent = await db.query.torrents.findFirst({
-        where: eq(schema.torrents.infoHash, infoHash),
-        columns: { id: true },
-      });
-      if (user && torrent) {
-        await createHnrEntry(user.id, torrent.id);
-      }
+    if (user && torrent) {
+      await createHnrEntry(user.id, torrent.id);
+      markSnatched(user.id, torrent.id);
     }
   }
 
-  // Update seed time for HnR tracking (seeders only)
-  if (params.passkey && isSeeder(params.left) && previousPeer) {
-    const timeSinceLastAnnounce = Math.floor(
-      (Date.now() - previousPeer.updatedAt) / 1000
-    );
-
-    // Bonus points for seeding (issue #48); never block the announce on it
-    await accrueSeedingBonus({
-      passkey: params.passkey,
-      infoHash,
-      elapsedSeconds: timeSinceLastAnnounce,
-    }).catch((err) => console.error('[Bonus] Seeding accrual failed:', err));
-    if (timeSinceLastAnnounce > 0 && timeSinceLastAnnounce < 3600) {
-      // Max 1 hour per announce
-      const user = await db.query.users.findFirst({
-        where: eq(schema.users.passkey, params.passkey),
-        columns: { id: true },
-      });
-      const torrent = await db.query.torrents.findFirst({
-        where: eq(schema.torrents.infoHash, infoHash),
-        columns: { id: true },
-      });
-      if (user && torrent) {
-        await updateSeedTime(user.id, torrent.id, timeSinceLastAnnounce);
-      }
-    }
+  // Update seed time for HnR tracking (seeders only, max 1 hour per announce)
+  if (user && torrent && seeding && elapsedSeconds > 0 && elapsedSeconds < 3600) {
+    await updateSeedTime(user.id, torrent.id, elapsedSeconds);
   }
 }
 

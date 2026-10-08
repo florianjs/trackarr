@@ -10,13 +10,28 @@ export default defineNuxtRouteMiddleware(async (to) => {
   const publicRoutes = ['/auth/login', '/auth/register'];
   const isPublicRoute = publicRoutes.includes(to.path);
 
-  // Fetch auth status to check if setup is needed and update session with fresh DB data
-  // Use $fetch to bypass caching and ensure we always get fresh data
-  const status = await $fetch('/api/auth/status');
+  // Setup state and fresh session stats come from /api/auth/status. On
+  // client-side navigation, skip it once setup is done (it never comes back)
+  // unless the last refresh is older than a minute.
+  const lastStatus = useState<{ needsSetup: boolean; at: number } | null>(
+    'auth-status',
+    () => null
+  );
+  const stale =
+    !lastStatus.value ||
+    lastStatus.value.needsSetup ||
+    Date.now() - lastStatus.value.at > 60_000;
 
-  // Refresh session state to get latest stats from server
-  if (loggedIn.value) {
-    await fetchSession();
+  let status = lastStatus.value;
+  if (import.meta.server || stale) {
+    const fresh = await $fetch('/api/auth/status');
+    status = { needsSetup: Boolean(fresh?.needsSetup), at: Date.now() };
+    lastStatus.value = status;
+
+    // Refresh session state to get latest stats from server
+    if (loggedIn.value) {
+      await fetchSession();
+    }
   }
 
   // If setup is needed, redirect to register (for first admin)

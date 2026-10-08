@@ -9,6 +9,7 @@ import { torrents } from '../../db/schema';
 import { redis } from '../../redis/client';
 import { requireAuthSession } from '../../utils/adminAuth';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
+import { invalidateTrackerTorrents } from '~~/server/tracker/lookups';
 
 export default defineEventHandler(async (event) => {
   // Rate limit mutations
@@ -61,6 +62,9 @@ export default defineEventHandler(async (event) => {
   } catch {
     // Redis errors are non-fatal
   }
+
+  // Tracker caches the row for a few seconds
+  invalidateTrackerTorrents();
 
   return {
     success: true,

@@ -1,6 +1,6 @@
 import { db, schema } from '../../../db';
 import { and, eq, desc, sql } from 'drizzle-orm';
-import { getStats } from '../../../redis/cache';
+import { getStatsMany } from '../../../redis/cache';
 import { z } from 'zod';
 
 const paramsSchema = z.object({
@@ -65,9 +65,12 @@ export default defineEventHandler(async (event) => {
   const total = countResult[0]?.count || 0;
 
   // Enrich with live stats from Redis
+  // One Redis round trip for every torrent of the page
+  const statsByHash = await getStatsMany(torrents.map((torrent) => torrent.infoHash));
+
   const enriched = await Promise.all(
     torrents.map(async (torrent) => {
-      const stats = await getStats(torrent.infoHash);
+      const stats = statsByHash.get(torrent.infoHash)!;
       return {
         ...torrent,
         stats: {

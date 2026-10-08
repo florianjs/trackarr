@@ -1,6 +1,7 @@
 import { db, schema } from '~~/server/db';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
 import { and, eq } from 'drizzle-orm';
+import { invalidateTrackerTorrents } from '~~/server/tracker/lookups';
 
 export default defineEventHandler(async (event) => {
   await requireModeratorSession(event);
@@ -37,6 +38,9 @@ export default defineEventHandler(async (event) => {
   await db
     .delete(schema.torrentStats)
     .where(eq(schema.torrentStats.infoHash, hash.toLowerCase()));
+
+  // Tracker caches the row for a few seconds
+  invalidateTrackerTorrents();
 
   return {
     success: true,
