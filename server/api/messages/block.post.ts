@@ -18,6 +18,12 @@ export default defineEventHandler(async (event) => {
   }
 
   if (blocked) {
+    const target = await db.query.users.findFirst({
+      where: eq(schema.users.id, userId),
+      columns: { id: true },
+    });
+    if (!target) throw createError({ statusCode: 404, message: 'User not found' });
+
     await db
       .insert(schema.userBlocks)
       .values({ blockerId: user.id, blockedId: userId })

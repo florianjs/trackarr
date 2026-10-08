@@ -1,4 +1,4 @@
-import { and, desc, eq, inArray, ne } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNull, ne, or } from 'drizzle-orm';
 import { db, schema } from '../../db';
 import { isConversationUnread, isConversationVisible } from '../../utils/messageRules';
 
@@ -19,7 +19,8 @@ export default defineEventHandler(async (event) => {
     })
     .from(cm)
     .innerJoin(c, eq(c.id, cm.conversationId))
-    .where(eq(cm.userId, user.id))
+    // Same rule as isConversationVisible, in SQL so hidden rows do not use up the limit
+    .where(and(eq(cm.userId, user.id), or(isNull(cm.hiddenAt), gt(c.lastMessageAt, cm.hiddenAt))))
     .orderBy(desc(c.lastMessageAt))
     .limit(100);
 

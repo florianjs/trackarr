@@ -2,6 +2,7 @@ import { and, desc, eq, lt } from 'drizzle-orm';
 import { z } from 'zod';
 import { db, schema } from '../../db';
 import { getBlockState, requireConversation } from '../../utils/messages';
+import { validateQuery } from '../../utils/schemas';
 
 const querySchema = z.object({
   before: z.iso.datetime().optional(),
@@ -15,7 +16,7 @@ const querySchema = z.object({
  */
 export default defineEventHandler(async (event) => {
   const { user, conversationId, otherUserId } = await requireConversation(event);
-  const query = querySchema.parse(getQuery(event));
+  const query = validateQuery(event, querySchema);
   const pm = schema.privateMessages;
 
   const conditions = [eq(pm.conversationId, conversationId)];

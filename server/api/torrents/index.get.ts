@@ -78,7 +78,8 @@ export default defineEventHandler(async (event) => {
       category: true,
       torrentTags: { with: { tag: { columns: { id: true, name: true } } } },
     },
-    orderBy: [orderBy],
+    // id breaks ties so offset pagination never repeats or skips a row
+    orderBy: [orderBy, asc(schema.torrents.id)],
     limit: query.limit,
     offset,
   });
