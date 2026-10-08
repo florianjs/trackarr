@@ -332,10 +332,10 @@ generate_secrets() {
     echo -n "$REDIS_PASSWORD" > "$SECRETS_DIR/redis_password.txt"
     log_info "Generated Redis password"
     
-    # Admin API key (48 chars)
-    ADMIN_API_KEY=$(openssl rand -base64 48 | tr -d '/+=' | head -c 48)
-    echo -n "$ADMIN_API_KEY" > "$SECRETS_DIR/admin_api_key.txt"
-    log_info "Generated admin API key"
+    # Grafana admin password (32 chars)
+    GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
+    echo -n "$GRAFANA_ADMIN_PASSWORD" > "$SECRETS_DIR/grafana_admin_password.txt"
+    log_info "Generated Grafana admin password"
     
     # IP hash secret (64 chars)
     IP_HASH_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
@@ -399,7 +399,6 @@ REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
 REDIS_KEY_PREFIX=tr:
 
 # Security
-ADMIN_API_KEY=${ADMIN_API_KEY}
 IP_HASH_SECRET=${IP_HASH_SECRET}
 
 # Domains
@@ -418,7 +417,7 @@ MONITORING_USER=admin
 # Note: $ escaped as $$ for Docker Compose compatibility
 MONITORING_PASSWORD_HASH=$(echo "${MONITORING_PASSWORD_HASH}" | sed 's/\$/\$\$/g')
 GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=admin
+GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
 EOF
     
     chmod 600 "$ENV_FILE"
@@ -435,15 +434,11 @@ update_pgbouncer_config() {
     # Update userlist.txt with actual password
     USERLIST_FILE="$INSTALL_DIR/docker/pgbouncer/userlist.txt"
     
-    if [[ -f "$USERLIST_FILE" ]]; then
-        # Generate MD5 hash for PgBouncer
-        MD5_HASH=$(echo -n "${DB_PASSWORD}${DB_USER}" | md5sum | awk '{print $1}')
-        echo "\"${DB_USER}\" \"md5${MD5_HASH}\"" > "$USERLIST_FILE"
-        chmod 600 "$USERLIST_FILE"
-        log_success "PgBouncer userlist updated"
-    else
-        log_warn "PgBouncer userlist not found. Will be created on first start."
-    fi
+    # Not tracked in git (contains a credential): always generate it
+    MD5_HASH=$(echo -n "${DB_PASSWORD}${DB_USER}" | md5sum | awk '{print $1}')
+    echo "\"${DB_USER}\" \"md5${MD5_HASH}\"" > "$USERLIST_FILE"
+    chmod 600 "$USERLIST_FILE"
+    log_success "PgBouncer userlist updated"
 }
 
 # =============================================================================
@@ -688,10 +683,7 @@ Password: ${MONITORING_PASSWORD}
 GRAFANA
 URL: https://${MONITORING_DOMAIN}/grafana
 Username: admin
-Password: admin (default - CHANGE THIS!)
-
-ADMIN API KEY
-${ADMIN_API_KEY}
+Password: ${GRAFANA_ADMIN_PASSWORD}
 
 ================================================================================
 ⚠️  DELETE THIS FILE AFTER SAVING CREDENTIALS SECURELY!

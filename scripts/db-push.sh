@@ -4,6 +4,11 @@
 
 set -e
 
+# Hide credentials when printing connection URLs
+mask_url() {
+  echo "$1" | sed -E 's#://[^@/]+@#://***@#'
+}
+
 # Get DATABASE_URL from environment or .env file
 if [ -z "$DATABASE_URL" ]; then
   if [ -f .env ]; then
@@ -19,12 +24,12 @@ DATABASE_URL="${DATABASE_URL:-postgres://tracker:tracker@postgres:5432/trackarr}
 if [ ! -f /.dockerenv ] && [ "$(hostname)" != "trackarr-app" ]; then
   LOCAL_URL=$(echo "$DATABASE_URL" | sed -E 's/@(postgres|pgbouncer|db|trackarr-db):/@localhost:/g')
   echo "🔄 Pushing schema to database (local mode)..."
-  echo "   Original: $DATABASE_URL"
-  echo "   Local:    $LOCAL_URL"
+  echo "   Original: $(mask_url "$DATABASE_URL")"
+  echo "   Local:    $(mask_url "$LOCAL_URL")"
   DATABASE_URL="$LOCAL_URL"
 else
   echo "🔄 Pushing schema to database (Docker mode)..."
-  echo "   URL: $DATABASE_URL"
+  echo "   URL: $(mask_url "$DATABASE_URL")"
 fi
 echo ""
 

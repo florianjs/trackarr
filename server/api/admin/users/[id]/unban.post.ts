@@ -2,17 +2,11 @@ import { eq } from 'drizzle-orm';
 import { db } from '~~/server/db';
 import { users, bannedIps } from '~~/server/db/schema';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
+import { validateParam, uuidSchema } from '~~/server/utils/schemas';
 
 export default defineEventHandler(async (event) => {
-  await requireModeratorSession(event);
-  const userId = getRouterParam(event, 'id');
-
-  if (!userId) {
-    throw createError({
-      statusCode: 400,
-      message: 'User ID is required',
-    });
-  }
+  const session = await requireModeratorSession(event);
+  const userId = validateParam(event, 'id', uuidSchema);
 
   // Get user to find their IP
   const user = await db.query.users.findFirst({
@@ -23,6 +17,14 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 404,
       message: 'User not found',
+    });
+  }
+
+  // Moderators can only act on regular users
+  if ((user.isModerator || user.isAdmin) && !session.user.isAdmin) {
+    throw createError({
+      statusCode: 403,
+      message: 'Only admins can unban moderators',
     });
   }
 

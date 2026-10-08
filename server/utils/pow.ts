@@ -40,12 +40,13 @@ export async function generatePoWChallenge(): Promise<PoWChallenge> {
 /**
  * Verify a PoW solution
  * Returns true if valid, false otherwise
- * Deletes challenge after verification to prevent reuse
+ * Consumes the challenge before verification to prevent reuse
  */
 export async function verifyPoWSolution(solution: PoWSolution): Promise<boolean> {
-  // Check if challenge exists and hasn't been used
-  const exists = await redis.get(`pow:${solution.challenge}`);
-  if (!exists) {
+  // Atomically consume the challenge first: concurrent requests reusing the
+  // same solution must not all pass. A failed attempt burns the challenge.
+  const consumed = await redis.del(`pow:${solution.challenge}`);
+  if (consumed !== 1) {
     return false;
   }
   
@@ -63,10 +64,7 @@ export async function verifyPoWSolution(solution: PoWSolution): Promise<boolean>
   if (!solution.hash.startsWith(target)) {
     return false;
   }
-  
-  // Delete challenge to prevent reuse (one-time use)
-  await redis.del(`pow:${solution.challenge}`);
-  
+
   return true;
 }
 

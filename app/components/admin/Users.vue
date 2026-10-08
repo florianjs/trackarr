@@ -202,7 +202,7 @@ async function toggleUserRole(user: any, role: 'isAdmin' | 'isModerator') {
     // Update local state
     const index = foundUsers.value.findIndex((u) => u.id === user.id);
     if (index !== -1) {
-      foundUsers.value[index] = updatedUser;
+      foundUsers.value[index] = { ...foundUsers.value[index], ...updatedUser };
     }
   } catch (error: any) {
     alert(error.data?.message || 'Failed to update user role');

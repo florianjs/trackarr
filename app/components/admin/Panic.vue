@@ -80,10 +80,31 @@
             be unreadable until restored with the panic password.
           </p>
 
-          <div class="bg-error/10 border border-error/30 rounded p-3 mb-6">
+          <div class="bg-error/10 border border-error/30 rounded p-3 mb-4">
             <p class="text-error text-sm font-medium">
               ⚠️ This action is irreversible without the panic password.
             </p>
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="panicPasswordEncrypt"
+              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+            >
+              Panic Password
+            </label>
+            <input
+              id="panicPasswordEncrypt"
+              v-model="panicPassword"
+              type="password"
+              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-error transition-colors"
+              placeholder="Enter panic password"
+              @keyup.enter="triggerPanic"
+            />
+          </div>
+
+          <div v-if="error" class="text-error text-sm mb-4">
+            {{ error }}
           </div>
 
           <div class="flex gap-3">
@@ -95,7 +116,7 @@
             </button>
             <button
               @click="triggerPanic"
-              :disabled="loading"
+              :disabled="loading || !panicPassword"
               class="flex-1 bg-error text-white text-sm font-bold py-2.5 rounded hover:bg-error/90 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
             >
               <Icon
@@ -202,18 +223,21 @@ onMounted(async () => {
 });
 
 async function triggerPanic() {
+  if (!panicPassword.value) return;
+
   loading.value = true;
   error.value = '';
 
   try {
     await $fetch('/api/admin/panic/encrypt', {
       method: 'POST',
-      body: { confirm: 'ENCRYPT_ALL_DATA' },
+      body: { confirm: 'ENCRYPT_ALL_DATA', panicPassword: panicPassword.value },
     });
 
     isEncrypted.value = true;
     encryptedAt.value = new Date().toISOString();
     showConfirmModal.value = false;
+    panicPassword.value = '';
   } catch (err: any) {
     error.value = err.data?.message || 'Encryption failed';
   } finally {

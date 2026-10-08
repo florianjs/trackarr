@@ -24,6 +24,8 @@ services:
       NODE_ENV: production
       NITRO_SERVE_STATIC: "true"
       NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET}
+      # Served over plain HTTP locally: secure cookies would never be sent back
+      NUXT_SESSION_COOKIE_SECURE: "false"
       # Direct connection to PostgreSQL (no PgBouncer for simplicity)
       DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-trackarr}
       DB_HOST: postgres
@@ -41,6 +43,8 @@ services:
       TRACKER_WS_URL: ${TRACKER_WS_URL:-}
       IP_HASH_SECRET: ${IP_HASH_SECRET}
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+      # Tracker port is published directly (no proxy): ignore X-Forwarded-For
+      TRACKER_TRUST_PROXY: "false"
     ports:
       - "3000:3000"   # Web UI
       - "8080:8080"   # HTTP Tracker
@@ -75,7 +79,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD}
       POSTGRES_DB: ${DB_NAME:-trackarr}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -102,7 +106,7 @@ services:
       --maxmemory 256mb
       --maxmemory-policy allkeys-lru
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
     healthcheck:
@@ -130,7 +134,7 @@ services:
       - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
       - prometheus_data:/prometheus
     ports:
-      - "9090:9090"
+      - "127.0.0.1:9090:9090"
     networks:
       - trackarr
 
@@ -143,10 +147,10 @@ services:
     restart: unless-stopped
     environment:
       GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
       GF_USERS_ALLOW_SIGN_UP: "false"
     ports:
-      - "3001:3000"
+      - "127.0.0.1:3001:3000"
     volumes:
       - grafana_data:/var/lib/grafana
       - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro

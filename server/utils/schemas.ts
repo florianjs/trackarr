@@ -138,7 +138,12 @@ export const adminSettingsSchema = z.object({
   starterUpload: z.coerce.number().int().min(0).optional(),
   siteName: z.string().min(1).max(500).optional(),
   siteLogo: z.string().min(1).max(100).optional(),
-  siteLogoImage: z.string().max(500).optional().nullable(),
+  siteLogoImage: z
+    .string()
+    .max(500)
+    .regex(/^(\/uploads\/[\w.-]+|https:\/\/\S+)?$/, 'Invalid logo URL')
+    .optional()
+    .nullable(),
   siteSubtitle: z.string().max(500).optional().nullable(),
   siteNameColor: z.string().max(50).optional().nullable(),
   siteNameBold: z.boolean().optional(),

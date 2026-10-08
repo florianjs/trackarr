@@ -11,6 +11,12 @@ import { hashIP } from '../utils/crypto';
 import { db, schema } from '../db';
 import { sql, eq } from 'drizzle-orm';
 import { createHnrEntry, updateSeedTime } from '../utils/hnr';
+import { createHash } from 'crypto';
+import { computeCredit, getMaxRateBytes } from './credit';
+
+function hashOwner(passkey: string): string {
+  return createHash('sha256').update(`peer-owner:${passkey}`).digest('hex').slice(0, 16);
+}
 
 // Debug mode for verbose tracker logging (set TRACKER_DEBUG=true in .env)
 const TRACKER_DEBUG = process.env.TRACKER_DEBUG === 'true';
@@ -110,21 +116,27 @@ export async function handleAnnounce(params: {
     );
   }
 
-  // Calculate deltas for user stats
+  // Peers are keyed by peer_id, which clients choose freely: bind each entry
+  // to its owner so one user cannot skew or evict another user's peer.
+  const owner = params.passkey ? hashOwner(params.passkey) : undefined;
   const previousPeer = await getPeer(infoHash, peerId);
-  let deltaUploaded = 0;
-  let deltaDownloaded = 0;
-
-  if (previousPeer) {
-    deltaUploaded = Math.max(0, params.uploaded - previousPeer.uploaded);
-    deltaDownloaded = Math.max(0, params.downloaded - previousPeer.downloaded);
-  } else {
-    // First announce for this peer in this session - don't credit full amount
-    // The client sends cumulative session stats, but on first announce we can't know the baseline
-    // So we store the current values and only credit deltas on subsequent announces
-    deltaUploaded = 0;
-    deltaDownloaded = 0;
+  if (previousPeer?.owner && previousPeer.owner !== owner) {
+    return;
   }
+
+  const otherLeechers = previousPeer
+    ? (await getStats(infoHash)).leechers - (previousPeer.isSeeder ? 0 : 1)
+    : 0;
+  const credit = computeCredit({
+    previous: previousPeer,
+    uploaded: params.uploaded,
+    downloaded: params.downloaded,
+    now: Date.now(),
+    otherLeechers,
+    maxRateBytes: getMaxRateBytes(),
+  });
+  const deltaUploaded = credit.uploaded;
+  const deltaDownloaded = credit.downloaded;
 
   // Update user stats if passkey is provided
   if (params.passkey && (deltaUploaded > 0 || deltaDownloaded > 0)) {
@@ -145,6 +157,7 @@ export async function handleAnnounce(params: {
 
   // Add/update peer
   await setPeer(infoHash, peerId, {
+    owner,
     ip: params.ip,
     port: params.port,
     uploaded: params.uploaded,

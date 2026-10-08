@@ -106,7 +106,6 @@ fi
 # Generate secrets
 log_info "Generating cryptographic secrets..."
 NUXT_SESSION_SECRET=$(openssl rand -hex 32)
-ADMIN_API_KEY=$(openssl rand -hex 32)
 IP_HASH_SECRET=$(openssl rand -hex 32)
 DB_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=')
 REDIS_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=')
@@ -143,7 +142,6 @@ sed_inplace "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=$REDIS_PASSWORD/" "$PROJECT_DIR
 
 # Security
 sed_inplace "s/^NUXT_SESSION_SECRET=.*/NUXT_SESSION_SECRET=$NUXT_SESSION_SECRET/" "$PROJECT_DIR/.env"
-sed_inplace "s/^ADMIN_API_KEY=.*/ADMIN_API_KEY=$ADMIN_API_KEY/" "$PROJECT_DIR/.env"
 sed_inplace "s/^IP_HASH_SECRET=.*/IP_HASH_SECRET=$IP_HASH_SECRET/" "$PROJECT_DIR/.env"
 
 # Tracker URLs

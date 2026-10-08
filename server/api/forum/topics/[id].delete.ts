@@ -1,6 +1,6 @@
 import { db } from '~~/server/db';
-import { forumTopics } from '~~/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { forumPosts, forumTopics } from '~~/server/db/schema';
+import { and, count, eq, ne } from 'drizzle-orm';
 import { requireAuthSession } from '~~/server/utils/adminAuth';
 
 export default defineEventHandler(async (event) => {
@@ -34,6 +34,22 @@ export default defineEventHandler(async (event) => {
       statusCode: 403,
       message: 'You do not have permission to delete this topic',
     });
+  }
+
+  // Deleting a topic cascades to every post: authors may only do that while
+  // the topic is unlocked and nobody else has replied
+  if (!isModerator) {
+    const [otherReplies] = await db
+      .select({ value: count() })
+      .from(forumPosts)
+      .where(and(eq(forumPosts.topicId, id), ne(forumPosts.authorId, session.user.id)));
+
+    if (topic.isLocked || otherReplies!.value > 0) {
+      throw createError({
+        statusCode: 403,
+        message: 'Cannot delete a locked topic or one with replies from other users',
+      });
+    }
   }
 
   await db.delete(forumTopics).where(eq(forumTopics.id, id));

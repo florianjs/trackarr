@@ -4,7 +4,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { validateBody, forumTopicSchema } from '~~/server/utils/schemas';
 
 export default defineEventHandler(async (event) => {
-  const session = await requireUserSession(event);
+  const session = await requireAuthSession(event);
 
   // Validate request body with Zod
   const body = await validateBody(event, forumTopicSchema);

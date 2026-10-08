@@ -5,7 +5,7 @@ import { validateParam, infoHashSchema } from '../../utils/schemas';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
 
   // Validate info hash parameter
   const infoHash = validateParam(event, 'hash', infoHashSchema);
@@ -13,6 +13,8 @@ export default defineEventHandler(async (event) => {
   // Get torrent from DB
   const torrent = await db.query.torrents.findFirst({
     where: (t, { eq }) => eq(t.infoHash, infoHash),
+    // Raw .torrent blob embeds the uploader's announce URL (passkey)
+    columns: { torrentData: false },
     with: {
       category: true,
       torrentTags: {
@@ -34,7 +36,14 @@ export default defineEventHandler(async (event) => {
     },
   });
 
-  if (!torrent) {
+  const canView =
+    torrent &&
+    (torrent.isApproved ||
+      torrent.uploaderId === user.id ||
+      user.isAdmin ||
+      user.isModerator);
+
+  if (!torrent || !canView) {
     throw createError({
       statusCode: 404,
       message: 'Torrent not found',

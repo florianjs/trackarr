@@ -2,7 +2,6 @@ declare module '#auth-utils' {
   interface User {
     id: string;
     username: string;
-    passkey: string; // Private - never expose in public API responses
     isAdmin: boolean;
     isModerator: boolean;
     uploaded: number;

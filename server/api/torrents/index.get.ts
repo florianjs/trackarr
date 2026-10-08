@@ -2,10 +2,11 @@ import { db, schema } from '../../db';
 import { getStats } from '../../redis/cache';
 import { desc, eq, ilike, sql, and, or } from 'drizzle-orm';
 import { validateQuery, torrentQuerySchema } from '../../utils/schemas';
+import { escapeLike } from '../../utils/validation';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
 
   // Validate query parameters with Zod
   const query = validateQuery(event, torrentQuerySchema);
@@ -38,7 +39,7 @@ export default defineEventHandler(async (event) => {
       const terms = query.search.split(/\s+/).filter((t) => t.length > 0);
       if (terms.length > 0) {
         conditions.push(
-          and(...terms.map((term) => ilike(schema.torrents.name, `%${term}%`)))
+          and(...terms.map((term) => ilike(schema.torrents.name, `%${escapeLike(term)}%`)))
         );
       }
     }
@@ -62,6 +63,8 @@ export default defineEventHandler(async (event) => {
   // Get torrents with optional search
   const torrents = await db.query.torrents.findMany({
     where: whereClause,
+    // Raw .torrent blob embeds the uploader's announce URL (passkey)
+    columns: { torrentData: false },
     with: {
       category: true,
     },

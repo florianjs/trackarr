@@ -3,10 +3,8 @@
  * Returns the current user's passkey (private, only accessible to the user themselves)
  */
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event);
+  // Read from the DB so a rotated passkey is reflected immediately
+  const passkey = await requireUserPasskey(event);
 
-  // The passkey is stored in the session, which is only accessible to the authenticated user
-  return {
-    passkey: user.passkey,
-  };
+  return { passkey };
 });

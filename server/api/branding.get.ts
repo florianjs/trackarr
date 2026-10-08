@@ -11,6 +11,7 @@ import {
   getFooterText,
   getPageTitleSuffix,
 } from '../utils/settings';
+import { sanitizeRichText } from '../utils/sanitize';
 
 /**
  * GET /api/branding
@@ -29,17 +30,19 @@ export default defineEventHandler(async () => {
   const footerText = await getFooterText();
   const pageTitleSuffix = await getPageTitleSuffix();
 
+  // Rich text fields are rendered with v-html: sanitize on the way out so
+  // values stored before sanitization was added are covered too.
   return {
-    siteName,
+    siteName: sanitizeRichText(siteName),
     siteLogo,
     siteLogoImage,
     siteFavicon,
-    siteSubtitle,
+    siteSubtitle: sanitizeRichText(siteSubtitle),
     siteNameColor,
     siteNameBold,
-    authTitle,
-    authSubtitle,
-    footerText,
-    pageTitleSuffix,
+    authTitle: sanitizeRichText(authTitle),
+    authSubtitle: sanitizeRichText(authSubtitle),
+    footerText: sanitizeRichText(footerText),
+    pageTitleSuffix, // Rendered as text in <title>, never as HTML
   };
 });

@@ -1,12 +1,12 @@
 import { db, schema } from '../../db';
-import { eq, sql } from 'drizzle-orm';
+import { and, eq, gt, sql } from 'drizzle-orm';
 import { randomUUID, randomBytes } from 'crypto';
 import { isInviteEnabled } from '../../utils/settings';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event);
-  rateLimit(event, RATE_LIMITS.mutation);
+  const { user } = await requireAuthSession(event);
+  await rateLimit(event, RATE_LIMITS.mutation);
 
   // Check if invites are enabled
   const enabled = await isInviteEnabled();
@@ -17,25 +17,30 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Check if user has invites remaining
-  const userData = await db.query.users.findFirst({
-    where: eq(schema.users.id, user.id),
-    columns: { invitesRemaining: true },
-  });
-
-  if (!userData || userData.invitesRemaining <= 0) {
-    throw createError({
-      statusCode: 403,
-      message: 'No invites remaining',
-    });
-  }
-
   // Generate unique invite code
   const code = randomBytes(16).toString('hex').toUpperCase();
 
-  // Create invitation and decrement user's remaining invites
-  const [invite] = await Promise.all([
-    db
+  // Decrement only if an invite is left, in the same transaction as the
+  // insert: parallel requests cannot create more codes than allowed.
+  const invite = await db.transaction(async (tx) => {
+    const decremented = await tx
+      .update(schema.users)
+      .set({
+        invitesRemaining: sql`${schema.users.invitesRemaining} - 1`,
+      })
+      .where(
+        and(eq(schema.users.id, user.id), gt(schema.users.invitesRemaining, 0))
+      )
+      .returning({ id: schema.users.id });
+
+    if (decremented.length === 0) {
+      throw createError({
+        statusCode: 403,
+        message: 'No invites remaining',
+      });
+    }
+
+    return tx
       .insert(schema.invitations)
       .values({
         id: randomUUID(),
@@ -43,14 +48,8 @@ export default defineEventHandler(async (event) => {
         createdBy: user.id,
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       })
-      .returning(),
-    db
-      .update(schema.users)
-      .set({
-        invitesRemaining: sql`${schema.users.invitesRemaining} - 1`,
-      })
-      .where(eq(schema.users.id, user.id)),
-  ]);
+      .returning();
+  });
 
   return {
     success: true,

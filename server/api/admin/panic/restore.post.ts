@@ -1,4 +1,5 @@
-import { eq, and, asc } from 'drizzle-orm';
+import { eq, asc } from 'drizzle-orm';
+import { z } from 'zod';
 import { db } from '../../../db';
 import {
   users,
@@ -7,7 +8,12 @@ import {
   forumPosts,
   torrentComments,
 } from '../../../db/schema';
+import { protectEndpoint } from '../../../utils/rateLimit';
 import { deriveKey, decryptField, decrypt } from '../../../utils/panic';
+
+const bodySchema = z.object({
+  panicPassword: z.string().min(1).max(256),
+});
 
 /**
  * POST /api/admin/panic/restore
@@ -16,14 +22,17 @@ import { deriveKey, decryptField, decrypt } from '../../../utils/panic';
  * user sessions may be invalid after encryption
  */
 export default defineEventHandler(async (event) => {
-  const body = await readBody(event);
+  // Public endpoint: strict brute-force protection
+  await protectEndpoint(event, 'auth');
 
-  if (!body.panicPassword) {
+  const parsed = bodySchema.safeParse(await readBody(event));
+  if (!parsed.success) {
     throw createError({
       statusCode: 400,
       message: 'Panic password is required',
     });
   }
+  const { panicPassword } = parsed.data;
 
   // Check if database is encrypted
   const currentState = await db.query.panicState.findFirst();
@@ -34,7 +43,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  if (!currentState.encryptionSalt || !currentState.encryptionIv) {
+  if (!currentState.encryptionSalt) {
     throw createError({
       statusCode: 500,
       message: 'Encryption metadata missing. Recovery impossible.',
@@ -43,7 +52,7 @@ export default defineEventHandler(async (event) => {
 
   // Get first admin to verify panic password
   const admin = await db.query.users.findFirst({
-    where: and(eq(users.isAdmin, true)),
+    where: eq(users.isAdmin, true),
     orderBy: asc(users.createdAt),
   });
 
@@ -55,7 +64,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Verify panic password matches stored hash
-  const isValid = await verifyPassword(admin.panicPasswordHash, body.panicPassword);
+  const isValid = await verifyPassword(admin.panicPasswordHash, panicPassword);
   if (!isValid) {
     throw createError({
       statusCode: 401,
@@ -63,144 +72,137 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Derive decryption key (same as encryption key)
+  // Legacy scheme (shared IV stored in panic_state, key derived from the
+  // stored hash) is still decrypted so instances encrypted before the fix
+  // can be restored.
+  const legacyIv = currentState.encryptionIv
+    ? Buffer.from(currentState.encryptionIv, 'base64')
+    : undefined;
   const key = await deriveKey(
-    admin.panicPasswordHash,
+    legacyIv ? admin.panicPasswordHash : panicPassword,
     Buffer.from(currentState.encryptionSalt, 'base64')
   );
-  const ivBuffer = Buffer.from(currentState.encryptionIv, 'base64');
 
-  // =====================================================================
-  // Decrypt user data
-  // =====================================================================
-  const allUsers = await db.select().from(users);
-  for (const user of allUsers) {
-    try {
-      await db
-        .update(users)
-        .set({
-          authSalt: decryptField(user.authSalt, key, ivBuffer),
-          authVerifier: decryptField(user.authVerifier, key, ivBuffer),
-          passkey: decryptField(user.passkey, key, ivBuffer)!,
-          lastIp: decryptField(user.lastIp, key, ivBuffer) ?? undefined,
-        })
-        .where(eq(users.id, user.id));
-    } catch (err) {
-      console.error(`Failed to decrypt user ${user.id}:`, err);
-    }
-  }
+  // Single transaction: any decryption failure rolls everything back so the
+  // data stays recoverable instead of being half restored.
+  try {
+    await db.transaction(async (tx) => {
+      // ===================================================================
+      // Decrypt user data
+      // ===================================================================
+      const allUsers = await tx.select().from(users);
+      for (const user of allUsers) {
+        await tx
+          .update(users)
+          .set({
+            authSalt: decryptField(user.authSalt, key, legacyIv),
+            authVerifier: decryptField(user.authVerifier, key, legacyIv),
+            passkey: decryptField(user.passkey, key, legacyIv)!,
+            lastIp: decryptField(user.lastIp, key, legacyIv) ?? undefined,
+          })
+          .where(eq(users.id, user.id));
+      }
 
-  // =====================================================================
-  // Decrypt torrent data (including .torrent file and metadata)
-  // =====================================================================
-  const allTorrents = await db.select().from(torrents);
-  for (const torrent of allTorrents) {
-    try {
-      // Parse the description to extract encrypted metadata
-      const panicMetaMatch = torrent.description?.match(
-        /^\[PANIC_META:([^\]]+)\](.*)?$/s
-      );
+      // ===================================================================
+      // Decrypt torrent data (including .torrent file and metadata)
+      // ===================================================================
+      const allTorrents = await tx.select().from(torrents);
+      for (const torrent of allTorrents) {
+        // Parse the description to extract encrypted metadata
+        const panicMetaMatch = torrent.description?.match(
+          /^\[PANIC_META:([^\]]+)\](.*)?$/s
+        );
 
-      let decryptedDesc: string | null = null;
-      let originalSize: number = torrent.size;
-      let originalCategoryId: string | null = torrent.categoryId;
+        let decryptedDesc: string | null = null;
+        let originalSize: number = torrent.size;
+        let originalCategoryId: string | null = torrent.categoryId;
 
-      if (panicMetaMatch) {
-        // Extract and decrypt metadata
-        const encryptedMeta = panicMetaMatch[1]!;
-        const encryptedDescPart = panicMetaMatch[2] || null;
+        if (panicMetaMatch) {
+          // Extract and decrypt metadata
+          const encryptedMeta = panicMetaMatch[1]!;
+          const encryptedDescPart = panicMetaMatch[2] || null;
 
-        try {
-          const metaJson = decrypt(encryptedMeta, key, ivBuffer);
-          const meta = JSON.parse(metaJson);
+          const meta = JSON.parse(decrypt(encryptedMeta, key, legacyIv));
           originalSize = meta.size ?? 0;
           originalCategoryId = meta.categoryId ?? null;
-        } catch {
-          console.error(`Failed to decrypt metadata for torrent ${torrent.id}`);
+
+          // Decrypt the description part (after the metadata prefix)
+          decryptedDesc = encryptedDescPart
+            ? decryptField(encryptedDescPart, key, legacyIv)
+            : null;
+        } else {
+          // Fallback: try to decrypt the whole description
+          decryptedDesc = decryptField(torrent.description, key, legacyIv);
         }
 
-        // Decrypt the description part (after the metadata prefix)
-        decryptedDesc = encryptedDescPart
-          ? decryptField(encryptedDescPart, key, ivBuffer)
-          : null;
-      } else {
-        // Fallback: try to decrypt the whole description
-        decryptedDesc = decryptField(torrent.description, key, ivBuffer);
-      }
-
-      // Decrypt the .torrent file (Buffer -> utf8 string -> decrypt -> base64 -> Buffer)
-      let decryptedTorrentData: Buffer | null = null;
-      if (torrent.torrentData) {
-        try {
+        // Decrypt the .torrent file (Buffer -> utf8 string -> decrypt -> base64 -> Buffer)
+        let decryptedTorrentData: Buffer | null = null;
+        if (torrent.torrentData) {
           const encryptedStr = torrent.torrentData.toString('utf8');
-          const decryptedBase64 = decrypt(encryptedStr, key, ivBuffer);
+          const decryptedBase64 = decrypt(encryptedStr, key, legacyIv);
           decryptedTorrentData = Buffer.from(decryptedBase64, 'base64');
-        } catch {
-          console.error(`Failed to decrypt torrentData for torrent ${torrent.id}`);
         }
+
+        await tx
+          .update(torrents)
+          .set({
+            name: decryptField(torrent.name, key, legacyIv) ?? torrent.name,
+            description: decryptedDesc,
+            torrentData: decryptedTorrentData,
+            size: originalSize,
+            categoryId: originalCategoryId,
+          })
+          .where(eq(torrents.id, torrent.id));
       }
 
-      await db
-        .update(torrents)
-        .set({
-          name: decryptField(torrent.name, key, ivBuffer) ?? torrent.name,
-          description: decryptedDesc,
-          torrentData: decryptedTorrentData,
-          size: originalSize,
-          categoryId: originalCategoryId,
-        })
-        .where(eq(torrents.id, torrent.id));
-    } catch (err) {
-      console.error(`Failed to decrypt torrent ${torrent.id}:`, err);
-    }
-  }
+      // ===================================================================
+      // Decrypt forum posts
+      // ===================================================================
+      const allPosts = await tx.select().from(forumPosts);
+      for (const post of allPosts) {
+        await tx
+          .update(forumPosts)
+          .set({
+            content:
+              decryptField(post.content, key, legacyIv) ?? post.content,
+          })
+          .where(eq(forumPosts.id, post.id));
+      }
 
-  // =====================================================================
-  // Decrypt forum posts
-  // =====================================================================
-  const allPosts = await db.select().from(forumPosts);
-  for (const post of allPosts) {
-    try {
-      await db
-        .update(forumPosts)
-        .set({
-          content: decryptField(post.content, key, ivBuffer) ?? post.content,
-        })
-        .where(eq(forumPosts.id, post.id));
-    } catch (err) {
-      console.error(`Failed to decrypt post ${post.id}:`, err);
-    }
-  }
+      // ===================================================================
+      // Decrypt torrent comments
+      // ===================================================================
+      const allComments = await tx.select().from(torrentComments);
+      for (const comment of allComments) {
+        await tx
+          .update(torrentComments)
+          .set({
+            content:
+              decryptField(comment.content, key, legacyIv) ?? comment.content,
+          })
+          .where(eq(torrentComments.id, comment.id));
+      }
 
-  // =====================================================================
-  // Decrypt torrent comments
-  // =====================================================================
-  const allComments = await db.select().from(torrentComments);
-  for (const comment of allComments) {
-    try {
-      await db
-        .update(torrentComments)
+      // ===================================================================
+      // Update panic state
+      // ===================================================================
+      await tx
+        .update(panicState)
         .set({
-          content: decryptField(comment.content, key, ivBuffer) ?? comment.content,
+          isEncrypted: false,
+          encryptedAt: null,
+          encryptionSalt: null,
+          encryptionIv: null,
         })
-        .where(eq(torrentComments.id, comment.id));
-    } catch (err) {
-      console.error(`Failed to decrypt comment ${comment.id}:`, err);
-    }
+        .where(eq(panicState.id, 'singleton'));
+    });
+  } catch (err) {
+    console.error('[Panic] Restore failed, transaction rolled back:', err);
+    throw createError({
+      statusCode: 500,
+      message: 'Restore failed. Database left encrypted and unchanged.',
+    });
   }
-
-  // =====================================================================
-  // Update panic state
-  // =====================================================================
-  await db
-    .update(panicState)
-    .set({
-      isEncrypted: false,
-      encryptedAt: null,
-      encryptionSalt: null,
-      encryptionIv: null,
-    })
-    .where(eq(panicState.id, 'singleton'));
 
   return {
     success: true,

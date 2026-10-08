@@ -14,6 +14,7 @@ const PEER_TTL = 1800;
 // ============================================================================
 export interface PeerData {
   peerId: string;
+  owner?: string; // Hash of the announcing user's passkey
   ip: string; // Raw IP - needed for tracker peer exchange
   ipHash: string; // Hashed IP - for logging/display
   port: number;

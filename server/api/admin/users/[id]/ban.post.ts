@@ -10,7 +10,7 @@ import {
 } from '~~/server/utils/schemas';
 
 export default defineEventHandler(async (event) => {
-  await requireModeratorSession(event);
+  const session = await requireModeratorSession(event);
 
   // Validate user ID parameter
   const userId = validateParam(event, 'id', uuidSchema);
@@ -35,6 +35,21 @@ export default defineEventHandler(async (event) => {
     throw createError({
       statusCode: 403,
       message: 'Cannot ban an admin',
+    });
+  }
+
+  if (user.id === session.user.id) {
+    throw createError({
+      statusCode: 400,
+      message: 'Cannot ban yourself',
+    });
+  }
+
+  // Moderators can only act on regular users
+  if (user.isModerator && !session.user.isAdmin) {
+    throw createError({
+      statusCode: 403,
+      message: 'Only admins can ban moderators',
     });
   }
 

@@ -1,15 +1,15 @@
 import { getPeers, getStats } from '../../redis/cache';
-import { requireAdmin } from '../../utils/auth';
+import { requireAdminSession } from '../../utils/adminAuth';
 
 // Debug endpoint to check Redis state directly
 // Admin only - contains sensitive peer data
 export default defineEventHandler(async (event) => {
   // Require admin authentication
-  requireAdmin(event);
+  await requireAdminSession(event);
 
   const hash = getRouterParam(event, 'hash');
 
-  if (!hash) {
+  if (!hash || !/^[a-fA-F0-9]{40}$/.test(hash)) {
     throw createError({ statusCode: 400, message: 'Hash required' });
   }
 

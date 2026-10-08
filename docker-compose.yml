@@ -26,6 +26,8 @@ services:
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - TRACKER_DEBUG=${TRACKER_DEBUG:-false}
+      # Tracker port is published directly (no proxy): ignore X-Forwarded-For
+      - TRACKER_TRUST_PROXY=false
     volumes:
       - .:/app
       - /app/node_modules
@@ -54,7 +56,7 @@ services:
       POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     # Expose to host for local development (drizzle-kit, etc.)
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro

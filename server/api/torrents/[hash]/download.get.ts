@@ -4,7 +4,8 @@ import bencode from 'bencode';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
-  const { user } = await requireUserSession(event);
+  const { user } = await requireAuthSession(event);
+  const passkey = await requireUserPasskey(event);
   const config = useRuntimeConfig();
 
   const hash = getRouterParam(event, 'hash');
@@ -23,6 +24,8 @@ export default defineEventHandler(async (event) => {
     .select({
       name: schema.torrents.name,
       torrentData: schema.torrents.torrentData,
+      isApproved: schema.torrents.isApproved,
+      uploaderId: schema.torrents.uploaderId,
     })
     .from(schema.torrents)
     .where(eq(schema.torrents.infoHash, infoHash))
@@ -30,7 +33,14 @@ export default defineEventHandler(async (event) => {
 
   const torrent = torrents[0];
 
-  if (!torrent || !torrent.torrentData) {
+  const canAccess =
+    torrent &&
+    (torrent.isApproved ||
+      torrent.uploaderId === user.id ||
+      user.isAdmin ||
+      user.isModerator);
+
+  if (!torrent || !torrent.torrentData || !canAccess) {
     throw createError({
       statusCode: 404,
       message: 'Torrent not found',
@@ -50,7 +60,7 @@ export default defineEventHandler(async (event) => {
 
   // Personalize announce URL
   const trackerUrl = new URL(config.public.trackerHttpUrl as string);
-  trackerUrl.searchParams.set('passkey', user.passkey);
+  trackerUrl.searchParams.set('passkey', passkey);
   const personalizedUrl = trackerUrl.toString();
 
   decoded.announce = Buffer.from(personalizedUrl);

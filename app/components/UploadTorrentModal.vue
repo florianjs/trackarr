@@ -304,7 +304,6 @@
 </template>
 
 <script setup lang="ts">
-import { marked } from 'marked';
 
 interface TorrentResult {
   success: boolean;
@@ -341,7 +340,7 @@ const copied = ref(false);
 const { data: categories } = await useFetch('/api/categories');
 
 const renderedDescription = computed(() => {
-  return marked.parse(description.value || '');
+  return renderMarkdown(description.value);
 });
 
 function getFlattenedCategories(

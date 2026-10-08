@@ -25,9 +25,15 @@ jobs:
 
             - name: Extract version from branch name
               id: version
+              env:
+                  BRANCH: ${{ github.event.pull_request.head.ref }}
               run: |
-                  BRANCH="${{ github.event.pull_request.head.ref }}"
                   VERSION="${BRANCH#release/}"
+                  # Branch names are attacker-controlled: only accept a plain semver
+                  if ! printf '%s' "$VERSION" | grep -Eq '^v?[0-9]+\.[0-9]+\.[0-9]+$'; then
+                    echo "Invalid release version: $VERSION" >&2
+                    exit 1
+                  fi
                   echo "version=$VERSION" >> $GITHUB_OUTPUT
                   echo "Extracted version: $VERSION"
 
@@ -62,6 +68,8 @@ jobs:
                   GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
             - name: Delete release branch
+              env:
+                  BRANCH: ${{ github.event.pull_request.head.ref }}
               run: |
-                  git push origin --delete "${{ github.event.pull_request.head.ref }}" || true
-                  echo "🧹 Cleaned up branch: ${{ github.event.pull_request.head.ref }}"
+                  git push origin --delete "$BRANCH" || true
+                  echo "🧹 Cleaned up branch: $BRANCH"

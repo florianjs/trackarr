@@ -1,5 +1,5 @@
 # Production Dockerfile for Trackarr
-FROM node:20-alpine AS base
+FROM node:22-alpine AS base
 
 ARG TRACKER_HTTP_URL
 ARG TRACKER_UDP_URL

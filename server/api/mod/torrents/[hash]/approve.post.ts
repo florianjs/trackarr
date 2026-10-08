@@ -19,7 +19,12 @@ export default defineEventHandler(async (event) => {
     .update(schema.torrents)
     .set({ isApproved: true })
     .where(eq(schema.torrents.infoHash, hash.toLowerCase()))
-    .returning();
+    .returning({
+      id: schema.torrents.id,
+      infoHash: schema.torrents.infoHash,
+      name: schema.torrents.name,
+      isApproved: schema.torrents.isApproved,
+    });
 
   if (!approvedTorrent) {
     throw createError({

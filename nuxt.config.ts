@@ -39,6 +39,17 @@ export default defineNuxtConfig({
       return baseUrl;
     })(),
     redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+    // Sealed session cookies are stateless: bound their lifetime so a stolen
+    // or stale cookie does not stay valid forever.
+    session: {
+      maxAge: 60 * 60 * 24 * 7,
+      cookie: {
+        sameSite: 'lax',
+        // Override at runtime with NUXT_SESSION_COOKIE_SECURE=false only when
+        // serving a production build over plain HTTP (local testing)
+        secure: process.env.NODE_ENV === 'production',
+      },
+    },
     public: {
       appVersion: pkg.version,
       trackerHttpUrl:

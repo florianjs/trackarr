@@ -7,7 +7,9 @@ import bencode from 'bencode';
  * GET /api/debug/torrent/[hash]
  */
 export default defineEventHandler(async (event) => {
-  const { user } = await requireUserSession(event);
+  // Admin only: exposes original announce URLs of any torrent
+  await requireAdminSession(event);
+  const passkey = await requireUserPasskey(event);
   const config = useRuntimeConfig();
 
   const hash = getRouterParam(event, 'hash');
@@ -59,7 +61,7 @@ export default defineEventHandler(async (event) => {
 
   // Generate personalized URL
   const trackerUrl = new URL(config.public.trackerHttpUrl as string);
-  trackerUrl.searchParams.set('passkey', user.passkey);
+  trackerUrl.searchParams.set('passkey', passkey);
   const personalizedUrl = trackerUrl.toString();
 
   // Simulate what download does
@@ -78,7 +80,7 @@ export default defineEventHandler(async (event) => {
     debug: {
       infoHash,
       torrentName: torrent.name,
-      userPasskey: user.passkey,
+      userPasskey: passkey,
       trackerBaseUrl: config.public.trackerHttpUrl,
     },
     original: {

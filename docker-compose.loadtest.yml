@@ -28,7 +28,7 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD:-}
       REDIS_HOST: redis
       REDIS_PORT: 6379
-      IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret-not-for-production}
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
     ports:
       - "3000:3000"   # Nuxt app
@@ -56,7 +56,7 @@ services:
       POSTGRES_PASSWORD: ${DB_PASSWORD:-tracker}
       POSTGRES_DB: ${DB_NAME:-trackarr}
     ports:
-      - "5432:5432"
+      - "127.0.0.1:5432:5432"
     volumes:
       - loadtest_postgres:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
@@ -86,7 +86,7 @@ services:
       --maxmemory-policy allkeys-lru
       --maxclients 5000
     ports:
-      - "6379:6379"
+      - "127.0.0.1:6379:6379"
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]
       interval: 5s

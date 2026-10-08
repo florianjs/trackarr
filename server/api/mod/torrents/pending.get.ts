@@ -8,6 +8,8 @@ export default defineEventHandler(async (event) => {
   // Get all pending (unapproved) torrents
   const pendingTorrents = await db.query.torrents.findMany({
     where: eq(schema.torrents.isApproved, false),
+    // Raw .torrent blob embeds the uploader's announce URL (passkey)
+    columns: { torrentData: false },
     with: {
       uploader: {
         columns: {

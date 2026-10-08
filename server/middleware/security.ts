@@ -8,6 +8,7 @@ import { detectDDoS, isBlacklisted, getClientIP } from '../utils/rateLimit';
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { users, bannedIps } from '../db/schema';
+import { authUserColumns } from '../utils/adminAuth';
 
 // ============================================================================
 // Security Configuration
@@ -236,12 +237,12 @@ export default defineEventHandler(async (event) => {
     if (session.user) {
       // Check DB for ban status
       const [dbUser] = await db
-        .select({ isBanned: users.isBanned })
+        .select(authUserColumns)
         .from(users)
         .where(eq(users.id, session.user.id))
         .limit(1);
 
-      if (dbUser?.isBanned) {
+      if (!dbUser || dbUser.isBanned) {
         // Clear session immediately
         await clearUserSession(event);
 
@@ -254,8 +255,10 @@ export default defineEventHandler(async (event) => {
         }
       }
 
-      // Mark as checked to avoid redundant DB queries in requireAuthSession
-      event.context.authChecked = true;
+      // Cache DB state to avoid redundant queries in requireAuthSession
+      if (dbUser && !dbUser.isBanned) {
+        event.context.authUser = dbUser;
+      }
     }
   }
 });

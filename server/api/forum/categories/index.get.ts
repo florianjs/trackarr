@@ -3,6 +3,8 @@ import { forumCategories } from '~~/server/db/schema';
 import { asc } from 'drizzle-orm';
 
 export default defineEventHandler(async (event) => {
+  await requireAuthSession(event);
+
   const categories = await db.query.forumCategories.findMany({
     orderBy: [asc(forumCategories.order)],
     with: {

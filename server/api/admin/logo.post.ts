@@ -91,10 +91,13 @@ export default defineEventHandler(async (event) => {
   await setSetting(SETTINGS_KEYS.SITE_LOGO_IMAGE, fileUrl);
 
   // Delete old logo if it exists and is in uploads folder
-  if (currentLogo && currentLogo.startsWith('/uploads/')) {
-    const oldPath = isProduction
-      ? join('/app/public', currentLogo)
-      : join(process.cwd(), 'public', currentLogo);
+  // Only delete files we generated ourselves: the setting is admin-editable
+  // and a crafted value like /uploads/../../x must never reach unlink.
+  const oldName = currentLogo?.startsWith('/uploads/')
+    ? currentLogo.slice('/uploads/'.length)
+    : null;
+  if (oldName && /^(logo|favicon)-[a-f0-9]{16}\.[a-z]+$/.test(oldName)) {
+    const oldPath = join(uploadsDir, oldName);
     try {
       if (existsSync(oldPath)) {
         await unlink(oldPath);

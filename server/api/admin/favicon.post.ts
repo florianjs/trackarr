@@ -92,10 +92,13 @@ export default defineEventHandler(async (event) => {
   await setSetting(SETTINGS_KEYS.SITE_FAVICON, fileUrl);
 
   // Delete old favicon if it exists and is in uploads folder
-  if (currentFavicon && currentFavicon.startsWith('/uploads/')) {
-    const oldPath = isProduction
-      ? join('/app/public', currentFavicon)
-      : join(process.cwd(), 'public', currentFavicon);
+  // Only delete files we generated ourselves: the setting is admin-editable
+  // and a crafted value like /uploads/../../x must never reach unlink.
+  const oldName = currentFavicon?.startsWith('/uploads/')
+    ? currentFavicon.slice('/uploads/'.length)
+    : null;
+  if (oldName && /^(logo|favicon)-[a-f0-9]{16}\.[a-z]+$/.test(oldName)) {
+    const oldPath = join(uploadsDir, oldName);
     try {
       if (existsSync(oldPath)) {
         await unlink(oldPath);

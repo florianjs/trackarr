@@ -135,9 +135,6 @@
                   <p class="text-sm font-medium">
                     {{ user?.username }}
                   </p>
-                  <p class="text-xs text-text-muted truncate">
-                    {{ user?.email }}
-                  </p>
                   <div
                     v-if="user?.isAdmin || user?.isModerator"
                     class="mt-1 flex gap-1"
@@ -165,7 +162,7 @@
                     </p>
                     <code
                       class="text-xs font-mono text-text-secondary break-all"
-                      >{{ user?.passkey }}</code
+                      >{{ passkey ?? '…' }}</code
                     >
                   </div>
                 </div>
@@ -331,6 +328,9 @@
 
 <script setup lang="ts">
 const { user, clear, fetch } = useUserSession();
+
+// Passkey is not part of the client session: fetch it on demand
+const passkey = ref<string | null>(null);
 const router = useRouter();
 
 const showUserMenu = ref(false);
@@ -475,6 +475,11 @@ const visibleNavLinks = computed(() =>
 
 function toggleUserMenu() {
   showUserMenu.value = !showUserMenu.value;
+  if (showUserMenu.value && !passkey.value) {
+    $fetch<{ passkey: string }>('/api/auth/passkey')
+      .then((res) => (passkey.value = res.passkey))
+      .catch(() => {});
+  }
 }
 
 // Close on outside click
@@ -494,6 +499,7 @@ onUnmounted(() => {
 
 async function handleLogout() {
   showUserMenu.value = false;
+  passkey.value = null;
   await clear();
   router.push('/auth/login');
 }
