@@ -481,8 +481,9 @@ build_application() {
     
     cd "$INSTALL_DIR"
     
-    # Build the image
-    docker build -t trackarr:latest .
+    # Build through compose so the tracker URLs from .env are passed as build
+    # args (a plain docker build baked localhost into the image, issue #49)
+    docker compose -f docker-compose.prod.yml build app
     
     log_success "Docker image built successfully"
 }

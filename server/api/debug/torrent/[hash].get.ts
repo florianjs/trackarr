@@ -69,9 +69,6 @@ export default defineEventHandler(async (event) => {
   if (decoded['announce-list']) {
     decoded['announce-list'] = [[Buffer.from(personalizedUrl)]];
   }
-  if (decoded.info) {
-    decoded.info.private = 1;
-  }
 
   const personalizedData = bencode.encode(decoded);
   const reDecoded = bencode.decode(personalizedData);

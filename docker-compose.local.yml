@@ -41,6 +41,10 @@ services:
       TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
       TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
       TRACKER_WS_URL: ${TRACKER_WS_URL:-}
+      # Runtime override of the URLs baked at build time (issue #49)
+      NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
+      NUXT_PUBLIC_TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
+      NUXT_PUBLIC_TRACKER_WS_URL: ${TRACKER_WS_URL:-}
       IP_HASH_SECRET: ${IP_HASH_SECRET}
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
       # Tracker port is published directly (no proxy): ignore X-Forwarded-For
