@@ -902,6 +902,27 @@
       "banFailed": "Failed to ban user",
       "unbanFailed": "Failed to unban user",
       "assignRoleFailed": "Failed to assign role"
+    },
+    "footer": {
+      "title": "Footer links",
+      "description": "Icons shown at the bottom right of every page. Links open in a new tab.",
+      "icon": "Icon",
+      "label": "Label",
+      "url": "URL",
+      "add": "Add link",
+      "remove": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "empty": "No links: the footer shows none.",
+      "max": "Maximum {max} links.",
+      "tagline": "Footer tagline",
+      "taglineDescription": "Short text next to the copyright. Leave empty to hide it.",
+      "taglineDefault": "Default text",
+      "resetTagline": "Use default",
+      "resetLinks": "Restore default links",
+      "save": "Save footer",
+      "saved": "Saved",
+      "invalid": "Each link needs a label and an http(s) or mailto URL."
     }
   },
   "time": {

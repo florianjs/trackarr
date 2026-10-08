@@ -332,33 +332,25 @@
               `© ${new Date().getFullYear()} ${(branding?.siteName || 'Trackarr')}`
             "
           ></span>
-          <span class="w-1 h-1 bg-border rounded-full"></span>
-          <span>{{ t('layout.p2pProtocol') }}</span>
+          <template v-if="footerTagline">
+            <span class="w-1 h-1 bg-border rounded-full"></span>
+            <span>{{ footerTagline }}</span>
+          </template>
           <span class="w-1 h-1 bg-border rounded-full md:hidden"></span>
           <!-- Header switcher is hidden on small screens -->
           <LanguageSwitcher class="md:hidden" />
         </div>
         <div class="flex gap-6">
           <a
-            href="https://n0w.me/"
+            v-for="link in footerLinks"
+            :key="link.url"
+            :href="link.url"
             target="_blank"
-            rel="noopener"
+            rel="noopener noreferrer"
+            :title="link.label"
+            :aria-label="link.label"
             class="text-text-muted hover:text-white transition-colors"
-            ><Icon name="ph:globe" class="text-xl"
-          /></a>
-          <a
-            href="https://github.com/florianjs/trackarr"
-            target="_blank"
-            rel="noopener"
-            class="text-text-muted hover:text-white transition-colors"
-            ><Icon name="ph:github-logo" class="text-xl"
-          /></a>
-          <a
-            href="https://discord.gg/GRFu35djvz"
-            target="_blank"
-            rel="noopener"
-            class="text-text-muted hover:text-white transition-colors"
-            ><Icon name="ph:discord-logo" class="text-xl"
+            ><Icon :name="link.icon" class="text-xl"
           /></a>
         </div>
       </div>
@@ -367,6 +359,7 @@
 </template>
 
 <script setup lang="ts">
+import type { FooterLink } from '~~/shared/utils/footerLinks';
 const { t, locale } = useI18n();
 const { user, clear, fetch } = useUserSession();
 
@@ -406,7 +399,20 @@ const { data: branding } = await useFetch<{
   authSubtitle: string | null;
   footerText: string | null;
   pageTitleSuffix: string | null;
+  footerLinks?: FooterLink[];
+  footerTagline?: string | null;
 }>('/api/branding');
+
+// Footer links and tagline are editable by admins (Admin > Branding)
+const footerLinks = computed(
+  () => branding.value?.footerLinks ?? DEFAULT_FOOTER_LINKS
+);
+const footerTagline = computed(() => {
+  const tagline = branding.value?.footerTagline;
+  return tagline === null || tagline === undefined
+    ? t('layout.p2pProtocol')
+    : tagline;
+});
 
 // Set dynamic favicon and title template
 useHead({

@@ -6,6 +6,11 @@ import {
   isFreeleechActive,
   type FreeleechState,
 } from '../../shared/utils/freeleech';
+import {
+  DEFAULT_FOOTER_LINKS,
+  parseFooterLinks,
+  type FooterLink,
+} from '../../shared/utils/footerLinks';
 
 /**
  * Check if HTML content is effectively empty (just empty tags like <p></p> or whitespace)
@@ -37,6 +42,8 @@ export const SETTINGS_KEYS = {
   AUTH_TITLE: 'auth_title',
   AUTH_SUBTITLE: 'auth_subtitle',
   FOOTER_TEXT: 'footer_text',
+  FOOTER_LINKS: 'footer_links', // JSON array of { icon, label, url }
+  FOOTER_TAGLINE: 'footer_tagline',
   PAGE_TITLE_SUFFIX: 'page_title_suffix',
   WELCOME_MESSAGE: 'welcome_message',
   SITE_RULES: 'site_rules',
@@ -103,6 +110,14 @@ export async function setSetting(key: string, value: string): Promise<void> {
     });
 
   // Invalidate cache
+  settingsCache.delete(key);
+}
+
+/**
+ * Remove a setting so its getter falls back to the default
+ */
+export async function deleteSetting(key: string): Promise<void> {
+  await db.delete(settings).where(eq(settings.key, key));
   settingsCache.delete(key);
 }
 
@@ -454,4 +469,26 @@ export async function getFreeleechState(): Promise<
     until: until || null,
   };
   return { ...state, active: isFreeleechActive(state) };
+}
+
+// ============================================================================
+// Footer
+// ============================================================================
+
+/** Footer links; defaults until an admin saves their own (even an empty list) */
+export async function getFooterLinks(): Promise<FooterLink[]> {
+  const value = await getSetting(SETTINGS_KEYS.FOOTER_LINKS);
+  if (value === null) return DEFAULT_FOOTER_LINKS;
+  try {
+    return parseFooterLinks(JSON.parse(value)) ?? DEFAULT_FOOTER_LINKS;
+  } catch {
+    return DEFAULT_FOOTER_LINKS;
+  }
+}
+
+/**
+ * Footer tagline: null = default translated text, '' = hidden
+ */
+export async function getFooterTagline(): Promise<string | null> {
+  return getSetting(SETTINGS_KEYS.FOOTER_TAGLINE);
 }

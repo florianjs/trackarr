@@ -902,6 +902,27 @@
       "banFailed": "Impossible de bannir l'utilisateur",
       "unbanFailed": "Impossible de débannir l'utilisateur",
       "assignRoleFailed": "Impossible d'attribuer le rôle"
+    },
+    "footer": {
+      "title": "Liens du footer",
+      "description": "Icônes affichées en bas à droite de chaque page. Les liens s'ouvrent dans un nouvel onglet.",
+      "icon": "Icône",
+      "label": "Libellé",
+      "url": "URL",
+      "add": "Ajouter un lien",
+      "remove": "Supprimer",
+      "moveUp": "Monter",
+      "moveDown": "Descendre",
+      "empty": "Aucun lien : le footer n'en affiche pas.",
+      "max": "{max} liens maximum.",
+      "tagline": "Slogan du footer",
+      "taglineDescription": "Court texte à côté du copyright. Laisser vide pour le masquer.",
+      "taglineDefault": "Texte par défaut",
+      "resetTagline": "Utiliser le texte par défaut",
+      "resetLinks": "Restaurer les liens par défaut",
+      "save": "Enregistrer le footer",
+      "saved": "Enregistré",
+      "invalid": "Chaque lien doit avoir un libellé et une URL http(s) ou mailto."
     }
   },
   "time": {
