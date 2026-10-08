@@ -7,7 +7,8 @@
 import { detectDDoS, isBlacklisted, getClientIP } from '../utils/rateLimit';
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
-import { users, bannedIps } from '../db/schema';
+import { users } from '../db/schema';
+import { getIpBan } from '../utils/bannedIps';
 import { authUserColumns } from '../utils/adminAuth';
 
 // ============================================================================
@@ -164,18 +165,13 @@ export default defineEventHandler(async (event) => {
   const ip = getClientIP(event);
   const userAgent = getHeader(event, 'user-agent') || '';
 
-  // 1. Check IP Ban (Permanent bans from DB)
+  // 1. Check IP Ban (permanent bans, kept in memory)
   if (ip) {
-    const [bannedIp] = await db
-      .select()
-      .from(bannedIps)
-      .where(eq(bannedIps.ip, ip))
-      .limit(1);
-
-    if (bannedIp) {
+    const banReason = await getIpBan(ip);
+    if (banReason !== undefined) {
       throw createError({
         statusCode: 403,
-        message: `Access denied: ${bannedIp.reason || 'IP banned'}`,
+        message: `Access denied: ${banReason || 'IP banned'}`,
       });
     }
   }

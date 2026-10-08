@@ -116,6 +116,8 @@ export const torrents = pgTable(
     index('torrents_tmdb_idx').on(table.tmdbId),
     index('torrents_tvdb_idx').on(table.tvdbId),
     index('torrents_uploader_idx').on(table.uploaderId),
+    // Lists and Torznab sort by date with a LIMIT
+    index('torrents_created_idx').on(table.createdAt),
     index('torrents_category_idx').on(table.categoryId),
     index('torrents_name_trgm_idx').using(
       'gist',

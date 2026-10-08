@@ -1,4 +1,4 @@
-import { count, eq } from 'drizzle-orm';
+import { eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { users } from '../../db/schema';
 import { getSetting, SETTINGS_KEYS, isInviteEnabled } from '../../utils/settings';
@@ -9,9 +9,9 @@ import type { PublicUser } from '~~/types/auth';
  * Returns authentication status and tracker state
  */
 export default defineEventHandler(async (event) => {
-  // Check if any users exist
-  const userCount = await db.select({ count: count() }).from(users);
-  const hasUsers = userCount[0].count > 0;
+  // Check if any users exist (called on every page load: no full count)
+  const [anyUser] = await db.select({ id: users.id }).from(users).limit(1);
+  const hasUsers = Boolean(anyUser);
 
   // Get current user session
   const session = await getUserSession(event);

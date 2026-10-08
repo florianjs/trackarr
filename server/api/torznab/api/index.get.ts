@@ -12,7 +12,7 @@
 import type { H3Event } from 'h3';
 import { z } from 'zod';
 import { db, schema } from '../../../db';
-import { getStats } from '../../../redis/cache';
+import { getStatsMany } from '../../../redis/cache';
 import { desc, eq, ilike, and, inArray, sql } from 'drizzle-orm';
 import { escapeLike } from '../../../utils/validation';
 import { getFreeleechState } from '../../../utils/settings';
@@ -331,9 +331,12 @@ async function performSearch(
   const { active: freeleech } = await getFreeleechState();
 
   // Enrich with stats from Redis
+  // One Redis round trip for every torrent of the page
+  const statsByHash = await getStatsMany(torrents.map((torrent) => torrent.infoHash));
+
   const items: TorznabItem[] = await Promise.all(
     torrents.map(async (torrent) => {
-      const stats = await getStats(torrent.infoHash);
+      const stats = statsByHash.get(torrent.infoHash)!;
       const newznabCatId = getNewznabCategoryId(torrent.category);
 
       return {

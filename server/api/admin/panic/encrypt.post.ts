@@ -16,6 +16,7 @@ import {
   encryptField,
   encrypt,
 } from '../../../utils/panic';
+import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/lookups';
 
 const bodySchema = z.object({
   confirm: z.literal('ENCRYPT_ALL_DATA'),
@@ -181,6 +182,10 @@ export default defineEventHandler(async (event) => {
         },
       });
   });
+
+  // Passkeys and torrents changed: drop tracker caches
+  invalidateTrackerUsers();
+  invalidateTrackerTorrents();
 
   return {
     success: true,

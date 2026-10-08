@@ -2,6 +2,7 @@ import { db, schema } from '~~/server/db';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
 import { awardUploadBonus } from '~~/server/utils/bonus';
 import { eq } from 'drizzle-orm';
+import { invalidateTrackerTorrents } from '~~/server/tracker/lookups';
 
 export default defineEventHandler(async (event) => {
   await requireModeratorSession(event);
@@ -38,6 +39,9 @@ export default defineEventHandler(async (event) => {
   await awardUploadBonus(db, approvedTorrent).catch((err) =>
     console.error('[Bonus] Upload bonus failed:', err)
   );
+
+  // Tracker caches the row for a few seconds
+  invalidateTrackerTorrents();
 
   return {
     success: true,

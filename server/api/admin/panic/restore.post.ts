@@ -10,6 +10,7 @@ import {
 } from '../../../db/schema';
 import { protectEndpoint } from '../../../utils/rateLimit';
 import { deriveKey, decryptField, decrypt } from '../../../utils/panic';
+import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/lookups';
 
 const bodySchema = z.object({
   panicPassword: z.string().min(1).max(256),
@@ -203,6 +204,10 @@ export default defineEventHandler(async (event) => {
       message: 'Restore failed. Database left encrypted and unchanged.',
     });
   }
+
+  // Passkeys and torrents changed: drop tracker caches
+  invalidateTrackerUsers();
+  invalidateTrackerTorrents();
 
   return {
     success: true,

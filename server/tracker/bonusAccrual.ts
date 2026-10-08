@@ -5,61 +5,56 @@
  * user really holds (uploader or completed snatch): `left=0` is client
  * supplied and must not let anyone farm points on any torrent. The number of
  * torrents earning at once is capped by the admin setting.
+ *
+ * Returns the points to credit; the caller writes them together with the
+ * upload/download stats in a single UPDATE.
  */
 
-import { and, eq, sql } from 'drizzle-orm';
-import { db, schema } from '../db';
 import { redis } from '../redis/client';
 import { computeSeedPoints } from '../utils/bonus';
 import { getBonusSettings } from '../utils/settings';
+import { hasSnatched, type TrackerTorrent } from './lookups';
 
 const SEEDING_SET_TTL = 2 * 3600; // Seconds a torrent stays "currently seeding"
 
-export async function accrueSeedingBonus(params: {
-  passkey: string;
+export async function computeSeedingBonus(params: {
+  userId: string;
   infoHash: string;
+  torrent: TrackerTorrent;
   elapsedSeconds: number;
-}): Promise<void> {
+}): Promise<number> {
   const settings = await getBonusSettings();
-  if (!settings.enabled || settings.pointsPerSeedDay <= 0) return;
+  if (!settings.enabled || settings.pointsPerSeedDay <= 0) return 0;
 
   const points = computeSeedPoints(params.elapsedSeconds, settings.pointsPerSeedDay);
-  if (points <= 0) return;
+  if (points <= 0 || !params.torrent.isApproved) return 0;
 
-  const [user, torrent] = await Promise.all([
-    db.query.users.findFirst({
-      where: eq(schema.users.passkey, params.passkey),
-      columns: { id: true, isBanned: true },
-    }),
-    db.query.torrents.findFirst({
-      where: eq(schema.torrents.infoHash, params.infoHash),
-      columns: { id: true, uploaderId: true, isApproved: true },
-    }),
-  ]);
-  if (!user || user.isBanned || !torrent || !torrent.isApproved) return;
-
-  if (torrent.uploaderId !== user.id) {
-    const snatch = await db.query.hnrTracking.findFirst({
-      where: and(
-        eq(schema.hnrTracking.userId, user.id),
-        eq(schema.hnrTracking.torrentId, torrent.id)
-      ),
-      columns: { id: true },
-    });
-    if (!snatch) return;
+  if (
+    params.torrent.uploaderId !== params.userId &&
+    !(await hasSnatched(params.userId, params.torrent.id))
+  ) {
+    return 0;
   }
 
-  // Cap concurrent earning torrents: a sorted set of recently seen hashes
-  const key = `bonus:seeding:${user.id}`;
+  // Cap concurrent earning torrents: a sorted set of recently seen hashes.
+  // One round trip to read, one to write.
+  const key = `bonus:seeding:${params.userId}`;
   const now = Date.now();
-  await redis.zremrangebyscore(key, 0, now - SEEDING_SET_TTL * 1000);
-  const known = (await redis.zscore(key, params.infoHash)) !== null;
-  if (!known && (await redis.zcard(key)) >= settings.maxSeedingTorrents) return;
-  await redis.zadd(key, now, params.infoHash);
-  await redis.expire(key, SEEDING_SET_TTL);
+  const result = await redis
+    .multi()
+    .zremrangebyscore(key, 0, now - SEEDING_SET_TTL * 1000)
+    .zscore(key, params.infoHash)
+    .zcard(key)
+    .exec();
+  const known = result?.[1]?.[1] != null;
+  const count = Number(result?.[2]?.[1] ?? 0);
+  if (!known && count >= settings.maxSeedingTorrents) return 0;
 
-  await db
-    .update(schema.users)
-    .set({ bonusPoints: sql`${schema.users.bonusPoints} + ${points}` })
-    .where(eq(schema.users.id, user.id));
+  await redis
+    .multi()
+    .zadd(key, now, params.infoHash)
+    .expire(key, SEEDING_SET_TTL)
+    .exec();
+
+  return points;
 }

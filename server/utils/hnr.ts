@@ -1,5 +1,5 @@
 import { db, schema } from '../db';
-import { eq, and, lt, sql } from 'drizzle-orm';
+import { eq, and, isNull, lt, sql } from 'drizzle-orm';
 import { randomUUID } from 'crypto';
 import {
   isHnrEnabled,
@@ -8,74 +8,67 @@ import {
 } from './settings';
 
 /**
- * Create HnR tracking entry when user completes a download
+ * Record a completed download (snatch).
+ * The entry is also the proof that the user really holds the torrent (used
+ * for seeding bonus points), so it is created even when HnR is disabled, as
+ * exempt: it will never count as a hit & run.
  */
 export async function createHnrEntry(
   userId: string,
   torrentId: string
 ): Promise<void> {
-  const enabled = await isHnrEnabled();
-  if (!enabled) return;
+  const [enabled, requiredSeedTime] = await Promise.all([
+    isHnrEnabled(),
+    getHnrRequiredSeedTime(),
+  ]);
 
-  const requiredSeedTime = await getHnrRequiredSeedTime();
-
-  // Check if entry already exists
-  const existing = await db.query.hnrTracking.findFirst({
-    where: and(
-      eq(schema.hnrTracking.userId, userId),
-      eq(schema.hnrTracking.torrentId, torrentId)
-    ),
-  });
-
-  if (existing) return;
-
-  await db.insert(schema.hnrTracking).values({
-    id: randomUUID(),
-    userId,
-    torrentId,
-    downloadedAt: new Date(),
-    seedTime: 0,
-    requiredSeedTime,
-    isHnr: false,
-    isExempt: false,
-  });
+  // Unique (user_id, torrent_id): an existing snatch is kept as is
+  await db
+    .insert(schema.hnrTracking)
+    .values({
+      id: randomUUID(),
+      userId,
+      torrentId,
+      downloadedAt: new Date(),
+      seedTime: 0,
+      requiredSeedTime,
+      isHnr: false,
+      isExempt: !enabled,
+    })
+    .onConflictDoNothing({
+      target: [schema.hnrTracking.userId, schema.hnrTracking.torrentId],
+    });
 }
 
 /**
- * Update seed time for a user on a torrent
+ * Update seed time for a user on a torrent.
+ * Single statement (runs on every seeder announce): adds the time and marks
+ * the requirement as met once reached; exempt or completed entries are left
+ * untouched.
  */
 export async function updateSeedTime(
   userId: string,
   torrentId: string,
   additionalSeconds: number
 ): Promise<void> {
-  const entry = await db.query.hnrTracking.findFirst({
-    where: and(
-      eq(schema.hnrTracking.userId, userId),
-      eq(schema.hnrTracking.torrentId, torrentId)
-    ),
-  });
+  const newSeedTime = sql`${schema.hnrTracking.seedTime} + ${additionalSeconds}`;
+  const requirementMet = sql`${newSeedTime} >= ${schema.hnrTracking.requiredSeedTime}`;
 
-  if (!entry || entry.isExempt || entry.completedAt) return;
-
-  const newSeedTime = entry.seedTime + additionalSeconds;
-
-  // Check if requirement is now met
-  if (newSeedTime >= entry.requiredSeedTime) {
-    await db
-      .update(schema.hnrTracking)
-      .set({
-        seedTime: newSeedTime,
-        isHnr: false,
-        completedAt: new Date(),
-      })
-      .where(eq(schema.hnrTracking.id, entry.id));
-  } else {
-    await db
-      .update(schema.hnrTracking)
-      .set({ seedTime: newSeedTime })
-      .where(eq(schema.hnrTracking.id, entry.id));
-  }
+  await db
+    .update(schema.hnrTracking)
+    .set({
+      seedTime: newSeedTime,
+      isHnr: sql`CASE WHEN ${requirementMet} THEN false ELSE ${schema.hnrTracking.isHnr} END`,
+      completedAt: sql`CASE WHEN ${requirementMet} THEN now() ELSE ${schema.hnrTracking.completedAt} END`,
+    })
+    .where(
+      and(
+        eq(schema.hnrTracking.userId, userId),
+        eq(schema.hnrTracking.torrentId, torrentId),
+        eq(schema.hnrTracking.isExempt, false),
+        isNull(schema.hnrTracking.completedAt)
+      )
+    );
 }
 
 /**

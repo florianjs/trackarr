@@ -8,6 +8,8 @@ import {
   adminBanSchema,
   uuidSchema,
 } from '~~/server/utils/schemas';
+import { invalidateTrackerUsers } from '~~/server/tracker/lookups';
+import { invalidateBannedIps } from '~~/server/utils/bannedIps';
 
 export default defineEventHandler(async (event) => {
   const session = await requireModeratorSession(event);
@@ -69,6 +71,10 @@ export default defineEventHandler(async (event) => {
         set: { reason: `Banned user: ${user.username}. Reason: ${reason}` },
       });
   }
+
+  // Tracker caches the row for a few seconds
+  invalidateTrackerUsers();
+  invalidateBannedIps();
 
   return { success: true };
 });

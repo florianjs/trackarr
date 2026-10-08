@@ -1,5 +1,5 @@
 import { db, schema } from '../../db';
-import { getStats } from '../../redis/cache';
+import { getStatsMany } from '../../redis/cache';
 import { and, desc, eq } from 'drizzle-orm';
 import { requireFeedAccess } from '../../utils/feedAuth';
 import { cdata } from '../../utils/validation';
@@ -34,10 +34,13 @@ export default defineEventHandler(async (event) => {
   });
 
   // Get stats from Redis
+  // One Redis round trip for every torrent of the page
+  const statsByHash = await getStatsMany(torrents.map((t) => t.infoHash));
+
   const enriched = await Promise.all(
     torrents.map(async (t) => ({
       ...t,
-      stats: await getStats(t.infoHash),
+      stats: statsByHash.get(t.infoHash)!,
     }))
   );
 
