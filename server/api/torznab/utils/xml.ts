@@ -85,8 +85,8 @@ export function buildCapsXml(config: CapsConfig): string {
 
   <searching>
     <search available="yes" supportedParams="q"/>
-    <tv-search available="yes" supportedParams="q,season,ep"/>
-    <movie-search available="yes" supportedParams="q,imdbid"/>
+    <tv-search available="yes" supportedParams="q,season,ep,tvdbid,imdbid,tmdbid"/>
+    <movie-search available="yes" supportedParams="q,imdbid,tmdbid"/>
     <audio-search available="no"/>
     <book-search available="no"/>
   </searching>
@@ -117,6 +117,8 @@ export interface TorznabItem {
   downloadVolumeFactor?: number; // 0 = freeleech, 1 = normal
   uploadVolumeFactor?: number; // 1 = normal, 2 = double upload
   imdbId?: string;
+  tmdbId?: number;
+  tvdbId?: number;
 }
 
 export interface TorznabFeed {
@@ -144,6 +146,12 @@ export function buildSearchXml(feed: TorznabFeed): string {
         attrs.push(
           `      <torznab:attr name="imdbid" value="${escapeXml(item.imdbId)}"/>`
         );
+      }
+      if (item.tmdbId) {
+        attrs.push(`      <torznab:attr name="tmdbid" value="${item.tmdbId}"/>`);
+      }
+      if (item.tvdbId) {
+        attrs.push(`      <torznab:attr name="tvdbid" value="${item.tvdbId}"/>`);
       }
 
       return `    <item>
