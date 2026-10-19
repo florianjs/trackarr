@@ -10,6 +10,7 @@ import { db, schema } from '../db';
 import { redis } from '../redis/client';
 import { SETTINGS_KEYS, getSetting, isShoutboxEnabled, setSetting } from './settings';
 import { validateParam, uuidSchema } from './schemas';
+import type { AuthUserState } from './adminAuth';
 import {
   canDeleteShout,
   canReactChannel,
@@ -33,15 +34,13 @@ export async function requireShoutboxEnabled(): Promise<void> {
 export async function requireShoutViewer(event: H3Event): Promise<ShoutViewer> {
   await requireShoutboxEnabled();
   const { user } = await requireAuthSession(event);
-  const account = await db.query.users.findFirst({
-    where: eq(schema.users.id, user.id),
-    columns: { roleId: true },
-  });
+  // Loaded with the auth state on every request: no extra query per poll
+  const { roleId } = event.context.authUser as AuthUserState;
   return {
     id: user.id,
     isAdmin: user.isAdmin,
     isModerator: user.isModerator,
-    roleId: account?.roleId ?? null,
+    roleId,
   };
 }
 

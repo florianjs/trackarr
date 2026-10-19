@@ -176,7 +176,18 @@ async function run(fn: () => Promise<unknown>) {
 function saveSettings() {
   if (!settings.value) return;
   const enabled = settings.value.enabled;
-  return run(() => $fetch('/api/admin/shoutbox/settings', { method: 'PUT', body: { enabled } }));
+  return run(async () => {
+    try {
+      settings.value = await $fetch<{ enabled: boolean }>('/api/admin/shoutbox/settings', {
+        method: 'PUT',
+        body: { enabled },
+      });
+    } catch (err) {
+      // The checkbox already flipped: put it back to what is saved
+      if (settings.value) settings.value.enabled = !enabled;
+      throw err;
+    }
+  });
 }
 
 function edit(channel?: Channel) {
