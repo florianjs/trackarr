@@ -38,7 +38,9 @@ export async function hashVerifier(verifier: string): Promise<string> {
 /** Constant-time check of a provided verifier against the stored value */
 export async function checkVerifier(stored: string, provided: string): Promise<boolean> {
   if (!isHashedVerifier(stored)) {
-    // Not converted yet: bare verifier
+    // Not converted yet: bare verifier. Same scrypt cost as a hashed row, so
+    // timing does not tell which accounts are not converted yet.
+    await burnVerifierCheck(provided);
     const a = Buffer.from(stored);
     const b = Buffer.from(provided);
     return a.length === b.length && timingSafeEqual(a, b);

@@ -9,12 +9,13 @@ Trackarr splits monitoring in two:
 
 Beszel shows CPU, memory, disk, network and temperature for the host, plus per-container stats, with history. It also sends alerts (CPU, memory, disk, bandwidth, temperature, container status) through the notification channels you configure in its UI (email, webhooks via Shoutrrr, etc.).
 
-The production stack runs two containers:
+The production stack runs three containers:
 
 | Service        | Container               | Role                                                                 |
 | -------------- | ----------------------- | -------------------------------------------------------------------- |
-| `beszel`       | `trackarr-beszel`       | Hub and web UI (port 8090, internal network only)                    |
+| `beszel`       | `trackarr-beszel`       | Hub and web UI (port 8090, reached through Caddy; outbound access for notifications) |
 | `beszel-agent` | `trackarr-beszel-agent` | Collects host and container stats (host network, Compose profile `monitoring`) |
+| `docker-proxy` | `trackarr-docker-proxy` | Read-only, filtered Docker API for the agent on `127.0.0.1:2375` (Compose profile `monitoring`) |
 
 The hub and the agent talk through a shared unix socket (`/beszel_socket/beszel.sock`): no port is opened. The agent exits without a key, so it only starts once paired and `COMPOSE_PROFILES=monitoring` is set in `.env`.
 
@@ -50,8 +51,8 @@ Do this once, after the first start (or after upgrading from Grafana):
 
 The installers keep `BESZEL_AGENT_KEY`, `BESZEL_AGENT_TOKEN` and `COMPOSE_PROFILES` when you re-run them.
 
-::: warning Docker socket
-The agent mounts `/var/run/docker.sock` read-only for per-container stats and "container down" alerts. Even read-only, the Docker API is powerful. To monitor the host only, remove that line from the `beszel-agent` service.
+::: tip Docker socket
+The agent never sees `/var/run/docker.sock`. It reads per-container stats and "container down" alerts through `docker-proxy`, which only lets container listing, stats, info and version requests through and refuses every write. To monitor the host only, set `DOCKER_HOST: ""` on the `beszel-agent` service.
 :::
 
 ## Admin dashboard

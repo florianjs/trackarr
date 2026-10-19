@@ -7,5 +7,5 @@ import { listSecurityAlerts } from '../../../utils/alerts';
  */
 export default defineEventHandler(async (event) => {
   await requireAdminSession(event);
-  return { data: await listSecurityAlerts(100) };
+  return { data: await listSecurityAlerts() };
 });

@@ -74,6 +74,7 @@ The production compose file includes:
 - **caddy** — Reverse proxy with automatic HTTPS
 - **beszel** — Monitoring hub and UI ([Monitoring](/guide/monitoring))
 - **beszel-agent** — Host and container stats (Compose profile `monitoring`, starts once paired)
+- **docker-proxy** — Read-only Docker API filter for the agent (Compose profile `monitoring`)
 
 ### Development (`docker-compose.yml`)
 

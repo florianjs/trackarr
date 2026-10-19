@@ -1,4 +1,4 @@
-import { and, eq, isNotNull, notLike } from 'drizzle-orm';
+import { and, eq, isNotNull, notExists, notLike } from 'drizzle-orm';
 
 const BATCH = 200;
 
@@ -19,6 +19,11 @@ export default defineNitroPlugin(() => {
       // Checked before every batch, in case panic mode starts meanwhile.
       const encrypted = async () =>
         (await db.select().from(panicState).limit(1))[0]?.isEncrypted ?? false;
+      // Also checked by each update: panic mode may commit between the check
+      // above and the batch select, which would then read ciphertext.
+      const notEncrypted = notExists(
+        db.select().from(panicState).where(eq(panicState.isEncrypted, true))
+      );
 
       let converted = 0;
       for (;;) {
@@ -33,7 +38,9 @@ export default defineNitroPlugin(() => {
           await db
             .update(users)
             .set({ authVerifier: await hashVerifier(row.authVerifier!) })
-            .where(and(eq(users.id, row.id), eq(users.authVerifier, row.authVerifier!)));
+            .where(
+              and(eq(users.id, row.id), eq(users.authVerifier, row.authVerifier!), notEncrypted)
+            );
           converted++;
         }
       }

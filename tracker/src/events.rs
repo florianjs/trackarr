@@ -1,7 +1,8 @@
 //! Abuse the web app should alert admins about. Queued in memory and pushed
 //! to a capped Redis list (`tracker:abuse_events`) with the other periodic
-//! writes; the app drains it (server/plugins/security-events.ts).
+//! writes; the app drains it (server/plugins/tracker-events.ts).
 
+use std::collections::VecDeque;
 use std::sync::Mutex;
 
 use serde::Serialize;
@@ -30,19 +31,20 @@ pub enum AbuseEvent {
 
 #[derive(Default)]
 pub struct AbuseEvents {
-    queue: Mutex<Vec<AbuseEvent>>,
+    queue: Mutex<VecDeque<AbuseEvent>>,
 }
 
 impl AbuseEvents {
-    fn lock(&self) -> std::sync::MutexGuard<'_, Vec<AbuseEvent>> {
+    fn lock(&self) -> std::sync::MutexGuard<'_, VecDeque<AbuseEvent>> {
         self.queue.lock().unwrap_or_else(|p| p.into_inner())
     }
 
     pub fn report(&self, event: AbuseEvent) {
         let mut queue = self.lock();
-        if queue.len() < MAX_EVENTS {
-            queue.push(event);
+        if queue.len() == MAX_EVENTS {
+            queue.pop_front();
         }
+        queue.push_back(event);
     }
 
     pub async fn flush(&self, redis: &RedisStore) -> Result<(), String> {
@@ -58,10 +60,13 @@ impl AbuseEvents {
         }
         pipe.ltrim(&key, 0, MAX_EVENTS as isize - 1).ignore();
         if let Err(err) = redis.query::<()>(&pipe).await {
-            // Keep them for the next attempt, within the cap
+            // Keep them for the next attempt, before the ones reported since;
+            // the newest win when over the cap
             let mut queue = self.lock();
             let room = MAX_EVENTS.saturating_sub(queue.len());
-            queue.extend(events.into_iter().take(room));
+            for event in events.into_iter().rev().take(room) {
+                queue.push_front(event);
+            }
             return Err(err);
         }
         Ok(())
@@ -86,7 +91,7 @@ mod tests {
     }
 
     #[test]
-    fn queue_is_capped() {
+    fn queue_is_capped_and_keeps_the_newest() {
         let events = AbuseEvents::default();
         for i in 0..MAX_EVENTS + 5 {
             events.report(AbuseEvent::BlockedClient {
@@ -95,6 +100,13 @@ mod tests {
                 at: i as u64,
             });
         }
-        assert_eq!(events.lock().len(), MAX_EVENTS);
+        let queue = events.lock();
+        assert_eq!(queue.len(), MAX_EVENTS);
+        let at = |e: Option<&AbuseEvent>| match e {
+            Some(AbuseEvent::BlockedClient { at, .. }) => *at,
+            _ => unreachable!(),
+        };
+        assert_eq!(at(queue.front()), 5);
+        assert_eq!(at(queue.back()), (MAX_EVENTS + 4) as u64);
     }
 }

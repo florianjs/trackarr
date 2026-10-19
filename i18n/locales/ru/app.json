@@ -808,6 +808,7 @@
     "securityAlerts": {
       "title": "Оповещения безопасности",
       "empty": "Нет оповещений безопасности",
+      "loadError": "Не удалось загрузить оповещения.",
       "clear": "Очистить",
       "hint": "Перебор паролей, срабатывания ловушек (honeypot) и злоупотребления трекером. Задайте DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL или SECURITY_WEBHOOK_URL, чтобы также получать уведомления.",
       "severity": {
@@ -828,6 +829,7 @@
       "seeders": "Сидеры",
       "leechers": "Личеры",
       "pendingAccounting": "Кредит к записи",
+      "blockedNow": "Заблокировано сейчас",
       "uptime": "Время работы",
       "rejected": "Отклонено с запуска",
       "invalidPasskey": "Неверные passkey",

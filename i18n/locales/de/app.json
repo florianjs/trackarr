@@ -808,6 +808,7 @@
     "securityAlerts": {
       "title": "Sicherheitswarnungen",
       "empty": "Keine Sicherheitswarnungen",
+      "loadError": "Die Warnungen konnten nicht geladen werden.",
       "clear": "Leeren",
       "hint": "Brute-Force, ausgelöste Honeypots und Tracker-Missbrauch. Setze DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL oder SECURITY_WEBHOOK_URL, um zusätzlich benachrichtigt zu werden.",
       "severity": {
@@ -828,6 +829,7 @@
       "seeders": "Seeder",
       "leechers": "Leecher",
       "pendingAccounting": "Noch zu schreibende Gutschriften",
+      "blockedNow": "Derzeit gesperrt",
       "uptime": "Laufzeit",
       "rejected": "Abgelehnt seit Start",
       "invalidPasskey": "Ungültige Passkeys",

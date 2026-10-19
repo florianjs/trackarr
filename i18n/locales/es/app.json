@@ -808,6 +808,7 @@
     "securityAlerts": {
       "title": "Alertas de seguridad",
       "empty": "No hay alertas de seguridad",
+      "loadError": "No se pudieron cargar las alertas.",
       "clear": "Borrar",
       "hint": "Fuerza bruta, trampas (honeypots) activadas y abusos del tracker. Define DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL o SECURITY_WEBHOOK_URL para recibir también notificaciones.",
       "severity": {
@@ -828,6 +829,7 @@
       "seeders": "Seeders",
       "leechers": "Leechers",
       "pendingAccounting": "Crédito por escribir",
+      "blockedNow": "Bloqueados ahora",
       "uptime": "Tiempo activo",
       "rejected": "Rechazados desde el arranque",
       "invalidPasskey": "Passkeys inválidas",

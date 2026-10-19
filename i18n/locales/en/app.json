@@ -808,6 +808,7 @@
     "securityAlerts": {
       "title": "Security alerts",
       "empty": "No security alerts",
+      "loadError": "Could not load the alerts.",
       "clear": "Clear",
       "hint": "Brute force, honeypot hits and tracker abuse. Set DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL or SECURITY_WEBHOOK_URL to also be notified.",
       "severity": {
@@ -828,6 +829,7 @@
       "seeders": "Seeders",
       "leechers": "Leechers",
       "pendingAccounting": "Credit to write",
+      "blockedNow": "Blocked now",
       "uptime": "Uptime",
       "rejected": "Rejected since start",
       "invalidPasskey": "Invalid passkeys",
