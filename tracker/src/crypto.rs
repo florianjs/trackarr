@@ -23,12 +23,13 @@ pub fn ip_hash_secret() -> Result<String, String> {
             }
         };
     }
-    Ok(secret.unwrap_or_else(|| {
-        tracing::warn!("IP_HASH_SECRET not set, using a random dev secret");
-        let mut bytes = [0u8; 32];
-        bytes.iter_mut().for_each(|b| *b = fastrand::u8(..));
-        hex(&bytes)
-    }))
+    if let Some(secret) = secret {
+        return Ok(secret);
+    }
+    tracing::warn!("IP_HASH_SECRET not set, using a random dev secret");
+    let mut bytes = [0u8; 32];
+    getrandom::fill(&mut bytes).map_err(|err| format!("no OS randomness: {err}"))?;
+    Ok(hex(&bytes))
 }
 
 pub fn hash_ip(secret: &str, ip: IpAddr, now: DateTime<Utc>) -> String {

@@ -36,6 +36,23 @@ pub struct Peer {
 struct Swarm {
     seeders: IndexMap<Hash, Peer>,
     leechers: IndexMap<Hash, Peer>,
+    /// Owner → (seeders, leechers): caps peers per user, and keeps a user's
+    /// own leechers out of the upload credit check
+    owners: HashMap<Owner, (u16, u16)>,
+}
+
+/// Count a peer in or out of its owner's tally
+fn tally(owners: &mut HashMap<Owner, (u16, u16)>, owner: Owner, seeder: bool, added: bool) {
+    let entry = owners.entry(owner).or_default();
+    let slot = if seeder { &mut entry.0 } else { &mut entry.1 };
+    *slot = if added {
+        slot.saturating_add(1)
+    } else {
+        slot.saturating_sub(1)
+    };
+    if *entry == (0, 0) {
+        owners.remove(&owner);
+    }
 }
 
 impl Swarm {
@@ -51,10 +68,29 @@ impl Swarm {
     }
 
     fn remove(&mut self, peer_id: &Hash) -> Option<(Peer, bool)> {
-        self.seeders
+        let removed = self
+            .seeders
             .swap_remove(peer_id)
             .map(|p| (p, true))
-            .or_else(|| self.leechers.swap_remove(peer_id).map(|p| (p, false)))
+            .or_else(|| self.leechers.swap_remove(peer_id).map(|p| (p, false)));
+        if let Some((peer, seeder)) = &removed {
+            tally(&mut self.owners, peer.owner, *seeder, false);
+        }
+        removed
+    }
+
+    fn insert(&mut self, peer_id: Hash, peer: Peer, seeder: bool) {
+        tally(&mut self.owners, peer.owner, seeder, true);
+        if seeder {
+            self.seeders.insert(peer_id, peer);
+        } else {
+            self.leechers.insert(peer_id, peer);
+        }
+    }
+
+    /// (seeders, leechers) owned by one user
+    fn owned(&self, owner: Owner) -> (u16, u16) {
+        self.owners.get(&owner).copied().unwrap_or_default()
     }
 
     fn counts(&self) -> (u32, u32) {
@@ -151,13 +187,16 @@ pub enum Applied {
     Removed,
     /// The peer id belongs to another user's peer: left untouched
     NotOwner,
+    /// New peer refused: the user already has the maximum on this torrent
+    TooManyPeers,
 }
 
 #[derive(Debug)]
 pub struct Outcome {
     pub previous: Option<Previous>,
     pub applied: Applied,
-    /// Leechers other than this peer, before the update (credit check)
+    /// Leechers of other users, before the update: a user's own leechers
+    /// cannot justify upload credit
     pub other_leechers: u32,
     pub seeders: u32,
     pub leechers: u32,
@@ -187,19 +226,28 @@ pub struct SwarmStats {
     pub users: HashMap<Owner, (u32, u32)>,
 }
 
+/// Default cap on one user's peers in one swarm (several clients or machines)
+pub const DEFAULT_MAX_PEERS_PER_USER: u16 = 3;
+
 pub struct Swarms {
     shards: Vec<Mutex<Shard>>,
+    max_peers_per_user: u16,
 }
 
 impl Default for Swarms {
     fn default() -> Self {
-        Swarms {
-            shards: (0..SHARDS).map(|_| Mutex::default()).collect(),
-        }
+        Swarms::new(DEFAULT_MAX_PEERS_PER_USER)
     }
 }
 
 impl Swarms {
+    pub fn new(max_peers_per_user: u16) -> Self {
+        Swarms {
+            shards: (0..SHARDS).map(|_| Mutex::default()).collect(),
+            max_peers_per_user: max_peers_per_user.max(1),
+        }
+    }
+
     fn shard(&self, info_hash: &Hash) -> std::sync::MutexGuard<'_, Shard> {
         // Info hashes are SHA-1 output: the first byte is uniform enough
         let shard = &self.shards[info_hash[0] as usize % SHARDS];
@@ -228,13 +276,15 @@ impl Swarms {
                 )
             });
 
+        let own_leechers = u32::from(swarm.owned(update.owner).1);
         let other_leechers = match &existing {
-            Some((_, previous)) => swarm.leechers.len() as u32 - u32::from(!previous.seeder),
+            Some(_) => (swarm.leechers.len() as u32).saturating_sub(own_leechers),
             None => 0,
         };
 
         // A stale entry under the same peer id is replaced whoever owned it
         let not_owner = matches!(&existing, Some((owner, _)) if *owner != update.owner);
+        let is_new = existing.is_none();
         let previous = existing.map(|(_, previous)| previous);
         let seeder = update.is_seeder();
 
@@ -246,40 +296,40 @@ impl Swarms {
         } else {
             let counts = swarm.counts();
             swarm.remove(&update.peer_id);
-            let peer = Peer {
-                owner: update.owner,
-                ip: update.ip,
-                port: update.port,
-                uploaded: update.uploaded,
-                downloaded: update.downloaded,
-                left: update.left,
-                updated_at: update.now,
-            };
-            if seeder {
-                swarm.seeders.insert(update.peer_id, peer);
+            let (own_seeders, own_leechers) = swarm.owned(update.owner);
+            let applied = if is_new && own_seeders + own_leechers >= self.max_peers_per_user {
+                Applied::TooManyPeers
             } else {
-                swarm.leechers.insert(update.peer_id, peer);
-            }
+                let peer = Peer {
+                    owner: update.owner,
+                    ip: update.ip,
+                    port: update.port,
+                    uploaded: update.uploaded,
+                    downloaded: update.downloaded,
+                    left: update.left,
+                    updated_at: update.now,
+                };
+                swarm.insert(update.peer_id, peer, seeder);
+                Applied::Updated
+            };
             if swarm.counts() != counts {
                 shard.dirty.insert(update.info_hash);
             }
-            Applied::Updated
+            applied
         };
 
-        let peers = if applied == Applied::Removed {
+        let peers = if matches!(applied, Applied::Removed | Applied::TooManyPeers) {
             Vec::new()
         } else {
             swarm.select(update.numwant, &update.peer_id, seeder)
         };
         let (seeders, leechers) = swarm.counts();
 
-        if applied == Applied::Removed {
-            if previous.is_some() {
-                shard.dirty.insert(update.info_hash);
-            }
-            if swarm.is_empty() {
-                shard.swarms.remove(&update.info_hash);
-            }
+        if applied == Applied::Removed && previous.is_some() {
+            shard.dirty.insert(update.info_hash);
+        }
+        if swarm.is_empty() {
+            shard.swarms.remove(&update.info_hash);
         }
 
         Outcome {
@@ -318,10 +368,12 @@ impl Swarms {
             let shard = &mut *guard;
             shard.swarms.retain(|info_hash, swarm| {
                 let before = swarm.counts();
+                let owners = &mut swarm.owners;
                 for (peers, seeder) in [(&mut swarm.seeders, true), (&mut swarm.leechers, false)] {
                     peers.retain(|_, peer| {
                         let live = now.saturating_sub(peer.updated_at) < PEER_TTL_MS;
                         if !live {
+                            tally(owners, peer.owner, seeder, false);
                             expired.push(Expired {
                                 info_hash: *info_hash,
                                 owner: peer.owner,
@@ -393,11 +445,7 @@ impl Swarms {
         let shard = &mut *guard;
         let swarm = shard.swarms.entry(info_hash).or_default();
         swarm.remove(&peer_id);
-        if seeder {
-            swarm.seeders.insert(peer_id, peer);
-        } else {
-            swarm.leechers.insert(peer_id, peer);
-        }
+        swarm.insert(peer_id, peer, seeder);
         shard.dirty.insert(info_hash);
     }
 
@@ -625,6 +673,49 @@ mod tests {
         let mut all = swarms.all_counts();
         all.sort();
         assert_eq!(all, vec![(HASH, (1, 1)), ([2; 20], (1, 0))]);
+    }
+
+    #[test]
+    fn caps_peers_per_user() {
+        let swarms = Swarms::new(2);
+        swarms.announce(&update(1, 7, Some(10), Event::Started, 0));
+        swarms.announce(&update(2, 7, Some(10), Event::Started, 0));
+        let out = swarms.announce(&update(3, 7, Some(10), Event::Started, 0));
+        assert_eq!(out.applied, Applied::TooManyPeers);
+        assert!(out.peers.is_empty());
+        assert_eq!(swarms.counts(&HASH), (0, 2));
+        // Known peers keep announcing, other users are not affected
+        let out = swarms.announce(&update(1, 7, Some(0), Event::Update, 10));
+        assert_eq!(out.applied, Applied::Updated);
+        let out = swarms.announce(&update(4, 8, Some(10), Event::Started, 10));
+        assert_eq!(out.applied, Applied::Updated);
+        // A stopped peer frees a slot
+        swarms.announce(&update(2, 7, Some(10), Event::Stopped, 20));
+        let out = swarms.announce(&update(3, 7, Some(10), Event::Started, 20));
+        assert_eq!(out.applied, Applied::Updated);
+    }
+
+    #[test]
+    fn expired_peers_free_slots() {
+        let swarms = Swarms::new(1);
+        swarms.announce(&update(1, 7, Some(10), Event::Started, 0));
+        swarms.expire(PEER_TTL_MS + 1);
+        let out = swarms.announce(&update(2, 7, Some(10), Event::Started, PEER_TTL_MS + 2));
+        assert_eq!(out.applied, Applied::Updated);
+    }
+
+    #[test]
+    fn own_leechers_do_not_justify_upload() {
+        let swarms = Swarms::default();
+        // One user seeds and leeches the same torrent from two clients
+        swarms.announce(&update(1, 7, Some(0), Event::Started, 0));
+        swarms.announce(&update(2, 7, Some(10), Event::Started, 0));
+        let out = swarms.announce(&update(1, 7, Some(0), Event::Update, 10));
+        assert_eq!(out.other_leechers, 0);
+        // Another user's leecher counts
+        swarms.announce(&update(3, 8, Some(10), Event::Started, 10));
+        let out = swarms.announce(&update(1, 7, Some(0), Event::Update, 20));
+        assert_eq!(out.other_leechers, 1);
     }
 
     #[test]

@@ -48,7 +48,12 @@ async fn announce(
     bencoded(tracker.announce(&request, ip).await)
 }
 
-async fn scrape(State(tracker): State<Arc<Tracker>>, RawQuery(raw): RawQuery) -> Response {
+async fn scrape(
+    State(tracker): State<Arc<Tracker>>,
+    ConnectInfo(remote): ConnectInfo<SocketAddr>,
+    headers: HeaderMap,
+    RawQuery(raw): RawQuery,
+) -> Response {
     let params = Params::parse(raw.as_deref().unwrap_or(""));
     let request = match query::parse_scrape(&params) {
         Ok(request) => request,
@@ -63,5 +68,9 @@ async fn scrape(State(tracker): State<Arc<Tracker>>, RawQuery(raw): RawQuery) ->
     if request.info_hashes.len() > MAX_SCRAPE_HASHES {
         return fail("Too many info_hash values");
     }
-    bencoded(tracker.scrape(&request).await)
+    let forwarded = headers.get("x-forwarded-for").and_then(|v| v.to_str().ok());
+    let Some(ip) = client_ip(remote, forwarded, tracker.config.trusted_hops) else {
+        return fail("invalid ip");
+    };
+    bencoded(tracker.scrape(&request, ip).await)
 }

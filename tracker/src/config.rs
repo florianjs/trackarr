@@ -4,6 +4,7 @@ use std::env;
 
 use crate::client_ip::parse_trusted_hops;
 use crate::credit::DEFAULT_MAX_RATE_BYTES;
+use crate::swarms::DEFAULT_MAX_PEERS_PER_USER;
 
 #[derive(Debug, Clone)]
 pub struct Config {
@@ -25,6 +26,13 @@ pub struct Config {
     pub warmup: u64,
     /// Private API port (health, metrics, swarm peers for the web app)
     pub internal_port: u16,
+    /// Failed lookups (bad passkey, unknown torrent) per client and minute
+    /// before its requests are refused without touching the database
+    pub max_failures_per_minute: u32,
+    /// HTTP header timeout and connection cap (both listeners)
+    pub limits: crate::server::Limits,
+    /// Peers one user may have in one swarm
+    pub max_peers_per_user: u16,
     /// Where swarms are saved on shutdown and loaded on start (disabled if unset)
     pub snapshot_path: Option<std::path::PathBuf>,
 }
@@ -43,6 +51,17 @@ impl Config {
             stats_interval: parse_or::<u64>("TRACKER_STATS_INTERVAL", 60)?.max(5),
             warmup: parse_or("TRACKER_WARMUP", u64::from(interval) + 60)?,
             internal_port: parse_or("TRACKER_INTERNAL_PORT", 8090)?,
+            max_failures_per_minute: parse_or(
+                "TRACKER_MAX_FAILURES_PER_MINUTE",
+                crate::abuse::DEFAULT_MAX_FAILURES,
+            )?,
+            limits: crate::server::Limits {
+                header_timeout: std::time::Duration::from_secs(
+                    parse_or::<u64>("TRACKER_HEADER_TIMEOUT_SECS", 10)?.max(1),
+                ),
+                max_connections: parse_or("TRACKER_MAX_CONNECTIONS", 10_000)?,
+            },
+            max_peers_per_user: parse_or("TRACKER_MAX_PEERS_PER_USER", DEFAULT_MAX_PEERS_PER_USER)?,
             snapshot_path: env::var("TRACKER_SNAPSHOT_PATH")
                 .ok()
                 .filter(|p| !p.trim().is_empty())
