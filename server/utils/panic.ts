@@ -105,3 +105,22 @@ export function decryptField(
   if (value == null) return null;
   return decrypt(value, key, legacyIv);
 }
+
+/**
+ * Decrypt a nullable field, or return it unchanged when it is not our
+ * ciphertext. For data written while encrypted (the site keeps running) or
+ * left in clear by an older version: restoring must not fail on it. The
+ * password is verified before, so a failing value is plaintext, not a wrong key.
+ */
+export function decryptOrKeep(
+  value: string | null | undefined,
+  key: Buffer,
+  legacyIv?: Buffer
+): string | null {
+  if (value == null) return null;
+  try {
+    return decrypt(value, key, legacyIv);
+  } catch {
+    return value;
+  }
+}

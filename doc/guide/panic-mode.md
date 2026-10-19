@@ -21,7 +21,7 @@ The **Panic Button** allows administrators to **instantly encrypt all sensitive 
 │  • Torrent names  → [ENCRYPTED]                                   │
 │  • Torrent sizes  → 0                                             │
 │  • User credentials → Encrypted                                   │
-│  • Forum posts    → Encrypted                                     │
+│  • Posts, messages, IPs → Encrypted                               │
 └───────────────────────────────────────────────────────────────────┘
                               │
                     RESTORE (with password)
@@ -54,14 +54,46 @@ Encryption begins immediately and cannot be interrupted.
 
 ## What Gets Encrypted
 
-| Data Type | Encryption |
-|-----------|------------|
-| `.torrent` files | AES-256-GCM (completely unusable) |
-| Torrent metadata | Names replaced with `[ENCRYPTED]` |
-| File sizes | Set to 0 |
-| User auth data | Encrypted |
-| Forum posts | Content encrypted |
-| Private messages | Encrypted |
+Everything below is encrypted in a single database transaction: a crash midway leaves the data unchanged.
+
+| Data | Columns |
+|------|---------|
+| `.torrent` files | Raw file (completely unusable) |
+| Torrents | Name, description; size (set to 0), category, IMDb/TMDB/TVDB ids (cleared, kept encrypted) |
+| Users | Passkey, auth salt and verifier, last IP |
+| Forum | Topic titles, post content |
+| Torrent comments | Content |
+| Private messages | Message body |
+| Shoutbox | Message body (deleted messages included) |
+| Banned IPs | IP and reason |
+| Reports | Reason, details, resolution |
+| Bounties | Title, description, IMDb id |
+| Bonus ledger | Transaction descriptions (they hold torrent names and bounty titles) |
+
+### What Gets Deleted
+
+Logs that hold passkeys or IPs are deleted from Redis, not encrypted, and are **not restored**:
+
+| Redis key | Content |
+|-----------|---------|
+| `torznab:logs`, `torznab:user:logs:*` | Torznab requests: passkey, IP, query, user agent |
+| `torznab:user:stats` | Torznab usage per passkey |
+| `torznab:blocked` | Torznab blocks per passkey (blocked users must be blocked again) |
+| `security:alerts` | Admin alert inbox (IPs, user agents); webhooks already received them |
+| `tracker:abuse_events` | Pending tracker abuse events (IPs) |
+
+### What Stays in Clear
+
+- Usernames, roles, ratios, bonus points and timestamps
+- Info hashes: the tracker and torrent stats reference them
+- Relations (who wrote what, who talks to whom, invitations)
+- Settings, uploaded images, tags and categories
+- Rate-limit and DDoS keys in Redis (`ratelimit:*`, `ddos:*`): they expire within 24 hours and protect the restore endpoint against brute force
+- The tracker service's memory: peers (with their IPs) expire after their announce interval; a snapshot file holding them is written only on shutdown
+
+### While Encrypted
+
+The site keeps running, but nobody can log in (verifiers are encrypted) and the tracker refuses every announce (passkeys are encrypted). IP bans are inactive since banned IPs are encrypted too. Members already logged in may keep posting: posts, comments, messages and shouts written meanwhile stay in clear and are kept as is on restore.
 
 ## Restoration
 
@@ -79,7 +111,7 @@ The system will decrypt all data and return to normal operation.
 |-----------|-----------|
 | Key Derivation | scrypt (32 bytes output) |
 | Encryption | AES-256-GCM |
-| IV | 16 bytes random (per encryption session) |
+| IV | 12 bytes random, per value |
 | Authentication | GCM tag (prevents tampering) |
 
 ## Use Cases
