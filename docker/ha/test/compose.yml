@@ -1,0 +1,198 @@
+# Local failover test: three "datacenters" on one machine.
+# Each site is a pause container with a fixed IP on the "wan" network; its
+# services share that network namespace, like host networking on a real node.
+# Usage: docker/ha/test/failover-test.sh
+
+name: trackarr-ha-test
+
+x-common: &common
+  REDIS_PASSWORD: test-redis
+  REDIS_INITIAL_MASTER_IP: 172.30.8.1
+  SENTINEL_DOWN_AFTER_MS: "5000"
+
+x-etcd: &etcd
+  image: quay.io/coreos/etcd:v3.5.17
+  restart: unless-stopped
+
+x-etcd-env: &etcd-env
+  ETCD_DATA_DIR: /etcd-data
+  ETCD_INITIAL_CLUSTER: dc1=http://172.30.8.1:2380,dc2=http://172.30.8.2:2380,dc3=http://172.30.8.3:2380
+  ETCD_INITIAL_CLUSTER_STATE: new
+  ETCD_INITIAL_CLUSTER_TOKEN: trackarr
+  ETCD_HEARTBEAT_INTERVAL: 250
+  ETCD_ELECTION_TIMEOUT: 2500
+
+x-sentinel: &sentinel
+  image: redis:7.4
+  restart: unless-stopped
+  entrypoint: ["/bin/sh", "/ha/sentinel-entrypoint.sh"]
+  volumes:
+    - ../sentinel-entrypoint.sh:/ha/sentinel-entrypoint.sh:ro
+
+x-redis: &redis
+  image: redis:7.4
+  restart: unless-stopped
+  entrypoint: ["/bin/sh", "/ha/redis-entrypoint.sh"]
+  volumes:
+    - ../redis-entrypoint.sh:/ha/redis-entrypoint.sh:ro
+
+x-postgres: &postgres
+  image: ghcr.io/zalando/spilo-16:3.3-p3
+  restart: unless-stopped
+  shm_size: 256m
+
+x-postgres-env: &postgres-env
+  SCOPE: trackarr
+  PGVERSION: "16"
+  ETCD3_HOSTS: '"172.30.8.1:2379","172.30.8.2:2379","172.30.8.3:2379"'
+  PGPASSWORD_SUPERUSER: test-super
+  PGPASSWORD_STANDBY: test-repl
+  PGPASSWORD_ADMIN: test-admin
+  ALLOW_NOSSL: "true"
+
+x-app: &app
+  image: trackarr:ha-test
+  restart: unless-stopped
+  sysctls:
+    net.ipv4.tcp_keepalive_time: 10
+    net.ipv4.tcp_keepalive_intvl: 5
+    net.ipv4.tcp_keepalive_probes: 3
+    net.ipv4.tcp_retries2: 5
+  depends_on:
+    db-init:
+      condition: service_completed_successfully
+
+x-app-env: &app-env
+  NODE_ENV: production
+  NUXT_SESSION_PASSWORD: test-session-secret-at-least-32-chars
+  DATABASE_URL: postgres://tracker:test-db@172.30.8.1:5432,172.30.8.2:5432/trackarr?target_session_attrs=primary
+  DB_SSL: "false"
+  DB_CONNECT_TIMEOUT: "3"
+  DB_IDLE_TIMEOUT: "0"
+  DB_KEEP_ALIVE: "10"
+  REDIS_COMMAND_TIMEOUT_MS: "5000"
+  REDIS_SENTINELS: 172.30.8.1:26379,172.30.8.2:26379,172.30.8.3:26379
+  REDIS_PASSWORD: test-redis
+  TRACKER_HTTP_URL: http://tracker1.test/announce
+  NUXT_PUBLIC_TRACKER_HTTP_URL: http://tracker1.test/announce
+  TRACKER_BACKUP_HTTP_URLS: http://tracker2.test/announce
+  IP_HASH_SECRET: test-ip-hash-secret-at-least-32-characters
+
+services:
+  # --- Sites -----------------------------------------------------------------
+  site1:
+    image: registry.k8s.io/pause:3.9
+    networks: { wan: { ipv4_address: 172.30.8.1 } }
+  site2:
+    image: registry.k8s.io/pause:3.9
+    networks: { wan: { ipv4_address: 172.30.8.2 } }
+  site3:
+    image: registry.k8s.io/pause:3.9
+    networks: { wan: { ipv4_address: 172.30.8.3 } }
+
+  # --- etcd ------------------------------------------------------------------
+  etcd1:
+    <<: *etcd
+    network_mode: service:site1
+    environment:
+      <<: *etcd-env
+      ETCD_NAME: dc1
+      ETCD_LISTEN_PEER_URLS: http://172.30.8.1:2380
+      ETCD_LISTEN_CLIENT_URLS: http://172.30.8.1:2379,http://127.0.0.1:2379
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://172.30.8.1:2380
+      ETCD_ADVERTISE_CLIENT_URLS: http://172.30.8.1:2379
+  etcd2:
+    <<: *etcd
+    network_mode: service:site2
+    environment:
+      <<: *etcd-env
+      ETCD_NAME: dc2
+      ETCD_LISTEN_PEER_URLS: http://172.30.8.2:2380
+      ETCD_LISTEN_CLIENT_URLS: http://172.30.8.2:2379,http://127.0.0.1:2379
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://172.30.8.2:2380
+      ETCD_ADVERTISE_CLIENT_URLS: http://172.30.8.2:2379
+  etcd3:
+    <<: *etcd
+    network_mode: service:site3
+    environment:
+      <<: *etcd-env
+      ETCD_NAME: dc3
+      ETCD_LISTEN_PEER_URLS: http://172.30.8.3:2380
+      ETCD_LISTEN_CLIENT_URLS: http://172.30.8.3:2379,http://127.0.0.1:2379
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://172.30.8.3:2380
+      ETCD_ADVERTISE_CLIENT_URLS: http://172.30.8.3:2379
+
+  # --- Sentinel ----------------------------------------------------------------
+  sentinel1:
+    <<: *sentinel
+    network_mode: service:site1
+    environment: { <<: *common, NODE_IP: 172.30.8.1 }
+  sentinel2:
+    <<: *sentinel
+    network_mode: service:site2
+    environment: { <<: *common, NODE_IP: 172.30.8.2 }
+  sentinel3:
+    <<: *sentinel
+    network_mode: service:site3
+    environment: { <<: *common, NODE_IP: 172.30.8.3 }
+
+  # --- Redis -------------------------------------------------------------------
+  redis1:
+    <<: *redis
+    network_mode: service:site1
+    environment: { <<: *common, NODE_IP: 172.30.8.1 }
+  redis2:
+    <<: *redis
+    network_mode: service:site2
+    environment: { <<: *common, NODE_IP: 172.30.8.2 }
+
+  # --- Postgres ----------------------------------------------------------------
+  pg1:
+    <<: *postgres
+    network_mode: service:site1
+    environment:
+      <<: *postgres-env
+      POD_IP: 172.30.8.1
+      PATRONI_POSTGRESQL_LISTEN: 172.30.8.1,127.0.0.1:5432
+      PATRONI_RESTAPI_LISTEN: 172.30.8.1:8008
+  pg2:
+    <<: *postgres
+    network_mode: service:site2
+    environment:
+      <<: *postgres-env
+      POD_IP: 172.30.8.2
+      PATRONI_POSTGRESQL_LISTEN: 172.30.8.2,127.0.0.1:5432
+      PATRONI_RESTAPI_LISTEN: 172.30.8.2:8008
+
+  db-init:
+    image: postgres:16-alpine
+    restart: "no"
+    entrypoint: ["/bin/sh", "/ha/db-init.sh"]
+    networks: [wan]
+    environment:
+      PG_HOSTS: 172.30.8.1:5432,172.30.8.2:5432
+      PG_SUPERUSER_PASSWORD: test-super
+      DB_USER: tracker
+      DB_PASSWORD: test-db
+      DB_NAME: trackarr
+    volumes:
+      - ../db-init.sh:/ha/db-init.sh:ro
+
+  # --- App ---------------------------------------------------------------------
+  app1:
+    <<: *app
+    environment: *app-env
+    networks: { wan: { ipv4_address: 172.30.8.11 } }
+    ports: ["3001:3000", "8081:8080"]
+  app2:
+    <<: *app
+    environment: *app-env
+    networks: { wan: { ipv4_address: 172.30.8.12 } }
+    ports: ["3002:3000", "8082:8080"]
+
+networks:
+  wan:
+    ipam:
+      config:
+        - subnet: 172.30.8.0/24
+          gateway: 172.30.8.254
