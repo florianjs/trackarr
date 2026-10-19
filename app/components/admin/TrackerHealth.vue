@@ -95,6 +95,7 @@ const figures = computed(() => {
     { label: t('admin.trackerHealth.seeders'), value: n(s.seeders) },
     { label: t('admin.trackerHealth.leechers'), value: n(s.leechers) },
     { label: t('admin.trackerHealth.pendingAccounting'), value: n(s.pendingAccounting) },
+    { label: t('admin.trackerHealth.blockedNow'), value: n(s.blockedClients) },
     { label: t('admin.trackerHealth.uptime'), value: uptime(s.uptimeSeconds) },
   ];
 });
@@ -106,7 +107,7 @@ const rejections = computed(() => {
     { label: t('admin.trackerHealth.invalidPasskey'), value: n(s.rejected.invalidPasskey) },
     { label: t('admin.trackerHealth.unknownTorrent'), value: n(s.rejected.unknownTorrent) },
     { label: t('admin.trackerHealth.tooManyPeers'), value: n(s.rejected.tooManyPeers) },
-    { label: t('admin.trackerHealth.blockedClients'), value: n(s.blockedClients) },
+    { label: t('admin.trackerHealth.blockedClients'), value: n(s.rejected.blockedClient) },
   ];
 });
 </script>

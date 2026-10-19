@@ -59,6 +59,9 @@
           </div>
         </div>
       </div>
+      <p v-else-if="error" class="text-xs text-error text-center py-4">
+        {{ t('admin.securityAlerts.loadError') }}
+      </p>
       <p v-else class="text-xs text-text-muted text-center py-4">
         {{ t('admin.securityAlerts.empty') }}
       </p>
@@ -80,7 +83,7 @@ interface SecurityAlert {
   timestamp: string;
 }
 
-const { data, refresh } = await useFetch<{ data: SecurityAlert[] }>(
+const { data, error, refresh } = await useFetch<{ data: SecurityAlert[] }>(
   '/api/admin/security/alerts'
 );
 const alerts = computed(() => data.value?.data ?? []);

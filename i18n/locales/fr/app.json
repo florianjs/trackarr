@@ -809,6 +809,7 @@
     "securityAlerts": {
       "title": "Alertes de sécurité",
       "empty": "Aucune alerte de sécurité",
+      "loadError": "Impossible de charger les alertes.",
       "clear": "Effacer",
       "hint": "Force brute, pièges (honeypots) déclenchés et abus du tracker. Définissez DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL ou SECURITY_WEBHOOK_URL pour être aussi notifié.",
       "severity": {
@@ -829,6 +830,7 @@
       "seeders": "Seeders",
       "leechers": "Leechers",
       "pendingAccounting": "Crédit à écrire",
+      "blockedNow": "Bloqués en ce moment",
       "uptime": "Uptime",
       "rejected": "Rejetés depuis le démarrage",
       "invalidPasskey": "Passkeys invalides",

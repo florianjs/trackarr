@@ -809,6 +809,7 @@
     "securityAlerts": {
       "title": "安全警报",
       "empty": "没有安全警报",
+      "loadError": "无法加载警报。",
       "clear": "清除",
       "hint": "暴力破解、蜜罐触发和 Tracker 滥用。设置 DISCORD_WEBHOOK_URL、SLACK_WEBHOOK_URL 或 SECURITY_WEBHOOK_URL 以同时接收通知。",
       "severity": {
@@ -829,6 +830,7 @@
       "seeders": "做种者",
       "leechers": "下载者",
       "pendingAccounting": "待写入的流量",
+      "blockedNow": "当前已封锁",
       "uptime": "运行时间",
       "rejected": "启动以来拒绝",
       "invalidPasskey": "无效的 passkey",

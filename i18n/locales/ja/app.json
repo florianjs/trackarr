@@ -809,6 +809,7 @@
     "securityAlerts": {
       "title": "セキュリティアラート",
       "empty": "セキュリティアラートはありません",
+      "loadError": "アラートを読み込めませんでした。",
       "clear": "クリア",
       "hint": "ブルートフォース、ハニーポットの作動、トラッカーの不正利用。DISCORD_WEBHOOK_URL、SLACK_WEBHOOK_URL、SECURITY_WEBHOOK_URL を設定すると通知も受け取れます。",
       "severity": {
@@ -829,6 +830,7 @@
       "seeders": "シーダー",
       "leechers": "リーチャー",
       "pendingAccounting": "書き込み待ちのクレジット",
+      "blockedNow": "現在ブロック中",
       "uptime": "稼働時間",
       "rejected": "起動後の拒否",
       "invalidPasskey": "無効なパスキー",

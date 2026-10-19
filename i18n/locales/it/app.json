@@ -809,6 +809,7 @@
     "securityAlerts": {
       "title": "Avvisi di sicurezza",
       "empty": "Nessun avviso di sicurezza",
+      "loadError": "Impossibile caricare gli avvisi.",
       "clear": "Cancella",
       "hint": "Forza bruta, honeypot attivati e abusi del tracker. Imposta DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL o SECURITY_WEBHOOK_URL per ricevere anche le notifiche.",
       "severity": {
@@ -829,6 +830,7 @@
       "seeders": "Seeder",
       "leechers": "Leecher",
       "pendingAccounting": "Crediti da scrivere",
+      "blockedNow": "Bloccati ora",
       "uptime": "Uptime",
       "rejected": "Rifiutati dall'avvio",
       "invalidPasskey": "Passkey non valide",
