@@ -9,7 +9,7 @@ import { torrents } from '../../db/schema';
 import { redis } from '../../redis/client';
 import { requireAuthSession } from '../../utils/adminAuth';
 import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
-import { invalidateTrackerTorrents } from '~~/server/tracker/lookups';
+import { invalidateTrackerTorrent } from '~~/server/tracker/client';
 
 export default defineEventHandler(async (event) => {
   // Rate limit mutations
@@ -57,14 +57,13 @@ export default defineEventHandler(async (event) => {
 
   // Delete from Redis cache
   try {
-    await redis.del(`peers:${infoHash}`);
     await redis.del(`stats:${infoHash}`);
   } catch {
     // Redis errors are non-fatal
   }
 
-  // Tracker caches the row for a few seconds
-  invalidateTrackerTorrents();
+  // Tracker caches the row for a few seconds and holds the swarm in memory
+  invalidateTrackerTorrent(infoHash);
 
   return {
     success: true,

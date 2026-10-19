@@ -4,7 +4,7 @@ import { users } from '~~/server/db/schema';
 import { requireAdminSession } from '~~/server/utils/adminAuth';
 import { validateBody, validateParam, uuidSchema } from '~~/server/utils/schemas';
 import { and, count, eq, ne } from 'drizzle-orm';
-import { invalidateTrackerUsers } from '~~/server/tracker/lookups';
+import { invalidateTrackerUsers } from '~~/server/tracker/client';
 
 const roleSchema = z.object({
   isAdmin: z.boolean(),

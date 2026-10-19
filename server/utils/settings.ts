@@ -1,6 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { settings } from '../db/schema';
+import { invalidateTracker } from '../tracker/client';
 import pkg from '../../package.json';
 import {
   isFreeleechActive,
@@ -116,6 +117,7 @@ export async function setSetting(key: string, value: string): Promise<void> {
 
   // Invalidate cache
   settingsCache.delete(key);
+  invalidateTracker('settings');
 }
 
 /**
@@ -136,6 +138,7 @@ export async function setSettings(values: Record<string, string>): Promise<void>
   });
 
   for (const key of Object.keys(values)) settingsCache.delete(key);
+  invalidateTracker('settings');
 }
 
 /**

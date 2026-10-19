@@ -1,7 +1,7 @@
 import { getPeers, getStats } from '../../redis/cache';
 import { requireAdminSession } from '../../utils/adminAuth';
 
-// Debug endpoint to check Redis state directly
+// Debug endpoint to check a torrent's live swarm in the tracker
 // Admin only - contains sensitive peer data
 export default defineEventHandler(async (event) => {
   // Require admin authentication
@@ -22,7 +22,6 @@ export default defineEventHandler(async (event) => {
 
   // Even for admin, only show hashed IPs
   const sanitizedPeers = peers.map((p) => ({
-    peerId: p.peerId.slice(0, 8) + '...',
     ipHash: p.ipHash,
     port: p.port,
     isSeeder: p.isSeeder,

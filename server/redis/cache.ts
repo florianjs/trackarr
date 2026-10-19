@@ -1,162 +1,60 @@
 import { redis } from './client';
-import { hashIP } from '../utils/crypto';
 import { TtlCache } from '../utils/ttlCache';
-import { PEER_TTL, countPeers } from './peerCount';
+import { trackerInternal } from '../tracker/client';
 
-// Keys
-const PEER_KEY = (infoHash: string) => `peers:${infoHash}`;
-const STATS_KEY = (infoHash: string) => `stats:${infoHash}`;
+// Published by the tracker service (tracker/src/publish.rs)
+const SWARMS_KEY = 'tracker:swarms'; // info hash → "seeders:leechers"
+const STATS_KEY = (infoHash: string) => `stats:${infoHash}`; // completed
 const GLOBAL_STATS_KEY = 'tracker:stats';
 
 // ============================================================================
-// Peer Types
+// Peers (live in the tracker's memory)
 // ============================================================================
-export interface PeerData {
-  peerId: string;
-  owner?: string; // Hash of the announcing user's passkey
-  ip: string; // Raw IP - needed for tracker peer exchange
-  ipHash: string; // Hashed IP - for logging/display
+export interface SwarmPeer {
+  ipHash: string; // Hashed IP: raw IPs never leave the tracker
   port: number;
+  isSeeder: boolean;
   uploaded: number;
   downloaded: number;
-  left: number;
-  isSeeder: boolean;
+  left: number | null;
   updatedAt: number;
 }
 
-// ============================================================================
-// Peer Operations
-// ============================================================================
-
 /**
- * Add or update a peer in the swarm
+ * Get all peers for a torrent (empty when the tracker cannot be reached)
  */
-export async function setPeer(
-  infoHash: string,
-  peerId: string,
-  data: Omit<PeerData, 'peerId' | 'ipHash' | 'updatedAt'>
-): Promise<void> {
-  const key = PEER_KEY(infoHash);
-  const peerData: PeerData = {
-    peerId,
-    ...data,
-    ipHash: hashIP(data.ip), // Store hashed version for display/logging
-    updatedAt: Date.now(),
-  };
-
-  await redis.hset(key, peerId, JSON.stringify(peerData));
-  await redis.expire(key, PEER_TTL);
+export async function getPeers(infoHash: string): Promise<SwarmPeer[]> {
+  const swarm = await trackerInternal<{ peers: SwarmPeer[] }>(
+    `/internal/swarms/${infoHash}`
+  );
+  return swarm?.peers ?? [];
 }
-
-/**
- * Get a single peer from the swarm
- */
-export async function getPeer(
-  infoHash: string,
-  peerId: string
-): Promise<PeerData | null> {
-  const key = PEER_KEY(infoHash);
-  const data = await redis.hget(key, peerId);
-  if (!data) return null;
-
-  try {
-    const peer = JSON.parse(data) as PeerData;
-    const now = Date.now();
-    if (now - peer.updatedAt < PEER_TTL * 1000) {
-      return peer;
-    }
-    // Stale peer
-    await redis.hdel(key, peerId);
-    return null;
-  } catch {
-    await redis.hdel(key, peerId);
-    return null;
-  }
-}
-
-/**
- * Remove a peer from the swarm
- */
-export async function removePeer(
-  infoHash: string,
-  peerId: string
-): Promise<void> {
-  const key = PEER_KEY(infoHash);
-  await redis.hdel(key, peerId);
-}
-
-/**
- * Get all peers for a torrent
- */
-export async function getPeers(infoHash: string): Promise<PeerData[]> {
-  const key = PEER_KEY(infoHash);
-  const data = await redis.hgetall(key);
-
-  const now = Date.now();
-  const peers: PeerData[] = [];
-
-  for (const [peerId, json] of Object.entries(data)) {
-    try {
-      const peer = JSON.parse(json) as PeerData;
-      // Filter out stale peers (older than TTL)
-      if (now - peer.updatedAt < PEER_TTL * 1000) {
-        peers.push(peer);
-      } else {
-        // Cleanup stale peer
-        await redis.hdel(key, peerId);
-      }
-    } catch {
-      // Invalid JSON, remove it
-      await redis.hdel(key, peerId);
-    }
-  }
-
-  return peers;
-}
-
 
 // ============================================================================
 // Stats Operations
 // ============================================================================
-
-/**
- * Increment completed count for a torrent
- */
-export async function incrementCompleted(infoHash: string): Promise<number> {
-  const key = STATS_KEY(infoHash);
-  return redis.hincrby(key, 'completed', 1);
-}
-
 export interface TorrentStats {
   seeders: number;
   leechers: number;
   completed: number;
 }
 
-// Counting peers reads and parses the whole swarm hash: cache the result
-// briefly. Lists, Torznab and every announce ask for these counts.
-const STATS_CACHE_MS = 10_000;
-const statsCache = new TtlCache<string, TorrentStats>(STATS_CACHE_MS, 100_000);
-
-
-async function withSwarmFallback(
-  infoHash: string,
-  stats: TorrentStats
-): Promise<TorrentStats> {
-  // If no peers in Redis, try tracker's internal swarm data
-  if (stats.seeders === 0 && stats.leechers === 0) {
-    try {
-      const { getSwarmStats } = await import('../tracker');
-      const swarmStats = getSwarmStats(infoHash);
-      if (swarmStats.seeders > 0 || swarmStats.leechers > 0) {
-        return { ...swarmStats, completed: stats.completed };
-      }
-    } catch {
-      // Tracker not available, continue with Redis data
-    }
-  }
-  return stats;
+/** Parse a "seeders:leechers" counter; missing means an empty swarm */
+export function parseSwarmCounts(value: string | null | undefined): {
+  seeders: number;
+  leechers: number;
+} {
+  const [seeders, leechers] = (value ?? '').split(':').map((n) => parseInt(n, 10));
+  return {
+    seeders: Number.isFinite(seeders) ? seeders! : 0,
+    leechers: Number.isFinite(leechers) ? leechers! : 0,
+  };
 }
+
+// The tracker publishes changed counts every few seconds: Lists, Torznab and
+// RSS asking for the same torrents share one read for that long
+const STATS_CACHE_MS = 5_000;
+const statsCache = new TtlCache<string, TorrentStats>(STATS_CACHE_MS, 100_000);
 
 /**
  * Get stats for several torrents in one Redis round trip (cached per torrent)
@@ -176,48 +74,26 @@ export async function getStatsMany(
 
   if (missing.length > 0) {
     const pipeline = redis.pipeline();
-    for (const hash of missing) {
-      pipeline.hgetall(PEER_KEY(hash));
-      pipeline.hget(STATS_KEY(hash), 'completed');
-    }
+    pipeline.hmget(SWARMS_KEY, ...missing);
+    for (const hash of missing) pipeline.hget(STATS_KEY(hash), 'completed');
     const replies = (await pipeline.exec()) ?? [];
-    const now = Date.now();
 
     // Each reply is [error, value]: never cache counts built from a failure
     const failure = replies.find(([err]) => err)?.[0];
-    if (failure || replies.length !== missing.length * 2) {
+    if (failure || replies.length !== missing.length + 1) {
       throw failure ?? new Error('Incomplete Redis pipeline reply');
     }
 
-    // Departed peers that never sent "stopped" stay in the hash while active
-    // peers keep refreshing its TTL: delete them as we find them
-    const cleanup = redis.pipeline();
-    let hasCleanup = false;
-
-    await Promise.all(
-      missing.map(async (hash, i) => {
-        const peers = (replies[i * 2]![1] as Record<string, string> | null) ?? {};
-        const completedRaw = replies[i * 2 + 1]![1] as string | null;
-        const { seeders, leechers, stale } = countPeers(peers, now);
-        if (stale.length > 0) {
-          cleanup.hdel(PEER_KEY(hash), ...stale);
-          hasCleanup = true;
-        }
-        const stats = await withSwarmFallback(hash, {
-          seeders,
-          leechers,
-          completed: parseInt(completedRaw || '0', 10),
-        });
-        statsCache.set(hash, stats);
-        result.set(hash, stats);
-      })
-    );
-
-    if (hasCleanup) {
-      await cleanup.exec().catch((err) =>
-        console.error('[Redis] Stale peer cleanup failed:', err)
-      );
-    }
+    const counts = (replies[0]![1] as Array<string | null>) ?? [];
+    missing.forEach((hash, i) => {
+      const completedRaw = replies[i + 1]![1] as string | null;
+      const stats = {
+        ...parseSwarmCounts(counts[i]),
+        completed: parseInt(completedRaw || '0', 10),
+      };
+      statsCache.set(hash, stats);
+      result.set(hash, stats);
+    });
   }
 
   return result;
@@ -234,34 +110,36 @@ export async function getStats(infoHash: string): Promise<TorrentStats> {
 // ============================================================================
 // Global Stats
 // ============================================================================
-
-/**
- * Track global tracker stats
- */
-export async function updateGlobalStats(
-  torrents: number,
-  peers: number,
-  seeders: number
-): Promise<void> {
-  await redis.hset(GLOBAL_STATS_KEY, {
-    torrents: torrents.toString(),
-    peers: peers.toString(),
-    seeders: seeders.toString(),
-    updatedAt: Date.now().toString(),
-  });
-}
-
-export async function getGlobalStats(): Promise<{
+export interface GlobalStats {
   torrents: number;
+  /** Peer entries: a client in 10 swarms counts 10 times */
   peers: number;
   seeders: number;
+  leechers: number;
+  /** Torrents with at least one seeder */
+  seededTorrents: number;
+  /** Distinct ip:port */
+  uniquePeers: number;
+  uniqueSeeders: number;
+  /** 0 when the tracker never published */
   updatedAt: number;
-}> {
-  const data = await redis.hgetall(GLOBAL_STATS_KEY);
+}
+
+export function parseGlobalStats(data: Record<string, string>): GlobalStats {
+  const n = (key: string) => parseInt(data[key] || '0', 10) || 0;
   return {
-    torrents: parseInt(data.torrents || '0', 10),
-    peers: parseInt(data.peers || '0', 10),
-    seeders: parseInt(data.seeders || '0', 10),
-    updatedAt: parseInt(data.updatedAt || '0', 10),
+    torrents: n('torrents'),
+    peers: n('peers'),
+    seeders: n('seeders'),
+    leechers: n('leechers'),
+    seededTorrents: n('seededTorrents'),
+    uniquePeers: n('uniquePeers'),
+    uniqueSeeders: n('uniqueSeeders'),
+    updatedAt: n('updatedAt'),
   };
+}
+
+/** Site-wide counters, refreshed by the tracker every minute */
+export async function getGlobalStats(): Promise<GlobalStats> {
+  return parseGlobalStats(await redis.hgetall(GLOBAL_STATS_KEY));
 }
