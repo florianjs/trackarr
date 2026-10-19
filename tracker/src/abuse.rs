@@ -72,13 +72,20 @@ impl FailureLimiter {
         blocked
     }
 
-    pub fn record_failure(&self, ip: IpAddr, now: u64) {
+    pub fn max_failures(&self) -> u32 {
+        self.max_failures
+    }
+
+    /// Count a failure; true when this one puts the client over its budget
+    /// (reported once per window, not on every refused request)
+    pub fn record_failure(&self, ip: IpAddr, now: u64) -> bool {
         let mut clients = self.lock();
         let entry = clients.entry(client_key(ip)).or_insert((0, now));
         if now.saturating_sub(entry.1) >= WINDOW_MS {
             *entry = (0, now);
         }
         entry.0 = entry.0.saturating_add(1);
+        entry.0 == self.max_failures
     }
 
     /// Clients currently refused
@@ -120,10 +127,11 @@ mod tests {
         let limiter = FailureLimiter::new(3);
         let a = ip("203.0.113.5");
         for _ in 0..2 {
-            limiter.record_failure(a, 0);
+            assert!(!limiter.record_failure(a, 0));
         }
         assert!(!limiter.is_blocked(a, 10));
-        limiter.record_failure(a, 20);
+        assert!(limiter.record_failure(a, 20), "this one crosses the budget");
+        assert!(!limiter.record_failure(a, 21), "reported once");
         assert!(limiter.is_blocked(a, 30));
         assert!(!limiter.is_blocked(ip("203.0.113.6"), 30), "other client");
         assert_eq!(limiter.blocked_clients(30), 1);

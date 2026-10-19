@@ -108,6 +108,7 @@ All keys are prefixed with `REDIS_KEY_PREFIX` (default `ot:`).
 | `tracker:stats` | hash | `torrents`, `peers`, `seeders`, `leechers`, `seededTorrents`, `uniquePeers`, `uniqueSeeders`, `updatedAt` |
 | `stats:<hash>` | hash | field `completed` |
 | `tracker:invalidate` | pub/sub channel | Cache invalidation from the app |
+| `tracker:abuse_events` | list (last 1000) | Abuse for admin alerts, drained by the app every minute: `blocked_client` (failed-lookup budget exceeded), `impossible_upload` (upload claimed beyond `TRACKER_MAX_RATE_MIBPS` × elapsed time: possible ratio cheat) |
 
 ## Development
 
