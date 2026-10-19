@@ -51,6 +51,10 @@ pub struct Tracker {
     settings: RwLock<Arc<Settings>>,
     /// Successful announces since start
     pub announces: AtomicU64,
+    /// (announces, time) at the last sweep, for the rate below
+    rate_sample: std::sync::Mutex<(u64, u64)>,
+    /// Announces per second over the last sweep interval (f64 bits)
+    announce_rate: AtomicU64,
     started_at: u64,
     /// No publishing until swarms refilled; zero after restoring a fresh snapshot
     warmup_ms: AtomicU64,
@@ -68,6 +72,8 @@ impl Tracker {
             redis,
             completed: Completed::default(),
             announces: AtomicU64::new(0),
+            rate_sample: std::sync::Mutex::new((0, now_ms())),
+            announce_rate: AtomicU64::new(0),
             started_at: now_ms(),
             warmup_ms: AtomicU64::new(config.warmup * 1000),
             publish_state: tokio::sync::Mutex::default(),
@@ -441,6 +447,14 @@ impl Tracker {
     /// Periodic housekeeping: expired peers, bonus sets
     pub fn sweep(&self) {
         let now = now_ms();
+        let announces = self.announces.load(Ordering::Relaxed);
+        {
+            let mut sample = self.rate_sample.lock().unwrap_or_else(|p| p.into_inner());
+            let elapsed = now.saturating_sub(sample.1).max(1) as f64 / 1000.0;
+            let rate = announces.saturating_sub(sample.0) as f64 / elapsed;
+            self.announce_rate.store(rate.to_bits(), Ordering::Relaxed);
+            *sample = (announces, now);
+        }
         let expired = self.swarms.expire(now);
         self.seeding.purge(now);
         if !expired.is_empty() {
@@ -537,6 +551,11 @@ impl Tracker {
 
     pub fn uptime_ms(&self) -> u64 {
         now_ms().saturating_sub(self.started_at)
+    }
+
+    /// Announces per second over the last minute
+    pub fn announce_rate(&self) -> f64 {
+        f64::from_bits(self.announce_rate.load(Ordering::Relaxed))
     }
 
     pub fn is_synced(&self) -> bool {

@@ -98,19 +98,6 @@
 		{$MONITORING_USER:admin} {$MONITORING_PASSWORD_HASH}
 	}
 
-	# Grafana
-	handle /grafana* {
-		reverse_proxy grafana:3000
-	}
-
-	# Prometheus (admin only)
-	handle /prometheus* {
-		uri strip_prefix /prometheus
-		reverse_proxy prometheus:9090
-	}
-
-	# Default to Grafana
-	handle {
-		redir /grafana{uri} permanent
-	}
+	# Beszel (host and container monitoring, alerts)
+	reverse_proxy trackarr-beszel:8090
 }

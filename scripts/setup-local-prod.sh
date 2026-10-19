@@ -78,7 +78,8 @@ EXISTING_REDIS_PASSWORD=$(get_existing_secret "REDIS_PASSWORD")
 EXISTING_NUXT_SESSION_SECRET=$(get_existing_secret "NUXT_SESSION_SECRET")
 EXISTING_IP_HASH_SECRET=$(get_existing_secret "IP_HASH_SECRET")
 EXISTING_TRACKER_INTERNAL_TOKEN=$(get_existing_secret "TRACKER_INTERNAL_TOKEN")
-EXISTING_GRAFANA_ADMIN_PASSWORD=$(get_existing_secret "GRAFANA_ADMIN_PASSWORD")
+EXISTING_BESZEL_AGENT_KEY=$(get_existing_secret "BESZEL_AGENT_KEY")
+EXISTING_BESZEL_AGENT_TOKEN=$(get_existing_secret "BESZEL_AGENT_TOKEN")
 
 if [ -n "$EXISTING_DB_PASSWORD" ]; then
     log_info "Preserving existing secrets from $ENV_FILE"
@@ -86,25 +87,23 @@ if [ -n "$EXISTING_DB_PASSWORD" ]; then
     REDIS_PASSWORD=$EXISTING_REDIS_PASSWORD
     NUXT_SESSION_SECRET=$EXISTING_NUXT_SESSION_SECRET
     IP_HASH_SECRET=$EXISTING_IP_HASH_SECRET
-    GRAFANA_ADMIN_PASSWORD=$EXISTING_GRAFANA_ADMIN_PASSWORD
 else
     DB_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
     REDIS_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
     NUXT_SESSION_SECRET=$(openssl rand -hex 32)
     IP_HASH_SECRET=$(openssl rand -hex 32)
-    GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
     log_success "Secrets generated"
+fi
+
+# Beszel agent pairing survives a re-run
+if [ -n "$EXISTING_BESZEL_AGENT_KEY" ]; then
+    BESZEL_ENV=$(printf 'BESZEL_AGENT_KEY=%s\nBESZEL_AGENT_TOKEN=%s\nCOMPOSE_PROFILES=monitoring' "$EXISTING_BESZEL_AGENT_KEY" "$EXISTING_BESZEL_AGENT_TOKEN")
+else
+    BESZEL_ENV=$(printf '# BESZEL_AGENT_KEY=\n# BESZEL_AGENT_TOKEN=\n# COMPOSE_PROFILES=monitoring')
 fi
 
 # Older installs predate the tracker service: create its token once
 TRACKER_INTERNAL_TOKEN=${EXISTING_TRACKER_INTERNAL_TOKEN:-$(openssl rand -hex 32)}
-
-# Never keep the old admin/admin Grafana default
-if [ -z "$GRAFANA_ADMIN_PASSWORD" ] || [ "$GRAFANA_ADMIN_PASSWORD" = "admin" ]; then
-    GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
-fi
-
-
 
 # =============================================================================
 # Create .env file
@@ -155,10 +154,9 @@ TRACKER_UDP_URL=
 TRACKER_WS_URL=
 
 # =============================================================================
-# Monitoring (Grafana)
+# Monitoring (Beszel on http://localhost:3001: pair the agent, then set these)
 # =============================================================================
-GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+${BESZEL_ENV}
 EOF
 
 chmod 600 "$ENV_FILE"
@@ -262,12 +260,12 @@ echo ""
 echo -e "${BOLD}Access URLs:${NC}"
 echo -e "  Frontend:     ${CYAN}http://localhost:3000${NC}"
 echo -e "  Tracker:      ${CYAN}http://localhost:8080/announce${NC}"
-echo -e "  Grafana:      ${CYAN}http://localhost:3001${NC} (admin / GRAFANA_ADMIN_PASSWORD in $ENV_FILE)"
+echo -e "  Monitoring:   ${CYAN}http://localhost:3001${NC} (Beszel: create the admin account on first visit)"
 echo ""
 if command -v orb &> /dev/null; then
     echo -e "${BOLD}OrbStack Domains:${NC}"
     echo -e "  Frontend:     ${CYAN}http://trackarr.orb.local:3000${NC}"
-    echo -e "  Grafana:      ${CYAN}http://trackarr-grafana.orb.local:3000${NC}"
+    echo -e "  Monitoring:   ${CYAN}http://trackarr-beszel.orb.local:8090${NC}"
     echo ""
 fi
 echo -e "${BOLD}Environment File:${NC}"

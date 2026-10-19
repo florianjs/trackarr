@@ -133,90 +133,6 @@
       </div>
     </div>
 
-    <!-- Grafana Password Section -->
-    <div class="card">
-      <div class="card-header">
-        <div class="flex items-center gap-2">
-          <Icon name="ph:chart-line" class="text-text-muted" />
-          <h3
-            class="text-sm font-medium text-text-primary"
-          >
-            {{ t('admin.system.grafanaTitle') }}
-          </h3>
-        </div>
-      </div>
-      <div class="card-body space-y-4">
-        <p class="text-xs text-text-muted mb-6">
-          {{ t('admin.system.grafanaIntro') }}
-        </p>
-
-        <SettingsGroup
-          :label="t('admin.system.currentPassword')"
-          :description="t('admin.system.currentPasswordDescription')"
-        >
-          <input
-            v-model="grafana.currentPassword"
-            type="password"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            :placeholder="t('admin.system.currentPasswordPlaceholder')"
-          />
-        </SettingsGroup>
-
-        <SettingsGroup
-          :label="t('admin.system.newPassword')"
-          :description="t('admin.system.newPasswordDescription')"
-        >
-          <input
-            v-model="grafana.newPassword"
-            type="password"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            :placeholder="t('admin.system.newPasswordPlaceholder')"
-          />
-        </SettingsGroup>
-
-        <SettingsGroup
-          :label="t('admin.system.confirmPassword')"
-          :description="t('admin.system.confirmPasswordDescription')"
-        >
-          <input
-            v-model="grafana.confirmPassword"
-            type="password"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20"
-            :placeholder="t('admin.system.confirmPasswordPlaceholder')"
-          />
-        </SettingsGroup>
-
-        <!-- Error / Success Messages -->
-        <div
-          v-if="grafana.error"
-          class="p-3 bg-danger/10 border border-danger/30 rounded-lg flex items-center gap-2"
-        >
-          <Icon name="ph:warning-circle" class="text-danger" />
-          <p class="text-sm text-danger">{{ grafana.error }}</p>
-        </div>
-
-        <div
-          v-if="grafana.success"
-          class="p-3 bg-success/10 border border-success/30 rounded-lg flex items-center gap-2"
-        >
-          <Icon name="ph:check-circle" class="text-success" />
-          <p class="text-sm text-success">{{ grafana.success }}</p>
-        </div>
-
-        <button
-          @click="changeGrafanaPassword"
-          :disabled="grafana.loading || !isGrafanaFormValid"
-          class="w-full bg-text-primary text-bg-primary text-xs font-bold py-2.5 rounded hover:opacity-90 transition-opacity disabled:opacity-50 flex items-center justify-center gap-2"
-        >
-          <Icon
-            v-if="grafana.loading"
-            name="ph:circle-notch"
-            class="animate-spin"
-          />
-          {{ grafana.loading ? t('admin.system.updating') : t('admin.system.updateGrafanaPassword') }}
-        </button>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -246,23 +162,6 @@ const checkingUpdates = ref(false);
 const showUpdateInstructions = ref(false);
 const updateCommands = ref<UpdateCommand[]>([]);
 
-const grafana = reactive({
-  currentPassword: '',
-  newPassword: '',
-  confirmPassword: '',
-  loading: false,
-  error: '',
-  success: '',
-});
-
-const isGrafanaFormValid = computed(() => {
-  return (
-    grafana.currentPassword.length > 0 &&
-    grafana.newPassword.length >= 8 &&
-    grafana.newPassword === grafana.confirmPassword
-  );
-});
-
 onMounted(async () => {
   await checkUpdates();
 });
@@ -290,31 +189,6 @@ async function toggleUpdateInstructions() {
     }
   }
   showUpdateInstructions.value = !showUpdateInstructions.value;
-}
-
-async function changeGrafanaPassword() {
-  grafana.error = '';
-  grafana.success = '';
-  grafana.loading = true;
-
-  try {
-    await $fetch('/api/admin/system/grafana-password', {
-      method: 'POST',
-      body: {
-        currentPassword: grafana.currentPassword,
-        newPassword: grafana.newPassword,
-      },
-    });
-
-    grafana.success = t('admin.system.grafanaSuccess');
-    grafana.currentPassword = '';
-    grafana.newPassword = '';
-    grafana.confirmPassword = '';
-  } catch (error: any) {
-    grafana.error = error.data?.message || t('admin.system.grafanaFailed');
-  } finally {
-    grafana.loading = false;
-  }
 }
 
 function copyCommand(command: string) {

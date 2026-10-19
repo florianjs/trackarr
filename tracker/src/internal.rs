@@ -107,6 +107,20 @@ struct Status {
     pending_accounting: usize,
     /// Counters have been published to Redis since start (warm-up over)
     published: bool,
+    /// Over the last minute
+    announces_per_second: f64,
+    rejected: Rejected,
+    /// Clients currently refused for too many failed lookups
+    blocked_clients: usize,
+}
+
+#[derive(Serialize)]
+#[serde(rename_all = "camelCase")]
+struct Rejected {
+    invalid_passkey: u64,
+    unknown_torrent: u64,
+    too_many_peers: u64,
+    blocked_client: u64,
 }
 
 async fn status(State(state): State<Arc<InternalState>>, headers: HeaderMap) -> Response {
@@ -115,6 +129,7 @@ async fn status(State(state): State<Arc<InternalState>>, headers: HeaderMap) -> 
     }
     let tracker = &state.tracker;
     let (swarms, seeders, leechers) = tracker.swarms.totals();
+    let counters = &tracker.limiter.counters;
     Json(Status {
         uptime_seconds: tracker.uptime_ms() / 1000,
         announces: tracker.announces.load(Ordering::Relaxed),
@@ -123,6 +138,14 @@ async fn status(State(state): State<Arc<InternalState>>, headers: HeaderMap) -> 
         leechers,
         pending_accounting: tracker.ledger.pending_len(),
         published: tracker.is_synced(),
+        announces_per_second: (tracker.announce_rate() * 10.0).round() / 10.0,
+        rejected: Rejected {
+            invalid_passkey: counters.invalid_passkey.load(Ordering::Relaxed),
+            unknown_torrent: counters.unknown_torrent.load(Ordering::Relaxed),
+            too_many_peers: counters.too_many_peers.load(Ordering::Relaxed),
+            blocked_client: counters.blocked.load(Ordering::Relaxed),
+        },
+        blocked_clients: tracker.limiter.blocked_clients(now_ms()),
     })
     .into_response()
 }

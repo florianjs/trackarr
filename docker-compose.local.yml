@@ -159,45 +159,39 @@ services:
       - trackarr
 
   # =============================================================================
-  # MONITORING - Prometheus
+  # MONITORING - Beszel (host and container metrics, alerts)
   # =============================================================================
-  prometheus:
-    image: prom/prometheus:v2.48.0
-    container_name: trackarr-prometheus
+  # UI on http://localhost:3001. Pairing: see docker-compose.prod.yml
+  beszel:
+    image: henrygd/beszel:0.21.0
+    container_name: trackarr-beszel
     restart: unless-stopped
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=7d"
-      - "--web.enable-lifecycle"
-    volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
+    environment:
+      APP_URL: http://localhost:3001
     ports:
-      - "127.0.0.1:9090:9090"
+      - "127.0.0.1:3001:8090"
+    volumes:
+      - beszel_data:/beszel_data
+      - beszel_socket:/beszel_socket
     networks:
       - trackarr
 
-  # =============================================================================
-  # MONITORING - Grafana
-  # =============================================================================
-  grafana:
-    image: grafana/grafana:12.3.1
-    container_name: trackarr-grafana
+  beszel-agent:
+    image: henrygd/beszel-agent:0.21.0
+    container_name: trackarr-beszel-agent
+    # Starts once paired (exits without a key): COMPOSE_PROFILES=monitoring
+    profiles: [monitoring]
     restart: unless-stopped
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    ports:
-      - "127.0.0.1:3001:3000"
+    network_mode: host
     volumes:
-      - grafana_data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
-    depends_on:
-      - prometheus
-    networks:
-      - trackarr
+      - beszel_agent_data:/var/lib/beszel-agent
+      - beszel_socket:/beszel_socket
+      # Container stats; remove to monitor the host only
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      KEY: ${BESZEL_AGENT_KEY:-}
+      TOKEN: ${BESZEL_AGENT_TOKEN:-}
 
 networks:
   trackarr:
@@ -210,9 +204,11 @@ volumes:
     driver: local
   redis_data:
     driver: local
-  grafana_data:
+  beszel_data:
     driver: local
-  prometheus_data:
+  beszel_socket:
+    driver: local
+  beszel_agent_data:
     driver: local
   uploads_data:
     driver: local

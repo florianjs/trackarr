@@ -25,6 +25,9 @@
       </p>
     </div>
 
+    <!-- Tracker service: live state, rejections -->
+    <AdminTrackerHealth />
+
     <!-- Brute force, honeypots, tracker abuse -->
     <AdminSecurityAlerts />
 
