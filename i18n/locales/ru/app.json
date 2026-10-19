@@ -664,31 +664,16 @@
     "system": {
       "backupWarning": "Перед обновлением сделайте резервную копию базы данных",
       "checkUpdates": "Проверить обновления",
-      "confirmPassword": "Подтверждение пароля",
-      "confirmPasswordDescription": "Введите новый пароль ещё раз для проверки.",
-      "confirmPasswordPlaceholder": "Подтвердите новый пароль",
-      "currentPassword": "Текущий пароль",
-      "currentPasswordDescription": "Пароль, которым вы сейчас входите в Grafana.",
-      "currentPasswordPlaceholder": "Введите текущий пароль Grafana",
       "currentVersion": "Текущая версия",
       "downtimeWarning": "Обновление вызовет кратковременный простой",
-      "grafanaFailed": "Не удалось изменить пароль Grafana",
-      "grafanaIntro": "Смена пароля администратора Grafana. Потребуется текущий пароль.",
-      "grafanaSuccess": "Пароль Grafana изменён",
-      "grafanaTitle": "Пароль Grafana",
       "hideInstructions": "Скрыть инструкцию по обновлению",
       "installedVersion": "Установленная версия Trackarr",
-      "newPassword": "Новый пароль",
-      "newPasswordDescription": "Не менее 8 символов.",
-      "newPasswordPlaceholder": "Введите новый пароль",
       "published": "Опубликовано {date}",
       "showInstructions": "Показать инструкцию по обновлению",
       "step": "Шаг {step}: {description}",
       "upToDate": "У вас последняя версия",
       "updateAvailable": "Доступно обновление: {version}",
       "updateCommands": "Команды обновления",
-      "updateGrafanaPassword": "Изменить пароль Grafana",
-      "updating": "Обновление...",
       "versionTitle": "Версия и обновления",
       "viewChangelog": "Список изменений"
     },
@@ -728,8 +713,7 @@
     },
     "endpoints": {
       "title": "Адреса",
-      "httpAnnounce": "HTTP-анонс",
-      "udpAnnounce": "UDP-анонс"
+      "httpAnnounce": "HTTP-анонс"
     },
     "torznabLogs": {
       "title": "Последние запросы",
@@ -820,6 +804,38 @@
       "resolve": "Решить",
       "dismiss": "Отклонить",
       "empty": "Жалобы не найдены"
+    },
+    "securityAlerts": {
+      "title": "Оповещения безопасности",
+      "empty": "Нет оповещений безопасности",
+      "loadError": "Не удалось загрузить оповещения.",
+      "clear": "Очистить",
+      "hint": "Перебор паролей, срабатывания ловушек (honeypot) и злоупотребления трекером. Задайте DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL или SECURITY_WEBHOOK_URL, чтобы также получать уведомления.",
+      "severity": {
+        "critical": "Критическая",
+        "high": "Высокая",
+        "medium": "Средняя",
+        "low": "Низкая"
+      }
+    },
+    "trackerHealth": {
+      "title": "Трекер",
+      "running": "Работает",
+      "unreachable": "Недоступен",
+      "unreachableHint": "Служба трекера не отвечает: проверьте, что её контейнер запущен и TRACKER_INTERNAL_TOKEN совпадает с обеих сторон.",
+      "warmingUp": "Запуск: счётчики swarm публикуются после повторных анонсов клиентов.",
+      "announcesPerSecond": "Анонсов / с",
+      "swarms": "Swarm",
+      "seeders": "Сидеры",
+      "leechers": "Личеры",
+      "pendingAccounting": "Кредит к записи",
+      "blockedNow": "Заблокировано сейчас",
+      "uptime": "Время работы",
+      "rejected": "Отклонено с запуска",
+      "invalidPasskey": "Неверные passkey",
+      "unknownTorrent": "Неизвестные торренты",
+      "tooManyPeers": "Слишком много пиров",
+      "blockedClients": "Заблокированные клиенты"
     },
     "homepage": {
       "title": "Содержимое главной страницы",

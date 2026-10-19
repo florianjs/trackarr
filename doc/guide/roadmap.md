@@ -20,7 +20,7 @@ Trackarr is actively developed with a focus on performance, security, and usabil
 - [x] **Reports & Moderation** — Flag content for moderation review
 - [x] **Homepage Customization** — WYSIWYG editor for homepage content
 - [x] **Panic Mode** — Emergency lockdown system
-- [x] **Grafana Monitoring** — Full observability stack
+- [x] **Monitoring** — Beszel server monitoring and alerts, tracker health in the admin dashboard
 
 ---
 

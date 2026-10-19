@@ -249,6 +249,16 @@
                 : t('auth.register.createAccount')
             }}</span>
           </button>
+          <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
+          <div class="sr-only" aria-hidden="true">
+            <input
+              v-model="form.hpot_field"
+              type="text"
+              name="hpot_field"
+              tabindex="-1"
+              autocomplete="off"
+            />
+          </div>
         </form>
 
         <div
@@ -314,6 +324,7 @@ const form = reactive({
   username: '',
   password: '',
   confirmPassword: '',
+  hpot_field: '',
   panicPassword: '',
   confirmPanicPassword: '',
   inviteCode: '',
@@ -386,6 +397,7 @@ async function handleRegister() {
         username: form.username,
         authSalt: credentials.salt,
         authVerifier: credentials.verifier,
+        hpot_field: form.hpot_field,
         powChallenge: powSolution.challenge,
         powNonce: powSolution.nonce,
         powHash: powSolution.hash,

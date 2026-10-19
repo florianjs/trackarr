@@ -72,6 +72,16 @@ export interface TrackerStatus {
   pendingAccounting: number;
   /** Counters published to Redis since start (warm-up over) */
   published: boolean;
+  /** Over the last minute */
+  announcesPerSecond: number;
+  rejected: {
+    invalidPasskey: number;
+    unknownTorrent: number;
+    tooManyPeers: number;
+    blockedClient: number;
+  };
+  /** Clients currently refused for too many failed lookups */
+  blockedClients: number;
 }
 
 export function getTrackerStatus(): Promise<TrackerStatus | null> {

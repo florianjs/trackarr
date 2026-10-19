@@ -16,8 +16,6 @@ services:
       dockerfile: Dockerfile
       args:
         TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
-        TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
-        TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
     container_name: trackarr
     restart: unless-stopped
     environment:
@@ -39,12 +37,8 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
-      TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
-      TRACKER_WS_URL: ${TRACKER_WS_URL:-}
       # Runtime override of the URLs baked at build time (issue #49)
       NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
-      NUXT_PUBLIC_TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
-      NUXT_PUBLIC_TRACKER_WS_URL: ${TRACKER_WS_URL:-}
       IP_HASH_SECRET: ${IP_HASH_SECRET}
       # Port 3000 is published directly, without a proxy: never trust
       # X-Forwarded-For / X-Real-IP from LAN or Docker addresses
@@ -159,48 +153,67 @@ services:
       - trackarr
 
   # =============================================================================
-  # MONITORING - Prometheus
+  # MONITORING - Beszel (host and container metrics, alerts)
   # =============================================================================
-  prometheus:
-    image: prom/prometheus:v2.48.0
-    container_name: trackarr-prometheus
+  # UI on http://localhost:3001. Pairing: see docker-compose.prod.yml
+  beszel:
+    image: henrygd/beszel:0.21.0
+    container_name: trackarr-beszel
     restart: unless-stopped
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=7d"
-      - "--web.enable-lifecycle"
-    volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
+    environment:
+      APP_URL: http://localhost:3001
     ports:
-      - "127.0.0.1:9090:9090"
+      - "127.0.0.1:3001:8090"
+    volumes:
+      - beszel_data:/beszel_data
+      - beszel_socket:/beszel_socket
     networks:
       - trackarr
 
-  # =============================================================================
-  # MONITORING - Grafana
-  # =============================================================================
-  grafana:
-    image: grafana/grafana:12.3.1
-    container_name: trackarr-grafana
+  beszel-agent:
+    image: henrygd/beszel-agent:0.21.0
+    container_name: trackarr-beszel-agent
+    # Starts once paired (exits without a key): COMPOSE_PROFILES=monitoring
+    profiles: [monitoring]
+    restart: unless-stopped
+    network_mode: host
+    volumes:
+      - beszel_agent_data:/var/lib/beszel-agent
+      - beszel_socket:/beszel_socket
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      # Container stats through the filtered proxy; "" for the host only
+      DOCKER_HOST: tcp://127.0.0.1:2375
+      KEY: ${BESZEL_AGENT_KEY:-}
+      TOKEN: ${BESZEL_AGENT_TOKEN:-}
+
+  # Filtered Docker API for the agent: container stats only, read-only
+  docker-proxy:
+    image: lscr.io/linuxserver/socket-proxy:3.4.7-r0-ls103
+    container_name: trackarr-docker-proxy
+    profiles: [monitoring]
     restart: unless-stopped
     environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-    ports:
-      - "127.0.0.1:3001:3000"
+      CONTAINERS: 1
+      INFO: 1
+      VERSION: 1
+      EVENTS: 0
+      POST: 0
     volumes:
-      - grafana_data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
-    depends_on:
-      - prometheus
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Host loopback only: the agent runs in the host network
+    ports:
+      - "127.0.0.1:2375:2375"
     networks:
-      - trackarr
+      - docker-proxy
+    read_only: true
+    tmpfs:
+      - /run
 
 networks:
   trackarr:
+    driver: bridge
+  docker-proxy:
     driver: bridge
 
 volumes:
@@ -210,9 +223,11 @@ volumes:
     driver: local
   redis_data:
     driver: local
-  grafana_data:
+  beszel_data:
     driver: local
-  prometheus_data:
+  beszel_socket:
+    driver: local
+  beszel_agent_data:
     driver: local
   uploads_data:
     driver: local

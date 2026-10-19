@@ -348,11 +348,6 @@ generate_secrets() {
     echo -n "$REDIS_PASSWORD" > "$SECRETS_DIR/redis_password.txt"
     log_info "Prepared Redis password"
     
-    # Grafana admin password (32 chars)
-    GRAFANA_ADMIN_PASSWORD=$(existing_secret GRAFANA_ADMIN_PASSWORD)
-    [[ -z "$GRAFANA_ADMIN_PASSWORD" ]] && GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
-    echo -n "$GRAFANA_ADMIN_PASSWORD" > "$SECRETS_DIR/grafana_admin_password.txt"
-    log_info "Prepared Grafana admin password"
     
     # IP hash secret (64 chars)
     IP_HASH_SECRET=$(existing_secret IP_HASH_SECRET)
@@ -392,6 +387,16 @@ create_env_file() {
     
     ENV_FILE="$INSTALL_DIR/.env"
     
+    # Beszel agent pairing survives a re-run
+    local key token
+    key=$(existing_secret BESZEL_AGENT_KEY)
+    token=$(existing_secret BESZEL_AGENT_TOKEN)
+    if [[ -n "$key" ]]; then
+        BESZEL_ENV=$(printf 'BESZEL_AGENT_KEY=%s\nBESZEL_AGENT_TOKEN=%s\nCOMPOSE_PROFILES=monitoring' "$key" "$token")
+    else
+        BESZEL_ENV=$(printf '# BESZEL_AGENT_KEY=\n# BESZEL_AGENT_TOKEN=\n# COMPOSE_PROFILES=monitoring')
+    fi
+
     # Generate monitoring password hash if not done yet
     if [[ -z "$MONITORING_PASSWORD_HASH" ]]; then
         log_info "Generating Caddy password hash..."
@@ -435,15 +440,13 @@ ACME_EMAIL=${ACME_EMAIL}
 
 # Tracker Announce URLs (displayed in admin dashboard)
 TRACKER_HTTP_URL=https://${TRACKER_DOMAIN}/announce
-TRACKER_UDP_URL=udp://${TRACKER_DOMAIN}:6969/announce
-TRACKER_WS_URL=wss://${TRACKER_DOMAIN}/websocket
 
 # Monitoring
 MONITORING_USER=admin
 # Note: $ escaped as $$ for Docker Compose compatibility
 MONITORING_PASSWORD_HASH=$(echo "${MONITORING_PASSWORD_HASH}" | sed 's/\$/\$\$/g')
-GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=${GRAFANA_ADMIN_PASSWORD}
+# Beszel agent, once paired in the monitoring UI (see the Monitoring guide)
+${BESZEL_ENV}
 EOF
     
     chmod 600 "$ENV_FILE"
@@ -672,9 +675,11 @@ print_summary() {
     echo -e "  Username: ${CYAN}admin${NC}"
     echo -e "  Password: ${CYAN}${MONITORING_PASSWORD}${NC}"
     echo ""
-    echo -e "${BOLD}Grafana Credentials:${NC}"
-    echo -e "  Username: ${CYAN}admin${NC}"
-    echo -e "  Password: ${CYAN}${GRAFANA_ADMIN_PASSWORD}${NC} (also in ${INSTALL_DIR}/.env)"
+    echo -e "${BOLD}Monitoring (Beszel):${NC}"
+    echo -e "  Open https://${MONITORING_DOMAIN} right away: the first visitor creates"
+    echo -e "  the Beszel admin account. Then add this server (host"
+    echo -e "  /beszel_socket/beszel.sock) and put its key and token in .env"
+    echo -e "  (BESZEL_AGENT_KEY, BESZEL_AGENT_TOKEN, COMPOSE_PROFILES=monitoring)."
     echo ""
     echo -e "${BOLD}Important Files:${NC}"
     echo -e "  Installation:     ${CYAN}${INSTALL_DIR}${NC}"
@@ -716,10 +721,8 @@ URL: https://${MONITORING_DOMAIN}
 Username: admin
 Password: ${MONITORING_PASSWORD}
 
-GRAFANA
-URL: https://${MONITORING_DOMAIN}/grafana
-Username: admin
-Password: ${GRAFANA_ADMIN_PASSWORD}
+BESZEL (behind the basic auth above)
+Create the admin account on first visit, then pair the agent.
 
 ================================================================================
 ⚠️  DELETE THIS FILE AFTER SAVING CREDENTIALS SECURELY!

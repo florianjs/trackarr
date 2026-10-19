@@ -49,9 +49,9 @@ The installer will automatically:
 - Set up TLS/SSL with Let's Encrypt
 - Create systemd service for auto-restart
 - Configure PostgreSQL, Redis, Caddy, and monitoring
-- Set up Prometheus + Grafana monitoring
+- Set up Beszel monitoring
 
-After installation, Grafana is accessible at `https://monitoring.your-domain.com/grafana` with default credentials `admin` / `admin`.
+After installation, open `https://monitoring.your-domain.com` right away: it is protected by basic auth (user `admin`, password shown at the end of the install and saved in `CREDENTIALS.txt`), and the first visitor creates the Beszel admin account. Then [pair the agent](/guide/monitoring#pairing-the-agent).
 
 ### Option 2: Docker Setup (Interactive)
 
@@ -109,7 +109,7 @@ At minimum, configure these in your `.env`:
 
 - `DOMAIN` — Your main domain (e.g., `tracker.example.com`)
 - `TRACKER_DOMAIN` — Announce domain (e.g., `announce.example.com`)
-- `MONITORING_DOMAIN` — Grafana domain (e.g., `monitoring.example.com`)
+- `MONITORING_DOMAIN` — Monitoring (Beszel) domain (e.g., `monitoring.example.com`)
 - `ACME_EMAIL` — Email for Let's Encrypt SSL certificates
 - `TRACKER_INTERNAL_TOKEN` — Token shared by the app and the tracker service (`openssl rand -hex 32`)
   :::
@@ -148,6 +148,23 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 Swarms refill as clients re-announce (up to 10 minutes). Upload/download transferred between the last announce before the upgrade and the first one after is not credited.
+:::
+
+::: warning Upgrading: monitoring moved to Beszel
+Prometheus, Grafana and the exporters are replaced by [Beszel](/guide/monitoring). After pulling, remove the old monitoring containers:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d --remove-orphans
+```
+
+Once you no longer need the history, delete the old volumes by hand (`prometheus_data` and `grafana_data`, prefixed with the Compose project name):
+
+```bash
+docker volume ls
+docker volume rm <project>_prometheus_data <project>_grafana_data
+```
+
+Then [pair the Beszel agent](/guide/monitoring#pairing-the-agent). `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` can be removed from `.env`.
 :::
 
 ## Next Steps

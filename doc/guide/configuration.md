@@ -35,22 +35,18 @@ Trackarr is configured primarily through environment variables. This page covers
 | `TRACKER_SECRET`   | Secret for generating passkeys              | —                                |
 | `IP_HASH_SECRET`   | Secret for hashing peer IPs                 | —                                |
 | `TRACKER_HTTP_URL` | HTTP announce URL (shown in .torrent files) | `http://localhost:8080/announce` |
-| `TRACKER_UDP_URL`  | UDP announce URL                            | `udp://localhost:8081/announce`  |
-| `TRACKER_WS_URL`   | WebSocket URL                               | `ws://localhost:8082`            |
 | `TRACKER_DEBUG`    | Enable verbose tracker logging              | `false`                          |
 | `TRACKER_INTERNAL_URL`   | Tracker service private API (app side)  | `http://localhost:8090`          |
 | `TRACKER_INTERNAL_TOKEN` | Shared token between the app and the tracker service | —                       |
 
-The tracker runs as a separate service (`trackarr-tracker`, HTTP only). UDP and WebSocket announces are not served: `TRACKER_UDP_URL` and `TRACKER_WS_URL` are only displayed. Tracker service settings are listed in the [environment reference](../reference/env.md#tracker).
+The tracker runs as a separate service (`trackarr-tracker`, HTTP only). UDP and WebSocket announces are not served. Tracker service settings are listed in the [environment reference](../reference/env.md#tracker).
 
-::: tip Configuring Tracker URLs
-These URLs are embedded in `.torrent` files and displayed in the admin dashboard. Configure them with your actual domain:
+::: tip Configuring the Tracker URL
+This URL is embedded in `.torrent` files and displayed in the admin dashboard. Configure it with your actual domain:
 
 ```bash
 # In your .env file
 TRACKER_HTTP_URL=https://tracker.your-domain.com/announce
-TRACKER_UDP_URL=udp://tracker.your-domain.com:8081/announce
-TRACKER_WS_URL=wss://tracker.your-domain.com/ws
 ```
 
 Replace `your-domain.com` with your actual tracker domain.
@@ -70,12 +66,15 @@ Replace `your-domain.com` with your actual tracker domain.
 
 The production compose file includes:
 
-- **app** — Main Trackarr application
-- **db** — PostgreSQL 16 database
+- **app** — Main Trackarr application (website and API)
+- **tracker** — BitTorrent tracker service in Rust (announces, scrapes)
+- **postgres** — PostgreSQL 16 database
+- **pgbouncer** — Connection pooling in front of PostgreSQL
 - **redis** — Redis 7 cache
 - **caddy** — Reverse proxy with automatic HTTPS
-- **prometheus** — Metrics collection
-- **grafana** — Dashboards and monitoring
+- **beszel** — Monitoring hub and UI ([Monitoring](/guide/monitoring))
+- **beszel-agent** — Host and container stats (Compose profile `monitoring`, starts once paired)
+- **docker-proxy** — Read-only Docker API filter for the agent (Compose profile `monitoring`)
 
 ### Development (`docker-compose.yml`)
 
@@ -111,7 +110,7 @@ services:
 
 ## Caddy Configuration
 
-The production setup uses Caddy for automatic HTTPS. Configuration is in `docker/Caddyfile`:
+The production setup uses Caddy for automatic HTTPS. Configuration is in `docker/caddy/Caddyfile`:
 
 ```
 {$DOMAIN} {
@@ -122,13 +121,11 @@ announce.{$DOMAIN} {
     reverse_proxy app:3000
 }
 
-monitoring.{$DOMAIN} {
-    handle_path /grafana* {
-        reverse_proxy grafana:3000
+{$MONITORING_DOMAIN} {
+    basicauth {
+        {$MONITORING_USER:admin} {$MONITORING_PASSWORD_HASH}
     }
-    handle_path /prometheus* {
-        reverse_proxy prometheus:9090
-    }
+    reverse_proxy trackarr-beszel:8090
 }
 ```
 

@@ -1,6 +1,6 @@
 # Production Docker Compose Configuration
 # Enhanced security settings for private tracker deployment
-# Includes: Caddy (reverse proxy), PgBouncer (connection pooling), Prometheus + Grafana (monitoring)
+# Includes: Caddy (reverse proxy), PgBouncer (connection pooling), Beszel (monitoring)
 
 services:
   # =============================================================================
@@ -49,8 +49,6 @@ services:
       dockerfile: Dockerfile
       args:
         TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
-        TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
-        TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
     container_name: trackarr-app
     restart: always
     # Enhanced security: Drop all capabilities and add only required ones
@@ -79,13 +77,9 @@ services:
       REDIS_PORT: 6379
       # Tracker announce URLs (displayed in admin dashboard)
       TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
-      TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
-      TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
       # Runtime override of the URLs baked at build time: these end up in the
       # announce URL of every downloaded .torrent (issue #49)
       NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
-      NUXT_PUBLIC_TRACKER_UDP_URL: ${TRACKER_UDP_URL:-udp://localhost:8081/announce}
-      NUXT_PUBLIC_TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
       # Security: Secret for hashing peer IPs
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
       # Tracker service private API (swarm peers, status)
@@ -154,7 +148,7 @@ services:
     volumes:
       # Swarms saved on stop, reloaded on start (no credit gap on deploys)
       - tracker_data:/data
-    # 8080: announces through Caddy; 8090: private API (app, Prometheus)
+    # 8080: announces through Caddy; 8090: private API (app, health, metrics)
     expose:
       - "8080"
       - "8090"
@@ -339,127 +333,83 @@ services:
           memory: 256M
 
   # =============================================================================
-  # MONITORING - Prometheus
+  # MONITORING - Beszel (host and container metrics, alerts)
   # =============================================================================
-  prometheus:
-    image: prom/prometheus:v2.48.0
-    container_name: trackarr-prometheus
+  # Web UI at https://MONITORING_DOMAIN (Caddy basic auth, then Beszel login).
+  # Pairing, once: create the admin account, "Add system" with host
+  # /beszel_socket/beszel.sock, put its key and token in .env as
+  # BESZEL_AGENT_KEY / BESZEL_AGENT_TOKEN with COMPOSE_PROFILES=monitoring,
+  # then `docker compose -f docker-compose.prod.yml up -d`.
+  beszel:
+    image: henrygd/beszel:0.21.0
+    container_name: trackarr-beszel
     restart: always
-    command:
-      - "--config.file=/etc/prometheus/prometheus.yml"
-      - "--storage.tsdb.path=/prometheus"
-      - "--storage.tsdb.retention.time=30d"
-      - "--storage.tsdb.retention.size=10GB"
-      - "--web.console.libraries=/usr/share/prometheus/console_libraries"
-      - "--web.console.templates=/usr/share/prometheus/consoles"
-      - "--web.enable-lifecycle"
+    environment:
+      APP_URL: https://${MONITORING_DOMAIN:-monitoring.localhost}
     volumes:
-      - ./docker/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-      - prometheus_data:/prometheus
+      - beszel_data:/beszel_data
+      - beszel_socket:/beszel_socket
     expose:
-      - "9090"
+      - "8090"
     networks:
       - trackarr-internal
+      # Outbound access for alert notifications (email, webhooks)
+      - trackarr-public
     deploy:
       resources:
         limits:
-          memory: 512M
-        reservations:
           memory: 128M
 
-  # =============================================================================
-  # MONITORING - Grafana
-  # =============================================================================
-  grafana:
-    image: grafana/grafana:12.3.1
-    container_name: trackarr-grafana
+  beszel-agent:
+    image: henrygd/beszel-agent:0.21.0
+    container_name: trackarr-beszel-agent
+    # Starts once paired (exits without a key): COMPOSE_PROFILES=monitoring
+    profiles: [monitoring]
     restart: always
-    environment:
-      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
-      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD:?GRAFANA_ADMIN_PASSWORD is required}
-      GF_USERS_ALLOW_SIGN_UP: "false"
-      GF_SERVER_ROOT_URL: "https://${MONITORING_DOMAIN:-monitoring.localhost}/grafana/"
-      GF_SERVER_SERVE_FROM_SUB_PATH: "true"
-      # Plugins disabled - install manually if needed
-      # GF_INSTALL_PLUGINS: grafana-clock-panel,grafana-piechart-panel
+    # Host network: real host network statistics
+    network_mode: host
     volumes:
-      - grafana_data:/var/lib/grafana
-      - ./docker/grafana/provisioning:/etc/grafana/provisioning:ro
-    expose:
-      - "3000"
-    networks:
-      - trackarr-public
-      - trackarr-internal
-    depends_on:
-      - prometheus
+      - beszel_agent_data:/var/lib/beszel-agent
+      # The hub reaches the agent through this socket: no port opened
+      - beszel_socket:/beszel_socket
+    environment:
+      LISTEN: /beszel_socket/beszel.sock
+      # Per-container stats and "container down" alerts, through the filtered
+      # proxy below. Set to "" to monitor the host only
+      DOCKER_HOST: tcp://127.0.0.1:2375
+      KEY: ${BESZEL_AGENT_KEY:-}
+      TOKEN: ${BESZEL_AGENT_TOKEN:-}
     deploy:
       resources:
         limits:
-          memory: 256M
-        reservations:
           memory: 64M
 
-  # =============================================================================
-  # EXPORTERS - Metrics collection
-  # =============================================================================
-  node-exporter:
-    image: prom/node-exporter:v1.7.0
-    container_name: trackarr-node-exporter
+  # Filtered Docker API for the agent: container stats only, read-only
+  docker-proxy:
+    image: lscr.io/linuxserver/socket-proxy:3.4.7-r0-ls103
+    container_name: trackarr-docker-proxy
+    profiles: [monitoring]
     restart: always
-    command:
-      - "--path.procfs=/host/proc"
-      - "--path.sysfs=/host/sys"
-      - "--path.rootfs=/rootfs"
-      - "--collector.filesystem.mount-points-exclude=^/(sys|proc|dev|host|etc)($$|/)"
+    environment:
+      CONTAINERS: 1
+      INFO: 1
+      VERSION: 1
+      EVENTS: 0
+      POST: 0
     volumes:
-      - /proc:/host/proc:ro
-      - /sys:/host/sys:ro
-      - /:/rootfs:ro
-    expose:
-      - "9100"
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Host loopback only: the agent runs in the host network
+    ports:
+      - "127.0.0.1:2375:2375"
     networks:
-      - trackarr-internal
+      - docker-proxy
+    read_only: true
+    tmpfs:
+      - /run
     deploy:
       resources:
         limits:
-          memory: 64M
-
-  postgres-exporter:
-    image: prometheuscommunity/postgres-exporter:v0.15.0
-    container_name: trackarr-postgres-exporter
-    restart: always
-    environment:
-      DATA_SOURCE_NAME: "postgresql://${DB_USER:-tracker}:${DB_PASSWORD:?DB_PASSWORD is required}@postgres:5432/${DB_NAME:-trackarr}?sslmode=disable"
-    expose:
-      - "9187"
-    networks:
-      - trackarr-internal
-    depends_on:
-      postgres:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 64M
-
-  redis-exporter:
-    image: oliver006/redis_exporter:v1.55.0
-    container_name: trackarr-redis-exporter
-    restart: always
-    environment:
-      REDIS_ADDR: redis://redis:6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
-    expose:
-      - "9121"
-    networks:
-      - trackarr-internal
-    depends_on:
-      redis:
-        condition: service_healthy
-    deploy:
-      resources:
-        limits:
-          memory: 64M
+          memory: 32M
 
   # =============================================================================
   # OPTIONAL: Redis Sentinel for HA (uncomment for production HA)
@@ -476,6 +426,8 @@ services:
 networks:
   trackarr-public:
     driver: bridge
+  docker-proxy:
+    driver: bridge
   trackarr-internal:
     driver: bridge
     internal: true # Isolated from host network
@@ -486,6 +438,12 @@ networks:
 volumes:
   postgres_data:
     driver: local
+  beszel_data:
+    driver: local
+  beszel_socket:
+    driver: local
+  beszel_agent_data:
+    driver: local
   tracker_data:
     driver: local
   redis_data:
@@ -495,10 +453,6 @@ volumes:
   caddy_config:
     driver: local
   caddy_logs:
-    driver: local
-  prometheus_data:
-    driver: local
-  grafana_data:
     driver: local
   uploads_data:
     driver: local

@@ -58,3 +58,7 @@ documentation/
 .scripts/publish-public.sh
 # Internal working notes
 .ignore/
+
+# Test output
+coverage/
+.vitest/

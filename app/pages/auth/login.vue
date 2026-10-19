@@ -99,6 +99,16 @@
           <span v-if="loading">{{ t('auth.login.signingIn') }}</span>
           <span v-else>{{ t('auth.login.signIn') }}</span>
         </button>
+        <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
+        <div class="sr-only" aria-hidden="true">
+          <input
+            v-model="form.hpot_field"
+            type="text"
+            name="hpot_field"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
       </form>
 
       <div
@@ -121,7 +131,7 @@
 </template>
 
 <script setup lang="ts">
-import { generateLoginProof } from '~/utils/crypto';
+import { deriveLoginVerifier } from '~/utils/crypto';
 
 definePageMeta({
   layout: false,
@@ -162,6 +172,7 @@ useHead({
 const form = reactive({
   username: '',
   password: '',
+  hpot_field: '',
 });
 
 const error = ref('');
@@ -181,22 +192,19 @@ async function handleLogin() {
       { query: { username: form.username } }
     );
 
-    // Step 2: Generate ZKE proof client-side
+    // Step 2: Derive the verifier client-side
     authStatus.value = t('auth.status.generatingProof');
-    const proof = await generateLoginProof(
-      form.password,
-      challengeData.salt,
-      challengeData.challenge
-    );
+    const verifier = await deriveLoginVerifier(form.password, challengeData.salt);
 
-    // Step 3: Send proof to server (password never leaves client)
+    // Step 3: Send the verifier (the password never leaves the browser)
     authStatus.value = t('auth.status.authenticating');
     await $fetch('/api/auth/login', {
       method: 'POST',
       body: {
         username: form.username,
         challenge: challengeData.challenge,
-        proof,
+        verifier,
+        hpot_field: form.hpot_field,
       },
     });
 

@@ -2,6 +2,9 @@ import { count, eq, and, isNull, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { users, bannedIps, invitations } from '../../db/schema';
 import { generateToken } from '../../utils/crypto';
+import { hashVerifier } from '../../utils/verifier';
+import { isHoneypotFilled } from '../../utils/honeypot';
+import { SecurityAlertType, sendSecurityAlert } from '../../utils/alerts';
 import {
   isRegistrationOpen,
   setRegistrationOpen,
@@ -27,6 +30,15 @@ export default defineEventHandler(async (event) => {
 
   // Validate request body with Zod
   const body = await validateBody(event, registerSchema);
+  if (isHoneypotFilled(body.hpot_field)) {
+    void sendSecurityAlert(SecurityAlertType.HONEYPOT_TRIGGERED, {
+      title: 'Bot filled the hidden registration field',
+      description: 'Registration refused',
+      ip: getClientIP(event),
+      details: { username: body.username },
+    }).catch(() => {});
+    throw createError({ statusCode: 400, message: 'Registration failed' });
+  }
 
   // Verify Proof of Work first (anti-abuse)
   const powValid = await verifyPoWSolution({
@@ -126,8 +138,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Create user with ZKE credentials (no password hash - we store verifier)
+  // Create user with ZKE credentials: the server never sees the password, and
+  // stores only a hash of the verifier derived from it
   const userId = crypto.randomUUID();
+  const authVerifier = await hashVerifier(body.authVerifier);
   const passkey = generateToken(16); // 32-char hex string for tracker auth
   const starterUpload = await getStarterUpload();
   const defaultInvites = await getDefaultInvites();
@@ -160,7 +174,7 @@ export default defineEventHandler(async (event) => {
       id: userId,
       username: body.username,
       authSalt: body.authSalt,
-      authVerifier: body.authVerifier,
+      authVerifier,
       passkey,
       isAdmin: isFirstUser,
       isModerator: false,

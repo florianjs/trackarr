@@ -312,38 +312,42 @@ e21V5@postgres:5432/trackarr = host=postgres port=5432 auth_user=tracker
 
 ## Monitoring Issues
 
-### Grafana Shows Black Screen
+### Beszel Shows No System / Agent Not Running
 
-**Symptoms:** Grafana dashboard loads but displays nothing.
+**Symptoms:** Beszel loads but lists no system, or the system stays down.
 
 **Causes:**
 
-- Incorrect `GF_SERVER_ROOT_URL` configuration
-- Grafana redirect loop
+- The agent was never paired: it exits without a key
+- `COMPOSE_PROFILES=monitoring` is missing from `.env`, so the agent is not started
 
 **Solutions:**
 
-1. Verify `GF_SERVER_ROOT_URL` includes the full path:
+1. Pair the agent as described in [Monitoring](/guide/monitoring#pairing-the-agent) (host `/beszel_socket/beszel.sock`), and check `.env`:
 
    ```
-   GF_SERVER_ROOT_URL=https://monitoring.your-domain.com/grafana
+   BESZEL_AGENT_KEY=...
+   BESZEL_AGENT_TOKEN=...
+   COMPOSE_PROFILES=monitoring
    ```
 
-2. Restart Grafana:
+2. Start it and check its logs:
    ```bash
-   docker compose -f docker-compose.prod.yml restart grafana
+   docker compose -f docker-compose.prod.yml up -d
+   docker logs trackarr-beszel-agent
    ```
 
 ---
 
-### Forgot Grafana Password
+### Forgot Monitoring Basic Auth Password
 
 **Solutions:**
 
-Reset the admin password:
+Generate a new hash and put it in `.env` as `MONITORING_PASSWORD_HASH`, doubling every `$` (`$$`) for Docker Compose:
 
 ```bash
-docker exec -it trackarr-grafana grafana-cli admin reset-admin-password <new-password>
+printf '%s\n' '<new-password>' | docker run --rm -i caddy:2-alpine caddy hash-password
+docker compose -f docker-compose.prod.yml up -d caddy
 ```
 
 ---

@@ -13,6 +13,7 @@ use crate::abuse::{self, FailureLimiter};
 use crate::config::Config;
 use crate::credit::{self, SeedingSets};
 use crate::dedupe::Dedupe;
+use crate::events::{AbuseEvent, AbuseEvents};
 use crate::invalidate::Invalidation;
 use crate::ledger::{self, Ledger, UserDelta};
 use crate::lookups::{Lookups, TrackerTorrent, TrackerUser};
@@ -45,10 +46,15 @@ pub struct Tracker {
     owners: Arc<Owners>,
     dedupe: Dedupe,
     pub limiter: FailureLimiter,
+    pub events: AbuseEvents,
     seeding: SeedingSets,
     settings: RwLock<Arc<Settings>>,
     /// Successful announces since start
     pub announces: AtomicU64,
+    /// (announces, time) at the last sweep, for the rate below
+    rate_sample: std::sync::Mutex<(u64, u64)>,
+    /// Announces per second over the last sweep interval (f64 bits)
+    announce_rate: AtomicU64,
     started_at: u64,
     /// No publishing until swarms refilled; zero after restoring a fresh snapshot
     warmup_ms: AtomicU64,
@@ -66,12 +72,15 @@ impl Tracker {
             redis,
             completed: Completed::default(),
             announces: AtomicU64::new(0),
+            rate_sample: std::sync::Mutex::new((0, now_ms())),
+            announce_rate: AtomicU64::new(0),
             started_at: now_ms(),
             warmup_ms: AtomicU64::new(config.warmup * 1000),
             publish_state: tokio::sync::Mutex::default(),
             synced: AtomicBool::new(false),
             swarms: Swarms::new(config.max_peers_per_user),
             limiter: FailureLimiter::new(config.max_failures_per_minute),
+            events: AbuseEvents::default(),
             config,
             pool,
             ledger: Ledger::default(),
@@ -118,7 +127,7 @@ impl Tracker {
                 .counters
                 .unknown_torrent
                 .fetch_add(1, Ordering::Relaxed);
-            self.limiter.record_failure(ip, started);
+            self.record_failure(ip, started);
         }
         let settings = self.settings();
         let freeleech = settings.freeleech_active(Utc::now());
@@ -200,7 +209,7 @@ impl Tracker {
                 .claim(&request.info_hash, &request.peer_id, request.event, now)
         {
             self.account(
-                request, &user, &torrent, &settings, freeleech, &outcome, now,
+                request, &user, &torrent, &settings, freeleech, &outcome, now, ip,
             )
             .await;
         }
@@ -225,7 +234,22 @@ impl Tracker {
         freeleech: bool,
         outcome: &Outcome,
         now: u64,
+        ip: IpAddr,
     ) {
+        if let Some(claimed) = credit::impossible_upload(
+            outcome.previous.as_ref(),
+            request.uploaded,
+            now,
+            self.config.max_rate_bytes,
+        ) {
+            self.events.report(AbuseEvent::ImpossibleUpload {
+                ip: ip.to_string(),
+                user_id: user.id.to_string(),
+                info_hash: to_hex(&request.info_hash),
+                claimed,
+                at: now,
+            });
+        }
         let credit = credit::compute_credit(
             outcome.previous.as_ref(),
             request.uploaded,
@@ -383,6 +407,17 @@ impl Tracker {
         Ok(response::scrape(&entries))
     }
 
+    /// Count a failed lookup; report the client when it gets blocked
+    fn record_failure(&self, ip: IpAddr, now: u64) {
+        if self.limiter.record_failure(ip, now) {
+            self.events.report(AbuseEvent::BlockedClient {
+                ip: ip.to_string(),
+                failures: self.limiter.max_failures(),
+                at: now,
+            });
+        }
+    }
+
     /// The user behind a passkey, unless the client is over its failure
     /// budget: then nothing is looked up. Unknown passkeys count as failures.
     async fn lookup_user(
@@ -404,7 +439,7 @@ impl Tracker {
                 .counters
                 .invalid_passkey
                 .fetch_add(1, Ordering::Relaxed);
-            self.limiter.record_failure(ip, now);
+            self.record_failure(ip, now);
         }
         Ok(user)
     }
@@ -412,6 +447,14 @@ impl Tracker {
     /// Periodic housekeeping: expired peers, bonus sets
     pub fn sweep(&self) {
         let now = now_ms();
+        let announces = self.announces.load(Ordering::Relaxed);
+        {
+            let mut sample = self.rate_sample.lock().unwrap_or_else(|p| p.into_inner());
+            let elapsed = now.saturating_sub(sample.1).max(1) as f64 / 1000.0;
+            let rate = announces.saturating_sub(sample.0) as f64 / elapsed;
+            self.announce_rate.store(rate.to_bits(), Ordering::Relaxed);
+            *sample = (announces, now);
+        }
         let expired = self.swarms.expire(now);
         self.seeding.purge(now);
         if !expired.is_empty() {
@@ -424,6 +467,9 @@ impl Tracker {
             Ok(0) => {}
             Ok(count) => tracing::debug!("flushed {count} accounting rows"),
             Err(err) => tracing::error!("accounting flush failed (will retry): {err}"),
+        }
+        if let Err(err) = self.events.flush(&self.redis).await {
+            tracing::warn!("abuse events not published (will retry): {err}");
         }
         if let Err(err) = self.completed.flush(&self.redis).await {
             tracing::warn!("completed counts not published (will retry): {err}");
@@ -505,6 +551,11 @@ impl Tracker {
 
     pub fn uptime_ms(&self) -> u64 {
         now_ms().saturating_sub(self.started_at)
+    }
+
+    /// Announces per second over the last minute
+    pub fn announce_rate(&self) -> f64 {
+        f64::from_bits(self.announce_rate.load(Ordering::Relaxed))
     }
 
     pub fn is_synced(&self) -> bool {

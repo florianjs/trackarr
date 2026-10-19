@@ -65,22 +65,6 @@ export default defineNuxtConfig({
       appVersion: pkg.version,
       trackerHttpUrl:
         process.env.TRACKER_HTTP_URL || 'http://localhost:8080/announce',
-      trackerUdpUrl:
-        process.env.TRACKER_UDP_URL || 'udp://localhost:8081/announce',
-      trackerWsUrl: process.env.TRACKER_WS_URL || 'ws://localhost:8082',
-    },
-  },
-
-  // Exclude native modules from Nitro bundling
-  nitro: {
-    externals: {
-      inline: [],
-      external: [
-        'node-datachannel',
-        'webrtc-polyfill',
-        '@thaunknown/simple-peer',
-        'webtorrent',
-      ],
     },
   },
 

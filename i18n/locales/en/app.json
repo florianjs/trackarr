@@ -664,31 +664,16 @@
     "system": {
       "backupWarning": "Backup your database before updating",
       "checkUpdates": "Check for updates",
-      "confirmPassword": "Confirm Password",
-      "confirmPasswordDescription": "Re-enter your new password to verify.",
-      "confirmPasswordPlaceholder": "Confirm new password",
-      "currentPassword": "Current Password",
-      "currentPasswordDescription": "The password you currently use to log in to Grafana.",
-      "currentPasswordPlaceholder": "Enter current Grafana password",
       "currentVersion": "Current Version",
       "downtimeWarning": "The update will cause a brief downtime",
-      "grafanaFailed": "Failed to update Grafana password",
-      "grafanaIntro": "Change the Grafana admin password. You'll need your current password.",
-      "grafanaSuccess": "Grafana password updated successfully",
-      "grafanaTitle": "Grafana Password",
       "hideInstructions": "Hide Update Instructions",
       "installedVersion": "Installed version of Trackarr",
-      "newPassword": "New Password",
-      "newPasswordDescription": "Must be at least 8 characters long.",
-      "newPasswordPlaceholder": "Enter new password",
       "published": "Published {date}",
       "showInstructions": "Show Update Instructions",
       "step": "Step {step}: {description}",
       "upToDate": "You're running the latest version",
       "updateAvailable": "Update Available: {version}",
       "updateCommands": "Update Commands",
-      "updateGrafanaPassword": "Update Grafana Password",
-      "updating": "Updating...",
       "versionTitle": "Version & Updates",
       "viewChangelog": "View changelog"
     },
@@ -728,8 +713,7 @@
     },
     "endpoints": {
       "title": "Endpoints",
-      "httpAnnounce": "HTTP Announce",
-      "udpAnnounce": "UDP Announce"
+      "httpAnnounce": "HTTP Announce"
     },
     "torznabLogs": {
       "title": "Recent Requests",
@@ -820,6 +804,38 @@
       "resolve": "Resolve",
       "dismiss": "Dismiss",
       "empty": "No reports found"
+    },
+    "securityAlerts": {
+      "title": "Security alerts",
+      "empty": "No security alerts",
+      "loadError": "Could not load the alerts.",
+      "clear": "Clear",
+      "hint": "Brute force, honeypot hits and tracker abuse. Set DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL or SECURITY_WEBHOOK_URL to also be notified.",
+      "severity": {
+        "critical": "Critical",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
+    "trackerHealth": {
+      "title": "Tracker",
+      "running": "Running",
+      "unreachable": "Unreachable",
+      "unreachableHint": "The tracker service does not answer: check that its container runs and that TRACKER_INTERNAL_TOKEN is the same on both sides.",
+      "warmingUp": "Warming up: swarm counters are published once clients have re-announced.",
+      "announcesPerSecond": "Announces / s",
+      "swarms": "Swarms",
+      "seeders": "Seeders",
+      "leechers": "Leechers",
+      "pendingAccounting": "Credit to write",
+      "blockedNow": "Blocked now",
+      "uptime": "Uptime",
+      "rejected": "Rejected since start",
+      "invalidPasskey": "Invalid passkeys",
+      "unknownTorrent": "Unknown torrents",
+      "tooManyPeers": "Too many peers",
+      "blockedClients": "Blocked clients"
     },
     "homepage": {
       "title": "Homepage Content",

@@ -38,7 +38,12 @@ export const passkeySchema = z
 export const loginSchema = z.object({
   username: z.string().min(1, 'Username is required').max(100),
   challenge: z.string().length(64, 'Invalid challenge'),
-  proof: z.string().length(64, 'Invalid proof'),
+  // Base64 of a SHA-256: 44 chars. Optional so pages loaded before the
+  // protocol change get a "reload" message instead of a validation error
+  verifier: z.string().min(40, 'Invalid verifier').max(100).optional(),
+  proof: z.string().optional(),
+  // Honeypot (server/utils/honeypot.ts): hidden, must stay empty
+  hpot_field: z.string().max(500).optional(),
 });
 
 export const registerSchema = z.object({
@@ -68,6 +73,8 @@ export const registerSchema = z.object({
     .min(12, 'Panic password must be at least 12 characters')
     .max(128)
     .optional(),
+  // Honeypot (server/utils/honeypot.ts): hidden, must stay empty
+  hpot_field: z.string().max(500).optional(),
 });
 
 // ============================================================================

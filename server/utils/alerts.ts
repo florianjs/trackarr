@@ -25,6 +25,8 @@ export enum SecurityAlertType {
   MALICIOUS_USER_AGENT = 'malicious_user_agent',
   UNAUTHORIZED_ACCESS = 'unauthorized_access',
   ANOMALOUS_BEHAVIOR = 'anomalous_behavior',
+  HONEYPOT_TRIGGERED = 'honeypot_triggered',
+  RATIO_CHEAT_SUSPECTED = 'ratio_cheat_suspected',
 }
 
 // Severity mapping
@@ -39,24 +41,27 @@ const SEVERITY_MAP: Record<SecurityAlertType, SecurityAlert['severity']> = {
   [SecurityAlertType.MALICIOUS_USER_AGENT]: 'medium',
   [SecurityAlertType.UNAUTHORIZED_ACCESS]: 'high',
   [SecurityAlertType.ANOMALOUS_BEHAVIOR]: 'medium',
+  [SecurityAlertType.HONEYPOT_TRIGGERED]: 'medium',
+  [SecurityAlertType.RATIO_CHEAT_SUSPECTED]: 'high',
 };
 
 // Cooldown to avoid alert spam (in milliseconds)
 const ALERT_COOLDOWN = 5 * 60 * 1000; // 5 minutes
 const alertCooldowns = new Map<string, number>();
 
+// Last alerts, shown in the admin dashboard even when no webhook is set
+const INBOX_KEY = 'security:alerts';
+const INBOX_SIZE = 200;
+
+/**
+ * @param subject What the cooldown applies to; defaults to the IP. Set it when
+ * one IP can legitimately raise distinct alerts (e.g. a user id).
+ */
 export async function sendSecurityAlert(
   type: SecurityAlertType,
-  details: Omit<SecurityAlert, 'type' | 'severity' | 'timestamp'>
+  details: Omit<SecurityAlert, 'type' | 'severity' | 'timestamp'>,
+  subject?: string
 ): Promise<void> {
-  // Skip alerts in non-production unless explicitly enabled
-  if (
-    process.env.NODE_ENV !== 'production' &&
-    process.env.ENABLE_DEV_ALERTS !== 'true'
-  ) {
-    return;
-  }
-
   const severity = SEVERITY_MAP[type];
   const alert: SecurityAlert = {
     type,
@@ -66,7 +71,7 @@ export async function sendSecurityAlert(
   };
 
   // Check cooldown to avoid spam
-  const cooldownKey = `${type}:${details.ip || 'unknown'}`;
+  const cooldownKey = `${type}:${subject ?? details.ip ?? 'unknown'}`;
   const lastAlert = alertCooldowns.get(cooldownKey);
   const now = Date.now();
 
@@ -87,8 +92,33 @@ export async function sendSecurityAlert(
   // Log the alert
   securityLogger.warn({ alert }, `Security Alert: ${alert.title}`);
 
-  // Send to configured webhooks
-  await sendToWebhooks(alert);
+  await redis
+    .multi()
+    .lpush(INBOX_KEY, JSON.stringify(alert))
+    .ltrim(INBOX_KEY, 0, INBOX_SIZE - 1)
+    .exec()
+    .catch((err) => securityLogger.error({ err }, 'Security alert not stored'));
+
+  // Webhooks only in production, unless explicitly enabled
+  if (process.env.NODE_ENV === 'production' || process.env.ENABLE_DEV_ALERTS === 'true') {
+    await sendToWebhooks(alert);
+  }
+}
+
+/** Most recent first */
+export async function listSecurityAlerts(limit = INBOX_SIZE): Promise<SecurityAlert[]> {
+  const raw = await redis.lrange(INBOX_KEY, 0, Math.min(limit, INBOX_SIZE) - 1);
+  return raw.flatMap((entry) => {
+    try {
+      return [JSON.parse(entry) as SecurityAlert];
+    } catch {
+      return [];
+    }
+  });
+}
+
+export async function clearSecurityAlerts(): Promise<void> {
+  await redis.del(INBOX_KEY);
 }
 
 async function sendToWebhooks(alert: SecurityAlert): Promise<void> {

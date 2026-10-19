@@ -664,31 +664,16 @@
     "system": {
       "backupWarning": "更新前请先备份数据库",
       "checkUpdates": "检查更新",
-      "confirmPassword": "确认密码",
-      "confirmPasswordDescription": "请再次输入新密码以确认。",
-      "confirmPasswordPlaceholder": "确认新密码",
-      "currentPassword": "当前密码",
-      "currentPasswordDescription": "你当前用于登录 Grafana 的密码。",
-      "currentPasswordPlaceholder": "请输入当前 Grafana 密码",
       "currentVersion": "当前版本",
       "downtimeWarning": "更新期间服务会短暂中断",
-      "grafanaFailed": "更新 Grafana 密码失败",
-      "grafanaIntro": "修改 Grafana 管理员密码，需要提供当前密码。",
-      "grafanaSuccess": "Grafana 密码已更新",
-      "grafanaTitle": "Grafana 密码",
       "hideInstructions": "隐藏更新说明",
       "installedVersion": "已安装的 Trackarr 版本",
-      "newPassword": "新密码",
-      "newPasswordDescription": "至少 8 个字符。",
-      "newPasswordPlaceholder": "请输入新密码",
       "published": "发布于 {date}",
       "showInstructions": "显示更新说明",
       "step": "第 {step} 步：{description}",
       "upToDate": "当前已是最新版本",
       "updateAvailable": "有可用更新：{version}",
       "updateCommands": "更新命令",
-      "updateGrafanaPassword": "更新 Grafana 密码",
-      "updating": "更新中…",
       "versionTitle": "版本与更新",
       "viewChangelog": "查看更新日志"
     },
@@ -728,8 +713,7 @@
     },
     "endpoints": {
       "title": "接口地址",
-      "httpAnnounce": "HTTP Announce",
-      "udpAnnounce": "UDP Announce"
+      "httpAnnounce": "HTTP Announce"
     },
     "torznabLogs": {
       "title": "最近请求",
@@ -820,6 +804,38 @@
       "resolve": "解决",
       "dismiss": "驳回",
       "empty": "没有找到举报"
+    },
+    "securityAlerts": {
+      "title": "安全警报",
+      "empty": "没有安全警报",
+      "loadError": "无法加载警报。",
+      "clear": "清除",
+      "hint": "暴力破解、蜜罐触发和 Tracker 滥用。设置 DISCORD_WEBHOOK_URL、SLACK_WEBHOOK_URL 或 SECURITY_WEBHOOK_URL 以同时接收通知。",
+      "severity": {
+        "critical": "严重",
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      }
+    },
+    "trackerHealth": {
+      "title": "Tracker",
+      "running": "运行中",
+      "unreachable": "无法访问",
+      "unreachableHint": "Tracker 服务没有响应：请检查其容器是否在运行，以及两端的 TRACKER_INTERNAL_TOKEN 是否一致。",
+      "warmingUp": "启动中：客户端重新 announce 后才会发布 swarm 计数。",
+      "announcesPerSecond": "每秒 announce",
+      "swarms": "Swarm",
+      "seeders": "做种者",
+      "leechers": "下载者",
+      "pendingAccounting": "待写入的流量",
+      "blockedNow": "当前已封锁",
+      "uptime": "运行时间",
+      "rejected": "启动以来拒绝",
+      "invalidPasskey": "无效的 passkey",
+      "unknownTorrent": "未知的种子",
+      "tooManyPeers": "peer 过多",
+      "blockedClients": "被阻止的客户端"
     },
     "homepage": {
       "title": "首页内容",

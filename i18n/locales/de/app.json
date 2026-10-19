@@ -664,31 +664,16 @@
     "system": {
       "backupWarning": "Sichere deine Datenbank vor dem Update",
       "checkUpdates": "Nach Updates suchen",
-      "confirmPassword": "Passwort bestätigen",
-      "confirmPasswordDescription": "Gib dein neues Passwort zur Bestätigung erneut ein.",
-      "confirmPasswordPlaceholder": "Neues Passwort bestätigen",
-      "currentPassword": "Aktuelles Passwort",
-      "currentPasswordDescription": "Das Passwort, mit dem du dich derzeit bei Grafana anmeldest.",
-      "currentPasswordPlaceholder": "Aktuelles Grafana-Passwort eingeben",
       "currentVersion": "Aktuelle Version",
       "downtimeWarning": "Das Update verursacht eine kurze Ausfallzeit",
-      "grafanaFailed": "Grafana-Passwort konnte nicht geändert werden",
-      "grafanaIntro": "Ändere das Grafana-Admin-Passwort. Du brauchst dein aktuelles Passwort.",
-      "grafanaSuccess": "Grafana-Passwort erfolgreich geändert",
-      "grafanaTitle": "Grafana-Passwort",
       "hideInstructions": "Update-Anleitung ausblenden",
       "installedVersion": "Installierte Version von Trackarr",
-      "newPassword": "Neues Passwort",
-      "newPasswordDescription": "Muss mindestens 8 Zeichen lang sein.",
-      "newPasswordPlaceholder": "Neues Passwort eingeben",
       "published": "Veröffentlicht am {date}",
       "showInstructions": "Update-Anleitung anzeigen",
       "step": "Schritt {step}: {description}",
       "upToDate": "Du verwendest die neueste Version",
       "updateAvailable": "Update verfügbar: {version}",
       "updateCommands": "Update-Befehle",
-      "updateGrafanaPassword": "Grafana-Passwort ändern",
-      "updating": "Wird aktualisiert...",
       "versionTitle": "Version & Updates",
       "viewChangelog": "Changelog ansehen"
     },
@@ -728,8 +713,7 @@
     },
     "endpoints": {
       "title": "Endpunkte",
-      "httpAnnounce": "HTTP-Announce",
-      "udpAnnounce": "UDP-Announce"
+      "httpAnnounce": "HTTP-Announce"
     },
     "torznabLogs": {
       "title": "Letzte Anfragen",
@@ -820,6 +804,38 @@
       "resolve": "Erledigen",
       "dismiss": "Verwerfen",
       "empty": "Keine Meldungen gefunden"
+    },
+    "securityAlerts": {
+      "title": "Sicherheitswarnungen",
+      "empty": "Keine Sicherheitswarnungen",
+      "loadError": "Die Warnungen konnten nicht geladen werden.",
+      "clear": "Leeren",
+      "hint": "Brute-Force, ausgelöste Honeypots und Tracker-Missbrauch. Setze DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL oder SECURITY_WEBHOOK_URL, um zusätzlich benachrichtigt zu werden.",
+      "severity": {
+        "critical": "Kritisch",
+        "high": "Hoch",
+        "medium": "Mittel",
+        "low": "Niedrig"
+      }
+    },
+    "trackerHealth": {
+      "title": "Tracker",
+      "running": "Läuft",
+      "unreachable": "Nicht erreichbar",
+      "unreachableHint": "Der Tracker-Dienst antwortet nicht: Prüfe, ob sein Container läuft und TRACKER_INTERNAL_TOKEN auf beiden Seiten gleich ist.",
+      "warmingUp": "Startphase: Swarm-Zähler werden veröffentlicht, sobald sich die Clients erneut gemeldet haben.",
+      "announcesPerSecond": "Announces / s",
+      "swarms": "Swarms",
+      "seeders": "Seeder",
+      "leechers": "Leecher",
+      "pendingAccounting": "Noch zu schreibende Gutschriften",
+      "blockedNow": "Derzeit gesperrt",
+      "uptime": "Laufzeit",
+      "rejected": "Abgelehnt seit Start",
+      "invalidPasskey": "Ungültige Passkeys",
+      "unknownTorrent": "Unbekannte Torrents",
+      "tooManyPeers": "Zu viele Peers",
+      "blockedClients": "Blockierte Clients"
     },
     "homepage": {
       "title": "Startseiteninhalt",
