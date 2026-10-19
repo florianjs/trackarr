@@ -1,7 +1,7 @@
 /**
  * Server-side revocation of sealed session cookies. A cookie carries the
  * users.session_version it was issued with; bumping the column (ban, sign out
- * everywhere, panic) invalidates every cookie issued before.
+ * everywhere) invalidates every cookie issued before.
  */
 export interface SessionUserState {
   isBanned: boolean;

@@ -33,7 +33,8 @@ The version is bumped when:
 
 - a moderator or admin bans the account (sessions stay revoked after an unban)
 - the user clicks **Sign out other devices** in the account menu (the current session is kept)
-- panic mode encrypts the database (everyone is signed out)
+
+Panic mode does not sign anyone out: the admin needs their session to reach the restore form, since nobody can log in while verifiers are encrypted.
 
 ## IP Privacy
 

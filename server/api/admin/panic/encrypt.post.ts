@@ -8,7 +8,7 @@ import {
   forumPosts,
   torrentComments,
 } from '../../../db/schema';
-import { bumpedSessionVersion, requireAdminSession } from '../../../utils/adminAuth';
+import { requireAdminSession } from '../../../utils/adminAuth';
 import { protectEndpoint } from '../../../utils/rateLimit';
 import {
   deriveKey,
@@ -92,8 +92,6 @@ export default defineEventHandler(async (event) => {
           authVerifier: encryptField(user.authVerifier, key),
           passkey: encryptField(user.passkey, key)!,
           lastIp: encryptField(user.lastIp, key) ?? undefined,
-          // Sign everyone out: open sessions must not outlive the lockdown
-          sessionVersion: bumpedSessionVersion(),
         })
         .where(eq(users.id, user.id));
     }

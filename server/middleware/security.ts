@@ -247,7 +247,7 @@ export default defineEventHandler(async (event) => {
         .limit(1);
 
       // Banned, or revoked: session_version bumped since the cookie was
-      // issued (ban, sign out everywhere, panic). Read on every request, so
+      // issued (ban, sign out everywhere). Read on every request, so
       // revocation applies at once on every node.
       const check = checkSession(session.sessionVersion, dbUser);
       if (check !== 'valid') {
