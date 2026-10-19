@@ -99,6 +99,16 @@
           <span v-if="loading">{{ t('auth.login.signingIn') }}</span>
           <span v-else>{{ t('auth.login.signIn') }}</span>
         </button>
+        <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
+        <div class="sr-only" aria-hidden="true">
+          <input
+            v-model="form.hpot_field"
+            type="text"
+            name="hpot_field"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
       </form>
 
       <div
@@ -162,6 +172,7 @@ useHead({
 const form = reactive({
   username: '',
   password: '',
+  hpot_field: '',
 });
 
 const error = ref('');
@@ -193,6 +204,7 @@ async function handleLogin() {
         username: form.username,
         challenge: challengeData.challenge,
         verifier,
+        hpot_field: form.hpot_field,
       },
     });
 

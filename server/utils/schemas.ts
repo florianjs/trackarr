@@ -42,6 +42,8 @@ export const loginSchema = z.object({
   // protocol change get a "reload" message instead of a validation error
   verifier: z.string().min(40, 'Invalid verifier').max(100).optional(),
   proof: z.string().optional(),
+  // Honeypot (server/utils/honeypot.ts): hidden, must stay empty
+  hpot_field: z.string().max(500).optional(),
 });
 
 export const registerSchema = z.object({
@@ -71,6 +73,8 @@ export const registerSchema = z.object({
     .min(12, 'Panic password must be at least 12 characters')
     .max(128)
     .optional(),
+  // Honeypot (server/utils/honeypot.ts): hidden, must stay empty
+  hpot_field: z.string().max(500).optional(),
 });
 
 // ============================================================================

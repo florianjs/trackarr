@@ -821,6 +821,18 @@
       "dismiss": "却下",
       "empty": "通報はありません"
     },
+    "securityAlerts": {
+      "title": "セキュリティアラート",
+      "empty": "セキュリティアラートはありません",
+      "clear": "クリア",
+      "hint": "ブルートフォース、ハニーポットの作動、トラッカーの不正利用。DISCORD_WEBHOOK_URL、SLACK_WEBHOOK_URL、SECURITY_WEBHOOK_URL を設定すると通知も受け取れます。",
+      "severity": {
+        "critical": "重大",
+        "high": "高",
+        "medium": "中",
+        "low": "低"
+      }
+    },
     "homepage": {
       "title": "ホームページのコンテンツ",
       "heroSection": "ヒーローセクション",

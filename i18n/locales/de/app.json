@@ -821,6 +821,18 @@
       "dismiss": "Verwerfen",
       "empty": "Keine Meldungen gefunden"
     },
+    "securityAlerts": {
+      "title": "Sicherheitswarnungen",
+      "empty": "Keine Sicherheitswarnungen",
+      "clear": "Leeren",
+      "hint": "Brute-Force, ausgelöste Honeypots und Tracker-Missbrauch. Setze DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL oder SECURITY_WEBHOOK_URL, um zusätzlich benachrichtigt zu werden.",
+      "severity": {
+        "critical": "Kritisch",
+        "high": "Hoch",
+        "medium": "Mittel",
+        "low": "Niedrig"
+      }
+    },
     "homepage": {
       "title": "Startseiteninhalt",
       "heroSection": "Hero-Bereich",

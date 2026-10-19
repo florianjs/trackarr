@@ -5,6 +5,7 @@
  */
 
 import { redis } from '../redis/client';
+import { SecurityAlertType, sendSecurityAlert } from './alerts';
 import {
   getClientIPOptions,
   rateLimitSubject,
@@ -120,7 +121,9 @@ export async function isBlacklisted(ip: string): Promise<boolean> {
 export async function blacklistIP(
   ip: string,
   reason: string,
-  previousViolations: number = 0
+  previousViolations: number = 0,
+  /** False when the caller already sends its own, more specific alert */
+  notify = true
 ): Promise<void> {
   const normalizedIP = rateLimitSubject(ip);
   const violations = previousViolations + 1;
@@ -148,6 +151,13 @@ export async function blacklistIP(
   } catch {
     memoryBlacklist.set(normalizedIP, entry);
   }
+
+  if (!notify) return;
+  void sendSecurityAlert(SecurityAlertType.IP_BLACKLISTED, {
+    title: 'IP temporarily blocked',
+    description: `${reason}: blocked for ${duration / 1000}s (violation ${violations})`,
+    ip: normalizedIP,
+  }).catch(() => {});
 }
 
 /**
@@ -449,13 +459,31 @@ export async function assertAccountNotLocked(username: string): Promise<void> {
   }
 }
 
-export async function recordAccountFailure(username: string): Promise<void> {
+export async function recordAccountFailure(username: string, ip?: string): Promise<void> {
   const key = accountFailureKey(username);
   const now = Date.now();
-  await redis
+  const result = await redis
     .multi()
     .zadd(key, now, `${now}:${Math.random()}`)
+    .zcard(key)
     .expire(key, ACCOUNT_FAILURE_WINDOW_SEC)
     .exec()
-    .catch((err) => console.warn('[RateLimit] Account failure not recorded:', err.message));
+    .catch((err) => {
+      console.warn('[RateLimit] Account failure not recorded:', err.message);
+      return null;
+    });
+
+  // Alert once, when the account gets locked (not on every later attempt)
+  if (Number(result?.[1]?.[1] ?? 0) === ACCOUNT_MAX_FAILURES) {
+    void sendSecurityAlert(
+      SecurityAlertType.BRUTE_FORCE_DETECTED,
+      {
+        title: 'Login brute force on one account',
+        description: `${ACCOUNT_MAX_FAILURES} failed logins in ${ACCOUNT_FAILURE_WINDOW_SEC / 60} min: logins to this account are paused`,
+        ip,
+        details: { username: username.trim() },
+      },
+      `user:${username.trim().toLowerCase()}`
+    ).catch(() => {});
+  }
 }

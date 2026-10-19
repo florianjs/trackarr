@@ -4,6 +4,8 @@ import { users, bannedIps } from '../../db/schema';
 import { validateBody, loginSchema } from '../../utils/schemas';
 import { redis } from '../../redis/client';
 import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
+import { isHoneypotFilled } from '../../utils/honeypot';
+import { SecurityAlertType, sendSecurityAlert } from '../../utils/alerts';
 import {
   burnVerifierCheck,
   checkVerifier,
@@ -27,6 +29,15 @@ export default defineEventHandler(async (event) => {
 
   // Validate request body with Zod (username, challenge, verifier)
   const body = await validateBody(event, loginSchema);
+  if (isHoneypotFilled(body.hpot_field)) {
+    void sendSecurityAlert(SecurityAlertType.HONEYPOT_TRIGGERED, {
+      title: 'Bot filled the hidden login field',
+      description: 'Login refused like a wrong password',
+      ip: getClientIP(event),
+      details: { username: body.username },
+    }).catch(() => {});
+    throw createError({ statusCode: 401, message: 'Invalid credentials' });
+  }
   await assertAccountNotLocked(body.username);
 
   // Atomically consume the challenge: a concurrent request cannot reuse it
@@ -85,7 +96,7 @@ export default defineEventHandler(async (event) => {
         await burnVerifierCheck(body.verifier).then(() => false);
 
   if (!valid || !user) {
-    await recordAccountFailure(body.username);
+    await recordAccountFailure(body.username, clientIp ?? undefined);
     throw createError({
       statusCode: 401,
       message: 'Invalid credentials',

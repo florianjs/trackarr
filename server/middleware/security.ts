@@ -4,7 +4,9 @@
  * Implements request validation, suspicious activity detection, and security headers
  */
 
-import { detectDDoS, isBlacklisted, getClientIP } from '../utils/rateLimit';
+import { blacklistIP, detectDDoS, isBlacklisted, getClientIP } from '../utils/rateLimit';
+import { isHoneypotPath } from '../utils/honeypot';
+import { SecurityAlertType, sendSecurityAlert } from '../utils/alerts';
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
@@ -71,23 +73,8 @@ function hasBlockedUserAgent(userAgent: string): boolean {
  * Validate request path
  */
 function isValidPath(path: string): boolean {
-  // Block path traversal attempts
-  if (path.includes('..')) return false;
-  if (path.includes('//')) return false;
-
-  // Block sensitive paths
-  const blockedPaths = [
-    '/etc/',
-    '/proc/',
-    '/sys/',
-    '/.env',
-    '/.git',
-    '/wp-admin',
-    '/phpmyadmin',
-    '/admin.php',
-  ];
-
-  return !blockedPaths.some((blocked) => path.toLowerCase().includes(blocked));
+  // Block path traversal attempts (scanner targets: see honeypot below)
+  return !path.includes('..') && !path.includes('//');
 }
 
 /**
@@ -195,6 +182,25 @@ export default defineEventHandler(async (event) => {
       statusCode: 403,
       message: 'Access denied',
     });
+  }
+
+  // Honeypot paths: nobody but a scanner asks for them. Look like any other
+  // missing page, alert the admins and block the IP for a while.
+  if (isHoneypotPath(path)) {
+    console.warn(`[Security] Honeypot path probed: ${path.slice(0, 100)}`);
+    void sendSecurityAlert(SecurityAlertType.HONEYPOT_TRIGGERED, {
+      title: 'Honeypot path probed',
+      description: process.env.HONEYPOT_BAN === 'false'
+        ? 'A scanner requested a trap path'
+        : 'A scanner requested a trap path: IP temporarily blocked',
+      ip,
+      endpoint: path.slice(0, 200),
+      userAgent: userAgent.slice(0, 200),
+    }).catch(() => {});
+    if (ip && process.env.HONEYPOT_BAN !== 'false') {
+      await blacklistIP(ip, `Honeypot: ${path.slice(0, 100)}`, 0, false);
+    }
+    throw createError({ statusCode: 404, message: 'Page not found' });
   }
 
   // Validate request path

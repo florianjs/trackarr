@@ -821,6 +821,18 @@
       "dismiss": "Dismiss",
       "empty": "No reports found"
     },
+    "securityAlerts": {
+      "title": "Security alerts",
+      "empty": "No security alerts",
+      "clear": "Clear",
+      "hint": "Brute force, honeypot hits and tracker abuse. Set DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL or SECURITY_WEBHOOK_URL to also be notified.",
+      "severity": {
+        "critical": "Critical",
+        "high": "High",
+        "medium": "Medium",
+        "low": "Low"
+      }
+    },
     "homepage": {
       "title": "Homepage Content",
       "heroSection": "Hero Section",
