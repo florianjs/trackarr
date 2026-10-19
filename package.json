@@ -54,10 +54,10 @@
   },
   "devDependencies": {
     "@nuxt/icon": "^2.1.1",
-    "@types/bencode": "^2.0.4",
+    "@types/bencode": "^4.0.0",
     "@types/create-torrent": "^6.1.0",
-    "@types/node": "^25.0.3",
-    "@types/parse-torrent": "^5.8.8",
+    "@types/node": "^24.19.2",
+    "@types/parse-torrent": "^11.0.1",
     "@types/sanitize-html": "^2.16.2",
     "@vitest/coverage-v8": "^5.0.5",
     "drizzle-kit": "^0.31.8",
