@@ -46,13 +46,11 @@ services:
       NUXT_PUBLIC_TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
       NUXT_PUBLIC_TRACKER_WS_URL: ${TRACKER_WS_URL:-}
       IP_HASH_SECRET: ${IP_HASH_SECRET}
-      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
-      # Tracker port is published directly (no proxy): ignore X-Forwarded-For
-      TRACKER_TRUST_PROXY: "false"
+      # Tracker service private API (swarm peers, status)
+      TRACKER_INTERNAL_URL: http://tracker:8090
+      TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
     ports:
       - "3000:3000"   # Web UI
-      - "8080:8080"   # HTTP Tracker
-      - "8082:8082"   # WebSocket Tracker
     volumes:
       - uploads_data:/app/public/uploads
       - uploads_data:/app/.output/public/uploads
@@ -70,6 +68,41 @@ services:
       timeout: 10s
       retries: 5
       start_period: 90s
+
+  # =============================================================================
+  # TRACKER - BitTorrent announce/scrape (Rust service, see tracker/)
+  # =============================================================================
+  tracker:
+    image: trackarr-tracker:latest
+    build: ./tracker
+    container_name: trackarr-tracker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@postgres:5432/${DB_NAME:-trackarr}
+      DB_SSL: "false"
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      IP_HASH_SECRET: ${IP_HASH_SECRET}
+      TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
+      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+      # Tracker port is published directly (no proxy): ignore X-Forwarded-For
+      TRACKER_TRUST_PROXY: "false"
+    volumes:
+      # Swarms saved on stop, reloaded on start (no credit gap on deploys)
+      - tracker_data:/data
+    ports:
+      - "8080:8080"   # HTTP Tracker
+    read_only: true
+    networks:
+      - trackarr
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    # Time to write pending credit to the database on stop
+    stop_grace_period: 30s
 
   # =============================================================================
   # DATABASE - PostgreSQL
@@ -169,6 +202,8 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
+  tracker_data:
     driver: local
   redis_data:
     driver: local

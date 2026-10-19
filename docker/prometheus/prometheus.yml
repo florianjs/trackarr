@@ -57,6 +57,12 @@ scrape_configs:
       - targets: ['caddy:2019']
     metrics_path: /metrics
 
+  # Tracker service (announces, swarms, peers, pending credit)
+  - job_name: 'tracker'
+    static_configs:
+      - targets: ['trackarr-tracker:8090']
+    metrics_path: /metrics
+
   # Trackarr application metrics (if exposed)
   # - job_name: 'trackarr'
   #   static_configs:

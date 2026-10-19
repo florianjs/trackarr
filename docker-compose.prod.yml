@@ -31,6 +31,7 @@ services:
       - trackarr-internal
     depends_on:
       - app
+      - tracker
     deploy:
       resources:
         limits:
@@ -87,11 +88,11 @@ services:
       NUXT_PUBLIC_TRACKER_WS_URL: ${TRACKER_WS_URL:-ws://localhost:8082}
       # Security: Secret for hashing peer IPs
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
-      # Debug mode for verbose tracker logging
-      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+      # Tracker service private API (swarm peers, status)
+      TRACKER_INTERNAL_URL: http://tracker:8090
+      TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
     expose:
       - "3000"
-      - "8080"
     volumes:
       - uploads_data:/app/public/uploads
     networks:
@@ -124,6 +125,54 @@ services:
       timeout: 10s
       retries: 5
       start_period: 60s
+
+  # =============================================================================
+  # TRACKER - BitTorrent announce/scrape (Rust service, see tracker/)
+  # =============================================================================
+  tracker:
+    image: trackarr-tracker:latest
+    build: ./tracker
+    container_name: trackarr-tracker
+    restart: always
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:?DB_PASSWORD is required}@pgbouncer:6432/${DB_NAME:-trackarr}?sslmode=disable
+      DB_SSL: "false"
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
+      TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
+      # Debug mode for verbose tracker logging
+      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+    volumes:
+      # Swarms saved on stop, reloaded on start (no credit gap on deploys)
+      - tracker_data:/data
+    # 8080: announces through Caddy; 8090: private API (app, Prometheus)
+    expose:
+      - "8080"
+      - "8090"
+    networks:
+      - trackarr-internal
+    depends_on:
+      redis:
+        condition: service_healthy
+      pgbouncer:
+        condition: service_healthy
+    # Time to write pending credit to the database on stop
+    stop_grace_period: 30s
+    deploy:
+      resources:
+        limits:
+          # Swarms live in memory: ~250 bytes per peer measured, so 1G holds
+          # about 4M peers. Raise it for bigger trackers.
+          memory: 1G
+        reservations:
+          memory: 64M
 
   # =============================================================================
   # DATABASE - PostgreSQL with optimized settings
@@ -434,6 +483,8 @@ networks:
 
 volumes:
   postgres_data:
+    driver: local
+  tracker_data:
     driver: local
   redis_data:
     driver: local

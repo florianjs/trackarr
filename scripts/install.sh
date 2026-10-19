@@ -341,6 +341,11 @@ generate_secrets() {
     IP_HASH_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
     echo -n "$IP_HASH_SECRET" > "$SECRETS_DIR/ip_hash_secret.txt"
     log_info "Generated IP hash secret"
+
+    # Token between the app and the tracker service's private API (64 chars)
+    TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)
+    echo -n "$TRACKER_INTERNAL_TOKEN" > "$SECRETS_DIR/tracker_internal_token.txt"
+    log_info "Generated tracker internal token"
     
     # Nuxt session secret (64 chars)
     NUXT_SESSION_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
@@ -400,6 +405,7 @@ REDIS_KEY_PREFIX=tr:
 
 # Security
 IP_HASH_SECRET=${IP_HASH_SECRET}
+TRACKER_INTERNAL_TOKEN=${TRACKER_INTERNAL_TOKEN}
 
 # Domains
 DOMAIN=${DOMAIN}

@@ -1,7 +1,7 @@
 # Trackarr - replicated deployment across datacenters
 #
 # One copy of this directory per site, each with its own .env (see .env.example):
-#   - app sites (2+):  COMPOSE_PROFILES=node -> etcd, sentinel, postgres, redis, app, caddy
+#   - app sites (2+):  COMPOSE_PROFILES=node -> etcd, sentinel, postgres, redis, app, tracker, caddy
 #   - witness site:    COMPOSE_PROFILES=     -> etcd, sentinel (votes only, tiny VPS)
 #
 # Sites talk over a private network (WireGuard recommended). Data services use
@@ -158,9 +158,11 @@ services:
       # Other sites' trackers, written as fallback tiers into .torrent files
       TRACKER_BACKUP_HTTP_URLS: ${TRACKER_BACKUP_HTTP_URLS:-}
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
+      # Tracker service private API (swarm peers, status)
+      TRACKER_INTERNAL_URL: http://tracker:8090
+      TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
     expose:
       - "3000"
-      - "8080"
     volumes:
       # Only read once to import pre-HA uploads into the database
       - uploads_data:/app/public/uploads
@@ -172,6 +174,49 @@ services:
       timeout: 5s
       retries: 3
       start_period: 60s
+
+  # BitTorrent tracker (Rust service, see tracker/). Swarms live in memory:
+  # after a failover they refill as clients re-announce (one interval).
+  tracker:
+    image: ${TRACKER_IMAGE:-trackarr-tracker:latest}
+    build: ../../tracker
+    profiles: [node]
+    container_name: trackarr-tracker
+    restart: always
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    read_only: true
+    sysctls:
+      net.ipv4.tcp_keepalive_time: 10
+      net.ipv4.tcp_keepalive_intvl: 5
+      net.ipv4.tcp_keepalive_probes: 3
+      net.ipv4.tcp_retries2: 5
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      # Same order as the app: this site's Postgres first
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@${NODE_IP}:5432,${PG_HOSTS}/${DB_NAME:-trackarr}?target_session_attrs=primary
+      DB_SSL: "false"
+      DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-3}
+      DB_KEEP_ALIVE: "10"
+      REDIS_SENTINELS: ${REDIS_SENTINELS:?REDIS_SENTINELS is required}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_COMMAND_TIMEOUT_MS: "5000"
+      IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
+      TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
+    volumes:
+      # Swarms saved on stop, reloaded on start (no credit gap on deploys)
+      - tracker_data:/data
+    expose:
+      - "8080"
+      - "8090"
+    networks:
+      - trackarr
+    stop_grace_period: 30s
 
   caddy:
     image: caddy:2-alpine
@@ -195,6 +240,7 @@ services:
       - trackarr
     depends_on:
       - app
+      - tracker
 
 networks:
   trackarr:
@@ -208,6 +254,7 @@ volumes:
   sentinel_data:
   pgdata:
   redis_data:
+  tracker_data:
   uploads_data:
   caddy_data:
   caddy_config:

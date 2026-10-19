@@ -29,10 +29,10 @@ services:
       REDIS_HOST: redis
       REDIS_PORT: 6379
       IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret-not-for-production}
-      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+      TRACKER_INTERNAL_URL: http://tracker:8090
+      TRACKER_INTERNAL_TOKEN: loadtest-internal-token
     ports:
       - "3000:3000"   # Nuxt app
-      - "8080:8080"   # Tracker HTTP (for load testing)
     networks:
       - trackarr-loadtest
     depends_on:
@@ -46,6 +46,36 @@ services:
       timeout: 5s
       retries: 5
       start_period: 30s
+
+  tracker:
+    image: trackarr-tracker:latest
+    build: ./tracker
+    container_name: trackarr-loadtest-tracker
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}
+      DB_SSL: "false"
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret-not-for-production}
+      TRACKER_INTERNAL_TOKEN: loadtest-internal-token
+      TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
+      # Load generator hits the port directly
+      TRACKER_TRUST_PROXY: "false"
+    ports:
+      - "8080:8080"   # Tracker HTTP (for load testing)
+      - "8090:8090"   # Metrics
+    volumes:
+      # Swarms saved on stop, reloaded on start (no credit gap on deploys)
+      - tracker_data:/data
+    networks:
+      - trackarr-loadtest
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
   postgres:
     image: postgres:16-alpine
@@ -101,3 +131,4 @@ networks:
 
 volumes:
   loadtest_postgres:
+  tracker_data:

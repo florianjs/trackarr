@@ -68,7 +68,7 @@
 	}
 
 	# Tracker endpoints
-	reverse_proxy trackarr-app:8080 {
+	reverse_proxy trackarr-tracker:8080 {
 		header_up X-Real-IP {remote_host}
 		header_up X-Forwarded-For {remote_host}
 	}
