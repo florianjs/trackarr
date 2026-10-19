@@ -4,10 +4,11 @@
 
 **A modern, high-performance private BitTorrent tracker**
 
-Built with Nuxt 4 • PostgreSQL • Redis
+Built with Nuxt 4 • Rust • PostgreSQL • Redis
 
 [![Node.js](https://img.shields.io/badge/Node.js-22+-339933?style=flat&logo=nodedotjs&logoColor=white)](https://nodejs.org/)
 [![Nuxt](https://img.shields.io/badge/Nuxt-4-00DC82?style=flat&logo=nuxtdotjs&logoColor=white)](https://nuxt.com/)
+[![Rust](https://img.shields.io/badge/Rust-1.95+-DEA584?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
 [![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/bbbkCPkdRk)
@@ -177,7 +178,8 @@ The encryption key is derived from the panic password itself, so the database al
 
 ### Prerequisites
 
-- **Node.js** 22+ • **Docker** & Docker Compose • **npm**
+- **Docker** & Docker Compose (the installer builds the app and the Rust tracker images)
+- For development outside Docker: **Node.js** 22+ and **npm** for the app, **Rust** 1.95+ for the tracker
 
 #### DNS Configuration (Required before installation)
 
