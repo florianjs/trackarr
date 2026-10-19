@@ -1,13 +1,9 @@
 # Production Dockerfile for Trackarr
-FROM node:22-alpine AS base
+FROM node:24-alpine AS base
 
 ARG TRACKER_HTTP_URL
-ARG TRACKER_UDP_URL
-ARG TRACKER_WS_URL
 
 ENV TRACKER_HTTP_URL=${TRACKER_HTTP_URL}
-ENV TRACKER_UDP_URL=${TRACKER_UDP_URL}
-ENV TRACKER_WS_URL=${TRACKER_WS_URL}
 
 
 # Install dependencies only when needed
