@@ -91,13 +91,10 @@ For full manual control over the installation:
 # Clone repository
 git clone https://github.com/florianjs/trackarr.git && cd trackarr
 
-# Copy and configure environment
-cp .env.example .env
+# Create .env with generated secrets (asks for your domains)
+./scripts/setup.sh
 
-# Generate secrets (or set them manually in .env)
-./scripts/generate-secrets.sh
-
-# Edit .env with your domain and settings
+# Review .env
 nano .env
 
 # Start production stack

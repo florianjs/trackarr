@@ -5,7 +5,6 @@
 .nitro
 .cache
 .dev-test
-.dev-downloads
 .vitepress/cache
 doc/node_modules
 dist
@@ -29,7 +28,6 @@ logs
 # Secrets
 CREDENTIALS.txt
 secrets/
-docker/pgbouncer/userlist.txt
 
 # Local env files
 .env
@@ -53,7 +51,6 @@ Thumbs.db
 # Documentation (internal only)
 documentation/
 .dev-test/	
-.dev-downloads/	
 .publishignore
 .scripts/publish-public.sh
 # Internal working notes
