@@ -65,7 +65,6 @@ x-app: &app
 x-app-env: &app-env
   NODE_ENV: production
   NUXT_SESSION_PASSWORD: test-session-secret-at-least-32-chars
-  DATABASE_URL: postgres://tracker:test-db@172.30.8.1:5432,172.30.8.2:5432/trackarr?target_session_attrs=primary
   DB_SSL: "false"
   DB_CONNECT_TIMEOUT: "3"
   DB_IDLE_TIMEOUT: "0"
@@ -181,12 +180,17 @@ services:
   # --- App ---------------------------------------------------------------------
   app1:
     <<: *app
-    environment: *app-env
+    environment:
+      <<: *app-env
+      # Local site first, like docker/ha/compose.yml
+      DATABASE_URL: postgres://tracker:test-db@172.30.8.1:5432,172.30.8.2:5432/trackarr?target_session_attrs=primary
     networks: { wan: { ipv4_address: 172.30.8.11 } }
     ports: ["3001:3000", "8081:8080"]
   app2:
     <<: *app
-    environment: *app-env
+    environment:
+      <<: *app-env
+      DATABASE_URL: postgres://tracker:test-db@172.30.8.2:5432,172.30.8.1:5432/trackarr?target_session_attrs=primary
     networks: { wan: { ipv4_address: 172.30.8.12 } }
     ports: ["3002:3000", "8082:8080"]
 

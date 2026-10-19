@@ -140,8 +140,10 @@ services:
     environment:
       NODE_ENV: production
       NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET:?NUXT_SESSION_SECRET is required}
-      # Every Postgres node: the driver only keeps the current primary
-      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@${PG_HOSTS}/${DB_NAME:-trackarr}?target_session_attrs=primary
+      # Every Postgres node, this site's first: the driver only keeps the
+      # current primary, and new connections try hosts in order. Local first
+      # means no connect timeout on a dead remote site after a failover.
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@${NODE_IP}:5432,${PG_HOSTS}/${DB_NAME:-trackarr}?target_session_attrs=primary
       DB_SSL: "false"
       # Fail fast on a dead datacenter, keep healthy connections open
       DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-3}

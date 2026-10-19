@@ -98,9 +98,9 @@ Measured with the local test (`docker/ha/test/failover-test.sh`), dc1 cut off th
 
 | Step | Time |
 | --- | --- |
-| PostgreSQL promoted on dc2 | ~25s |
+| PostgreSQL promoted on dc2 | ~25-35s |
 | Redis promoted on dc2 | ~1s |
-| App on dc2 healthy on the new primaries | ~105s total |
+| App on dc2 healthy on the new primaries | right after, ~40s total |
 | Torrent clients | switch at their next announce |
 
 - No member data is lost in the test, but replication is **asynchronous**: in a real crash, the last second or so of writes may not have reached dc2 (some upload/download stats, a message).
