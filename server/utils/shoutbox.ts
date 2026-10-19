@@ -45,9 +45,11 @@ export async function requireShoutViewer(event: H3Event): Promise<ShoutViewer> {
   };
 }
 
+// Channel names are data, not translations: English like the default locale,
+// admins rename them in their own language
 const DEFAULT_CHANNELS = [
-  { slug: 'general', name: 'Général', position: 0, writeAccess: 'members' },
-  { slug: 'announcements', name: 'Annonces', position: 1, writeAccess: 'admins' },
+  { slug: 'general', name: 'General', position: 0, writeAccess: 'members' },
+  { slug: 'announcements', name: 'Announcements', position: 1, writeAccess: 'admins' },
 ] as const;
 
 /**
