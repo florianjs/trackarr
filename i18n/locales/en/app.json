@@ -1050,6 +1050,13 @@
     "requestTorrent": "Request a torrent",
     "forum": "Latest on the forum",
     "noTopics": "No topic yet.",
-    "startTopic": "Start one"
+    "startTopic": "Start one",
+    "site": {
+      "title": "The tracker in numbers",
+      "members": "Members",
+      "activePeers": "Active peers",
+      "seededTorrents": "Seeded torrents",
+      "shared": "Data shared"
+    }
   }
 }
