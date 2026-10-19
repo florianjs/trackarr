@@ -150,8 +150,6 @@ TRACKER_INTERNAL_TOKEN=${TRACKER_INTERNAL_TOKEN}
 # Tracker URLs (Local OrbStack domains)
 # =============================================================================
 TRACKER_HTTP_URL=http://localhost:8080/announce
-TRACKER_UDP_URL=
-TRACKER_WS_URL=
 
 # =============================================================================
 # Monitoring (Beszel on http://localhost:3001: pair the agent, then set these)

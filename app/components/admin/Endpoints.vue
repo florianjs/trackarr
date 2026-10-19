@@ -30,44 +30,6 @@
           </button>
         </div>
       </div>
-      <div>
-        <label
-          class="text-xs font-bold text-text-muted ml-1"
-          >{{ t('admin.endpoints.udpAnnounce') }}</label
-        >
-        <div class="flex items-center gap-2 mt-1">
-          <code
-            class="flex-1 text-xs font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
-          >
-            {{ endpoints.udp }}
-          </code>
-          <button
-            class="p-1.5 text-text-muted hover:text-white transition-colors"
-            @click="copyToClipboard(endpoints.udp)"
-          >
-            <Icon name="ph:copy" />
-          </button>
-        </div>
-      </div>
-      <div>
-        <label
-          class="text-xs font-bold text-text-muted ml-1"
-          >WebSocket</label
-        >
-        <div class="flex items-center gap-2 mt-1">
-          <code
-            class="flex-1 text-xs font-mono bg-bg-primary border border-border px-2 py-1.5 rounded text-text-secondary truncate"
-          >
-            {{ endpoints.ws }}
-          </code>
-          <button
-            class="p-1.5 text-text-muted hover:text-white transition-colors"
-            @click="copyToClipboard(endpoints.ws)"
-          >
-            <Icon name="ph:copy" />
-          </button>
-        </div>
-      </div>
     </div>
   </div>
 </template>
@@ -78,8 +40,6 @@ const config = useRuntimeConfig();
 
 const endpoints = computed(() => ({
   http: config.public.trackerHttpUrl as string,
-  udp: config.public.trackerUdpUrl as string,
-  ws: config.public.trackerWsUrl as string,
 }));
 
 function copyToClipboard(text: string) {

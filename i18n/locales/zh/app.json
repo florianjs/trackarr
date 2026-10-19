@@ -713,8 +713,7 @@
     },
     "endpoints": {
       "title": "接口地址",
-      "httpAnnounce": "HTTP Announce",
-      "udpAnnounce": "UDP Announce"
+      "httpAnnounce": "HTTP Announce"
     },
     "torznabLogs": {
       "title": "最近请求",
