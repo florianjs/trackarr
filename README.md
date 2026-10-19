@@ -76,7 +76,7 @@ Trackarr uses a **Zero-Knowledge** authentication system: the server **never see
 │         │    Password NEVER leaves client           │           │
 │         │                                              │           │
 │         │                              6. Store salt + │           │
-│         │                                 verifier     │           │
+│         │                                 scrypt(verifier)         │
 │         │                              7. Create session           │
 │         │ ◄──────────────────────────────── 8. OK ─────┤           │
 │                                                                     │
@@ -96,27 +96,25 @@ Trackarr uses a **Zero-Knowledge** authentication system: the server **never see
 │         │                                              │           │
 │         │ 3. Derive key = PBKDF2(password, salt)       │           │
 │         │ 4. Compute verifier = SHA256(key)            │           │
-│         │ 5. Generate proof = SHA256(verifier+challenge)           │
 │         │                                              │           │
-│         │ 6. Send {username, proof, challenge} ───────►│           │
-│         │    Password NEVER leaves client           │           │
+│         │ 5. Send {username, verifier, challenge} ────►│           │
+│         │    over TLS; password NEVER leaves client    │           │
 │         │                                              │           │
-│         │                       7. Compute expected =  │           │
-│         │                          SHA256(storedVerifier+challenge)│
-│         │                       8. Verify proof == expected        │
-│         │ ◄──────────────────────────────── 9. Session ┤           │
+│         │                       6. Consume challenge   │           │
+│         │                       7. scrypt(verifier) ==  │           │
+│         │                          stored hash ?       │           │
+│         │ ◄──────────────────────────────── 8. Session ┤           │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 **Key Properties:**
 
-- **Password never transmitted** — Only cryptographic proofs
+- **Password never transmitted** — Only a verifier derived from it, over TLS
 - **PBKDF2 with 100k iterations** — Brute-force resistant
-- **Unique, single-use challenge per login** — Prevents replay attacks
+- **Only a scrypt hash of the verifier is stored** — A database copy cannot be replayed to log in; each password must be guessed through PBKDF2 and scrypt
+- **Unique, single-use challenge per login** — Decoys for unknown usernames, constant-time failures
 - **Proof of Work** — Stops automated registration attacks
-
-> **Limitation**: the stored verifier is enough to compute a valid proof. Someone who obtains a copy of the database can log in as any user without knowing their password, so database backups must be protected like password files. Moving to a PAKE (SRP / OPAQUE) is planned.
 
 ---
 

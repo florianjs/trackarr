@@ -26,7 +26,7 @@ Trackarr uses a **Zero-Knowledge** authentication system where the server **neve
 │         │    Password NEVER leaves client           │           │
 │         │                                              │           │
 │         │                              6. Store salt + │           │
-│         │                                 verifier     │           │
+│         │                                 scrypt(verifier)         │
 │         │                              7. Create session           │
 │         │ ◄──────────────────────────────── 8. OK ─────┤           │
 │                                                                     │
@@ -50,15 +50,14 @@ Trackarr uses a **Zero-Knowledge** authentication system where the server **neve
 │         │                                              │           │
 │         │ 3. Derive key = PBKDF2(password, salt)       │           │
 │         │ 4. Compute verifier = SHA256(key)            │           │
-│         │ 5. Generate proof = SHA256(verifier+challenge)           │
 │         │                                              │           │
-│         │ 6. Send {username, proof, challenge} ───────►│           │
-│         │    Password NEVER leaves client           │           │
+│         │ 5. Send {username, verifier, challenge} ────►│           │
+│         │    over TLS; password NEVER leaves client    │           │
 │         │                                              │           │
-│         │                       7. Compute expected =  │           │
-│         │                          SHA256(storedVerifier+challenge)│
-│         │                       8. Verify proof == expected        │
-│         │ ◄──────────────────────────────── 9. Session ┤           │
+│         │                       6. Consume challenge   │           │
+│         │                       7. scrypt(verifier) ==  │           │
+│         │                          stored hash ?       │           │
+│         │ ◄──────────────────────────────── 8. Session ┤           │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
@@ -67,7 +66,7 @@ Trackarr uses a **Zero-Knowledge** authentication system where the server **neve
 
 ### Password Never Transmitted
 
-Your password never leaves your device. Only cryptographic proofs derived from your password are sent to the server. Even if an attacker intercepts the network traffic, they cannot recover your password.
+Your password never leaves your device. The browser derives a verifier from it (PBKDF2, then SHA-256) and only that verifier is sent, over TLS. The server never sees, logs or stores your password.
 
 ### PBKDF2 with 100k Iterations
 
@@ -75,10 +74,7 @@ Password-Based Key Derivation Function 2 (PBKDF2) with 100,000 iterations makes 
 
 ### Unique Challenge Per Login
 
-Every login attempt receives a unique, time-limited challenge. This prevents:
-
-- **Replay attacks** — Captured login data cannot be reused
-- **Pre-computation attacks** — Attackers cannot pre-calculate proofs
+Every login attempt receives a unique, time-limited, single-use challenge, which also carries the account's salt. Unknown usernames get a decoy salt and challenge, and failed logins cost the same time whether the account exists or not, so the login form never reveals which accounts exist.
 
 ### Proof of Work
 
@@ -96,10 +92,10 @@ The server only stores:
 |------|---------|
 | Username | Account identification |
 | Salt | Random bytes for key derivation |
-| Verifier | SHA-256 hash of the derived key |
+| Verifier hash | scrypt hash (random salt) of the verifier |
 
 ::: tip
-Even with full database access, an attacker cannot recover passwords. The verifier is a one-way hash that cannot be reversed.
+The verifier itself is never stored: a database copy cannot be replayed to log in. To use it, an attacker has to guess each password through PBKDF2 (100,000 iterations) and scrypt.
 :::
 
 ## Comparison with Traditional Auth
@@ -107,6 +103,6 @@ Even with full database access, an attacker cannot recover passwords. The verifi
 | Aspect | Traditional | Zero-Knowledge |
 |--------|-------------|----------------|
 | Password storage | Hashed on server | Never reaches server |
-| Network exposure | Password sent over TLS | Only proof sent |
-| Database breach risk | Password hashes exposed | Only verifiers exposed |
+| Network exposure | Password sent over TLS | Only a derived verifier sent over TLS |
+| Database breach risk | Password hashes exposed | Hashes of derived verifiers exposed |
 | Server trust required | High | Minimal |

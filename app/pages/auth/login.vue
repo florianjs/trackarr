@@ -121,7 +121,7 @@
 </template>
 
 <script setup lang="ts">
-import { generateLoginProof } from '~/utils/crypto';
+import { deriveLoginVerifier } from '~/utils/crypto';
 
 definePageMeta({
   layout: false,
@@ -181,22 +181,18 @@ async function handleLogin() {
       { query: { username: form.username } }
     );
 
-    // Step 2: Generate ZKE proof client-side
+    // Step 2: Derive the verifier client-side
     authStatus.value = t('auth.status.generatingProof');
-    const proof = await generateLoginProof(
-      form.password,
-      challengeData.salt,
-      challengeData.challenge
-    );
+    const verifier = await deriveLoginVerifier(form.password, challengeData.salt);
 
-    // Step 3: Send proof to server (password never leaves client)
+    // Step 3: Send the verifier (the password never leaves the browser)
     authStatus.value = t('auth.status.authenticating');
     await $fetch('/api/auth/login', {
       method: 'POST',
       body: {
         username: form.username,
         challenge: challengeData.challenge,
-        proof,
+        verifier,
       },
     });
 

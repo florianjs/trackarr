@@ -106,26 +106,13 @@ export async function generateCredentials(password: string): Promise<ZKECredenti
 }
 
 /**
- * Generate login proof
- * Client proves knowledge of password without sending it
+ * Derive the login verifier from the password and the account's salt.
+ * Only the verifier is sent (over TLS), never the password; the server keeps
+ * a hash of it.
  */
-export async function generateLoginProof(
-  password: string, 
-  salt: string, 
-  challenge: string
-): Promise<string> {
-  // Reconstruct master key using provided salt
-  const saltBytes = fromBase64(salt);
-  const masterKey = await deriveKey(password, saltBytes);
-  
-  // Compute verifier
-  const verifier = await sha256(masterKey);
-  
-  // Proof = SHA256(verifier + challenge)
-  const proofInput = toBase64(verifier) + challenge;
-  const proof = await sha256Hex(proofInput);
-  
-  return proof;
+export async function deriveLoginVerifier(password: string, salt: string): Promise<string> {
+  const masterKey = await deriveKey(password, fromBase64(salt));
+  return toBase64(await sha256(masterKey));
 }
 
 /**

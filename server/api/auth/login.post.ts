@@ -1,10 +1,15 @@
-import { eq } from 'drizzle-orm';
-import { createHash, timingSafeEqual } from 'crypto';
+import { and, eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { users, bannedIps } from '../../db/schema';
 import { validateBody, loginSchema } from '../../utils/schemas';
 import { redis } from '../../redis/client';
 import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
+import {
+  burnVerifierCheck,
+  checkVerifier,
+  hashVerifier,
+  isHashedVerifier,
+} from '../../utils/verifier';
 import {
   assertAccountNotLocked,
   getClientIP,
@@ -14,13 +19,13 @@ import {
 
 /**
  * POST /api/auth/login
- * Authenticate user with Zero Knowledge proof
- * User proves knowledge of password without sending it
+ * Authenticate with the zero-knowledge verifier: derived from the password in
+ * the browser, which never sends the password itself
  */
 export default defineEventHandler(async (event) => {
   await protectEndpoint(event, 'login');
 
-  // Validate request body with Zod (now expects username, challenge, proof)
+  // Validate request body with Zod (username, challenge, verifier)
   const body = await validateBody(event, loginSchema);
   await assertAccountNotLocked(body.username);
 
@@ -33,29 +38,9 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Unknown usernames get a decoy challenge: fail exactly like a bad password
-  const user =
-    userId === FAKE_CHALLENGE_MARKER
-      ? undefined
-      : await db
-          .select()
-          .from(users)
-          .where(eq(users.id, userId))
-          .limit(1)
-          .then((r) => r[0]);
-
-  if (!user || user.username !== body.username) {
-    await recordAccountFailure(body.username);
-    throw createError({
-      statusCode: 401,
-      message: 'Invalid credentials',
-    });
-  }
-
-  // Check if IP is banned
+  // Not tied to the account: checked before looking it up
   const ip = getClientIP(event);
   const clientIp = ip === 'unknown' ? null : ip;
-
   if (clientIp) {
     const isIpBanned = await db
       .select()
@@ -72,29 +57,47 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  // Verify ZKE proof
-  // Expected proof = SHA256(authVerifier + challenge)
-  if (!user.authVerifier) {
+  // Pages loaded before the protocol change still send a proof
+  if (!body.verifier) {
     throw createError({
-      statusCode: 401,
-      message: 'Invalid credentials',
+      statusCode: 400,
+      message: 'The login form was updated: please reload the page',
     });
   }
-  
-  const expectedProof = createHash('sha256')
-    .update(user.authVerifier + body.challenge)
-    .digest();
-  const providedProof = Buffer.from(body.proof, 'hex');
 
-  if (
-    providedProof.length !== expectedProof.length ||
-    !timingSafeEqual(providedProof, expectedProof)
-  ) {
+  // Unknown usernames get a decoy challenge: fail exactly like a bad password
+  const user =
+    userId === FAKE_CHALLENGE_MARKER
+      ? undefined
+      : await db
+          .select()
+          .from(users)
+          .where(eq(users.id, userId))
+          .limit(1)
+          .then((r) => r[0]);
+
+  // The verifier is derived from the password in the browser (the password
+  // never leaves it) and compared with its stored scrypt hash
+  const valid =
+    user && user.username === body.username && user.authVerifier
+      ? await checkVerifier(user.authVerifier, body.verifier)
+      : // Same cost as a real check: timing must not reveal unknown accounts
+        await burnVerifierCheck(body.verifier).then(() => false);
+
+  if (!valid || !user) {
     await recordAccountFailure(body.username);
     throw createError({
       statusCode: 401,
       message: 'Invalid credentials',
     });
+  }
+
+  // Row written before verifiers were hashed: convert it now
+  if (user.authVerifier && !isHashedVerifier(user.authVerifier)) {
+    await db
+      .update(users)
+      .set({ authVerifier: await hashVerifier(body.verifier) })
+      .where(and(eq(users.id, user.id), eq(users.authVerifier, user.authVerifier)));
   }
 
   // Only after the proof: before it, the answer would tell anyone guessing

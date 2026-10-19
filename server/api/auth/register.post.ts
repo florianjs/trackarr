@@ -2,6 +2,7 @@ import { count, eq, and, isNull, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { users, bannedIps, invitations } from '../../db/schema';
 import { generateToken } from '../../utils/crypto';
+import { hashVerifier } from '../../utils/verifier';
 import {
   isRegistrationOpen,
   setRegistrationOpen,
@@ -126,8 +127,10 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Create user with ZKE credentials (no password hash - we store verifier)
+  // Create user with ZKE credentials: the server never sees the password, and
+  // stores only a hash of the verifier derived from it
   const userId = crypto.randomUUID();
+  const authVerifier = await hashVerifier(body.authVerifier);
   const passkey = generateToken(16); // 32-char hex string for tracker auth
   const starterUpload = await getStarterUpload();
   const defaultInvites = await getDefaultInvites();
@@ -160,7 +163,7 @@ export default defineEventHandler(async (event) => {
       id: userId,
       username: body.username,
       authSalt: body.authSalt,
-      authVerifier: body.authVerifier,
+      authVerifier,
       passkey,
       isAdmin: isFirstUser,
       isModerator: false,
