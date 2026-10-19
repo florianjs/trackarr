@@ -1,21 +1,23 @@
 /**
  * Site-wide numbers shown on the home page (members, live peers, seeded
- * torrents, data shared). Swarm counts need a scan of every peer hash, so
- * the result is cached in Redis and shared by every app node.
+ * torrents, data shared). Swarm counts come from the tracker service's
+ * published counters; the member totals need a full table aggregate, so the
+ * result is cached in Redis and shared by every app node.
  */
 
 import { sql } from 'drizzle-orm';
 import { db, schema } from '../db';
 import { redis } from '../redis/client';
-import { countPeers } from '../redis/peerCount';
+import { getGlobalStats, type GlobalStats } from '../redis/cache';
 
 const CACHE_KEY = 'stats:public';
 const CACHE_TTL_SEC = 300;
-const SCAN_BATCH = 500;
+/** Older counters mean the tracker stopped publishing: do not show them */
+const MAX_AGE_MS = 30 * 60 * 1000;
 
 export interface PublicStats {
   members: number;
-  /** null when Redis cannot be read */
+  /** null when the tracker counters are unavailable */
   activePeers: number | null;
   seededTorrents: number | null;
   /** Total uploaded by all members, in bytes */
@@ -23,40 +25,12 @@ export interface PublicStats {
   updatedAt: string;
 }
 
-/** Live peers and torrents with at least one seeder, from raw peer hashes */
-export function aggregateSwarms(swarms: Array<Record<string, string>>, now: number) {
-  let activePeers = 0;
-  let seededTorrents = 0;
-  for (const peers of swarms) {
-    const { seeders, leechers } = countPeers(peers, now);
-    activePeers += seeders + leechers;
-    if (seeders > 0) seededTorrents++;
+/** Live peers and seeded torrents, or nulls when the counters are missing or stale */
+export function swarmNumbers(stats: GlobalStats, now: number) {
+  if (stats.updatedAt === 0 || now - stats.updatedAt > MAX_AGE_MS) {
+    return { activePeers: null, seededTorrents: null };
   }
-  return { activePeers, seededTorrents };
-}
-
-async function scanSwarms() {
-  // SCAN returns keys with the client prefix, which commands add again
-  const keyPrefix = process.env.REDIS_KEY_PREFIX || 'ot:';
-  const now = Date.now();
-  let activePeers = 0;
-  let seededTorrents = 0;
-  let cursor = '0';
-  do {
-    const [next, keys] = await redis.scan(cursor, 'MATCH', `${keyPrefix}peers:*`, 'COUNT', SCAN_BATCH);
-    cursor = next;
-    if (keys.length === 0) continue;
-    const pipeline = redis.pipeline();
-    for (const key of keys) pipeline.hgetall(key.slice(keyPrefix.length));
-    const replies = (await pipeline.exec()) ?? [];
-    const swarms = replies
-      .filter(([err]) => !err)
-      .map(([, value]) => (value as Record<string, string> | null) ?? {});
-    const batch = aggregateSwarms(swarms, now);
-    activePeers += batch.activePeers;
-    seededTorrents += batch.seededTorrents;
-  } while (cursor !== '0');
-  return { activePeers, seededTorrents };
+  return { activePeers: stats.peers, seededTorrents: stats.seededTorrents };
 }
 
 async function computePublicStats(): Promise<PublicStats> {
@@ -67,10 +41,12 @@ async function computePublicStats(): Promise<PublicStats> {
         shared: sql<string>`coalesce(sum(${schema.users.uploaded}), 0)::text`,
       })
       .from(schema.users),
-    scanSwarms().catch((err) => {
-      console.error('[Stats] Swarm scan failed:', err);
-      return { activePeers: null, seededTorrents: null };
-    }),
+    getGlobalStats()
+      .then((stats) => swarmNumbers(stats, Date.now()))
+      .catch((err) => {
+        console.error('[Stats] Tracker counters unavailable:', err);
+        return { activePeers: null, seededTorrents: null };
+      }),
   ]);
   return {
     members: totals?.members ?? 0,

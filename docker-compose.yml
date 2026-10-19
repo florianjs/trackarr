@@ -11,7 +11,6 @@ services:
     restart: unless-stopped
     ports:
       - "3000:3000"
-      - "8080:8080" # Tracker HTTP
       - "24678:24678" # Vite HMR
     environment:
       - NODE_ENV=development
@@ -25,9 +24,9 @@ services:
       - DB_NAME=${DB_NAME:-trackarr}
       - REDIS_HOST=redis
       - REDIS_PORT=6379
-      - TRACKER_DEBUG=${TRACKER_DEBUG:-false}
-      # Tracker port is published directly (no proxy): ignore X-Forwarded-For
-      - TRACKER_TRUST_PROXY=false
+      # Tracker service private API (swarm peers, status)
+      - TRACKER_INTERNAL_URL=http://tracker:8090
+      - TRACKER_INTERNAL_TOKEN=${TRACKER_INTERNAL_TOKEN:-dev-internal-token}
     volumes:
       - .:/app
       - /app/node_modules
@@ -35,6 +34,33 @@ services:
       - /app/.output
     working_dir: /app
     command: sh -c "npm install && npm run dev"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - trackarr-internal
+
+  # BitTorrent tracker (Rust service, see tracker/)
+  tracker:
+    build: ./tracker
+    container_name: trackarr-tracker
+    restart: unless-stopped
+    ports:
+      - "8080:8080" # Tracker HTTP
+    environment:
+      - DATABASE_URL=postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}
+      - DB_SSL=false
+      - REDIS_URL=redis://redis:6379
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - TRACKER_INTERNAL_TOKEN=${TRACKER_INTERNAL_TOKEN:-dev-internal-token}
+      - TRACKER_DEBUG=${TRACKER_DEBUG:-false}
+      # Tracker port is published directly (no proxy): ignore X-Forwarded-For
+      - TRACKER_TRUST_PROXY=false
+    volumes:
+      # Swarms saved on stop, reloaded on start (no credit gap on deploys)
+      - tracker_data:/data
     depends_on:
       postgres:
         condition: service_healthy
@@ -123,3 +149,4 @@ networks:
 
 volumes:
   postgres_data:
+  tracker_data:

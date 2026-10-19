@@ -47,6 +47,14 @@ else
     exit 1
 fi
 
+# Installs set up before the tracker service have no token: create it once
+if ! grep -q '^TRACKER_INTERNAL_TOKEN=.' "$ENV_FILE"; then
+    log_step "Adding TRACKER_INTERNAL_TOKEN to $ENV_FILE..."
+    sed -i.bak '/^TRACKER_INTERNAL_TOKEN=/d' "$ENV_FILE" && rm -f "$ENV_FILE.bak"
+    echo "TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)" >> "$ENV_FILE"
+    log_success "Tracker token generated"
+fi
+
 # 2. Rebuild Containers
 log_step "Rebuilding Docker services..."
 cd "$PROJECT_DIR"

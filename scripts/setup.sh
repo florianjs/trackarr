@@ -107,6 +107,7 @@ fi
 log_info "Generating cryptographic secrets..."
 NUXT_SESSION_SECRET=$(openssl rand -hex 32)
 IP_HASH_SECRET=$(openssl rand -hex 32)
+TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)
 DB_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=')
 REDIS_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=')
 GRAFANA_PASSWORD=$(openssl rand -base64 16 | tr -d '/+=')
@@ -143,6 +144,7 @@ sed_inplace "s/^REDIS_PASSWORD=.*/REDIS_PASSWORD=$REDIS_PASSWORD/" "$PROJECT_DIR
 # Security
 sed_inplace "s/^NUXT_SESSION_SECRET=.*/NUXT_SESSION_SECRET=$NUXT_SESSION_SECRET/" "$PROJECT_DIR/.env"
 sed_inplace "s/^IP_HASH_SECRET=.*/IP_HASH_SECRET=$IP_HASH_SECRET/" "$PROJECT_DIR/.env"
+sed_inplace "s/^TRACKER_INTERNAL_TOKEN=.*/TRACKER_INTERNAL_TOKEN=$TRACKER_INTERNAL_TOKEN/" "$PROJECT_DIR/.env"
 
 # Tracker URLs
 sed_inplace "s|^TRACKER_HTTP_URL=.*|TRACKER_HTTP_URL=https://$TRACKER_DOMAIN/announce|" "$PROJECT_DIR/.env"

@@ -29,7 +29,7 @@ GET /announce?info_hash={info_hash}&peer_id={peer_id}&port={port}&uploaded={uplo
 **Response** (bencoded):
 
 ```
-d8:completei10e10:incompletei5e8:intervali1800e5:peersXX:...e
+d8:completei10e10:incompletei5e8:intervali600e5:peersXX:...e
 ```
 
 ### Scrape
@@ -46,20 +46,7 @@ GET /scrape?info_hash={info_hash}
 d5:filesd20:{info_hash}d8:completei10e10:downloadedi50e10:incompletei5eeee
 ```
 
-## WebSocket Announces
-
-Trackarr supports WebSocket announces for WebTorrent clients:
-
-```javascript
-const ws = new WebSocket('wss://announce.your-domain.com')
-
-ws.send(JSON.stringify({
-  action: 'announce',
-  info_hash: '...',
-  peer_id: '...',
-  // ... other parameters
-}))
-```
+Only HTTP is served (by the `trackarr-tracker` service): there is no UDP or WebSocket tracker.
 
 ## REST API
 

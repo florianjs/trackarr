@@ -8,7 +8,7 @@ import { db, schema } from '../../../../../db';
 import { eq } from 'drizzle-orm';
 import { generatePasskey } from '../../../../../utils/auth';
 import { clearTorznabUserStats } from '../../../../../utils/torznabStats';
-import { invalidateTrackerUsers } from '~~/server/tracker/lookups';
+import { invalidateTrackerUsers } from '~~/server/tracker/client';
 
 export default defineEventHandler(async (event) => {
   await requireAdminSession(event);

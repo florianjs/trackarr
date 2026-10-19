@@ -20,13 +20,13 @@ features:
   - title: Zero-Knowledge Auth
     details: Your password never leaves your device. All cryptographic operations happen client-side with PBKDF2 and challenge-response.
   - title: Lightning Fast
-    details: Redis-powered sub-millisecond peer lookups with PostgreSQL full-text search and optimized concurrent handling.
+    details: In-memory swarms in the Rust tracker, Redis caching, PostgreSQL full-text search and optimized concurrent handling.
   - title: Panic Mode
     details: Instant AES-256-GCM encryption of all sensitive data. One click to protect everything, recoverable only with your password.
   - title: Security First
     details: Distributed rate limiting, auto IP bans, SQL/XSS detection, SHA-256 hashed IPs, and comprehensive attack pattern detection.
-  - title: Multi-Protocol
-    details: Support for HTTP, UDP, and WebSocket announces via bittorrent-tracker. Full WebTorrent compatibility.
+  - title: Dedicated Tracker
+    details: A standalone Rust tracker service handles HTTP announces and scrapes, with swarms kept in memory and credit written to PostgreSQL in batches.
   - title: Built-in Monitoring
     details: Prometheus metrics and Grafana dashboards out of the box. Track peers, announces, and system health in real-time.
 ---
@@ -42,8 +42,8 @@ Trackarr is designed for communities that value **privacy** and **security** abo
 | Frontend | Nuxt 4, Vue 3, Tailwind CSS         | SSR, Composition API                |
 | Backend  | Nitro Server Engine                 | API routes, middleware              |
 | Database | PostgreSQL 16 + Drizzle ORM         | Data persistence, full-text search  |
-| Cache    | Redis 7                             | Peer lists, sessions, rate limiting |
-| P2P      | bittorrent-tracker                  | HTTP & WebSocket announces          |
+| Cache    | Redis 7                             | Swarm counters, sessions, rate limiting |
+| P2P      | Rust tracker service (`tracker/`)   | HTTP announces & scrapes            |
 | Crypto   | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption          |
 | Monitor  | Prometheus + Grafana                | Metrics, dashboards, alerting       |
 

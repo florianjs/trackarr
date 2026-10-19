@@ -1,0 +1,26 @@
+[package]
+name = "trackarr-tracker"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+axum = { version = "0.8.9", default-features = false, features = ["http1", "tokio", "query", "json"] }
+chrono = { version = "0.4.45", default-features = false, features = ["std", "clock"] }
+deadpool-postgres = "0.14.2"
+fastrand = "2.5.0"
+futures-util = "0.3.34"
+indexmap = "2.14.2"
+moka = { version = "0.12.16", features = ["future"] }
+redis = { version = "1.7.1", default-features = false, features = ["tokio-comp", "sentinel", "aio"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.11.1"
+tokio = { version = "1.53.3", features = ["rt-multi-thread", "macros", "net", "signal", "time"] }
+tokio-postgres = "0.7.18"
+tracing = "0.1.44"
+tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
+
+[profile.release]
+lto = "thin"
+codegen-units = 1
+strip = true

@@ -9,7 +9,7 @@ Trackarr includes a built-in load testing suite to measure tracker performance u
 docker compose -f docker-compose.loadtest.yml up -d --build
 
 # Wait for the tracker to be ready
-docker logs -f trackarr-loadtest
+docker logs -f trackarr-loadtest-tracker
 
 # Initialize the database (first time only)
 docker exec trackarr-loadtest npm run db:push
@@ -104,11 +104,13 @@ The test automatically passes or fails based on:
 
 ### Connection Refused
 
-The tracker isn't running or port 8080 isn't exposed.
+The tracker service isn't running or port 8080 isn't exposed.
 
 ```bash
-docker logs trackarr-loadtest | grep "listening"
+docker logs trackarr-loadtest-tracker | grep "listening"
 ```
+
+Tracker metrics are available on port 8090 (`http://localhost:8090/metrics`).
 
 ### High Error Rate
 

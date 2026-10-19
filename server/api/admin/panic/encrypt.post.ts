@@ -16,7 +16,7 @@ import {
   encryptField,
   encrypt,
 } from '../../../utils/panic';
-import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/lookups';
+import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/client';
 
 const bodySchema = z.object({
   confirm: z.literal('ENCRYPT_ALL_DATA'),

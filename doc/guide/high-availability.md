@@ -11,14 +11,15 @@ Three sites, connected by a private network (WireGuard recommended):
 
 | Site | Runs | Role |
 | --- | --- | --- |
-| **dc1** | app, PostgreSQL, Redis, etcd, Sentinel | Active site (initial primary) |
-| **dc2** | app, PostgreSQL, Redis, etcd, Sentinel | Standby, replicates dc1 continuously |
+| **dc1** | app, tracker, PostgreSQL, Redis, etcd, Sentinel | Active site (initial primary) |
+| **dc2** | app, tracker, PostgreSQL, Redis, etcd, Sentinel | Standby, replicates dc1 continuously |
 | **dc3** | etcd, Sentinel | Witness: a small VPS that only votes |
 
 - **PostgreSQL** runs under [Patroni](https://patroni.readthedocs.io) ([Spilo](https://github.com/zalando/spilo) image) with streaming replication. etcd (one member per site) decides which node is primary.
 - **Redis** is a master/replica pair watched by three **Sentinels** (quorum 2).
 - **Uploads** (avatars, logo, favicon) are stored in PostgreSQL, so replication carries them.
 - **The app** connects to every PostgreSQL node (`target_session_attrs=primary`) and to the Sentinels: after a failover it finds the new primaries on its own.
+- **The tracker** (`trackarr-tracker` service, `node` profile) connects to PostgreSQL and the Sentinels the same way. It keeps swarms in memory and writes credit to PostgreSQL every few seconds.
 - **Torrent clients** get every site's tracker in the `.torrent` file (`announce-list` tiers): when the first one does not answer, they move to the next one by themselves.
 
 ::: tip Why a third site?
@@ -56,7 +57,7 @@ On each site, copy the `docker/ha/` directory and create its `.env` from `docker
 - Passwords end up in connection URLs: generate URL-safe ones, e.g. `openssl rand -hex 24`
 - `COMPOSE_PROFILES=node` on dc1 and dc2, empty on the witness
 - `TRACKER_DOMAIN` is this site's tracker hostname (`tracker1.example.com` on dc1, `tracker2.example.com` on dc2)
-- Everything else (passwords, host lists, `TRACKER_HTTP_URL`, `TRACKER_BACKUP_HTTP_URLS`) is **identical on every site**
+- Everything else (passwords, host lists, `TRACKER_INTERNAL_TOKEN`, `TRACKER_HTTP_URL`, `TRACKER_BACKUP_HTTP_URLS`) is **identical on every site**. `TRACKER_INTERNAL_TOKEN` is required: generate it with `openssl rand -hex 32`
 
 Start the sites **in this order**, so dc1 bootstraps the cluster:
 
@@ -103,8 +104,9 @@ Measured with the local test (`docker/ha/test/failover-test.sh`), dc1 cut off th
 | App on dc2 healthy on the new primaries | right after, ~40s total |
 | Torrent clients | switch at their next announce |
 
-- No member data is lost in the test, but replication is **asynchronous**: in a real crash, the last second or so of writes may not have reached dc2 (some upload/download stats, a message).
-- Peer lists start empty on dc2 and fill up as clients announce. Ratios are not affected: accounting is in PostgreSQL and Redis.
+- No member data is lost in the test, but replication is **asynchronous**: in a real crash, the last second or so of writes may not have reached dc2 (some upload/download stats, a message). Credit not yet flushed by dc1's tracker (up to `TRACKER_FLUSH_INTERVAL`, 5 s) is lost too.
+- Swarms are not replicated: they live in each tracker's memory (the snapshot written on graceful stop only helps the same node's restarts). dc2's tracker starts with empty swarms and rebuilds them as clients re-announce (one interval, 600 s). Until its warm-up ends, it publishes nothing and the site shows the last counters.
+- The first announce of each peer on dc2 only sets a baseline: upload/download transferred since that peer's last announce on dc1 is **not credited** (up to one announce interval per peer).
 - When dc1 comes back, it rejoins automatically as a replica and catches up.
 
 ## Switching back
@@ -139,9 +141,9 @@ docker compose exec etcd etcdctl endpoint health --cluster
 
 ## Limitations
 
-- **Active/passive**: one site serves at a time. Peer lists live in each app's memory, so spreading announces over both sites would split swarms.
+- **Active/passive**: one site serves at a time. Swarms live in each tracker's memory, so spreading announces over both sites would split swarms. A passive tracker (no announces) publishes nothing.
 - Asynchronous replication (see above).
-- Redis holds short-lived data (peer state, rate limits, caches): a failover may reset some of it.
+- Redis holds short-lived data (swarm counters, rate limits, caches): a failover may reset some of it.
 
 ## Testing locally
 
@@ -149,6 +151,7 @@ The whole scenario runs on one machine:
 
 ```bash
 docker build -t trackarr:ha-test --build-arg TRACKER_HTTP_URL=http://tracker1.test/announce .
+docker build -t trackarr-tracker:ha-test tracker
 docker/ha/test/failover-test.sh
 ```
 

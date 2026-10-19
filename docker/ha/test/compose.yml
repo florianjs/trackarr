@@ -62,6 +62,29 @@ x-app: &app
     db-init:
       condition: service_completed_successfully
 
+x-tracker: &tracker
+  image: trackarr-tracker:ha-test
+  restart: unless-stopped
+  sysctls:
+    net.ipv4.tcp_keepalive_time: 10
+    net.ipv4.tcp_keepalive_intvl: 5
+    net.ipv4.tcp_keepalive_probes: 3
+    net.ipv4.tcp_retries2: 5
+  depends_on:
+    db-init:
+      condition: service_completed_successfully
+
+x-tracker-env: &tracker-env
+  NODE_ENV: production
+  DB_SSL: "false"
+  DB_CONNECT_TIMEOUT: "3"
+  DB_KEEP_ALIVE: "10"
+  REDIS_COMMAND_TIMEOUT_MS: "5000"
+  REDIS_SENTINELS: 172.30.8.1:26379,172.30.8.2:26379,172.30.8.3:26379
+  REDIS_PASSWORD: test-redis
+  IP_HASH_SECRET: test-ip-hash-secret-at-least-32-characters
+  TRACKER_INTERNAL_TOKEN: test-internal-token
+
 x-app-env: &app-env
   NODE_ENV: production
   NUXT_SESSION_PASSWORD: test-session-secret-at-least-32-chars
@@ -76,6 +99,7 @@ x-app-env: &app-env
   NUXT_PUBLIC_TRACKER_HTTP_URL: http://tracker1.test/announce
   TRACKER_BACKUP_HTTP_URLS: http://tracker2.test/announce
   IP_HASH_SECRET: test-ip-hash-secret-at-least-32-characters
+  TRACKER_INTERNAL_TOKEN: test-internal-token
 
 services:
   # --- Sites -----------------------------------------------------------------
@@ -184,15 +208,33 @@ services:
       <<: *app-env
       # Local site first, like docker/ha/compose.yml
       DATABASE_URL: postgres://tracker:test-db@172.30.8.1:5432,172.30.8.2:5432/trackarr?target_session_attrs=primary
+      TRACKER_INTERNAL_URL: http://172.30.8.21:8090
     networks: { wan: { ipv4_address: 172.30.8.11 } }
-    ports: ["3001:3000", "8081:8080"]
+    ports: ["3001:3000"]
   app2:
     <<: *app
     environment:
       <<: *app-env
       DATABASE_URL: postgres://tracker:test-db@172.30.8.2:5432,172.30.8.1:5432/trackarr?target_session_attrs=primary
+      TRACKER_INTERNAL_URL: http://172.30.8.22:8090
     networks: { wan: { ipv4_address: 172.30.8.12 } }
-    ports: ["3002:3000", "8082:8080"]
+    ports: ["3002:3000"]
+
+  # --- Tracker -----------------------------------------------------------------
+  tracker1:
+    <<: *tracker
+    environment:
+      <<: *tracker-env
+      DATABASE_URL: postgres://tracker:test-db@172.30.8.1:5432,172.30.8.2:5432/trackarr?target_session_attrs=primary
+    networks: { wan: { ipv4_address: 172.30.8.21 } }
+    ports: ["8081:8080"]
+  tracker2:
+    <<: *tracker
+    environment:
+      <<: *tracker-env
+      DATABASE_URL: postgres://tracker:test-db@172.30.8.2:5432,172.30.8.1:5432/trackarr?target_session_attrs=primary
+    networks: { wan: { ipv4_address: 172.30.8.22 } }
+    ports: ["8082:8080"]
 
 networks:
   wan:

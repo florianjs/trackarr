@@ -111,6 +111,7 @@ At minimum, configure these in your `.env`:
 - `TRACKER_DOMAIN` — Announce domain (e.g., `announce.example.com`)
 - `MONITORING_DOMAIN` — Grafana domain (e.g., `monitoring.example.com`)
 - `ACME_EMAIL` — Email for Let's Encrypt SSL certificates
+- `TRACKER_INTERNAL_TOKEN` — Token shared by the app and the tracker service (`openssl rand -hex 32`)
   :::
 
 Open `https://your-domain.com` to access your tracker.
@@ -136,6 +137,17 @@ docker compose -f docker-compose.prod.yml up -d --build
 
 ::: info
 Your data (PostgreSQL, Redis) is persisted in Docker volumes and will not be affected by updates.
+:::
+
+::: warning Upgrading to the Rust tracker
+The tracker now runs as a separate service (`trackarr-tracker`). Installations created before this change must add a shared token to `.env` before rebuilding, otherwise the stack does not start:
+
+```bash
+echo "TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)" >> .env
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Swarms refill as clients re-announce (up to 10 minutes). Upload/download transferred between the last announce before the upgrade and the first one after is not credited.
 :::
 
 ## Next Steps

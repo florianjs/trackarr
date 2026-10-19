@@ -77,6 +77,7 @@ EXISTING_DB_PASSWORD=$(get_existing_secret "DB_PASSWORD")
 EXISTING_REDIS_PASSWORD=$(get_existing_secret "REDIS_PASSWORD")
 EXISTING_NUXT_SESSION_SECRET=$(get_existing_secret "NUXT_SESSION_SECRET")
 EXISTING_IP_HASH_SECRET=$(get_existing_secret "IP_HASH_SECRET")
+EXISTING_TRACKER_INTERNAL_TOKEN=$(get_existing_secret "TRACKER_INTERNAL_TOKEN")
 EXISTING_GRAFANA_ADMIN_PASSWORD=$(get_existing_secret "GRAFANA_ADMIN_PASSWORD")
 
 if [ -n "$EXISTING_DB_PASSWORD" ]; then
@@ -94,6 +95,9 @@ else
     GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=' | head -c 24)
     log_success "Secrets generated"
 fi
+
+# Older installs predate the tracker service: create its token once
+TRACKER_INTERNAL_TOKEN=${EXISTING_TRACKER_INTERNAL_TOKEN:-$(openssl rand -hex 32)}
 
 # Never keep the old admin/admin Grafana default
 if [ -z "$GRAFANA_ADMIN_PASSWORD" ] || [ "$GRAFANA_ADMIN_PASSWORD" = "admin" ]; then
@@ -141,6 +145,7 @@ REDIS_URL=redis://:${REDIS_PASSWORD}@redis:6379
 # =============================================================================
 NUXT_SESSION_SECRET=${NUXT_SESSION_SECRET}
 IP_HASH_SECRET=${IP_HASH_SECRET}
+TRACKER_INTERNAL_TOKEN=${TRACKER_INTERNAL_TOKEN}
 
 # =============================================================================
 # Tracker URLs (Local OrbStack domains)

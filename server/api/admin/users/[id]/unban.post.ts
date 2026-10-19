@@ -3,7 +3,7 @@ import { db } from '~~/server/db';
 import { users, bannedIps } from '~~/server/db/schema';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
 import { validateParam, uuidSchema } from '~~/server/utils/schemas';
-import { invalidateTrackerUsers } from '~~/server/tracker/lookups';
+import { invalidateTrackerUsers } from '~~/server/tracker/client';
 import { invalidateBannedIps } from '~~/server/utils/bannedIps';
 
 export default defineEventHandler(async (event) => {

@@ -1,7 +1,7 @@
 import { db, schema } from '~~/server/db';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
 import { and, eq } from 'drizzle-orm';
-import { invalidateTrackerTorrents } from '~~/server/tracker/lookups';
+import { invalidateTrackerTorrents } from '~~/server/tracker/client';
 
 export default defineEventHandler(async (event) => {
   await requireModeratorSession(event);

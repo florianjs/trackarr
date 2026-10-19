@@ -10,7 +10,7 @@ import {
 } from '../../../db/schema';
 import { protectEndpoint } from '../../../utils/rateLimit';
 import { deriveKey, decryptField, decrypt } from '../../../utils/panic';
-import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/lookups';
+import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/client';
 
 const bodySchema = z.object({
   panicPassword: z.string().min(1).max(256),

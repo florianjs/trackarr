@@ -4,6 +4,7 @@
  */
 import { redis } from '../../../redis/client';
 import { getGlobalStats } from '../../../redis/cache';
+import { getTrackerStatus } from '../../../tracker/client';
 
 export default defineEventHandler(async (event) => {
   // Admin only
@@ -23,27 +24,10 @@ export default defineEventHandler(async (event) => {
     redisPing = (err as Error).message;
   }
 
-  // Check tracker
-  let trackerStatus = 'unknown';
-  let trackerProtocols: Record<string, boolean> = {};
-  try {
-    const { getTracker } = await import('../../../tracker');
-    const tracker = getTracker();
-    if (tracker) {
-      trackerStatus = 'running';
-      trackerProtocols = {
-        http: !!tracker.http,
-        udp: !!tracker.udp,
-        ws: !!tracker.ws,
-      };
-    } else {
-      trackerStatus = 'not initialized';
-    }
-  } catch (err) {
-    trackerStatus = 'error: ' + (err as Error).message;
-  }
+  // Tracker service (private API)
+  const trackerStatus = await getTrackerStatus();
 
-  // Get global stats from cache
+  // Counters it publishes to Redis
   let globalStats = null;
   try {
     globalStats = await getGlobalStats();
@@ -51,56 +35,26 @@ export default defineEventHandler(async (event) => {
     globalStats = { error: (err as Error).message };
   }
 
-  // Count peer keys manually
-  const keyPrefix = process.env.REDIS_KEY_PREFIX || 'ot:';
-  let peerKeyCount = 0;
-  let totalPeersInRedis = 0;
-  try {
-    let cursor = '0';
-    do {
-      const [nextCursor, keys] = await redis.scan(
-        cursor,
-        'MATCH',
-        `${keyPrefix}peers:*`,
-        'COUNT',
-        100
-      );
-      cursor = nextCursor;
-      for (const fullKey of keys) {
-        peerKeyCount++;
-        const key = fullKey.startsWith(keyPrefix)
-          ? fullKey.slice(keyPrefix.length)
-          : fullKey;
-        const count = await redis.hlen(key);
-        totalPeersInRedis += count;
-      }
-    } while (cursor !== '0');
-  } catch (err) {
-    peerKeyCount = -1;
-  }
-
   return {
     timestamp: new Date().toISOString(),
     redis: {
       status: redisStatus,
       ping: redisPing,
-      keyPrefix,
+      keyPrefix: process.env.REDIS_KEY_PREFIX || 'ot:',
     },
     tracker: {
-      status: trackerStatus,
-      protocols: trackerProtocols,
+      status: trackerStatus ? 'running' : 'unreachable',
+      internalUrl: process.env.TRACKER_INTERNAL_URL || 'http://localhost:8090',
       httpUrl: process.env.TRACKER_HTTP_URL || 'not set',
-    },
-    peers: {
-      keyCount: peerKeyCount,
-      totalPeers: totalPeersInRedis,
+      live: trackerStatus,
     },
     cachedGlobalStats: globalStats,
     env: {
       nodeEnv: process.env.NODE_ENV,
       hasIpHashSecret: !!process.env.IP_HASH_SECRET,
-      redisHost: process.env.REDIS_HOST || 'not set',
-      redisPort: process.env.REDIS_PORT || 'not set',
+      hasTrackerInternalToken: !!(
+        process.env.TRACKER_INTERNAL_TOKEN || process.env.TRACKER_INTERNAL_TOKEN_FILE
+      ),
     },
   };
 });

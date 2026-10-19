@@ -4,7 +4,9 @@
 #   2. cut dc1 off the network (datacenter outage)
 #   3. check dc2 takes over: Postgres primary, Redis master, app writes
 #   4. reconnect dc1 and check it rejoins as a replica
-# Requires the app image: docker build -t trackarr:ha-test .
+# Requires the images:
+#   docker build -t trackarr:ha-test .
+#   docker build -t trackarr-tracker:ha-test tracker
 
 set -eu
 
@@ -32,6 +34,8 @@ wait_for() { # description, timeout seconds, command...
 uploaded_is() { [ "$(sql "$1" "SELECT uploaded FROM users WHERE id='u-seed'")" = "$2" ]; }
 is_leader() { $DC exec -T "$1" curl -sf "http://$2:8008/primary"; }
 healthy() { curl -sf -m 5 "http://127.0.0.1:$1/api/health"; }
+# The tracker answers announces once it has read its settings from Postgres
+tracker_up() { curl -sf -m 5 "http://127.0.0.1:$1/announce" | grep -q 'failure reason'; }
 redis_master_is() {
   [ "$($DC exec -T sentinel2 redis-cli -p 26379 sentinel get-master-addr-by-name mymaster | head -1)" = "$1" ]
 }
@@ -55,10 +59,12 @@ wait_for "Postgres primary elected on dc1" 180 is_leader pg1 172.30.8.1
 $DC up -d pg2
 wait_for "dc2 replica streaming" 180 sh -c "$DC exec -T pg1 patronictl list | grep -E 'Replica|Sync' | grep -q streaming"
 
-log "Starting the app on both app sites"
-$DC up -d app1 app2
+log "Starting the app and the tracker on both app sites"
+$DC up -d app1 app2 tracker1 tracker2
 wait_for "app1 healthy" 240 healthy 3001
 wait_for "app2 healthy" 240 healthy 3002
+wait_for "tracker1 up" 60 tracker_up 8081
+wait_for "tracker2 up" 60 tracker_up 8082
 
 log "Seeding a seeder, a leecher and an approved torrent"
 sql pg1 "INSERT INTO users (id, username, passkey) VALUES
@@ -78,20 +84,27 @@ log "Datacenter dc1 goes dark"
 T0=$(date +%s)
 docker network disconnect trackarr-ha-test_wan "$($DC ps -q site1)"
 docker network disconnect trackarr-ha-test_wan "$($DC ps -q app1)"
+docker network disconnect trackarr-ha-test_wan "$($DC ps -q tracker1)"
 wait_for "dc2 promoted to Postgres primary" 120 is_leader pg2 172.30.8.2
 wait_for "Sentinel promoted Redis on dc2" 120 redis_master_is 172.30.8.2
 wait_for "app2 healthy on the new primaries" 120 healthy 3002
 echo "  failover took $(( $(date +%s) - T0 ))s"
 
 log "Writes through dc2"
+# Swarms live in each tracker's memory: dc2 rebuilds them from re-announces.
+# Its first announce per peer sets the baseline (nothing credited), the next
+# one credits the difference.
 sleep 3
 announce 8082 pkleech0000000000000000000000000 $LEECH_PEER 0 1000000000 update
 announce 8082 pkseed00000000000000000000000000 $SEEDER_PEER 2097152 0 update
-wait_for "next 1 MiB credited through dc2 (peer state survived in Redis)" 10 uploaded_is pg2 2097152
+sleep 3
+announce 8082 pkseed00000000000000000000000000 $SEEDER_PEER 3145728 0 update
+wait_for "next 1 MiB credited through dc2" 10 uploaded_is pg2 2097152
 
 log "dc1 comes back"
 docker network connect --ip 172.30.8.1 trackarr-ha-test_wan "$($DC ps -q site1)"
 docker network connect --ip 172.30.8.11 trackarr-ha-test_wan "$($DC ps -q app1)"
+docker network connect --ip 172.30.8.21 trackarr-ha-test_wan "$($DC ps -q tracker1)"
 wait_for "dc1 rejoined as Postgres replica" 180 sh -c "$DC exec -T pg2 patronictl list | grep 172.30.8.1 | grep -E 'Replica|Sync' | grep -q streaming"
 wait_for "dc1 Redis is a replica" 120 sh -c "$DC exec -T redis1 redis-cli -a test-redis --no-auth-warning role | head -1 | grep -q slave"
 wait_for "app1 healthy again" 120 healthy 3001
