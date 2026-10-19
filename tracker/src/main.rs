@@ -6,6 +6,7 @@ mod credit;
 mod crypto;
 mod db;
 mod dedupe;
+mod events;
 mod http;
 mod internal;
 mod invalidate;

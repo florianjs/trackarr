@@ -13,6 +13,7 @@ use crate::abuse::{self, FailureLimiter};
 use crate::config::Config;
 use crate::credit::{self, SeedingSets};
 use crate::dedupe::Dedupe;
+use crate::events::{AbuseEvent, AbuseEvents};
 use crate::invalidate::Invalidation;
 use crate::ledger::{self, Ledger, UserDelta};
 use crate::lookups::{Lookups, TrackerTorrent, TrackerUser};
@@ -45,6 +46,7 @@ pub struct Tracker {
     owners: Arc<Owners>,
     dedupe: Dedupe,
     pub limiter: FailureLimiter,
+    pub events: AbuseEvents,
     seeding: SeedingSets,
     settings: RwLock<Arc<Settings>>,
     /// Successful announces since start
@@ -72,6 +74,7 @@ impl Tracker {
             synced: AtomicBool::new(false),
             swarms: Swarms::new(config.max_peers_per_user),
             limiter: FailureLimiter::new(config.max_failures_per_minute),
+            events: AbuseEvents::default(),
             config,
             pool,
             ledger: Ledger::default(),
@@ -118,7 +121,7 @@ impl Tracker {
                 .counters
                 .unknown_torrent
                 .fetch_add(1, Ordering::Relaxed);
-            self.limiter.record_failure(ip, started);
+            self.record_failure(ip, started);
         }
         let settings = self.settings();
         let freeleech = settings.freeleech_active(Utc::now());
@@ -200,7 +203,7 @@ impl Tracker {
                 .claim(&request.info_hash, &request.peer_id, request.event, now)
         {
             self.account(
-                request, &user, &torrent, &settings, freeleech, &outcome, now,
+                request, &user, &torrent, &settings, freeleech, &outcome, now, ip,
             )
             .await;
         }
@@ -225,7 +228,22 @@ impl Tracker {
         freeleech: bool,
         outcome: &Outcome,
         now: u64,
+        ip: IpAddr,
     ) {
+        if let Some(claimed) = credit::impossible_upload(
+            outcome.previous.as_ref(),
+            request.uploaded,
+            now,
+            self.config.max_rate_bytes,
+        ) {
+            self.events.report(AbuseEvent::ImpossibleUpload {
+                ip: ip.to_string(),
+                user_id: user.id.to_string(),
+                info_hash: to_hex(&request.info_hash),
+                claimed,
+                at: now,
+            });
+        }
         let credit = credit::compute_credit(
             outcome.previous.as_ref(),
             request.uploaded,
@@ -383,6 +401,17 @@ impl Tracker {
         Ok(response::scrape(&entries))
     }
 
+    /// Count a failed lookup; report the client when it gets blocked
+    fn record_failure(&self, ip: IpAddr, now: u64) {
+        if self.limiter.record_failure(ip, now) {
+            self.events.report(AbuseEvent::BlockedClient {
+                ip: ip.to_string(),
+                failures: self.limiter.max_failures(),
+                at: now,
+            });
+        }
+    }
+
     /// The user behind a passkey, unless the client is over its failure
     /// budget: then nothing is looked up. Unknown passkeys count as failures.
     async fn lookup_user(
@@ -404,7 +433,7 @@ impl Tracker {
                 .counters
                 .invalid_passkey
                 .fetch_add(1, Ordering::Relaxed);
-            self.limiter.record_failure(ip, now);
+            self.record_failure(ip, now);
         }
         Ok(user)
     }
@@ -424,6 +453,9 @@ impl Tracker {
             Ok(0) => {}
             Ok(count) => tracing::debug!("flushed {count} accounting rows"),
             Err(err) => tracing::error!("accounting flush failed (will retry): {err}"),
+        }
+        if let Err(err) = self.events.flush(&self.redis).await {
+            tracing::warn!("abuse events not published (will retry): {err}");
         }
         if let Err(err) = self.completed.flush(&self.redis).await {
             tracing::warn!("completed counts not published (will retry): {err}");

@@ -52,6 +52,18 @@ These must be set for the application to run:
 | `RATE_LIMIT_MAX`    | Max requests per window         | `100`             |
 | `SESSION_MAX_AGE`   | Session lifetime (seconds)      | `604800` (7 days) |
 
+### Security alerts
+
+Brute force (per account and from the tracker), honeypot hits, blocked IPs and impossible upload claims (possible ratio cheats) are listed in the admin dashboard. To be notified as well, set one or more webhooks (production only, unless `ENABLE_DEV_ALERTS=true`). The same alert is sent at most once every 5 minutes per IP, user or account.
+
+| Variable               | Description                                                                        | Default |
+| ---------------------- | ---------------------------------------------------------------------------------- | ------- |
+| `DISCORD_WEBHOOK_URL`  | Discord webhook for security alerts                                                | —       |
+| `SLACK_WEBHOOK_URL`    | Slack webhook for security alerts                                                  | —       |
+| `SECURITY_WEBHOOK_URL` | Any endpoint: receives the alert as JSON (`type`, `severity`, `title`, `ip`, …)    | —       |
+| `ENABLE_DEV_ALERTS`    | Send webhooks outside production too                                               | `false` |
+| `HONEYPOT_BAN`         | `false`: honeypot paths (`/wp-admin`, `/.env`, `*.php`…) only alert, without blocking the IP (blocks start at 5 min and double up to 24 h) | `true` |
+
 ## Tracker
 
 The tracker is a separate service (`tracker/`, container `trackarr-tracker`). It also reads `DATABASE_URL`, `DB_POOL_MAX` (default `16`), `DB_CONNECT_TIMEOUT`, `DB_KEEP_ALIVE`, `REDIS_URL`, `REDIS_PASSWORD`, the Sentinel variables, `REDIS_COMMAND_TIMEOUT_MS` (default `5000`), `REDIS_KEY_PREFIX` (default `ot:`) and `IP_HASH_SECRET` (≥ 32 characters with `NODE_ENV=production`). `DB_SSL=true` and Redis TLS are not supported by the tracker yet. See [`tracker/README.md`](https://github.com/florianjs/trackarr/blob/main/tracker/README.md).

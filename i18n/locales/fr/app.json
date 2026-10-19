@@ -821,6 +821,18 @@
       "dismiss": "Rejeter",
       "empty": "Aucun signalement trouvé"
     },
+    "securityAlerts": {
+      "title": "Alertes de sécurité",
+      "empty": "Aucune alerte de sécurité",
+      "clear": "Effacer",
+      "hint": "Force brute, pièges (honeypots) déclenchés et abus du tracker. Définissez DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL ou SECURITY_WEBHOOK_URL pour être aussi notifié.",
+      "severity": {
+        "critical": "Critique",
+        "high": "Élevée",
+        "medium": "Moyenne",
+        "low": "Faible"
+      }
+    },
     "homepage": {
       "title": "Contenu de la page d'accueil",
       "heroSection": "Section principale",

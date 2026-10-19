@@ -821,6 +821,18 @@
       "dismiss": "Archivia",
       "empty": "Nessuna segnalazione trovata"
     },
+    "securityAlerts": {
+      "title": "Avvisi di sicurezza",
+      "empty": "Nessun avviso di sicurezza",
+      "clear": "Cancella",
+      "hint": "Forza bruta, honeypot attivati e abusi del tracker. Imposta DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL o SECURITY_WEBHOOK_URL per ricevere anche le notifiche.",
+      "severity": {
+        "critical": "Critico",
+        "high": "Alto",
+        "medium": "Medio",
+        "low": "Basso"
+      }
+    },
     "homepage": {
       "title": "Contenuto della home",
       "heroSection": "Sezione principale",

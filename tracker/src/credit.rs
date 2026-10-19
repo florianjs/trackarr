@@ -36,8 +36,7 @@ pub fn compute_credit(
     let Some(previous) = previous else {
         return Credit::default();
     };
-    let elapsed_sec = (now.saturating_sub(previous.updated_at) as f64 / 1000.0).max(1.0);
-    let ceiling = (elapsed_sec * max_rate_bytes as f64).floor() as u64;
+    let ceiling = ceiling(previous, now, max_rate_bytes);
 
     let mut delta_uploaded = uploaded.saturating_sub(previous.uploaded);
     let delta_downloaded = downloaded.saturating_sub(previous.downloaded);
@@ -51,6 +50,25 @@ pub fn compute_credit(
         uploaded: delta_uploaded.min(ceiling),
         downloaded: delta_downloaded.min(ceiling),
     }
+}
+
+/// Most a peer can have transferred since its previous announce
+fn ceiling(previous: &Previous, now: u64, max_rate_bytes: u64) -> u64 {
+    let elapsed_sec = (now.saturating_sub(previous.updated_at) as f64 / 1000.0).max(1.0);
+    (elapsed_sec * max_rate_bytes as f64).floor() as u64
+}
+
+/// Upload claimed beyond what the elapsed time allows: no real client
+/// reports that, a modified one inflating its ratio does. Returns the claim.
+pub fn impossible_upload(
+    previous: Option<&Previous>,
+    uploaded: u64,
+    now: u64,
+    max_rate_bytes: u64,
+) -> Option<u64> {
+    let previous = previous?;
+    let claimed = uploaded.saturating_sub(previous.uploaded);
+    (claimed > ceiling(previous, now, max_rate_bytes)).then_some(claimed)
 }
 
 pub fn compute_seed_points(elapsed_seconds: u64, points_per_day: f64) -> f64 {
@@ -165,6 +183,18 @@ mod tests {
         let p = previous(5 * MIB, 5 * MIB, 0);
         let credit = compute_credit(Some(&p), MIB, MIB, 60_000, 1, DEFAULT_MAX_RATE_BYTES);
         assert_eq!(credit, Credit::default());
+    }
+
+    #[test]
+    fn flags_impossible_uploads() {
+        let p = previous(0, 0, 0);
+        // 10 s at 1 MiB/s: up to 10 MiB is possible
+        assert_eq!(impossible_upload(Some(&p), 10 * MIB, 10_000, MIB), None);
+        assert_eq!(
+            impossible_upload(Some(&p), 11 * MIB, 10_000, MIB),
+            Some(11 * MIB)
+        );
+        assert_eq!(impossible_upload(None, u64::MAX, 10_000, MIB), None);
     }
 
     #[test]

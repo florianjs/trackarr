@@ -25,6 +25,9 @@
       </p>
     </div>
 
+    <!-- Brute force, honeypots, tracker abuse -->
+    <AdminSecurityAlerts />
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
       <!-- Protocol Status -->
       <AdminProtocols :protocols="stats?.protocols" />

@@ -3,6 +3,8 @@ import { db } from '../../db';
 import { users, bannedIps, invitations } from '../../db/schema';
 import { generateToken } from '../../utils/crypto';
 import { hashVerifier } from '../../utils/verifier';
+import { isHoneypotFilled } from '../../utils/honeypot';
+import { SecurityAlertType, sendSecurityAlert } from '../../utils/alerts';
 import {
   isRegistrationOpen,
   setRegistrationOpen,
@@ -28,6 +30,15 @@ export default defineEventHandler(async (event) => {
 
   // Validate request body with Zod
   const body = await validateBody(event, registerSchema);
+  if (isHoneypotFilled(body.hpot_field)) {
+    void sendSecurityAlert(SecurityAlertType.HONEYPOT_TRIGGERED, {
+      title: 'Bot filled the hidden registration field',
+      description: 'Registration refused',
+      ip: getClientIP(event),
+      details: { username: body.username },
+    }).catch(() => {});
+    throw createError({ statusCode: 400, message: 'Registration failed' });
+  }
 
   // Verify Proof of Work first (anti-abuse)
   const powValid = await verifyPoWSolution({

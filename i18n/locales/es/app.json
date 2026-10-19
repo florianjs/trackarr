@@ -821,6 +821,18 @@
       "dismiss": "Descartar",
       "empty": "No se encontraron denuncias"
     },
+    "securityAlerts": {
+      "title": "Alertas de seguridad",
+      "empty": "No hay alertas de seguridad",
+      "clear": "Borrar",
+      "hint": "Fuerza bruta, trampas (honeypots) activadas y abusos del tracker. Define DISCORD_WEBHOOK_URL, SLACK_WEBHOOK_URL o SECURITY_WEBHOOK_URL para recibir también notificaciones.",
+      "severity": {
+        "critical": "Crítica",
+        "high": "Alta",
+        "medium": "Media",
+        "low": "Baja"
+      }
+    },
     "homepage": {
       "title": "Contenido de la página de inicio",
       "heroSection": "Sección principal",
