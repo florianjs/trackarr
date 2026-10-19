@@ -68,19 +68,6 @@ export default defineNuxtConfig({
     },
   },
 
-  // Exclude native modules from Nitro bundling
-  nitro: {
-    externals: {
-      inline: [],
-      external: [
-        'node-datachannel',
-        'webrtc-polyfill',
-        '@thaunknown/simple-peer',
-        'webtorrent',
-      ],
-    },
-  },
-
   app: {
     head: {
       title: 'Trackarr',

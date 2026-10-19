@@ -8,7 +8,7 @@
     "dev": "nuxt dev",
     "generate": "nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare && if [ -d node_modules/@thaunknown/simple-peer ]; then echo 'export default {}' > node_modules/@thaunknown/simple-peer/lite.js; fi",
+    "postinstall": "nuxt prepare",
     "dev:seed": "tsx scripts/dev-seed.ts",
     "dev:download": "tsx scripts/dev-download.ts",
     "db:push": "./scripts/db-push.sh",
@@ -49,7 +49,6 @@
     "uuid": "^13.0.0",
     "vue": "^3.5.26",
     "vue-chartjs": "^5.3.3",
-    "vue-router": "^4.6.4",
     "zod": "^4.2.1"
   },
   "devDependencies": {
@@ -63,12 +62,6 @@
     "pino": "^10.1.0",
     "pino-pretty": "^13.1.3",
     "tsx": "^4.21.0",
-    "vitest": "^4.0.16",
-    "webtorrent": "^2.8.5"
-  },
-  "overrides": {
-    "node-datachannel": "npm:empty-npm-package@1.0.0",
-    "webrtc-polyfill": "npm:empty-npm-package@1.0.0",
-    "@thaunknown/simple-peer": "npm:empty-npm-package@1.0.0"
+    "vitest": "^4.0.16"
   }
 }
