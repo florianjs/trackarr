@@ -56,6 +56,17 @@
       </NuxtLink>
     </section>
 
+    <!-- Site-wide numbers (cached server side for a few minutes) -->
+    <section :aria-label="t('dashboard.site.title')">
+      <h2 class="text-xs text-text-muted mb-2">{{ t('dashboard.site.title') }}</h2>
+      <dl class="card grid grid-cols-2 md:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-border">
+        <div v-for="item in siteNumbers" :key="item.key" class="p-4 flex flex-col-reverse">
+          <dt class="text-xs text-text-muted mt-1">{{ t(`dashboard.site.${item.key}`) }}</dt>
+          <dd class="num text-2xl font-medium">{{ item.value }}</dd>
+        </div>
+      </dl>
+    </section>
+
     <!-- Note from the staff (Admin > Branding > Welcome message) -->
     <section v-if="data?.welcomeMessage" class="card p-4 flex gap-3">
       <Icon name="ph:megaphone-simple" class="text-lg text-text-muted shrink-0 mt-0.5" aria-hidden="true" />
@@ -181,6 +192,24 @@ interface Dashboard {
 const { t, locale } = useI18n();
 const { user } = useUserSession();
 const { data, refresh } = await useFetch<Dashboard>('/api/dashboard');
+
+interface SiteStats {
+  members: number;
+  activePeers: number | null;
+  seededTorrents: number | null;
+  shared: number;
+}
+// Lazy: a cache refresh scans every swarm, never hold the page for it
+const { data: site } = useLazyFetch<SiteStats>('/api/stats/public');
+const siteNumbers = computed(() => {
+  const count = (n: number | null | undefined) => (n == null ? '—' : n.toLocaleString(locale.value));
+  return [
+    { key: 'members', value: count(site.value?.members) },
+    { key: 'activePeers', value: count(site.value?.activePeers) },
+    { key: 'seededTorrents', value: count(site.value?.seededTorrents) },
+    { key: 'shared', value: site.value ? formatSize(site.value.shared) : '—' },
+  ];
+});
 
 useHead({ title: () => t('shell.nav.home') });
 
