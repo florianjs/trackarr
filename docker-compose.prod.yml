@@ -287,8 +287,14 @@ services:
     #   - ALL
     # security_opt:
     #   - no-new-privileges:true
+    # Password written to a config file, never on a command line (readable
+    # by any host user with ps). redis-cli reads REDISCLI_AUTH too.
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
     command: >
-      redis-server
+      sh -c 'printf "requirepass %s\n" "$$REDISCLI_AUTH" > /tmp/auth.conf &&
+      chown redis /tmp/auth.conf &&
+      exec docker-entrypoint.sh redis-server /tmp/auth.conf
       --appendonly yes
       --appendfsync everysec
       --auto-aof-rewrite-percentage 100
@@ -296,7 +302,6 @@ services:
       --save 900 1
       --save 300 10
       --save 60 10000
-      --requirepass ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
       --maxmemory 512mb
       --maxmemory-policy allkeys-lru
       --tcp-keepalive 300
@@ -311,14 +316,14 @@ services:
       --rename-command CONFIG ""
       --rename-command KEYS ""
       --rename-command SHUTDOWN ""
-      --loglevel warning
+      --loglevel warning'
     # No exposed ports in production - internal network only
     expose:
       - "6379"
     volumes:
       - redis_data:/data
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:?REDIS_PASSWORD is required}", "ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 30s
       timeout: 10s
       retries: 5
