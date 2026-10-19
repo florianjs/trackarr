@@ -1,0 +1,83 @@
+{
+  "shoutbox": {
+    "title": "シャウトボックス",
+    "nav": "シャウトボックス",
+    "channels": "チャンネル",
+    "loadEarlier": "以前のメッセージを読み込む",
+    "empty": "まだメッセージはありません。あいさつしてみましょう！",
+    "staff": "スタッフ",
+    "deleted": "メッセージは削除されました",
+    "deletedByModeration": "メッセージはモデレーターにより削除されました",
+    "reactionLabel": "{emoji}：{n} 件のリアクション | {emoji}：{n} 件のリアクション",
+    "addReaction": "リアクションを追加",
+    "otherEmoji": "その他の絵文字",
+    "placeholder": "#{channel} にメッセージを送信",
+    "send": "送信",
+    "readOnly": "このチャンネルは閲覧のみ可能で、投稿はできません。",
+    "mutedUntil": "{date} までシャウトボックスでミュートされています。",
+    "delete": "削除",
+    "muteUser": "{name} をミュート",
+    "muteDuration": "ミュート期間",
+    "muteReason": "理由（任意）",
+    "mute": "ミュート",
+    "cancel": "キャンセル",
+    "error": "問題が発生しました",
+    "durations": {
+      "10": "10 分",
+      "60": "1 時間",
+      "1440": "24 時間",
+      "10080": "7 日"
+    },
+    "adminNav": {
+      "label": "シャウトボックス",
+      "description": "シャウトボックスのオン／オフとチャンネルの管理"
+    },
+    "modNav": {
+      "label": "シャウトボックス",
+      "description": "シャウトボックスでミュート中のメンバー"
+    },
+    "admin": {
+      "settings": "シャウトボックス",
+      "enabled": "シャウトボックスを有効にする",
+      "enabledHint": "オフにすると、シャウトボックスはメンバーから見えなくなります（メニュー、ホームページ）。メッセージは保持されます。",
+      "channels": "チャンネル",
+      "addChannel": "新しいチャンネル",
+      "editChannel": "チャンネルを編集",
+      "deleteChannel": "チャンネルを削除",
+      "confirmDelete": "メッセージごと削除",
+      "name": "名前",
+      "position": "表示順",
+      "description": "説明",
+      "readAccess": "閲覧できるユーザー",
+      "writeAccess": "投稿できるユーザー",
+      "read": {
+        "all": "すべてのメンバー",
+        "roles": "特定のロール",
+        "staff": "スタッフのみ"
+      },
+      "write": {
+        "members": "閲覧できる全員",
+        "staff": "スタッフ",
+        "admins": "管理者"
+      },
+      "roles": "許可するロール",
+      "noRoles": "まだロールはありません：管理 > ロール で作成してください。",
+      "rolesHint": "モデレーターと管理者は常にすべてのチャンネルを閲覧できます。",
+      "reactions": "メンバーが絵文字でリアクションできる",
+      "save": "保存",
+      "saved": "保存しました",
+      "actions": "操作",
+      "noChannels": "チャンネルはありません。"
+    },
+    "mutes": {
+      "title": "ミュート中のメンバー",
+      "hint": "シャウトボックスでメンバーのメッセージにカーソルを合わせると、そのメンバーをミュートできます。",
+      "member": "メンバー",
+      "until": "期限",
+      "reason": "理由",
+      "by": "実行者",
+      "unmute": "ミュート解除",
+      "empty": "ミュート中のメンバーはいません。"
+    }
+  }
+}

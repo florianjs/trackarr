@@ -1,0 +1,30 @@
+{
+  "messages": {
+    "title": "Nachrichten",
+    "new": "Neue Nachricht",
+    "empty": "Noch keine Unterhaltungen.",
+    "emptyHint": "Starte eine über das Profil eines Mitglieds oder mit Neue Nachricht.",
+    "you": "Du: ",
+    "select": "Wähle eine Unterhaltung aus oder starte eine neue.",
+    "to": "An",
+    "toPlaceholder": "Benutzername des Mitglieds",
+    "bodyPlaceholder": "Nachricht schreiben…",
+    "send": "Senden",
+    "sending": "Wird gesendet…",
+    "sendHint": "Enter zum Senden, Umschalt+Enter für eine neue Zeile",
+    "loadEarlier": "Ältere Nachrichten laden",
+    "back": "Zurück zu den Unterhaltungen",
+    "profile": "Profil ansehen",
+    "block": "Mitglied blockieren",
+    "unblock": "Blockierung aufheben",
+    "hide": "Unterhaltung ausblenden",
+    "confirmBlock": "{name} blockieren? Dieses Mitglied kann dir dann keine Nachrichten mehr senden.",
+    "confirmHide": "Diese Unterhaltung ausblenden? Sie erscheint wieder, wenn eine neue Nachricht eintrifft.",
+    "youBlocked": "Du hast dieses Mitglied blockiert. Hebe die Blockierung auf, um zu antworten.",
+    "blockedYou": "Dieses Mitglied nimmt keine Nachrichten von dir an.",
+    "deletedUser": "Gelöschtes Mitglied",
+    "nav": "Nachrichten",
+    "sendMessage": "Nachricht senden",
+    "unreadCount": "keine ungelesene Unterhaltung | 1 ungelesene Unterhaltung | {n} ungelesene Unterhaltungen"
+  }
+}

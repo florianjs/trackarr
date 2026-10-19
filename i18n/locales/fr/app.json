@@ -929,10 +929,10 @@
   },
   "time": {
     "justNow": "à l'instant",
-    "minutesAgo": "il y a {count} min",
-    "hoursAgo": "il y a {count} h",
-    "daysAgo": "il y a {count} j",
-    "monthsAgo": "il y a {count} mois",
+    "minutesAgo": "il y a {count} min | il y a {count} min",
+    "hoursAgo": "il y a {count} h | il y a {count} h",
+    "daysAgo": "il y a {count} j | il y a {count} j",
+    "monthsAgo": "il y a {count} mois | il y a {count} mois",
     "yearsAgo": "il y a {count} an | il y a {count} ans"
   },
   "freeleech": {

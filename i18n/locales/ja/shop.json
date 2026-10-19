@@ -1,0 +1,140 @@
+{
+  "bonus": {
+    "points": "{n} pt",
+    "disabled": "ボーナスシステムは現在無効です。",
+    "shop": {
+      "title": "ボーナスショップ",
+      "subtitle": "シードで獲得したポイントを使いましょう",
+      "balance": "残高",
+      "seedingNow": "現在ポイント獲得中のトレント",
+      "howToEarn": "ポイントの獲得方法",
+      "earnSeed": "シード 1 日につきトレント 1 件あたり {points} pt（同時に最大 {max} 件まで）",
+      "earnSeedNote": "あなたがアップロードしたトレント、またはダウンロードを完了したトレントのみが対象です。",
+      "earnUpload": "あなたのアップロードが承認されると {points} pt",
+      "earnBounty": "バウンティを達成すると報酬を受け取れます",
+      "items": "アイテム",
+      "noItems": "販売中のアイテムはまだありません。",
+      "buy": "購入",
+      "owned": "所有済み",
+      "confirmBuy": "「{name}」を {price} ポイントで購入しますか？",
+      "bought": "購入しました：{name}",
+      "notEnough": "ポイントが足りません",
+      "itemUpload": "+{size} のアップロードクレジット",
+      "itemInvite": "招待なし | 招待 +1 | 招待 +{count}",
+      "itemGifAvatar": "アニメーションアバター（GIF、WebP、APNG）を解放",
+      "history": "履歴",
+      "noHistory": "まだ取引はありません。"
+    },
+    "tx": {
+      "upload": "アップロード承認",
+      "purchase": "購入",
+      "bounty_create": "バウンティ作成",
+      "bounty_contribute": "バウンティへの寄付",
+      "bounty_reward": "バウンティ報酬",
+      "bounty_refund": "バウンティの返金",
+      "admin": "調整"
+    },
+    "avatar": {
+      "title": "アバター",
+      "upload": "アバターをアップロード",
+      "remove": "削除",
+      "hint": "PNG、JPEG、WebP、最大 512KB。",
+      "hintGif": "PNG、JPEG、WebP、またはアニメーション GIF/WebP/APNG、最大 2MB。",
+      "updated": "アバターを更新しました",
+      "removed": "アバターを削除しました",
+      "confirmRemove": "アバターを削除しますか？"
+    },
+    "bounties": {
+      "title": "バウンティ",
+      "subtitle": "トラッカーにまだないトレントをリクエストしましょう",
+      "new": "新しいバウンティ",
+      "search": "バウンティを検索…",
+      "status": {
+        "all": "すべて",
+        "open": "受付中",
+        "claimed": "確認待ち",
+        "filled": "達成済み",
+        "cancelled": "キャンセル済み"
+      },
+      "empty": "バウンティはありません。",
+      "reward": "報酬",
+      "requestedBy": "{user} がリクエスト",
+      "form": {
+        "title": "タイトル",
+        "titlePlaceholder": "例：The Matrix (1999) 2160p UHD BluRay",
+        "description": "詳細",
+        "descriptionPlaceholder": "エディション、画質、言語、字幕…",
+        "imdb": "IMDb（任意）",
+        "category": "カテゴリ（任意）",
+        "points": "初期報酬",
+        "pointsHint": "最低 {min} ポイント。今すぐ残高から差し引かれ、キャンセルすると返金されます。",
+        "submit": "バウンティを作成",
+        "cancel": "キャンセル"
+      },
+      "detail": {
+        "back": "すべてのバウンティ",
+        "contributors": "寄付者",
+        "contribute": "ポイントを追加",
+        "contributePlaceholder": "ポイント",
+        "fill": "このバウンティを達成する",
+        "fillHint": "トラッカー上の承認済みトレントの info hash を貼り付けてください。リクエスト者が承認すると、そのアップローダーに報酬が支払われます。",
+        "fillPlaceholder": "Info hash（16 進数 40 文字）",
+        "fillSubmit": "送信",
+        "proposed": "提案されたトレント",
+        "uploader": "{user} がアップロード",
+        "accept": "承認して支払う",
+        "reject": "却下",
+        "cancelBounty": "バウンティをキャンセル",
+        "confirmCancel": "このバウンティをキャンセルしますか？すべての寄付は返金されます。",
+        "confirmAccept": "このトレントを承認しますか？報酬はアップローダーに支払われます。",
+        "filledBy": "{user} が達成"
+      }
+    },
+    "admin": {
+      "title": "ボーナスとショップ",
+      "settings": "獲得ルール",
+      "enabled": "ボーナスシステムを有効にする",
+      "pointsPerSeedDay": "シード 1 日あたりのトレント 1 件ごとのポイント",
+      "maxSeedingTorrents": "同時にポイントを獲得できるトレントの最大数",
+      "pointsPerUpload": "承認されたアップロード 1 件あたりのポイント",
+      "bountyMinPoints": "バウンティ作成に必要な最低ポイント",
+      "save": "保存",
+      "saved": "保存しました",
+      "items": "ショップのアイテム",
+      "addItem": "アイテムを追加",
+      "editItem": "アイテムを編集",
+      "name": "名前",
+      "description": "説明",
+      "type": "種類",
+      "types": {
+        "upload_credit": "アップロードクレジット",
+        "invite": "招待",
+        "gif_avatar": "アニメーションアバター"
+      },
+      "price": "価格（ポイント）",
+      "valueGb": "アップロードクレジット（GB）",
+      "valueInvites": "招待の数",
+      "active": "販売中",
+      "sortOrder": "表示順",
+      "delete": "削除",
+      "confirmDelete": "「{name}」を削除しますか？",
+      "grant": "ポイントの付与・削除",
+      "grantUser": "ユーザー ID",
+      "grantAmount": "数量（マイナスで削除）",
+      "grantReason": "理由",
+      "grantSubmit": "適用",
+      "granted": "残高を更新しました：{points} pt"
+    },
+    "nav": {
+      "shop": "ショップ",
+      "bounties": "バウンティ"
+    },
+    "menu": {
+      "shop": "ボーナスショップ"
+    },
+    "adminNav": {
+      "label": "ボーナスとショップ",
+      "description": "獲得ルール、ショップのアイテム、ポイントの付与"
+    }
+  }
+}

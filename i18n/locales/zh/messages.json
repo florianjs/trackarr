@@ -1,0 +1,30 @@
+{
+  "messages": {
+    "title": "私信",
+    "new": "新私信",
+    "empty": "暂无对话。",
+    "emptyHint": "可从会员的个人资料页或点击“新私信”开始对话。",
+    "you": "你：",
+    "select": "选择一个对话，或开始新的对话。",
+    "to": "收件人",
+    "toPlaceholder": "会员用户名",
+    "bodyPlaceholder": "输入消息…",
+    "send": "发送",
+    "sending": "发送中…",
+    "sendHint": "Enter 发送，Shift+Enter 换行",
+    "loadEarlier": "加载更早的消息",
+    "back": "返回对话列表",
+    "profile": "查看资料",
+    "block": "屏蔽此会员",
+    "unblock": "取消屏蔽此会员",
+    "hide": "隐藏对话",
+    "confirmBlock": "屏蔽 {name}？对方将无法再向你发送私信。",
+    "confirmHide": "隐藏此对话？收到新消息时它会重新出现。",
+    "youBlocked": "你已屏蔽此会员。取消屏蔽后才能回复。",
+    "blockedYou": "此会员不接收你的私信。",
+    "deletedUser": "已注销会员",
+    "nav": "私信",
+    "sendMessage": "发送私信",
+    "unreadCount": "没有未读对话 | 1 个未读对话 | {n} 个未读对话"
+  }
+}

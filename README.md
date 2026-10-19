@@ -38,7 +38,7 @@ Built with Nuxt 4 • PostgreSQL • Redis
 | Bonus shop (upload credit, invites, avatars)  | IMDb / TMDb / TheTVDB IDs with ID-based search      |
 | Bounties: request torrents with a points pot  | Personal RSS feeds                                  |
 | Global freeleech (timed or open-ended)        | Torrent moderation queue                            |
-| Forum, comments, reports, invitations, H&R    | English & French UI (more languages welcome)        |
+| Forum, comments, reports, invitations, H&R    | UI in 8 languages (EN, FR, ES, DE, IT, ZH, JA, RU)  |
 | Private messages between members, with blocks | Light & dark themes, ⌘K command palette             |
 
 | **Security**                     | **Emergency**                                |
@@ -296,7 +296,7 @@ docker compose logs -f app
 | Layer    | Technology                          | Purpose                             |
 | -------- | ----------------------------------- | ----------------------------------- |
 | Frontend | Nuxt 4, Vue 3, Tailwind CSS         | SSR, Composition API                |
-| i18n     | @nuxtjs/i18n                        | English & French UI                 |
+| i18n     | @nuxtjs/i18n                        | 8 UI languages                      |
 | Backend  | Nitro Server Engine                 | API routes, middleware              |
 | Database | PostgreSQL 16 + Drizzle ORM         | Data persistence, full-text search  |
 | Cache    | Redis 7                             | Peer lists, sessions, rate limiting |
@@ -375,7 +375,7 @@ npx drizzle-kit push     # Push schema changes
 npx drizzle-kit studio   # Database GUI
 ```
 
-**Translations**: strings live in `i18n/locales/<code>/*.json`. To add a language, copy `i18n/locales/en/`, translate it, and declare the locale in `nuxt.config.ts` (`i18n.locales`).
+**Translations**: strings live in `i18n/locales/<code>/*.json` (en, fr, es, de, it, zh, ja, ru). To add a language, copy `i18n/locales/en/`, translate it, and declare the locale in `nuxt.config.ts` (`i18n.locales`). `tests/i18n-locales.test.ts` checks every locale against English (keys, placeholders, plural forms); languages with more plural forms than English get a rule in `i18n/plural.ts` (Russian has one).
 
 | Private messages | Admin dashboard |
 | --- | --- |

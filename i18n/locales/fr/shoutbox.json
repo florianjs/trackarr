@@ -1,0 +1,83 @@
+{
+  "shoutbox": {
+    "title": "Shoutbox",
+    "nav": "Shoutbox",
+    "channels": "Canaux",
+    "loadEarlier": "Charger les messages précédents",
+    "empty": "Aucun message pour l'instant. Lancez la discussion !",
+    "staff": "Staff",
+    "deleted": "Message supprimé",
+    "deletedByModeration": "Message supprimé par la modération",
+    "reactionLabel": "{emoji} : {n} réaction | {emoji} : {n} réactions",
+    "addReaction": "Ajouter une réaction",
+    "otherEmoji": "Autre emoji",
+    "placeholder": "Message dans #{channel}",
+    "send": "Envoyer",
+    "readOnly": "Vous pouvez lire ce canal mais pas y écrire.",
+    "mutedUntil": "Vous êtes réduit au silence dans la shoutbox jusqu'au {date}.",
+    "delete": "Supprimer",
+    "muteUser": "Réduire {name} au silence",
+    "muteDuration": "Durée",
+    "muteReason": "Raison (facultatif)",
+    "mute": "Réduire au silence",
+    "cancel": "Annuler",
+    "error": "Une erreur est survenue",
+    "durations": {
+      "10": "10 minutes",
+      "60": "1 heure",
+      "1440": "24 heures",
+      "10080": "7 jours"
+    },
+    "adminNav": {
+      "label": "Shoutbox",
+      "description": "Activer ou désactiver la shoutbox et gérer ses canaux"
+    },
+    "modNav": {
+      "label": "Shoutbox",
+      "description": "Membres réduits au silence dans la shoutbox"
+    },
+    "admin": {
+      "settings": "Shoutbox",
+      "enabled": "Shoutbox activée",
+      "enabledHint": "Désactivée, la shoutbox disparaît pour les membres (menu, accueil). Les messages sont conservés.",
+      "channels": "Canaux",
+      "addChannel": "Nouveau canal",
+      "editChannel": "Modifier le canal",
+      "deleteChannel": "Supprimer le canal",
+      "confirmDelete": "Supprimer avec ses messages",
+      "name": "Nom",
+      "position": "Ordre",
+      "description": "Description",
+      "readAccess": "Qui peut lire",
+      "writeAccess": "Qui peut écrire",
+      "read": {
+        "all": "Tous les membres",
+        "roles": "Certains rôles",
+        "staff": "Staff uniquement"
+      },
+      "write": {
+        "members": "Tous les lecteurs",
+        "staff": "Staff",
+        "admins": "Admins"
+      },
+      "roles": "Rôles autorisés",
+      "noRoles": "Aucun rôle pour l'instant : créez-en dans Admin > Rôles.",
+      "rolesHint": "Les modérateurs et admins voient toujours tous les canaux.",
+      "reactions": "Les membres peuvent réagir avec des emojis",
+      "save": "Enregistrer",
+      "saved": "Enregistré",
+      "actions": "Actions",
+      "noChannels": "Aucun canal."
+    },
+    "mutes": {
+      "title": "Membres réduits au silence",
+      "hint": "Pour réduire un membre au silence, survolez l'un de ses messages dans la shoutbox.",
+      "member": "Membre",
+      "until": "Jusqu'au",
+      "reason": "Raison",
+      "by": "Par",
+      "unmute": "Lever",
+      "empty": "Personne n'est réduit au silence."
+    }
+  }
+}

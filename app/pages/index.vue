@@ -73,6 +73,8 @@
       <div class="prose-sm text-sm text-text-secondary [&_a]:underline" v-html="data.welcomeMessage" />
     </section>
 
+    <Shoutbox v-if="branding?.shoutboxEnabled" compact />
+
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <!-- New torrents -->
       <section class="card lg:col-span-2 overflow-hidden">
@@ -192,6 +194,8 @@ interface Dashboard {
 const { t, locale } = useI18n();
 const { user } = useUserSession();
 const { data, refresh } = await useFetch<Dashboard>('/api/dashboard');
+// Shared with the layout's request (same key): no extra call
+const { data: branding } = await useFetch<{ shoutboxEnabled?: boolean }>('/api/branding');
 
 interface SiteStats {
   members: number;

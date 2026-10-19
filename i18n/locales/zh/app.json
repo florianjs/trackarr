@@ -1,0 +1,1062 @@
+{
+  "common": {
+    "language": "语言",
+    "save": "保存",
+    "saving": "保存中…",
+    "saveChanges": "保存更改",
+    "cancel": "取消",
+    "delete": "删除",
+    "deleting": "删除中…",
+    "edit": "编辑",
+    "close": "关闭",
+    "create": "创建",
+    "creating": "创建中…",
+    "add": "添加",
+    "remove": "移除",
+    "search": "搜索",
+    "loading": "加载中…",
+    "refresh": "刷新",
+    "reset": "重置",
+    "copy": "复制",
+    "copied": "已复制！",
+    "approve": "通过",
+    "reject": "拒绝",
+    "all": "全部",
+    "unknown": "未知",
+    "never": "从未",
+    "optional": "可选",
+    "actions": "操作",
+    "name": "名称",
+    "description": "描述",
+    "enabled": "已启用",
+    "disabled": "已禁用",
+    "active": "活跃",
+    "inactive": "不活跃",
+    "previous": "上一页",
+    "next": "下一页",
+    "error": "错误",
+    "user": "用户",
+    "username": "用户名",
+    "password": "密码",
+    "role": "角色",
+    "reason": "原因",
+    "category": "分类",
+    "tags": "标签",
+    "size": "大小",
+    "seeders": "做种者",
+    "leechers": "下载者",
+    "completed": "完成",
+    "ratio": "分享率",
+    "uploaded": "上传量",
+    "downloaded": "下载量",
+    "admin": "管理员",
+    "moderator": "版主",
+    "pageOf": "第 {page} / {pages} 页",
+    "saveConfiguration": "保存配置",
+    "saved": "已保存"
+  },
+  "nav": {
+    "dashboard": "仪表盘",
+    "search": "搜索",
+    "torrents": "种子",
+    "forum": "论坛",
+    "admin": "管理",
+    "mod": "版务"
+  },
+  "layout": {
+    "refreshStats": "刷新数据",
+    "passkey": "Passkey",
+    "signOut": "退出登录",
+    "dismiss": "关闭",
+    "p2pProtocol": "P2P 协议"
+  },
+  "auth": {
+    "defaultSubtitle": "私有 BitTorrent Tracker",
+    "usernamePlaceholder": "请输入用户名",
+    "passwordPlaceholder": "请输入密码",
+    "status": {
+      "fetchingChallenge": "正在获取验证挑战…",
+      "generatingProof": "正在生成证明…",
+      "authenticating": "正在验证身份…",
+      "gettingChallenge": "正在获取验证挑战…",
+      "solvingPow": "正在计算工作量证明…",
+      "generatingCredentials": "正在生成安全凭据…"
+    },
+    "login": {
+      "registrationsClosed": "当前已关闭注册，仅现有会员可以登录。",
+      "signingIn": "登录中…",
+      "signIn": "登录",
+      "noAccount": "还没有账号？",
+      "createOne": "立即注册",
+      "failed": "登录失败"
+    },
+    "register": {
+      "closedTitle": "注册已关闭",
+      "closedText": "当前不接受新用户注册。如果你有邀请，请联系管理员。",
+      "createAdminAccount": "创建管理员账号",
+      "inviteOnlyTitle": "仅限邀请注册",
+      "createAccount": "创建账号",
+      "firstAccountWarning": "这是第一个账号，将拥有管理员权限。",
+      "zkeTitle": "零知识加密：",
+      "zkeText": "你的密码永远不会发送到服务器。如果忘记密码，账号将无法找回。",
+      "inviteCode": "邀请码",
+      "inviteCodePlaceholder": "请输入邀请码",
+      "usernamePlaceholder": "3–20 个字符，可用字母、数字、_ 或 -",
+      "passwordPlaceholder": "至少 8 个字符",
+      "confirmPassword": "确认密码",
+      "confirmPasswordPlaceholder": "请再次输入密码",
+      "panicWarning": "紧急密码用于启用数据库紧急加密。请妥善保管，它无法找回，也无法更改。",
+      "panicPassword": "紧急密码",
+      "panicPasswordPlaceholder": "至少 12 个字符",
+      "confirmPanicPassword": "确认紧急密码",
+      "confirmPanicPasswordPlaceholder": "请再次输入紧急密码",
+      "creatingAccount": "正在创建账号…",
+      "haveAccount": "已有账号？",
+      "signInLink": "登录",
+      "failed": "注册失败",
+      "errors": {
+        "passwordMismatch": "两次输入的密码不一致",
+        "passwordTooShort": "密码至少需要 8 个字符",
+        "panicMismatch": "两次输入的紧急密码不一致",
+        "panicTooShort": "紧急密码至少需要 12 个字符"
+      }
+    }
+  },
+  "home": {
+    "statusBadge": "Tracker 在线，运行正常",
+    "heroSubtitle": "高性能、极简的 P2P Tracker 引擎。在我们已索引的认证种子数据库中搜索。",
+    "searchPlaceholder": "按名称、标签或 infohash 搜索种子…",
+    "torrentCount": "{count} 个种子 | {count} 个种子 | {count} 个种子",
+    "peerCount": "{count} 个同伴 | {count} 个同伴 | {count} 个同伴",
+    "lowLatency": "超低延迟",
+    "recentlyIndexed": "最新收录",
+    "browseAll": "浏览全部",
+    "features": {
+      "performance": {
+        "title": "高性能",
+        "description": "基于 Node.js 和 Redis 构建，响应时间低于毫秒级，支持高并发。"
+      },
+      "protocols": {
+        "title": "多协议",
+        "description": "支持 HTTP、UDP 和 WebSocket 协议，最大限度兼容所有 BitTorrent 客户端。"
+      },
+      "openSource": {
+        "title": "开源",
+        "description": "完全透明，由社区驱动。为 P2P 生态中的隐私与效率而设计。"
+      }
+    }
+  },
+  "searchBar": {
+    "placeholder": "搜索…",
+    "clear": "清除"
+  },
+  "sidebar": {
+    "categories": "分类",
+    "allTorrents": "全部种子"
+  },
+  "report": {
+    "title": "举报{type}",
+    "targetTypes": {
+      "torrent": "种子",
+      "user": "用户",
+      "post": "帖子",
+      "comment": "评论"
+    },
+    "selectReason": "请选择原因…",
+    "reasons": {
+      "spam": "垃圾信息或广告",
+      "fake": "虚假或误导性内容",
+      "copyright": "侵犯版权",
+      "inappropriate": "不当内容",
+      "harassment": "骚扰或辱骂",
+      "other": "其他"
+    },
+    "details": "补充说明",
+    "detailsPlaceholder": "请提供其他相关信息…",
+    "submit": "提交举报",
+    "submitted": "举报已提交",
+    "failed": "举报提交失败"
+  },
+  "mediaIds": {
+    "label": "外部 ID",
+    "imdbPlaceholder": "IMDb（tt0133093 或链接）",
+    "tmdbPlaceholder": "TMDb（603 或链接）",
+    "help": "供 Sonarr / Radarr 匹配资源使用。粘贴 ID 或页面链接。"
+  },
+  "editor": {
+    "placeholder": "开始输入…",
+    "bold": "粗体",
+    "italic": "斜体",
+    "strikethrough": "删除线",
+    "heading1": "标题 1",
+    "heading2": "标题 2",
+    "heading3": "标题 3",
+    "bulletList": "无序列表",
+    "numberedList": "有序列表",
+    "quote": "引用",
+    "codeBlock": "代码块",
+    "horizontalRule": "分隔线",
+    "textColor": "文字颜色",
+    "clearFormatting": "清除格式",
+    "undo": "撤销",
+    "redo": "重做"
+  },
+  "markdown": {
+    "descriptionLabel": "简介（Markdown）",
+    "preview": "预览",
+    "bold": "粗体",
+    "italic": "斜体",
+    "link": "链接",
+    "image": "图片",
+    "list": "列表",
+    "quote": "引用",
+    "code": "代码",
+    "descriptionPlaceholder": "输入种子简介、图片等…",
+    "nothingToPreview": "没有可预览的内容",
+    "placeholders": {
+      "bold": "粗体文字",
+      "italic": "斜体文字",
+      "link": "链接文字",
+      "image": "替代文字",
+      "list": "列表项",
+      "quote": "引用",
+      "code": "代码"
+    }
+  },
+  "torrents": {
+    "table": {
+      "hash": "Hash",
+      "seedersShort": "种",
+      "leechersShort": "下",
+      "completedShort": "完",
+      "age": "存活时间",
+      "empty": "没有找到种子",
+      "deleteTorrent": "删除种子",
+      "confirmDelete": "删除“{name}”？",
+      "deleteFailed": "删除种子失败",
+      "pending": "待审核"
+    },
+    "list": {
+      "title": "种子",
+      "indexedCount": "暂无种子 | 1 个种子 | {count} 个种子",
+      "searchPlaceholder": "按名称或 Hash 搜索…",
+      "upload": "发布",
+      "noResults": "没有找到结果",
+      "noResultsHint": "搜索内容未匹配到任何已收录的种子。",
+      "resetFilters": "重置筛选",
+      "sort": "排序",
+      "sortNewest": "最新",
+      "sortOldest": "最早",
+      "sortLargest": "最大",
+      "sortSmallest": "最小",
+      "sortName": "名称",
+      "noMatch": "没有符合这些筛选条件的种子。",
+      "previous": "上一页",
+      "next": "下一页"
+    },
+    "detail": {
+      "backToIndex": "全部种子",
+      "object": "对象",
+      "copyHash": "复制 Hash",
+      "download": "下载",
+      "infoHash": "Info Hash",
+      "createdAt": "创建时间",
+      "totalSize": "总大小",
+      "activeSwarm": "活跃同伴（{count}）",
+      "endpoint": "地址",
+      "type": "类型",
+      "lastSeen": "最后活动",
+      "noPeers": "当前没有活跃的同伴",
+      "seeder": "做种者",
+      "leecher": "下载者",
+      "confirmDeleteTitle": "确认删除",
+      "confirmDeleteText": "确定要删除这个种子吗？此操作无法撤销。",
+      "notFound": "种子不存在",
+      "deleteFailed": "删除种子失败",
+      "uploadedBy": "由 {user} 发布",
+      "report": "举报此种子",
+      "swarm": "同伴",
+      "comments": "暂无评论 | 1 条评论 | {n} 条评论",
+      "commentPlaceholder": "发表评论…",
+      "postComment": "发表评论",
+      "commentFailed": "评论发表失败。",
+      "confirmDeleteComment": "删除这条评论？",
+      "details": "详情",
+      "commentDeleteFailed": "评论删除失败。"
+    }
+  },
+  "search": {
+    "pageTitle": "搜索种子",
+    "titlePrefix": "搜索",
+    "titleAccent": "种子",
+    "placeholder": "按名称、标签或 infohash 搜索…",
+    "results": "搜索结果",
+    "sortBy": "排序方式：",
+    "newest": "最新",
+    "noResults": "没有找到结果",
+    "noResultsHint": "没有找到符合搜索条件的种子。请尝试其他关键词或筛选条件。",
+    "searching": "正在搜索数据库…",
+    "trending": "热门种子"
+  },
+  "edit": {
+    "title": "编辑种子",
+    "torrentName": "种子名称",
+    "noCategory": "无分类",
+    "saveFailed": "保存更改失败"
+  },
+  "upload": {
+    "title": "发布种子",
+    "dropFile": "拖入 .torrent 文件",
+    "orBrowse": "或点击浏览文件",
+    "announceUrlLabel": "你的 Announce 地址",
+    "announceUrl": "Announce 地址",
+    "copyAnnounce": "复制 Announce 地址",
+    "announceHint": "请勿泄露：其中包含你的 Passkey。",
+    "displayName": "显示名称（可选）",
+    "displayNamePlaceholder": "默认使用 .torrent 内的名称",
+    "selectCategory": "请选择分类…",
+    "processing": "处理中…",
+    "submit": "开始发布",
+    "successHint": "已成功收录。",
+    "viewDetails": "查看详情",
+    "copyFailed": "复制到剪贴板失败",
+    "selectTorrentFile": "请选择 .torrent 文件",
+    "dropTorrentFile": "请拖入 .torrent 文件",
+    "failed": "发布失败"
+  },
+  "forum": {
+    "title": "论坛",
+    "confirmDeleteTopic": "确定要删除这个主题吗？",
+    "index": {
+      "subtitle": "社区讨论与公告。",
+      "newCategory": "新建版块",
+      "lastActivity": "最后活动",
+      "noTopics": "暂无主题",
+      "editCategory": "编辑版块",
+      "deleteCategory": "删除版块",
+      "createTitle": "新建版块",
+      "editTitle": "编辑版块",
+      "deleteTitle": "删除版块",
+      "namePlaceholder": "综合讨论",
+      "descriptionPlaceholder": "在这里畅所欲言…",
+      "order": "排序",
+      "deleteConfirm": "确定要删除 {name} 吗？该版块下的所有主题和帖子都将被永久删除。"
+    },
+    "newTopic": {
+      "breadcrumb": "新主题",
+      "title": "发表新主题",
+      "selectCategory": "请选择版块",
+      "topicTitle": "标题",
+      "titlePlaceholder": "你想说些什么？",
+      "content": "内容",
+      "contentPlaceholder": "在这里输入帖子内容…",
+      "submit": "发表主题"
+    },
+    "category": {
+      "newTopic": "新主题",
+      "topic": "主题",
+      "replies": "回复",
+      "lastPost": "最后发表",
+      "empty": "该版块暂无主题。",
+      "by": "作者",
+      "deleteTopic": "删除主题"
+    },
+    "topic": {
+      "breadcrumb": "主题",
+      "pin": "置顶",
+      "unpin": "取消置顶",
+      "lock": "锁定",
+      "unlock": "解锁",
+      "modBadge": "版主",
+      "postedOn": "发表于 {date}",
+      "deletePost": "删除帖子",
+      "confirmDeletePost": "确定要删除这个帖子吗？",
+      "replyTitle": "发表回复",
+      "replyPlaceholder": "在这里输入回复…",
+      "posting": "发表中…",
+      "postReply": "发表回复",
+      "locked": "该主题已锁定，无法回复。"
+    }
+  },
+  "users": {
+    "profile": {
+      "notFound": "用户不存在",
+      "modBadge": "版主",
+      "memberSince": "加入时间",
+      "lastSeen": "最后访问",
+      "uploads": "发布",
+      "uploadedTorrents": "发布的种子",
+      "noUploads": "暂无发布",
+      "seedersLeechers": "种/下",
+      "uploadedAt": "发布时间",
+      "uncategorized": "未分类",
+      "pageTitle": "{username} - 个人资料",
+      "pageTitleFallback": "用户资料"
+    }
+  },
+  "invites": {
+    "title": "我的邀请",
+    "subtitle": "邀请新会员加入 Tracker",
+    "remaining": "剩余邀请",
+    "generate": "生成邀请",
+    "yourInvites": "你的邀请",
+    "clickToCopy": "点击复制",
+    "createdAt": "创建于：{date}",
+    "usedBy": "使用者：",
+    "expiresAt": "过期时间：{date}",
+    "empty": "暂无邀请",
+    "emptyHint": "生成邀请码并分享给朋友",
+    "status": {
+      "used": "已使用",
+      "expired": "已过期"
+    },
+    "toast": {
+      "generated": "邀请码已生成！",
+      "generateFailed": "生成邀请失败",
+      "copied": "邀请码已复制到剪贴板！",
+      "copyFailed": "复制邀请码失败"
+    }
+  },
+  "mod": {
+    "layout": {
+      "title": "版务管理"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "仪表盘",
+        "description": "版务概览与快捷操作"
+      },
+      "pending": {
+        "label": "待审种子",
+        "description": "审核并通过待审核的种子"
+      },
+      "users": {
+        "label": "用户",
+        "description": "管理用户账号与封禁"
+      },
+      "reports": {
+        "label": "举报",
+        "description": "审阅并处理用户举报"
+      },
+      "hnr": {
+        "label": "H&R",
+        "description": "监控并管理 H&R 违规"
+      }
+    },
+    "dashboard": {
+      "pendingReports": "待处理举报",
+      "pendingReportsHint": "前往举报页面处理用户投诉。",
+      "viewReports": "查看举报",
+      "recentHnr": "近期 H&R",
+      "recentHnrHint": "关注下载后未回种的用户。",
+      "viewHnr": "查看 H&R"
+    }
+  },
+  "admin": {
+    "layout": {
+      "title": "站点管理",
+      "liveFeed": "Tracker 实时动态"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "仪表盘",
+        "description": "Tracker 配置与节点管理"
+      },
+      "users": {
+        "label": "用户",
+        "description": "管理用户账号与权限"
+      },
+      "roles": {
+        "label": "角色",
+        "description": "管理用户角色与权限"
+      },
+      "reports": {
+        "label": "举报",
+        "description": "审阅并处理用户举报"
+      },
+      "categories": {
+        "label": "分类",
+        "description": "管理种子分类"
+      },
+      "tags": {
+        "label": "标签",
+        "description": "管理种子标签"
+      },
+      "hnr": {
+        "label": "H&R",
+        "description": "监控并管理 H&R 违规"
+      },
+      "invites": {
+        "label": "邀请",
+        "description": "管理邀请系统"
+      },
+      "torznab": {
+        "label": "Torznab API",
+        "description": "配置 *arr 集成与请求限速"
+      },
+      "branding": {
+        "label": "品牌外观",
+        "description": "自定义站点外观与品牌"
+      },
+      "settings": {
+        "label": "设置",
+        "description": "全站注册与 Tracker 设置"
+      }
+    },
+    "dashboard": {
+      "noHistory": "暂无历史数据",
+      "noHistoryHint": "统计数据刚开始收集，请一小时后再来查看。"
+    },
+    "branding": {
+      "authSubtitle": "登录页副标题",
+      "authSubtitleDescription": "显示在登录/注册页面标题下方的副标题。",
+      "authSubtitlePlaceholder": "私有 BitTorrent Tracker",
+      "authTitle": "登录页标题",
+      "authTitleDescription": "显示在登录/注册页面的标题。留空则使用站点名称。",
+      "authTitlePlaceholder": "请输入登录页标题…",
+      "bold": "粗体",
+      "currentFavicon": "当前网站图标",
+      "currentLogo": "当前 Logo",
+      "dropFavicon": "拖入网站图标或点击上传",
+      "dropImage": "拖入图片或点击上传",
+      "favicon": "网站图标",
+      "faviconDescription": "上传自定义网站图标（ICO、PNG、SVG），最大 1MB。显示在浏览器标签页上。",
+      "footerContent": "页脚内容",
+      "footerContentDescription": "自定义页脚内容，支持富文本格式。",
+      "icon": "图标",
+      "image": "图片",
+      "livePreview": "实时预览",
+      "logoIcon": "Logo 图标",
+      "logoIconDescription": "使用 Phosphor 图标名称（例如 ph:broadcast-bold）。",
+      "logoImage": "Logo 图片",
+      "logoImageDescription": "上传自定义 Logo（PNG、JPG、SVG、WebP），最大 5MB。",
+      "logoType": "Logo 类型",
+      "logoTypeDescription": "选择使用 Phosphor 图标或自定义图片。",
+      "pageTitleExample": "示例：“搜索种子 {title}”",
+      "pageTitleSuffix": "页面标题后缀",
+      "pageTitleSuffixDescription": "附加在浏览器标签页标题后的文字，仅支持纯文本。",
+      "quickSelect": "快速选择",
+      "saveBranding": "保存品牌设置",
+      "saveTextBranding": "保存文字设置",
+      "siteName": "站点名称",
+      "siteNameColor": "站点名称颜色",
+      "siteNameDescription": "显示在导航栏和浏览器标题中。可使用富文本自定义样式。",
+      "siteRules": "站点规则",
+      "siteRulesDescription": "向用户展示的规则与条款，支持完整富文本。",
+      "siteRulesPlaceholder": "请输入站点规则与守则…",
+      "subtitle": "副标题",
+      "subtitleDescription": "显示在站点名称下方的文字。留空则显示版本号。支持富文本。",
+      "subtitlePlaceholder": "留空则显示版本号",
+      "textBranding": "文字设置",
+      "textBrandingDescription": "自定义全站显示的文字。使用富文本编辑器进行高级排版。",
+      "title": "站点品牌",
+      "uploading": "上传中…",
+      "welcomeMessage": "管理组寄语",
+      "welcomeMessageDescription": "显示在每位会员仪表盘的顶部。留空则隐藏。",
+      "welcomeMessagePlaceholder": "欢迎来到我们的 Tracker 社区…"
+    },
+    "categories": {
+      "addFailed": "添加分类失败",
+      "confirmDelete": "确定要删除这个分类吗？",
+      "confirmSeed": "将创建推荐的 Torznab 兼容分类。是否继续？",
+      "deleteFailed": "删除分类失败",
+      "empty": "尚未设置分类",
+      "newCategoryPlaceholder": "新分类名称…",
+      "newSubcategoryPlaceholder": "新子分类名称…",
+      "newznabId": "Newznab ID",
+      "newznabIdHint": "Newznab/Torznab 分类 ID（例如 2040 表示 Movies/HD）",
+      "newznabIdTitle": "Newznab/Torznab 分类 ID",
+      "nzId": "NZ ID",
+      "rootCategory": "顶级分类",
+      "seed": "导入 Torznab 分类",
+      "seedFailed": "导入分类失败",
+      "seeded": "未创建分类 | 已创建 1 个分类 | 已创建 {count} 个分类",
+      "subcategoriesCount": "无子分类 | 1 个子分类 | {count} 个子分类",
+      "title": "分类管理",
+      "updateFailed": "更新分类失败"
+    },
+    "charts": {
+      "databaseSize": "数据库大小（MB）",
+      "day": "日",
+      "dbSize": "数据库大小",
+      "growth": "用户与种子增长",
+      "hour": "小时",
+      "month": "月",
+      "peers": "同伴",
+      "peersSeeders": "同伴与做种者",
+      "redisMemory": "Redis 内存",
+      "redisMemoryUsage": "Redis 内存占用（MB）",
+      "torrents": "种子",
+      "users": "用户",
+      "view": "视图：",
+      "week": "周"
+    },
+    "invites": {
+      "allCodesCopied": "已复制全部邀请码！",
+      "clickToCopy": "点击复制",
+      "codeCopied": "邀请码已复制！",
+      "copyAll": "全部复制",
+      "copyCodeFailed": "复制邀请码失败",
+      "copyCodesFailed": "复制邀请码失败",
+      "count": "数量",
+      "createdBy": "创建者：",
+      "empty": "没有找到邀请",
+      "expires": "过期时间：{date}",
+      "expiresInDays": "有效天数（可选）",
+      "generate": "生成",
+      "generateFailed": "生成邀请码失败",
+      "generateTitle": "生成邀请码",
+      "generatedCodes": "已生成的邀请码",
+      "generatedToast": "未生成邀请码 | 已生成 1 个邀请码 | 已生成 {count} 个邀请码",
+      "grant": "发放",
+      "grantFailed": "发放邀请失败",
+      "grantTitle": "向用户发放邀请",
+      "grantedToast": "未向用户发放邀请 | 已向用户发放 1 个邀请 | 已向用户发放 {count} 个邀请",
+      "statusExpired": "已过期",
+      "statusPending": "未使用",
+      "statusUsed": "已使用",
+      "title": "邀请",
+      "usedBy": "使用者：",
+      "userId": "用户 ID"
+    },
+    "panic": {
+      "confirmText": "此操作将加密数据库中的所有敏感数据。在使用紧急密码恢复之前，这些数据将无法读取。",
+      "confirmTitle": "确认加密数据库",
+      "encryptButton": "紧急 — 加密数据库",
+      "encryptFailed": "加密失败",
+      "encryptNow": "立即加密",
+      "encryptedAt": "加密时间：{date}",
+      "encryptedText": "所有敏感数据当前处于加密状态。请输入紧急密码以恢复访问。",
+      "encryptedTitle": "数据库已加密",
+      "encrypting": "加密中…",
+      "intro": "立即加密所有敏感数据。若没有首次注册时设置的紧急密码，数据将无法读取。",
+      "irreversible": "没有紧急密码，此操作将无法撤销。",
+      "password": "紧急密码",
+      "passwordPlaceholder": "请输入紧急密码",
+      "restore": "恢复",
+      "restoreButton": "恢复数据库",
+      "restoreFailed": "恢复失败",
+      "restoreText": "请输入首个管理员注册时设置的紧急密码，以解密并恢复所有数据。",
+      "restoring": "恢复中…",
+      "title": "紧急锁定"
+    },
+    "registration": {
+      "closed": "已关闭",
+      "currentStatus": "当前状态：{status}",
+      "defaultInvitesDescription": "每位新用户注册时获得的邀请码数量。",
+      "defaultInvitesLabel": "默认邀请数",
+      "gb": "GB",
+      "inviteOnlyDescription": "注册时必须提供邀请码。",
+      "inviteOnlyLabel": "仅限邀请模式",
+      "minRatioDescription": "分享率低于此值的用户将被禁止下载。设为 0 则关闭此限制。",
+      "minRatioLabel": "最低分享率",
+      "open": "开放",
+      "openDescription": "允许新用户自由注册账号。",
+      "openLabel": "开放注册",
+      "starterCreditDescription": "赠送给新用户的初始上传量，避免一开始就因分享率过低而被限制。",
+      "starterCreditLabel": "初始上传量（GB）",
+      "statusClosed": "注册已关闭",
+      "statusInviteOnly": "仅限邀请注册",
+      "statusOpen": "注册向所有人开放",
+      "statusOpenInviteOptional": "开放注册（邀请可选）",
+      "title": "注册"
+    },
+    "system": {
+      "backupWarning": "更新前请先备份数据库",
+      "checkUpdates": "检查更新",
+      "confirmPassword": "确认密码",
+      "confirmPasswordDescription": "请再次输入新密码以确认。",
+      "confirmPasswordPlaceholder": "确认新密码",
+      "currentPassword": "当前密码",
+      "currentPasswordDescription": "你当前用于登录 Grafana 的密码。",
+      "currentPasswordPlaceholder": "请输入当前 Grafana 密码",
+      "currentVersion": "当前版本",
+      "downtimeWarning": "更新期间服务会短暂中断",
+      "grafanaFailed": "更新 Grafana 密码失败",
+      "grafanaIntro": "修改 Grafana 管理员密码，需要提供当前密码。",
+      "grafanaSuccess": "Grafana 密码已更新",
+      "grafanaTitle": "Grafana 密码",
+      "hideInstructions": "隐藏更新说明",
+      "installedVersion": "已安装的 Trackarr 版本",
+      "newPassword": "新密码",
+      "newPasswordDescription": "至少 8 个字符。",
+      "newPasswordPlaceholder": "请输入新密码",
+      "published": "发布于 {date}",
+      "showInstructions": "显示更新说明",
+      "step": "第 {step} 步：{description}",
+      "upToDate": "当前已是最新版本",
+      "updateAvailable": "有可用更新：{version}",
+      "updateCommands": "更新命令",
+      "updateGrafanaPassword": "更新 Grafana 密码",
+      "updating": "更新中…",
+      "versionTitle": "版本与更新",
+      "viewChangelog": "查看更新日志"
+    },
+    "torznabUsers": {
+      "blockAccess": "禁止 API 访问",
+      "blockConfirm": "确定要禁止 {username} 使用 Torznab API 吗？对方将无法通过 *arr 应用搜索或下载。",
+      "blockTitle": "禁止 API 访问",
+      "blockUser": "封禁用户",
+      "daysAgo": "{n} 天前",
+      "empty": "没有找到用户",
+      "hits": "{count} 次请求 | {count} 次请求 | {count} 次请求",
+      "hoursAgo": "{n} 小时前",
+      "justNow": "刚刚",
+      "lastRequest": "最后请求",
+      "logsTitle": "API 日志 - {username}",
+      "minutesAgo": "{n} 分钟前",
+      "passkey": "Passkey",
+      "rateLimits": "请求限速",
+      "requests": "请求数",
+      "resetPasskey": "重置 Passkey",
+      "resetPasskeyConfirm": "确定要重置 {username} 的 Passkey 吗？对方需要在 *arr 应用中更新为新的 Passkey。",
+      "resetPasskeyTitle": "重置 Passkey",
+      "searchPlaceholder": "搜索用户…",
+      "showing": "显示第 {from} - {to} 条，共 {total} 条",
+      "title": "API 用户",
+      "viewLogs": "查看日志"
+    },
+    "stats": {
+      "activeTorrents": "活跃种子",
+      "totalPeers": "同伴总数",
+      "trackerStatus": "Tracker 状态",
+      "operational": "运行正常",
+      "offline": "离线"
+    },
+    "protocols": {
+      "title": "协议"
+    },
+    "endpoints": {
+      "title": "接口地址",
+      "httpAnnounce": "HTTP Announce",
+      "udpAnnounce": "UDP Announce"
+    },
+    "torznabLogs": {
+      "title": "最近请求",
+      "totalRequests": "暂无请求 | 共 {count} 次请求 | 共 {count} 次请求",
+      "showing": "显示第 {from} - {to} 条，共 {total} 条",
+      "time": "时间",
+      "function": "功能",
+      "query": "查询",
+      "results": "结果",
+      "duration": "耗时",
+      "empty": "暂无日志"
+    },
+    "torznabStats": {
+      "title": "Torznab API 统计",
+      "totalRequests": "总请求数",
+      "last24h": "最近 24 小时",
+      "uniqueUsers": "独立用户",
+      "avgResponseTime": "平均响应时间",
+      "searchRequests": "搜索请求",
+      "tvSearches": "剧集搜索",
+      "movieSearches": "电影搜索",
+      "errors": "错误"
+    },
+    "torznabConfig": {
+      "title": "API 配置",
+      "statusLabel": "Torznab API 状态",
+      "statusDescription": "为所有用户启用或禁用 Torznab API。禁用后，*arr 应用将无法连接。",
+      "apiAccepting": "API 正在接受请求",
+      "apiDisabled": "API 已禁用",
+      "loggingLabel": "请求日志",
+      "loggingDescription": "记录所有 API 请求，用于调试与监控。日志保留 7 天。",
+      "loggingEnabled": "日志已启用",
+      "loggingDisabled": "日志已禁用",
+      "endpointLabel": "API 地址",
+      "endpointDescription": "Torznab API 的基础 URL，用户需在 Prowlarr/Sonarr/Radarr 中添加。",
+      "copyUrl": "复制 URL"
+    },
+    "torznabBlacklist": {
+      "title": "已封禁的 IP 与用户",
+      "rateLimitedIps": "被限速的 IP",
+      "noIps": "当前没有被封禁的 IP",
+      "expiresIn": "剩余时间",
+      "blockedUsers": "被封禁的 API 用户",
+      "noUsers": "当前没有被封禁的用户",
+      "unblock": "解除封禁",
+      "unblocking": "解除中…",
+      "expired": "已过期",
+      "justNow": "刚刚",
+      "minutesAgo": "{n} 分钟前",
+      "hoursAgo": "{n} 小时前",
+      "daysAgo": "{n} 天前"
+    },
+    "torznabRateLimit": {
+      "title": "请求限速",
+      "intro": "配置请求限速以防止 API 滥用。限制按用户（Passkey）在指定时间窗口内计算。",
+      "windowLabel": "时间窗口",
+      "windowDescription": "用于计算限速的时长（秒）。",
+      "seconds": "秒",
+      "searchLabel": "搜索请求上限",
+      "searchDescription": "每位用户在每个时间窗口内的最大搜索请求数（search、tvsearch、movie）。",
+      "downloadLabel": "下载请求上限",
+      "downloadDescription": "每位用户在每个时间窗口内的最大种子文件下载请求数。",
+      "perWindow": "次请求 / {window}",
+      "strict": "严格",
+      "default": "默认",
+      "relaxed": "宽松",
+      "generous": "非常宽松",
+      "presets": "快速预设",
+      "immediateNote": "更改将立即对新请求生效。"
+    },
+    "tags": {
+      "add": "添加标签",
+      "empty": "尚未设置标签",
+      "addTitle": "添加新标签",
+      "placeholder": "例如 1080p",
+      "slug": "标识",
+      "color": "颜色",
+      "confirmDelete": "删除这个标签？"
+    },
+    "reports": {
+      "title": "举报",
+      "status": {
+        "pending": "待处理",
+        "resolved": "已解决",
+        "dismissed": "已驳回"
+      },
+      "by": "举报人：",
+      "resolve": "解决",
+      "dismiss": "驳回",
+      "empty": "没有找到举报"
+    },
+    "homepage": {
+      "title": "首页内容",
+      "heroSection": "首屏区域",
+      "heroTitleLabel": "标题",
+      "heroTitleDescription": "首页的主标题。可使用富文本自定义样式、颜色和字体。",
+      "subtitleLabel": "副标题",
+      "subtitleDescription": "标题下方的简短描述，支持富文本。",
+      "subtitlePlaceholder": "高性能、极简的 P2P Tracker 引擎…",
+      "badgeLabel": "状态徽章",
+      "badgeDescription": "显示在标题上方胶囊徽章中的文字。",
+      "badgePlaceholder": "Tracker 在线，运行正常",
+      "featureBoxes": "特性卡片",
+      "featureLabel": "特性 {n}",
+      "featureDescription": "此特性卡片的标题与描述，支持富文本。",
+      "featureTitleLabel": "标题",
+      "featureTitlePlaceholder": "特性标题",
+      "featureDescriptionPlaceholder": "特性描述…",
+      "save": "保存首页内容"
+    },
+    "announcements": {
+      "title": "站点公告",
+      "enableLabel": "启用公告",
+      "enableDescription": "在所有页面的主导航栏下方显示横幅。",
+      "messageLabel": "内容",
+      "messageDescription": "公告内容，请保持简短清晰。",
+      "messagePlaceholder": "请输入公告内容…",
+      "typeLabel": "横幅类型",
+      "typeDescription": "决定公告横幅的颜色和图标。",
+      "typeInfo": "信息",
+      "typeWarning": "警告",
+      "preview": "实时预览",
+      "save": "保存公告"
+    },
+    "pending": {
+      "title": "待审种子",
+      "uncategorized": "未分类",
+      "empty": "没有待审核的种子",
+      "allModerated": "所有种子均已审核",
+      "approveFailed": "通过种子失败",
+      "rejectPrompt": "拒绝原因（可选）：",
+      "rejectFailed": "拒绝种子失败"
+    },
+    "hnr": {
+      "title": "H&R 追踪",
+      "hitAndRun": "H&R",
+      "pending": "待定",
+      "checkNew": "检查新的 H&R",
+      "seedTime": "做种时间：",
+      "downloadedAt": "下载时间：{date}",
+      "clear": "清除 H&R",
+      "exempt": "豁免",
+      "exempted": "已豁免",
+      "empty": "没有找到 H&R 记录"
+    },
+    "roles": {
+      "title": "角色管理",
+      "createTitle": "创建新角色",
+      "namePlaceholder": "角色名称…",
+      "color": "颜色",
+      "skipModeration": "免审核",
+      "canBypass": "可跳过审核",
+      "requiresModeration": "需要审核",
+      "skipMod": "免审",
+      "delete": "删除角色",
+      "empty": "尚未创建角色",
+      "createFailed": "创建角色失败",
+      "updateFailed": "更新角色失败",
+      "confirmDelete": "确定要删除角色“{name}”吗？",
+      "deleteFailed": "删除角色失败"
+    },
+    "users": {
+      "title": "用户管理",
+      "searchPlaceholder": "按用户名或邮箱搜索…",
+      "ban": "封禁",
+      "noRole": "无角色",
+      "mod": "版主",
+      "empty": "没有找到用户",
+      "updateRoleFailed": "更新用户角色失败",
+      "confirmBan": "确定要封禁 {name} 吗？",
+      "confirmUnban": "确定要解封 {name} 吗？",
+      "banFailed": "封禁用户失败",
+      "unbanFailed": "解封用户失败",
+      "assignRoleFailed": "分配角色失败"
+    },
+    "footer": {
+      "title": "页脚链接",
+      "description": "显示在每个页面右下角的图标。链接将在新标签页中打开。",
+      "icon": "图标",
+      "label": "标签",
+      "url": "URL",
+      "add": "添加链接",
+      "remove": "移除",
+      "moveUp": "上移",
+      "moveDown": "下移",
+      "empty": "没有链接：页脚将不显示任何链接。",
+      "max": "最多 {max} 个链接。",
+      "tagline": "页脚标语",
+      "taglineDescription": "显示在版权信息旁的简短文字。留空则隐藏。",
+      "taglineDefault": "默认文字",
+      "resetTagline": "使用默认",
+      "resetLinks": "恢复默认链接",
+      "save": "保存页脚",
+      "saved": "已保存",
+      "invalid": "每个链接都需要标签，以及 http(s) 或 mailto 地址。"
+    }
+  },
+  "time": {
+    "justNow": "刚刚",
+    "minutesAgo": "{count} 分钟前 | {count} 分钟前",
+    "hoursAgo": "{count} 小时前 | {count} 小时前",
+    "daysAgo": "{count} 天前 | {count} 天前",
+    "monthsAgo": "{count} 个月前 | {count} 个月前",
+    "yearsAgo": "{count} 年前 | {count} 年前"
+  },
+  "freeleech": {
+    "banner": "全站免费已开启：下载量不计入分享率。",
+    "bannerUntil": "全站免费持续至 {date}：下载量不计入分享率。",
+    "admin": {
+      "title": "全站免费",
+      "description": "开启期间不计算下载量（上传量照常计算），并暂停最低分享率限制。Torznab 报告的下载系数为 0。",
+      "active": "已开启",
+      "activeUntil": "开启至 {date}",
+      "activeForever": "已开启，无结束时间",
+      "inactive": "未开启",
+      "duration": "持续时间（小时）",
+      "durationHint": "留空则不设结束时间。",
+      "start": "开启全站免费",
+      "update": "更新",
+      "stop": "停止全站免费",
+      "confirmStop": "立即停止全站免费？"
+    }
+  },
+  "shell": {
+    "skip": "跳到主要内容",
+    "groups": {
+      "browse": "浏览",
+      "community": "社区",
+      "account": "我的账号",
+      "staff": "管理组"
+    },
+    "nav": {
+      "home": "首页",
+      "torrents": "种子",
+      "bounties": "悬赏",
+      "forum": "论坛",
+      "shop": "魔力商城",
+      "invites": "邀请",
+      "profile": "个人资料",
+      "mod": "版务管理",
+      "admin": "站点管理"
+    },
+    "menu": {
+      "open": "打开导航",
+      "close": "关闭导航",
+      "label": "主导航"
+    },
+    "search": {
+      "trigger": "搜索",
+      "placeholder": "搜索种子、IMDb ID 或 Info Hash",
+      "pages": "页面",
+      "torrents": "种子",
+      "seeAll": "查看“{q}”的全部结果",
+      "empty": "没有与“{q}”匹配的种子",
+      "loading": "搜索中…",
+      "close": "关闭搜索",
+      "hint": "切换选项，Enter 打开"
+    },
+    "meter": {
+      "uploaded": "上传量",
+      "downloaded": "下载量",
+      "ratio": "分享率",
+      "refresh": "刷新我的数据",
+      "label": "你的传输数据"
+    },
+    "freeleech": {
+      "pill": "免费",
+      "until": "免费至 {time}"
+    },
+    "user": {
+      "open": "账号菜单",
+      "passkey": "Passkey",
+      "copy": "复制 Passkey",
+      "copied": "已复制",
+      "points": "{n} 魔力值",
+      "signOut": "退出登录",
+      "theme": "主题",
+      "language": "语言"
+    },
+    "theme": {
+      "label": "主题",
+      "light": "浅色",
+      "system": "跟随系统",
+      "dark": "深色"
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "早上好，{name}",
+      "afternoon": "下午好，{name}",
+      "evening": "晚上好，{name}",
+      "neutral": "你好，{name}"
+    },
+    "memberSince": "加入于 {date}",
+    "browse": "浏览种子",
+    "upload": "发布种子",
+    "account": "你的账号",
+    "seeding": "做种中",
+    "leeching": "没有下载中的种子 | 正在下载 1 个种子 | 正在下载 {n} 个种子",
+    "points": "魔力值",
+    "spendPoints": "去魔力商城消费",
+    "hnr": "H&R",
+    "hnrNone": "没有需要补种的种子",
+    "hnrWarning": "继续做种即可消除",
+    "latest": "最新种子",
+    "seeAll": "查看全部",
+    "columns": {
+      "name": "名称",
+      "size": "大小",
+      "seeders": "做种者",
+      "leechers": "下载者",
+      "age": "发布时间"
+    },
+    "noTorrents": "暂无种子。",
+    "uploadFirst": "发布第一个种子",
+    "bounties": "进行中的悬赏",
+    "noBounties": "暂无进行中的悬赏。",
+    "requestTorrent": "求种",
+    "forum": "论坛最新动态",
+    "noTopics": "暂无主题。",
+    "startTopic": "发表一个",
+    "site": {
+      "title": "Tracker 数据一览",
+      "members": "会员",
+      "activePeers": "活跃同伴",
+      "seededTorrents": "做种中的种子",
+      "shared": "共享数据量"
+    }
+  }
+}

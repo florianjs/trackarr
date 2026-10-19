@@ -1,5 +1,8 @@
 import pkg from './package.json';
 
+// One translation file per area, in i18n/locales/<code>/ (issue #43)
+const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json'];
+
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
@@ -19,9 +22,15 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     defaultLocale: 'en',
     locales: [
-      { code: 'en', language: 'en-US', name: 'English', files: ['en/app.json', 'en/shop.json', 'en/messages.json'] },
-      { code: 'fr', language: 'fr-FR', name: 'Français', files: ['fr/app.json', 'fr/shop.json', 'fr/messages.json'] },
-    ],
+      { code: 'en', language: 'en-US', name: 'English' },
+      { code: 'fr', language: 'fr-FR', name: 'Français' },
+      { code: 'es', language: 'es-ES', name: 'Español' },
+      { code: 'de', language: 'de-DE', name: 'Deutsch' },
+      { code: 'it', language: 'it-IT', name: 'Italiano' },
+      { code: 'zh', language: 'zh-CN', name: '简体中文' },
+      { code: 'ja', language: 'ja-JP', name: '日本語' },
+      { code: 'ru', language: 'ru-RU', name: 'Русский' },
+    ].map((l) => ({ ...l, files: LOCALE_FILES.map((f) => `${l.code}/${f}`) })),
     // English unless the user picks another language (stored in a cookie by
     // app/plugins/locale-cookie.ts); the browser language is not used
     detectBrowserLanguage: false,

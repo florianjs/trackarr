@@ -61,7 +61,7 @@ Trackarr is actively developed with a focus on performance, security, and usabil
 ## v1.0.0 — Production Ready
 
 - [ ] **Theme System** — Dark/Light/Custom theme support
-- [ ] **i18n** — Multi-language support (FR, EN, ES...)
+- [x] **i18n** — 8 UI languages (EN, FR, ES, DE, IT, ZH, JA, RU)
 - [ ] **E2E Tests** — Complete functional test suite
 - [ ] **API Documentation** — OpenAPI/Swagger at `/api/docs`
 - [ ] **Performance Audit** — Final optimizations

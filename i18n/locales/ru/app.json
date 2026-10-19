@@ -1,0 +1,1062 @@
+{
+  "common": {
+    "language": "Язык",
+    "save": "Сохранить",
+    "saving": "Сохранение...",
+    "saveChanges": "Сохранить изменения",
+    "cancel": "Отмена",
+    "delete": "Удалить",
+    "deleting": "Удаление...",
+    "edit": "Изменить",
+    "close": "Закрыть",
+    "create": "Создать",
+    "creating": "Создание...",
+    "add": "Добавить",
+    "remove": "Убрать",
+    "search": "Поиск",
+    "loading": "Загрузка...",
+    "refresh": "Обновить",
+    "reset": "Сбросить",
+    "copy": "Копировать",
+    "copied": "Скопировано!",
+    "approve": "Одобрить",
+    "reject": "Отклонить",
+    "all": "Все",
+    "unknown": "Неизвестно",
+    "never": "Никогда",
+    "optional": "необязательно",
+    "actions": "Действия",
+    "name": "Название",
+    "description": "Описание",
+    "enabled": "Включено",
+    "disabled": "Отключено",
+    "active": "Активно",
+    "inactive": "Неактивно",
+    "previous": "Назад",
+    "next": "Далее",
+    "error": "Ошибка",
+    "user": "Пользователь",
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "role": "Роль",
+    "reason": "Причина",
+    "category": "Категория",
+    "tags": "Теги",
+    "size": "Размер",
+    "seeders": "Сиды",
+    "leechers": "Личи",
+    "completed": "Скачали",
+    "ratio": "Рейтинг",
+    "uploaded": "Отдано",
+    "downloaded": "Скачано",
+    "admin": "Администратор",
+    "moderator": "Модератор",
+    "pageOf": "Страница {page} / {pages}",
+    "saveConfiguration": "Сохранить настройки",
+    "saved": "Сохранено"
+  },
+  "nav": {
+    "dashboard": "Главная",
+    "search": "Поиск",
+    "torrents": "Торренты",
+    "forum": "Форум",
+    "admin": "Админка",
+    "mod": "Модерация"
+  },
+  "layout": {
+    "refreshStats": "Обновить статистику",
+    "passkey": "Пасскей",
+    "signOut": "Выйти",
+    "dismiss": "Скрыть",
+    "p2pProtocol": "P2P-протокол"
+  },
+  "auth": {
+    "defaultSubtitle": "Закрытый BitTorrent-трекер",
+    "usernamePlaceholder": "Введите имя пользователя",
+    "passwordPlaceholder": "Введите пароль",
+    "status": {
+      "fetchingChallenge": "Получение задачи...",
+      "generatingProof": "Генерация доказательства...",
+      "authenticating": "Аутентификация...",
+      "gettingChallenge": "Получение задачи...",
+      "solvingPow": "Решение proof of work...",
+      "generatingCredentials": "Генерация защищённых учётных данных..."
+    },
+    "login": {
+      "registrationsClosed": "Регистрация сейчас закрыта. Войти могут только существующие участники.",
+      "signingIn": "Вход...",
+      "signIn": "Войти",
+      "noAccount": "Нет аккаунта?",
+      "createOne": "Создать",
+      "failed": "Не удалось войти"
+    },
+    "register": {
+      "closedTitle": "Регистрация закрыта",
+      "closedText": "Новые регистрации сейчас не принимаются. Если у вас есть инвайт, свяжитесь с администратором.",
+      "createAdminAccount": "Создать аккаунт администратора",
+      "inviteOnlyTitle": "Регистрация только по инвайтам",
+      "createAccount": "Создать аккаунт",
+      "firstAccountWarning": "Это первый аккаунт. Он получит права администратора.",
+      "zkeTitle": "Шифрование с нулевым разглашением:",
+      "zkeText": "Ваш пароль никогда не передаётся на сервер. Если вы его забудете, восстановить аккаунт будет невозможно.",
+      "inviteCode": "Инвайт-код",
+      "inviteCodePlaceholder": "Введите инвайт-код",
+      "usernamePlaceholder": "3–20 символов: буквы, цифры, _ или -",
+      "passwordPlaceholder": "Не менее 8 символов",
+      "confirmPassword": "Подтверждение пароля",
+      "confirmPasswordPlaceholder": "Введите пароль ещё раз",
+      "panicWarning": "Аварийный пароль включает экстренное шифрование базы данных. Храните его в надёжном месте — его нельзя восстановить или изменить.",
+      "panicPassword": "Аварийный пароль",
+      "panicPasswordPlaceholder": "Не менее 12 символов",
+      "confirmPanicPassword": "Подтверждение аварийного пароля",
+      "confirmPanicPasswordPlaceholder": "Введите аварийный пароль ещё раз",
+      "creatingAccount": "Создание аккаунта...",
+      "haveAccount": "Уже есть аккаунт?",
+      "signInLink": "Войти",
+      "failed": "Не удалось зарегистрироваться",
+      "errors": {
+        "passwordMismatch": "Пароли не совпадают",
+        "passwordTooShort": "Пароль должен содержать не менее 8 символов",
+        "panicMismatch": "Аварийные пароли не совпадают",
+        "panicTooShort": "Аварийный пароль должен содержать не менее 12 символов"
+      }
+    }
+  },
+  "home": {
+    "statusBadge": "Трекер онлайн и работает",
+    "heroSubtitle": "Высокопроизводительный минималистичный P2P-трекер. Ищите в нашей базе проверенных торрентов.",
+    "searchPlaceholder": "Поиск торрентов по названию, тегу или инфохешу...",
+    "torrentCount": "{count} торрентов | {count} торрент | {count} торрента | {count} торрентов",
+    "peerCount": "{count} пиров | {count} пир | {count} пира | {count} пиров",
+    "lowLatency": "Сверхнизкая задержка",
+    "recentlyIndexed": "Недавно добавленные",
+    "browseAll": "Смотреть все",
+    "features": {
+      "performance": {
+        "title": "Высокая производительность",
+        "description": "Построен на Node.js и Redis: время отклика меньше миллисекунды и поддержка высокой нагрузки."
+      },
+      "protocols": {
+        "title": "Несколько протоколов",
+        "description": "Поддержка протоколов HTTP, UDP и WebSocket для максимальной совместимости со всеми BitTorrent-клиентами."
+      },
+      "openSource": {
+        "title": "Открытый исходный код",
+        "description": "Полностью прозрачный и развивается сообществом. Создан для приватности и эффективности в P2P-экосистеме."
+      }
+    }
+  },
+  "searchBar": {
+    "placeholder": "Поиск...",
+    "clear": "Очистить"
+  },
+  "sidebar": {
+    "categories": "Категории",
+    "allTorrents": "Все торренты"
+  },
+  "report": {
+    "title": "Жалоба: {type}",
+    "targetTypes": {
+      "torrent": "торрент",
+      "user": "пользователь",
+      "post": "сообщение",
+      "comment": "комментарий"
+    },
+    "selectReason": "Выберите причину...",
+    "reasons": {
+      "spam": "Спам или реклама",
+      "fake": "Фейк или вводящее в заблуждение содержимое",
+      "copyright": "Нарушение авторских прав",
+      "inappropriate": "Недопустимое содержимое",
+      "harassment": "Травля или оскорбления",
+      "other": "Другое"
+    },
+    "details": "Подробности",
+    "detailsPlaceholder": "Опишите ситуацию подробнее...",
+    "submit": "Отправить жалобу",
+    "submitted": "Жалоба отправлена",
+    "failed": "Не удалось отправить жалобу"
+  },
+  "mediaIds": {
+    "label": "Внешние ID",
+    "imdbPlaceholder": "IMDb (tt0133093 или URL)",
+    "tmdbPlaceholder": "TMDB (603 или URL)",
+    "help": "Используется Sonarr / Radarr для сопоставления релизов. Вставьте ID или URL страницы."
+  },
+  "editor": {
+    "placeholder": "Начните печатать...",
+    "bold": "Жирный",
+    "italic": "Курсив",
+    "strikethrough": "Зачёркнутый",
+    "heading1": "Заголовок 1",
+    "heading2": "Заголовок 2",
+    "heading3": "Заголовок 3",
+    "bulletList": "Маркированный список",
+    "numberedList": "Нумерованный список",
+    "quote": "Цитата",
+    "codeBlock": "Блок кода",
+    "horizontalRule": "Горизонтальная линия",
+    "textColor": "Цвет текста",
+    "clearFormatting": "Очистить форматирование",
+    "undo": "Отменить",
+    "redo": "Повторить"
+  },
+  "markdown": {
+    "descriptionLabel": "Описание (Markdown)",
+    "preview": "Предпросмотр",
+    "bold": "Жирный",
+    "italic": "Курсив",
+    "link": "Ссылка",
+    "image": "Изображение",
+    "list": "Список",
+    "quote": "Цитата",
+    "code": "Код",
+    "descriptionPlaceholder": "Введите описание торрента, изображения и т. д...",
+    "nothingToPreview": "Нечего показать",
+    "placeholders": {
+      "bold": "жирный текст",
+      "italic": "курсив",
+      "link": "текст ссылки",
+      "image": "альтернативный текст",
+      "list": "пункт списка",
+      "quote": "цитата",
+      "code": "код"
+    }
+  },
+  "torrents": {
+    "table": {
+      "hash": "Хеш",
+      "seedersShort": "С",
+      "leechersShort": "Л",
+      "completedShort": "З",
+      "age": "Возраст",
+      "empty": "Торренты не найдены",
+      "deleteTorrent": "Удалить торрент",
+      "confirmDelete": "Удалить «{name}»?",
+      "deleteFailed": "Не удалось удалить торрент",
+      "pending": "На проверке"
+    },
+    "list": {
+      "title": "Торренты",
+      "indexedCount": "Нет торрентов | {count} торрент | {count} торрента | {count} торрентов",
+      "searchPlaceholder": "Поиск по названию или хешу...",
+      "upload": "Загрузить",
+      "noResults": "Ничего не найдено",
+      "noResultsHint": "По этому запросу торрентов не найдено.",
+      "resetFilters": "Сбросить фильтры",
+      "sort": "Сортировка",
+      "sortNewest": "Сначала новые",
+      "sortOldest": "Сначала старые",
+      "sortLargest": "Сначала большие",
+      "sortSmallest": "Сначала маленькие",
+      "sortName": "По названию",
+      "noMatch": "Нет торрентов, подходящих под эти фильтры.",
+      "previous": "Предыдущая страница",
+      "next": "Следующая страница"
+    },
+    "detail": {
+      "backToIndex": "Все торренты",
+      "object": "Объект",
+      "copyHash": "Копировать хеш",
+      "download": "Скачать",
+      "infoHash": "Инфохеш",
+      "createdAt": "Создан",
+      "totalSize": "Общий размер",
+      "activeSwarm": "Активный рой ({count})",
+      "endpoint": "Адрес",
+      "type": "Тип",
+      "lastSeen": "Последняя активность",
+      "noPeers": "В рое нет активных пиров",
+      "seeder": "Сидер",
+      "leecher": "Личер",
+      "confirmDeleteTitle": "Подтвердите удаление",
+      "confirmDeleteText": "Вы уверены, что хотите удалить этот торрент? Это действие нельзя отменить.",
+      "notFound": "Торрент не найден",
+      "deleteFailed": "Не удалось удалить торрент",
+      "uploadedBy": "загрузил {user}",
+      "report": "Пожаловаться на торрент",
+      "swarm": "Рой",
+      "comments": "Нет комментариев | {n} комментарий | {n} комментария | {n} комментариев",
+      "commentPlaceholder": "Добавьте комментарий…",
+      "postComment": "Отправить комментарий",
+      "commentFailed": "Не удалось отправить комментарий.",
+      "confirmDeleteComment": "Удалить этот комментарий?",
+      "details": "Подробности",
+      "commentDeleteFailed": "Не удалось удалить комментарий."
+    }
+  },
+  "search": {
+    "pageTitle": "Поиск торрентов",
+    "titlePrefix": "Поиск",
+    "titleAccent": "торрентов",
+    "placeholder": "Поиск по названию, тегу или инфохешу...",
+    "results": "Результаты поиска",
+    "sortBy": "Сортировка:",
+    "newest": "Сначала новые",
+    "noResults": "Ничего не найдено",
+    "noResultsHint": "Не удалось найти торренты по вашему запросу. Попробуйте другие ключевые слова или фильтры.",
+    "searching": "Поиск в базе...",
+    "trending": "Популярные торренты"
+  },
+  "edit": {
+    "title": "Редактирование торрента",
+    "torrentName": "Название торрента",
+    "noCategory": "Без категории",
+    "saveFailed": "Не удалось сохранить изменения"
+  },
+  "upload": {
+    "title": "Загрузка торрента",
+    "dropFile": "Перетащите файл .torrent",
+    "orBrowse": "или нажмите, чтобы выбрать файл",
+    "announceUrlLabel": "Ваш анонс-URL",
+    "announceUrl": "Анонс-URL",
+    "copyAnnounce": "Копировать анонс-URL",
+    "announceHint": "Никому не показывайте его: он содержит ваш пасскей.",
+    "displayName": "Отображаемое название (необязательно)",
+    "displayNamePlaceholder": "По умолчанию — название из .torrent",
+    "selectCategory": "Выберите категорию...",
+    "processing": "Обработка...",
+    "submit": "Начать загрузку",
+    "successHint": "Объект успешно добавлен в индекс.",
+    "viewDetails": "Подробнее",
+    "copyFailed": "Не удалось скопировать в буфер обмена",
+    "selectTorrentFile": "Выберите файл .torrent",
+    "dropTorrentFile": "Перетащите файл .torrent",
+    "failed": "Не удалось загрузить"
+  },
+  "forum": {
+    "title": "Форум",
+    "confirmDeleteTopic": "Вы уверены, что хотите удалить эту тему?",
+    "index": {
+      "subtitle": "Обсуждения сообщества и объявления.",
+      "newCategory": "Новый раздел",
+      "lastActivity": "Последняя активность",
+      "noTopics": "Тем пока нет",
+      "editCategory": "Изменить раздел",
+      "deleteCategory": "Удалить раздел",
+      "createTitle": "Создание раздела",
+      "editTitle": "Редактирование раздела",
+      "deleteTitle": "Удаление раздела",
+      "namePlaceholder": "Общее обсуждение",
+      "descriptionPlaceholder": "Говорим обо всём...",
+      "order": "Порядок",
+      "deleteConfirm": "Вы уверены, что хотите удалить {name}? Все темы и сообщения в этом разделе будут удалены безвозвратно."
+    },
+    "newTopic": {
+      "breadcrumb": "Новая тема",
+      "title": "Создание темы",
+      "selectCategory": "Выберите раздел",
+      "topicTitle": "Заголовок",
+      "titlePlaceholder": "О чём хотите поговорить?",
+      "content": "Текст",
+      "contentPlaceholder": "Напишите текст сообщения...",
+      "submit": "Создать тему"
+    },
+    "category": {
+      "newTopic": "Новая тема",
+      "topic": "Тема",
+      "replies": "Ответы",
+      "lastPost": "Последнее сообщение",
+      "empty": "В этом разделе пока нет тем.",
+      "by": "от",
+      "deleteTopic": "Удалить тему"
+    },
+    "topic": {
+      "breadcrumb": "Тема",
+      "pin": "Закрепить",
+      "unpin": "Открепить",
+      "lock": "Закрыть",
+      "unlock": "Открыть",
+      "modBadge": "Мод",
+      "postedOn": "Опубликовано {date}",
+      "deletePost": "Удалить сообщение",
+      "confirmDeletePost": "Вы уверены, что хотите удалить это сообщение?",
+      "replyTitle": "Ответить",
+      "replyPlaceholder": "Напишите ответ...",
+      "posting": "Отправка...",
+      "postReply": "Отправить ответ",
+      "locked": "Тема закрыта. Отвечать в ней нельзя."
+    }
+  },
+  "users": {
+    "profile": {
+      "notFound": "Пользователь не найден",
+      "modBadge": "Мод",
+      "memberSince": "На трекере с",
+      "lastSeen": "Был в сети",
+      "uploads": "Раздачи",
+      "uploadedTorrents": "Загруженные торренты",
+      "noUploads": "Пока ничего не загружено",
+      "seedersLeechers": "С/Л",
+      "uploadedAt": "Загружен",
+      "uncategorized": "Без категории",
+      "pageTitle": "{username} — профиль",
+      "pageTitleFallback": "Профиль пользователя"
+    }
+  },
+  "invites": {
+    "title": "Мои инвайты",
+    "subtitle": "Пригласите новых участников на трекер",
+    "remaining": "Осталось инвайтов",
+    "generate": "Создать инвайт",
+    "yourInvites": "Ваши инвайты",
+    "clickToCopy": "Нажмите, чтобы скопировать",
+    "createdAt": "Создан: {date}",
+    "usedBy": "Использовал:",
+    "expiresAt": "Истекает: {date}",
+    "empty": "Инвайтов пока нет",
+    "emptyHint": "Создайте инвайт-код, чтобы поделиться им с друзьями",
+    "status": {
+      "used": "Использован",
+      "expired": "Истёк"
+    },
+    "toast": {
+      "generated": "Инвайт-код создан!",
+      "generateFailed": "Не удалось создать инвайт",
+      "copied": "Инвайт-код скопирован в буфер обмена!",
+      "copyFailed": "Не удалось скопировать код"
+    }
+  },
+  "mod": {
+    "layout": {
+      "title": "Модерация"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "Обзор",
+        "description": "Сводка модерации и быстрые действия"
+      },
+      "pending": {
+        "label": "Торренты на проверке",
+        "description": "Проверка и одобрение загруженных торрентов"
+      },
+      "users": {
+        "label": "Пользователи",
+        "description": "Управление аккаунтами и банами"
+      },
+      "reports": {
+        "label": "Жалобы",
+        "description": "Просмотр и обработка жалоб пользователей"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "Отслеживание и обработка нарушений H&R"
+      }
+    },
+    "dashboard": {
+      "pendingReports": "Необработанные жалобы",
+      "pendingReportsHint": "Откройте раздел жалоб, чтобы разобрать обращения пользователей.",
+      "viewReports": "Открыть жалобы",
+      "recentHnr": "Недавние H&R",
+      "recentHnrHint": "Следите за пользователями, которые не остаются на раздаче.",
+      "viewHnr": "Открыть H&R"
+    }
+  },
+  "admin": {
+    "layout": {
+      "title": "Администрирование",
+      "liveFeed": "Активность трекера в реальном времени"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "Обзор",
+        "description": "Настройки трекера и управление узлами"
+      },
+      "users": {
+        "label": "Пользователи",
+        "description": "Управление аккаунтами и правами"
+      },
+      "roles": {
+        "label": "Роли",
+        "description": "Управление ролями и правами пользователей"
+      },
+      "reports": {
+        "label": "Жалобы",
+        "description": "Просмотр и обработка жалоб пользователей"
+      },
+      "categories": {
+        "label": "Категории",
+        "description": "Управление категориями торрентов"
+      },
+      "tags": {
+        "label": "Теги",
+        "description": "Управление тегами торрентов"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "Отслеживание и обработка нарушений H&R"
+      },
+      "invites": {
+        "label": "Инвайты",
+        "description": "Управление системой инвайтов"
+      },
+      "torznab": {
+        "label": "Torznab API",
+        "description": "Интеграция с *arr и ограничение частоты запросов"
+      },
+      "branding": {
+        "label": "Оформление",
+        "description": "Внешний вид и брендинг сайта"
+      },
+      "settings": {
+        "label": "Настройки",
+        "description": "Общие настройки регистрации и трекера"
+      }
+    },
+    "dashboard": {
+      "noHistory": "Исторических данных пока нет",
+      "noHistoryHint": "Сбор статистики только начался. Загляните через час."
+    },
+    "branding": {
+      "authSubtitle": "Подзаголовок страницы входа",
+      "authSubtitleDescription": "Подзаголовок под названием на страницах входа и регистрации.",
+      "authSubtitlePlaceholder": "Закрытый BitTorrent-трекер",
+      "authTitle": "Заголовок страницы входа",
+      "authTitleDescription": "Заголовок на страницах входа и регистрации. Оставьте пустым, чтобы использовать название сайта.",
+      "authTitlePlaceholder": "Введите заголовок страницы входа...",
+      "bold": "Жирный",
+      "currentFavicon": "Текущий фавикон",
+      "currentLogo": "Текущий логотип",
+      "dropFavicon": "Перетащите фавикон или нажмите, чтобы загрузить",
+      "dropImage": "Перетащите изображение или нажмите, чтобы загрузить",
+      "favicon": "Фавикон",
+      "faviconDescription": "Загрузите свой фавикон (ICO, PNG, SVG). Не более 1 МБ. Отображается на вкладках браузера.",
+      "footerContent": "Содержимое подвала",
+      "footerContentDescription": "Свой текст в подвале. Поддерживается форматирование.",
+      "icon": "Иконка",
+      "image": "Изображение",
+      "livePreview": "Предпросмотр",
+      "logoIcon": "Иконка логотипа",
+      "logoIconDescription": "Используйте названия иконок Phosphor (например, ph:broadcast-bold).",
+      "logoImage": "Изображение логотипа",
+      "logoImageDescription": "Загрузите свой логотип (PNG, JPG, SVG, WebP). Не более 5 МБ.",
+      "logoType": "Тип логотипа",
+      "logoTypeDescription": "Выберите иконку Phosphor или своё изображение.",
+      "pageTitleExample": "Пример: «Поиск торрентов {title}»",
+      "pageTitleSuffix": "Суффикс заголовка страницы",
+      "pageTitleSuffixDescription": "Текст, добавляемый к заголовку вкладки браузера. Только обычный текст.",
+      "quickSelect": "Быстрый выбор",
+      "saveBranding": "Сохранить оформление",
+      "saveTextBranding": "Сохранить тексты",
+      "siteName": "Название сайта",
+      "siteNameColor": "Цвет названия сайта",
+      "siteNameDescription": "Отображается в панели навигации и заголовке браузера. Используйте форматирование для своего стиля.",
+      "siteRules": "Правила сайта",
+      "siteRulesDescription": "Правила и условия, показываемые пользователям. Поддерживается полное форматирование.",
+      "siteRulesPlaceholder": "Введите правила сайта...",
+      "subtitle": "Подзаголовок",
+      "subtitleDescription": "Текст под названием сайта. Оставьте пустым, чтобы показывать версию. Поддерживается форматирование.",
+      "subtitlePlaceholder": "Оставьте пустым для номера версии",
+      "textBranding": "Тексты сайта",
+      "textBrandingDescription": "Настройте тексты, которые встречаются на сайте. Для сложного форматирования используйте редактор.",
+      "title": "Оформление сайта",
+      "uploading": "Загрузка...",
+      "welcomeMessage": "Сообщение от администрации",
+      "welcomeMessageDescription": "Показывается вверху главной страницы каждого участника. Оставьте пустым, чтобы скрыть.",
+      "welcomeMessagePlaceholder": "Добро пожаловать в сообщество нашего трекера..."
+    },
+    "categories": {
+      "addFailed": "Не удалось добавить категорию",
+      "confirmDelete": "Вы уверены, что хотите удалить эту категорию?",
+      "confirmSeed": "Будут созданы рекомендуемые категории, совместимые с Torznab. Продолжить?",
+      "deleteFailed": "Не удалось удалить категорию",
+      "empty": "Категории не заданы",
+      "newCategoryPlaceholder": "Название новой категории...",
+      "newSubcategoryPlaceholder": "Название новой подкатегории...",
+      "newznabId": "Newznab ID",
+      "newznabIdHint": "ID категории Newznab/Torznab (например, 2040 для Movies/HD)",
+      "newznabIdTitle": "ID категории Newznab/Torznab",
+      "nzId": "NZ ID",
+      "rootCategory": "Корневая категория",
+      "seed": "Создать категории Torznab",
+      "seedFailed": "Не удалось создать категории",
+      "seeded": "Ни одной категории не создано | Создана {count} категория | Создано {count} категории | Создано {count} категорий",
+      "subcategoriesCount": "нет подкатегорий | {count} подкатегория | {count} подкатегории | {count} подкатегорий",
+      "title": "Управление категориями",
+      "updateFailed": "Не удалось обновить категорию"
+    },
+    "charts": {
+      "databaseSize": "Размер базы данных (МБ)",
+      "day": "День",
+      "dbSize": "Размер БД",
+      "growth": "Рост числа пользователей и торрентов",
+      "hour": "Час",
+      "month": "Месяц",
+      "peers": "Пиры",
+      "peersSeeders": "Пиры и сиды",
+      "redisMemory": "Память Redis",
+      "redisMemoryUsage": "Использование памяти Redis (МБ)",
+      "torrents": "Торренты",
+      "users": "Пользователи",
+      "view": "Период:",
+      "week": "Неделя"
+    },
+    "invites": {
+      "allCodesCopied": "Все коды скопированы!",
+      "clickToCopy": "Нажмите, чтобы скопировать",
+      "codeCopied": "Код скопирован!",
+      "copyAll": "Копировать все",
+      "copyCodeFailed": "Не удалось скопировать код",
+      "copyCodesFailed": "Не удалось скопировать коды",
+      "count": "Количество",
+      "createdBy": "Создал:",
+      "empty": "Инвайты не найдены",
+      "expires": "Истекает: {date}",
+      "expiresInDays": "Срок действия в днях (необязательно)",
+      "generate": "Создать",
+      "generateFailed": "Не удалось создать коды",
+      "generateTitle": "Создание уникальных кодов",
+      "generatedCodes": "Созданные коды",
+      "generatedToast": "Ни одного инвайт-кода не создано | Создан {count} инвайт-код | Создано {count} инвайт-кода | Создано {count} инвайт-кодов",
+      "grant": "Выдать",
+      "grantFailed": "Не удалось выдать инвайты",
+      "grantTitle": "Выдать инвайты пользователю",
+      "grantedToast": "Пользователю не выдано ни одного инвайта | Пользователю выдан {count} инвайт | Пользователю выдано {count} инвайта | Пользователю выдано {count} инвайтов",
+      "statusExpired": "Истёк",
+      "statusPending": "Не использован",
+      "statusUsed": "Использован",
+      "title": "Инвайты",
+      "usedBy": "Использовал:",
+      "userId": "ID пользователя"
+    },
+    "panic": {
+      "confirmText": "Все конфиденциальные данные в базе будут зашифрованы. Их нельзя будет прочитать, пока они не будут восстановлены с помощью аварийного пароля.",
+      "confirmTitle": "Подтвердите шифрование базы данных",
+      "encryptButton": "ТРЕВОГА — зашифровать базу данных",
+      "encryptFailed": "Не удалось зашифровать",
+      "encryptNow": "Зашифровать сейчас",
+      "encryptedAt": "Зашифровано: {date}",
+      "encryptedText": "Все конфиденциальные данные сейчас зашифрованы. Введите аварийный пароль, чтобы восстановить доступ.",
+      "encryptedTitle": "База данных зашифрована",
+      "encrypting": "Шифрование...",
+      "intro": "Немедленно зашифровать все конфиденциальные данные. После этого данные нельзя будет прочитать без аварийного пароля, заданного при первой регистрации.",
+      "irreversible": "Без аварийного пароля это действие необратимо.",
+      "password": "Аварийный пароль",
+      "passwordPlaceholder": "Введите аварийный пароль",
+      "restore": "Восстановить",
+      "restoreButton": "Восстановить базу данных",
+      "restoreFailed": "Не удалось восстановить",
+      "restoreText": "Введите аварийный пароль, заданный при регистрации первого администратора, чтобы расшифровать и восстановить все данные.",
+      "restoring": "Восстановление...",
+      "title": "Экстренная блокировка"
+    },
+    "registration": {
+      "closed": "Закрыта",
+      "currentStatus": "Текущий статус: {status}",
+      "defaultInvitesDescription": "Количество инвайт-кодов, которое получает каждый новый пользователь при регистрации.",
+      "defaultInvitesLabel": "Инвайты по умолчанию",
+      "gb": "GB",
+      "inviteOnlyDescription": "Требовать инвайт-код для регистрации.",
+      "inviteOnlyLabel": "Только по инвайтам",
+      "minRatioDescription": "Пользователям с рейтингом ниже этого значения будет запрещено скачивать. Укажите 0, чтобы отключить.",
+      "minRatioLabel": "Минимальный рейтинг",
+      "open": "Открыта",
+      "openDescription": "Разрешить свободное создание аккаунтов.",
+      "openLabel": "Открытая регистрация",
+      "starterCreditDescription": "Начальный объём отданного, который получают новые пользователи, чтобы их не заблокировало по рейтингу сразу.",
+      "starterCreditLabel": "Стартовый бонус (GB)",
+      "statusClosed": "Регистрация закрыта",
+      "statusInviteOnly": "Регистрация только по инвайтам",
+      "statusOpen": "Регистрация открыта для всех",
+      "statusOpenInviteOptional": "Регистрация открыта (инвайт необязателен)",
+      "title": "Регистрация"
+    },
+    "system": {
+      "backupWarning": "Перед обновлением сделайте резервную копию базы данных",
+      "checkUpdates": "Проверить обновления",
+      "confirmPassword": "Подтверждение пароля",
+      "confirmPasswordDescription": "Введите новый пароль ещё раз для проверки.",
+      "confirmPasswordPlaceholder": "Подтвердите новый пароль",
+      "currentPassword": "Текущий пароль",
+      "currentPasswordDescription": "Пароль, которым вы сейчас входите в Grafana.",
+      "currentPasswordPlaceholder": "Введите текущий пароль Grafana",
+      "currentVersion": "Текущая версия",
+      "downtimeWarning": "Обновление вызовет кратковременный простой",
+      "grafanaFailed": "Не удалось изменить пароль Grafana",
+      "grafanaIntro": "Смена пароля администратора Grafana. Потребуется текущий пароль.",
+      "grafanaSuccess": "Пароль Grafana изменён",
+      "grafanaTitle": "Пароль Grafana",
+      "hideInstructions": "Скрыть инструкцию по обновлению",
+      "installedVersion": "Установленная версия Trackarr",
+      "newPassword": "Новый пароль",
+      "newPasswordDescription": "Не менее 8 символов.",
+      "newPasswordPlaceholder": "Введите новый пароль",
+      "published": "Опубликовано {date}",
+      "showInstructions": "Показать инструкцию по обновлению",
+      "step": "Шаг {step}: {description}",
+      "upToDate": "У вас последняя версия",
+      "updateAvailable": "Доступно обновление: {version}",
+      "updateCommands": "Команды обновления",
+      "updateGrafanaPassword": "Изменить пароль Grafana",
+      "updating": "Обновление...",
+      "versionTitle": "Версия и обновления",
+      "viewChangelog": "Список изменений"
+    },
+    "torznabUsers": {
+      "blockAccess": "Заблокировать доступ к API",
+      "blockConfirm": "Вы уверены, что хотите запретить {username} пользоваться Torznab API? Поиск и скачивание через *arr-приложения станут недоступны.",
+      "blockTitle": "Блокировка доступа к API",
+      "blockUser": "Заблокировать пользователя",
+      "daysAgo": "{n} дн. назад",
+      "empty": "Пользователи не найдены",
+      "hits": "{count} запросов | {count} запрос | {count} запроса | {count} запросов",
+      "hoursAgo": "{n} ч назад",
+      "justNow": "Только что",
+      "lastRequest": "Последний запрос",
+      "logsTitle": "Логи API — {username}",
+      "minutesAgo": "{n} мин назад",
+      "passkey": "Пасскей",
+      "rateLimits": "Лимиты запросов",
+      "requests": "Запросы",
+      "resetPasskey": "Сбросить пасскей",
+      "resetPasskeyConfirm": "Вы уверены, что хотите сбросить пасскей пользователя {username}? Ему придётся указать новый пасскей в своих *arr-приложениях.",
+      "resetPasskeyTitle": "Сброс пасскея",
+      "searchPlaceholder": "Поиск пользователей...",
+      "showing": "Показаны {from}–{to} из {total}",
+      "title": "Пользователи API",
+      "viewLogs": "Открыть логи"
+    },
+    "stats": {
+      "activeTorrents": "Активные торренты",
+      "totalPeers": "Всего пиров",
+      "trackerStatus": "Статус трекера",
+      "operational": "Работает",
+      "offline": "Не в сети"
+    },
+    "protocols": {
+      "title": "Протоколы"
+    },
+    "endpoints": {
+      "title": "Адреса",
+      "httpAnnounce": "HTTP-анонс",
+      "udpAnnounce": "UDP-анонс"
+    },
+    "torznabLogs": {
+      "title": "Последние запросы",
+      "totalRequests": "нет запросов | всего {count} запрос | всего {count} запроса | всего {count} запросов",
+      "showing": "Показаны {from}–{to} из {total}",
+      "time": "Время",
+      "function": "Функция",
+      "query": "Запрос",
+      "results": "Результаты",
+      "duration": "Длительность",
+      "empty": "Логов нет"
+    },
+    "torznabStats": {
+      "title": "Статистика Torznab API",
+      "totalRequests": "Всего запросов",
+      "last24h": "За 24 ч",
+      "uniqueUsers": "Уникальные пользователи",
+      "avgResponseTime": "Среднее время ответа",
+      "searchRequests": "Поисковые запросы",
+      "tvSearches": "Поиск сериалов",
+      "movieSearches": "Поиск фильмов",
+      "errors": "Ошибки"
+    },
+    "torznabConfig": {
+      "title": "Настройки API",
+      "statusLabel": "Статус Torznab API",
+      "statusDescription": "Включение или отключение Torznab API для всех пользователей. Когда API отключён, *arr-приложения не смогут подключиться.",
+      "apiAccepting": "API принимает запросы",
+      "apiDisabled": "API отключён",
+      "loggingLabel": "Логирование запросов",
+      "loggingDescription": "Записывать все запросы к API для отладки и мониторинга. Логи хранятся 7 дней.",
+      "loggingEnabled": "Логирование включено",
+      "loggingDisabled": "Логирование отключено",
+      "endpointLabel": "Адрес API",
+      "endpointDescription": "Базовый URL Torznab API. Пользователи указывают его в Prowlarr/Sonarr/Radarr.",
+      "copyUrl": "Копировать URL"
+    },
+    "torznabBlacklist": {
+      "title": "Заблокированные IP и пользователи",
+      "rateLimitedIps": "IP, превысившие лимит",
+      "noIps": "Заблокированных IP нет",
+      "expiresIn": "Истекает через",
+      "blockedUsers": "Заблокированные пользователи API",
+      "noUsers": "Заблокированных пользователей нет",
+      "unblock": "Разблокировать",
+      "unblocking": "Разблокировка...",
+      "expired": "Истёк",
+      "justNow": "Только что",
+      "minutesAgo": "{n} мин назад",
+      "hoursAgo": "{n} ч назад",
+      "daysAgo": "{n} дн. назад"
+    },
+    "torznabRateLimit": {
+      "title": "Ограничение частоты запросов",
+      "intro": "Настройте лимиты, чтобы предотвратить злоупотребление API. Лимиты действуют для каждого пользователя (пасскея) в пределах заданного временного окна.",
+      "windowLabel": "Временное окно",
+      "windowDescription": "Длительность (в секундах), за которую считаются лимиты.",
+      "seconds": "секунд",
+      "searchLabel": "Лимит поисковых запросов",
+      "searchDescription": "Максимум поисковых запросов (search, tvsearch, movie) за окно на пользователя.",
+      "downloadLabel": "Лимит запросов на скачивание",
+      "downloadDescription": "Максимум запросов на скачивание торрент-файлов за окно на пользователя.",
+      "perWindow": "запросов / {window}",
+      "strict": "Строгий",
+      "default": "По умолчанию",
+      "relaxed": "Мягкий",
+      "generous": "Щедрый",
+      "presets": "Быстрые пресеты",
+      "immediateNote": "Изменения сразу применяются к новым запросам."
+    },
+    "tags": {
+      "add": "Добавить тег",
+      "empty": "Теги не настроены",
+      "addTitle": "Новый тег",
+      "placeholder": "например, 1080p",
+      "slug": "Слаг",
+      "color": "Цвет",
+      "confirmDelete": "Удалить этот тег?"
+    },
+    "reports": {
+      "title": "Жалобы",
+      "status": {
+        "pending": "Ожидает",
+        "resolved": "Решена",
+        "dismissed": "Отклонена"
+      },
+      "by": "От:",
+      "resolve": "Решить",
+      "dismiss": "Отклонить",
+      "empty": "Жалобы не найдены"
+    },
+    "homepage": {
+      "title": "Содержимое главной страницы",
+      "heroSection": "Шапка",
+      "heroTitleLabel": "Заголовок",
+      "heroTitleDescription": "Главный заголовок на главной странице. Используйте форматирование для своих стилей, цветов и шрифтов.",
+      "subtitleLabel": "Подзаголовок",
+      "subtitleDescription": "Короткое описание под заголовком. Поддерживается форматирование.",
+      "subtitlePlaceholder": "Высокопроизводительный минималистичный P2P-трекер...",
+      "badgeLabel": "Значок статуса",
+      "badgeDescription": "Текст в значке над заголовком.",
+      "badgePlaceholder": "Трекер онлайн и работает",
+      "featureBoxes": "Блоки преимуществ",
+      "featureLabel": "Преимущество {n}",
+      "featureDescription": "Заголовок и описание для этой карточки. Поддерживается форматирование.",
+      "featureTitleLabel": "Заголовок",
+      "featureTitlePlaceholder": "Заголовок преимущества",
+      "featureDescriptionPlaceholder": "Описание преимущества...",
+      "save": "Сохранить главную страницу"
+    },
+    "announcements": {
+      "title": "Объявление на сайте",
+      "enableLabel": "Включить объявление",
+      "enableDescription": "Показывать баннер под главной панелью навигации на всех страницах.",
+      "messageLabel": "Сообщение",
+      "messageDescription": "Текст объявления. Пишите коротко и ясно.",
+      "messagePlaceholder": "Введите текст объявления...",
+      "typeLabel": "Тип баннера",
+      "typeDescription": "Определяет цвет и иконку баннера объявления.",
+      "typeInfo": "Информация",
+      "typeWarning": "Предупреждение",
+      "preview": "Предпросмотр",
+      "save": "Сохранить объявление"
+    },
+    "pending": {
+      "title": "Торренты на проверке",
+      "uncategorized": "Без категории",
+      "empty": "Нет торрентов на проверке",
+      "allModerated": "Все торренты проверены",
+      "approveFailed": "Не удалось одобрить торрент",
+      "rejectPrompt": "Причина отклонения (необязательно):",
+      "rejectFailed": "Не удалось отклонить торрент"
+    },
+    "hnr": {
+      "title": "Отслеживание Hit & Run",
+      "hitAndRun": "Hit & Run",
+      "pending": "Ожидает",
+      "checkNew": "Проверить новые H&R",
+      "seedTime": "Время сидирования:",
+      "downloadedAt": "Скачано: {date}",
+      "clear": "Снять H&R",
+      "exempt": "Освободить",
+      "exempted": "Освобождён",
+      "empty": "Записей H&R не найдено"
+    },
+    "roles": {
+      "title": "Управление ролями",
+      "createTitle": "Новая роль",
+      "namePlaceholder": "Название роли...",
+      "color": "Цвет",
+      "skipModeration": "Без модерации",
+      "canBypass": "Может обходить модерацию",
+      "requiresModeration": "Требуется модерация",
+      "skipMod": "Без мод.",
+      "delete": "Удалить роль",
+      "empty": "Ролей пока нет",
+      "createFailed": "Не удалось создать роль",
+      "updateFailed": "Не удалось обновить роль",
+      "confirmDelete": "Вы уверены, что хотите удалить роль «{name}»?",
+      "deleteFailed": "Не удалось удалить роль"
+    },
+    "users": {
+      "title": "Управление пользователями",
+      "searchPlaceholder": "Поиск по имени пользователя или email...",
+      "ban": "Забанить",
+      "noRole": "Без роли",
+      "mod": "Мод",
+      "empty": "Пользователи не найдены",
+      "updateRoleFailed": "Не удалось изменить роль пользователя",
+      "confirmBan": "Вы уверены, что хотите забанить {name}?",
+      "confirmUnban": "Вы уверены, что хотите разбанить {name}?",
+      "banFailed": "Не удалось забанить пользователя",
+      "unbanFailed": "Не удалось разбанить пользователя",
+      "assignRoleFailed": "Не удалось назначить роль"
+    },
+    "footer": {
+      "title": "Ссылки в подвале",
+      "description": "Иконки внизу справа на каждой странице. Ссылки открываются в новой вкладке.",
+      "icon": "Иконка",
+      "label": "Подпись",
+      "url": "URL",
+      "add": "Добавить ссылку",
+      "remove": "Удалить",
+      "moveUp": "Переместить вверх",
+      "moveDown": "Переместить вниз",
+      "empty": "Ссылок нет: в подвале ничего не отображается.",
+      "max": "Не более {max} ссылок.",
+      "tagline": "Слоган в подвале",
+      "taglineDescription": "Короткий текст рядом с копирайтом. Оставьте пустым, чтобы скрыть.",
+      "taglineDefault": "Текст по умолчанию",
+      "resetTagline": "Вернуть по умолчанию",
+      "resetLinks": "Вернуть ссылки по умолчанию",
+      "save": "Сохранить подвал",
+      "saved": "Сохранено",
+      "invalid": "У каждой ссылки должны быть подпись и URL вида http(s) или mailto."
+    }
+  },
+  "time": {
+    "justNow": "только что",
+    "minutesAgo": "{count} мин назад | {count} мин назад | {count} мин назад",
+    "hoursAgo": "{count} ч назад | {count} ч назад | {count} ч назад",
+    "daysAgo": "{count} день назад | {count} дня назад | {count} дней назад",
+    "monthsAgo": "{count} месяц назад | {count} месяца назад | {count} месяцев назад",
+    "yearsAgo": "{count} год назад | {count} года назад | {count} лет назад"
+  },
+  "freeleech": {
+    "banner": "Действует фрилич: скачанное не учитывается в вашем рейтинге.",
+    "bannerUntil": "Фрилич действует до {date}: скачанное не учитывается в вашем рейтинге.",
+    "admin": {
+      "title": "Глобальный фрилич",
+      "description": "Пока он активен, скачанное не учитывается (отданное учитывается) и минимальный рейтинг не применяется. Torznab сообщает коэффициент скачивания 0.",
+      "active": "Активен",
+      "activeUntil": "Активен до {date}",
+      "activeForever": "Активен, без даты окончания",
+      "inactive": "Неактивен",
+      "duration": "Длительность (часы)",
+      "durationHint": "Оставьте пустым, чтобы не задавать дату окончания.",
+      "start": "Включить фрилич",
+      "update": "Обновить",
+      "stop": "Выключить фрилич",
+      "confirmStop": "Выключить глобальный фрилич сейчас?"
+    }
+  },
+  "shell": {
+    "skip": "Перейти к содержимому",
+    "groups": {
+      "browse": "Обзор",
+      "community": "Сообщество",
+      "account": "Мой аккаунт",
+      "staff": "Администрация"
+    },
+    "nav": {
+      "home": "Главная",
+      "torrents": "Торренты",
+      "bounties": "Заказы",
+      "forum": "Форум",
+      "shop": "Бонусный магазин",
+      "invites": "Инвайты",
+      "profile": "Мой профиль",
+      "mod": "Модерация",
+      "admin": "Администрирование"
+    },
+    "menu": {
+      "open": "Открыть навигацию",
+      "close": "Закрыть навигацию",
+      "label": "Главная навигация"
+    },
+    "search": {
+      "trigger": "Поиск",
+      "placeholder": "Поиск торрентов, IMDb ID или инфохеша",
+      "pages": "Страницы",
+      "torrents": "Торренты",
+      "seeAll": "Все результаты для «{q}»",
+      "empty": "Нет торрентов по запросу «{q}»",
+      "loading": "Поиск…",
+      "close": "Закрыть поиск",
+      "hint": "для перехода, Enter — открыть"
+    },
+    "meter": {
+      "uploaded": "Отдано",
+      "downloaded": "Скачано",
+      "ratio": "Рейтинг",
+      "refresh": "Обновить мою статистику",
+      "label": "Ваш трафик"
+    },
+    "freeleech": {
+      "pill": "Фрилич",
+      "until": "Фрилич до {time}"
+    },
+    "user": {
+      "open": "Меню аккаунта",
+      "passkey": "Пасскей",
+      "copy": "Копировать пасскей",
+      "copied": "Скопировано",
+      "points": "Бонусы: {n}",
+      "signOut": "Выйти",
+      "theme": "Тема",
+      "language": "Язык"
+    },
+    "theme": {
+      "label": "Тема",
+      "light": "Светлая",
+      "system": "Системная",
+      "dark": "Тёмная"
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Доброе утро, {name}",
+      "afternoon": "Добрый день, {name}",
+      "evening": "Добрый вечер, {name}",
+      "neutral": "Здравствуйте, {name}"
+    },
+    "memberSince": "На трекере с {date}",
+    "browse": "Смотреть торренты",
+    "upload": "Загрузить торрент",
+    "account": "Ваш аккаунт",
+    "seeding": "Раздаёте",
+    "leeching": "ничего не качаете | качаете {n} торрент | качаете {n} торрента | качаете {n} торрентов",
+    "points": "Бонусы",
+    "spendPoints": "Потратьте их в магазине",
+    "hnr": "Hit & Run",
+    "hnrNone": "Долгов нет",
+    "hnrWarning": "Продолжайте раздавать, чтобы их снять",
+    "latest": "Новые торренты",
+    "seeAll": "Смотреть все",
+    "columns": {
+      "name": "Название",
+      "size": "Размер",
+      "seeders": "Сиды",
+      "leechers": "Личи",
+      "age": "Добавлен"
+    },
+    "noTorrents": "Торрентов пока нет.",
+    "uploadFirst": "Загрузите первый",
+    "bounties": "Открытые заказы",
+    "noBounties": "Открытых заказов нет.",
+    "requestTorrent": "Заказать торрент",
+    "forum": "Новое на форуме",
+    "noTopics": "Тем пока нет.",
+    "startTopic": "Создать тему",
+    "site": {
+      "title": "Трекер в цифрах",
+      "members": "Участники",
+      "activePeers": "Активные пиры",
+      "seededTorrents": "Торренты на раздаче",
+      "shared": "Отдано данных"
+    }
+  }
+}
