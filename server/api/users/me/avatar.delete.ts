@@ -1,6 +1,6 @@
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../../../db';
-import { removeAvatarFile } from '../../../utils/uploadsDir';
+import { removeAvatarFile } from '../../../utils/uploads';
 
 /**
  * DELETE /api/users/me/avatar

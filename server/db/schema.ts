@@ -731,6 +731,17 @@ export type Conversation = typeof conversations.$inferSelect;
 export type PrivateMessage = typeof privateMessages.$inferSelect;
 
 // ============================================================================
+// Uploads (logos, favicons, avatars)
+// Kept in the database so replication carries them to every node
+// ============================================================================
+export const uploads = pgTable('uploads', {
+  name: text('name').primaryKey(),
+  contentType: text('content_type').notNull(),
+  data: bytea('data').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+// ============================================================================
 // Shoutbox
 // ============================================================================
 export const shoutChannels = pgTable('shout_channels', {

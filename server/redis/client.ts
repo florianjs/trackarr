@@ -1,5 +1,6 @@
 import Redis, { type RedisOptions } from 'ioredis';
-import { readSecret } from '../utils/secrets';
+import { readOptionalSecret, readSecret } from '../utils/secrets';
+import { parseSentinels } from './sentinel';
 
 /**
  * Secure Redis Client Configuration
@@ -27,6 +28,12 @@ function buildRedisOptions(): RedisOptions {
     // Key prefix for namespace isolation
     keyPrefix: process.env.REDIS_KEY_PREFIX || 'ot:',
   };
+
+  // Fail commands that get no reply instead of hanging (replicated setups)
+  const commandTimeout = Number(process.env.REDIS_COMMAND_TIMEOUT_MS);
+  if (commandTimeout > 0) {
+    options.commandTimeout = commandTimeout;
+  }
 
   // TLS/SSL configuration for production
   if (process.env.REDIS_TLS === 'true' || redisUrl.startsWith('rediss://')) {
@@ -76,7 +83,30 @@ function buildRedisOptions(): RedisOptions {
   return options;
 }
 
-export const redis = new Redis(redisUrl, buildRedisOptions());
+// Replicated deployments: discover the current master through Sentinel so a
+// failover to another datacenter needs no config change on the app nodes
+const sentinels = parseSentinels(process.env.REDIS_SENTINELS);
+
+export const redis =
+  sentinels.length > 0
+    ? new Redis({
+        ...buildRedisOptions(),
+        sentinels,
+        name: process.env.REDIS_SENTINEL_NAME || 'mymaster',
+        // Optional: Sentinels usually sit on the private network without auth
+        sentinelPassword: readOptionalSecret('REDIS_SENTINEL_PASSWORD'),
+        // TLS to the Sentinels themselves
+        sentinelTLS: process.env.REDIS_SENTINEL_TLS === 'true' ? {} : undefined,
+        // TLS to the master they point to, with the REDIS_TLS* options
+        enableTLSForSentinelMode: Boolean(buildRedisOptions().tls),
+        // Reconnect as soon as Sentinel announces a new master: a vanished
+        // datacenter never closes our socket, so no error would tell us
+        failoverDetector: true,
+        // A failover can outlast the single-server retry budget: never give
+        // up, or the app stays disconnected after the new master is up
+        retryStrategy: (times: number) => Math.min(times * 200, 3000),
+      })
+    : new Redis(redisUrl, buildRedisOptions());
 
 // Connection event handling with security logging
 redis.on('connect', () => {

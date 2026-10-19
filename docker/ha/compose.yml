@@ -1,0 +1,214 @@
+# Trackarr - replicated deployment across datacenters
+#
+# One copy of this directory per site, each with its own .env (see .env.example):
+#   - app sites (2+):  COMPOSE_PROFILES=node -> etcd, sentinel, postgres, redis, app, caddy
+#   - witness site:    COMPOSE_PROFILES=     -> etcd, sentinel (votes only, tiny VPS)
+#
+# Sites talk over a private network (WireGuard recommended). Data services use
+# host networking and bind to NODE_IP, the node's address on that network:
+# never expose 2379/2380/5432/6379/8008/26379 on a public interface.
+# Guide: doc/guide/high-availability.md
+
+name: trackarr-ha
+
+services:
+  # ===========================================================================
+  # etcd - consensus store for Patroni (one member per site, witness included)
+  # ===========================================================================
+  etcd:
+    image: quay.io/coreos/etcd:v3.5.17
+    restart: always
+    network_mode: host
+    environment:
+      ETCD_NAME: ${NODE_NAME:?NODE_NAME is required}
+      ETCD_DATA_DIR: /etcd-data
+      ETCD_LISTEN_PEER_URLS: http://${NODE_IP:?NODE_IP is required}:2380
+      ETCD_LISTEN_CLIENT_URLS: http://${NODE_IP}:2379,http://127.0.0.1:2379
+      ETCD_INITIAL_ADVERTISE_PEER_URLS: http://${NODE_IP}:2380
+      ETCD_ADVERTISE_CLIENT_URLS: http://${NODE_IP}:2379
+      ETCD_INITIAL_CLUSTER: ${ETCD_INITIAL_CLUSTER:?ETCD_INITIAL_CLUSTER is required}
+      ETCD_INITIAL_CLUSTER_STATE: new
+      ETCD_INITIAL_CLUSTER_TOKEN: trackarr
+      # Tuned for WAN latency between datacenters
+      ETCD_HEARTBEAT_INTERVAL: 250
+      ETCD_ELECTION_TIMEOUT: 2500
+    volumes:
+      - etcd_data:/etcd-data
+
+  # ===========================================================================
+  # Redis Sentinel - elects the Redis master (one per site, witness included)
+  # ===========================================================================
+  sentinel:
+    image: redis:7.4
+    restart: always
+    network_mode: host
+    entrypoint: ["/bin/sh", "/ha/sentinel-entrypoint.sh"]
+    environment:
+      NODE_IP: ${NODE_IP}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      REDIS_INITIAL_MASTER_IP: ${REDIS_INITIAL_MASTER_IP:?REDIS_INITIAL_MASTER_IP is required}
+      SENTINEL_DOWN_AFTER_MS: ${SENTINEL_DOWN_AFTER_MS:-10000}
+    volumes:
+      - ./sentinel-entrypoint.sh:/ha/sentinel-entrypoint.sh:ro
+      - sentinel_data:/data
+
+  # ===========================================================================
+  # PostgreSQL + Patroni (Spilo) - streaming replication, automatic failover
+  # ===========================================================================
+  postgres:
+    image: ghcr.io/zalando/spilo-16:3.3-p3
+    profiles: [node]
+    restart: always
+    network_mode: host
+    shm_size: 256m
+    environment:
+      SCOPE: trackarr
+      PGVERSION: "16"
+      ETCD3_HOSTS: ${ETCD3_HOSTS:?ETCD3_HOSTS is required}
+      # Address announced to the other sites
+      POD_IP: ${NODE_IP}
+      PATRONI_POSTGRESQL_LISTEN: ${NODE_IP},127.0.0.1:5432
+      PATRONI_RESTAPI_LISTEN: ${NODE_IP}:8008
+      PGPASSWORD_SUPERUSER: ${PG_SUPERUSER_PASSWORD:?PG_SUPERUSER_PASSWORD is required}
+      PGPASSWORD_STANDBY: ${PG_REPLICATION_PASSWORD:?PG_REPLICATION_PASSWORD is required}
+      PGPASSWORD_ADMIN: ${PG_ADMIN_PASSWORD:?PG_ADMIN_PASSWORD is required}
+      # Traffic between sites is encrypted by the private network
+      ALLOW_NOSSL: "true"
+    volumes:
+      - pgdata:/home/postgres/pgdata
+
+  # Creates the app role and database on the primary (idempotent)
+  db-init:
+    image: postgres:16-alpine
+    profiles: [node]
+    restart: "no"
+    network_mode: host
+    entrypoint: ["/bin/sh", "/ha/db-init.sh"]
+    environment:
+      PG_HOSTS: ${PG_HOSTS:?PG_HOSTS is required}
+      PG_SUPERUSER_PASSWORD: ${PG_SUPERUSER_PASSWORD}
+      DB_USER: ${DB_USER:-tracker}
+      DB_PASSWORD: ${DB_PASSWORD:?DB_PASSWORD is required}
+      DB_NAME: ${DB_NAME:-trackarr}
+    volumes:
+      - ./db-init.sh:/ha/db-init.sh:ro
+
+  # ===========================================================================
+  # Redis - master/replica, role decided by Sentinel
+  # ===========================================================================
+  redis:
+    image: redis:7.4
+    profiles: [node]
+    restart: always
+    network_mode: host
+    entrypoint: ["/bin/sh", "/ha/redis-entrypoint.sh"]
+    environment:
+      NODE_IP: ${NODE_IP}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_INITIAL_MASTER_IP: ${REDIS_INITIAL_MASTER_IP}
+    volumes:
+      - ./redis-entrypoint.sh:/ha/redis-entrypoint.sh:ro
+      - redis_data:/data
+
+  # ===========================================================================
+  # Application
+  # ===========================================================================
+  app:
+    image: ${TRACKARR_IMAGE:-trackarr:latest}
+    build:
+      context: ../..
+      dockerfile: Dockerfile
+      args:
+        TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:?TRACKER_HTTP_URL is required}
+    profiles: [node]
+    container_name: trackarr-app
+    restart: always
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    # A vanished datacenter drops packets silently: give up on its sockets in
+    # ~20s instead of the kernel default (~15 min)
+    sysctls:
+      net.ipv4.tcp_keepalive_time: 10
+      net.ipv4.tcp_keepalive_intvl: 5
+      net.ipv4.tcp_keepalive_probes: 3
+      net.ipv4.tcp_retries2: 5
+    depends_on:
+      db-init:
+        condition: service_completed_successfully
+    environment:
+      NODE_ENV: production
+      NUXT_SESSION_PASSWORD: ${NUXT_SESSION_SECRET:?NUXT_SESSION_SECRET is required}
+      # Every Postgres node, this site's first: the driver only keeps the
+      # current primary, and new connections try hosts in order. Local first
+      # means no connect timeout on a dead remote site after a failover.
+      DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD}@${NODE_IP}:5432,${PG_HOSTS}/${DB_NAME:-trackarr}?target_session_attrs=primary
+      DB_SSL: "false"
+      # Fail fast on a dead datacenter, keep healthy connections open
+      DB_CONNECT_TIMEOUT: ${DB_CONNECT_TIMEOUT:-3}
+      DB_IDLE_TIMEOUT: "0"
+      DB_KEEP_ALIVE: "10"
+      # Every Sentinel: the client follows the current Redis master
+      REDIS_SENTINELS: ${REDIS_SENTINELS:?REDIS_SENTINELS is required}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_COMMAND_TIMEOUT_MS: "5000"
+      TRACKER_HTTP_URL: ${TRACKER_HTTP_URL}
+      NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL}
+      # Other sites' trackers, written as fallback tiers into .torrent files
+      TRACKER_BACKUP_HTTP_URLS: ${TRACKER_BACKUP_HTTP_URLS:-}
+      IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
+    expose:
+      - "3000"
+      - "8080"
+    volumes:
+      # Only read once to import pre-HA uploads into the database
+      - uploads_data:/app/public/uploads
+    networks:
+      - trackarr
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:3000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 60s
+
+  caddy:
+    image: caddy:2-alpine
+    profiles: [node]
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      DOMAIN: ${DOMAIN:?DOMAIN is required}
+      TRACKER_DOMAIN: ${TRACKER_DOMAIN:?TRACKER_DOMAIN is required}
+      MONITORING_DOMAIN: ${MONITORING_DOMAIN:-monitoring.localhost}
+      ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
+    volumes:
+      - ../caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+      - caddy_logs:/var/log/caddy
+    networks:
+      - trackarr
+    depends_on:
+      - app
+
+networks:
+  trackarr:
+    # Fixed name so the firewall can let the app reach the local data
+    # services (see doc/guide/high-availability.md)
+    driver_opts:
+      com.docker.network.bridge.name: br-trackarr
+
+volumes:
+  etcd_data:
+  sentinel_data:
+  pgdata:
+  redis_data:
+  uploads_data:
+  caddy_data:
+  caddy_config:
+  caddy_logs:
