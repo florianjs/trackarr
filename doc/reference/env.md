@@ -69,6 +69,11 @@ The tracker is a separate service (`tracker/`, container `trackarr-tracker`). It
 | `TRACKER_WARMUP`         | Seconds after start before publishing counters                              | interval + 60   |
 | `TRACKER_CACHE_CAPACITY` | Entries per lookup cache (users, torrents)                                  | `500000`        |
 | `TRACKER_SNAPSHOT_PATH`  | Swarm snapshot written on graceful stop, loaded on start (unset: disabled)  | `/data/swarms.bin` in the image |
+| `TRACKER_MAX_PEERS_PER_USER` | Peers one user may have in one swarm | `3` |
+| `TRACKER_MAX_FAILURES_PER_MINUTE` | Failed lookups per client (IPv6 /64) before it is refused for the minute | `120` |
+| `TRACKER_HEADER_TIMEOUT_SECS` | Time a client gets to send request headers | `10` |
+| `TRACKER_MAX_CONNECTIONS` | Simultaneous connections per listener | `10000` |
+| `DB_POOL_WAIT_MS` | Longest wait for a database connection (tracker) | `2000` |
 | `TRACKER_DEBUG`          | Enable the tracker's debug logs                                             | `false`         |
 | `RUST_LOG`               | Log filter, overrides `TRACKER_DEBUG` (driver debug logs print passkeys)    | —               |
 

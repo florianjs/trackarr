@@ -58,6 +58,11 @@ The snapshot holds raw peer IPs, like the tracker's memory: keep it on a local v
 | `TRACKER_WARMUP` | Seconds after start before publishing | interval + 60 |
 | `TRACKER_CACHE_CAPACITY` | Entries per lookup cache (users, torrents) | `500000` |
 | `TRACKER_SNAPSHOT_PATH` | Swarm snapshot written on stop, loaded on start. Unset: disabled | `/data/swarms.bin` in the image |
+| `TRACKER_MAX_PEERS_PER_USER` | Peers one user may have in one swarm (several clients or machines); more are refused | `3` |
+| `TRACKER_MAX_FAILURES_PER_MINUTE` | Failed lookups (invalid passkey, unknown torrent) per client before it is refused without database access for the rest of the minute; IPv6 grouped by /64 | `120` |
+| `TRACKER_HEADER_TIMEOUT_SECS` | Time a client gets to send request headers | `10` |
+| `TRACKER_MAX_CONNECTIONS` | Simultaneous connections per listener; extra ones are closed | `10000` |
+| `DB_POOL_WAIT_MS` | Longest wait for a database connection before the request fails | `2000` |
 | `TRACKER_DEBUG` | `true` enables the tracker's own debug logs | `false` |
 | `RUST_LOG` | Log filter, overrides `TRACKER_DEBUG`. Driver debug logs print query parameters (passkeys): avoid in production | — |
 
@@ -89,6 +94,8 @@ The web app needs `TRACKER_INTERNAL_URL` (default `http://localhost:8090`, `http
 | `GET /metrics` | none | Prometheus metrics (aggregates only) |
 | `GET /internal/status` | `Authorization: Bearer $TRACKER_INTERNAL_TOKEN` | Uptime, announces, swarms, seeders, leechers, pending accounting, published |
 | `GET /internal/swarms/{hash}` | `Authorization: Bearer $TRACKER_INTERNAL_TOKEN` | Peers of a swarm (hashed IPs only) |
+
+Abuse counters in `/metrics`: `trackarr_tracker_rejected_total{reason="invalid_passkey|unknown_torrent|too_many_peers|blocked_client"}` and `trackarr_tracker_blocked_clients` (clients currently refused).
 
 ## Redis keys
 
