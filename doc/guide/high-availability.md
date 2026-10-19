@@ -46,8 +46,17 @@ ufw allow in on br-trackarr to any port 5432,6379,26379 proto tcp
 ```
 
 ::: danger
-Never expose ports 2379/2380 (etcd), 5432 (PostgreSQL), 8008 (Patroni), 6379 (Redis) or 26379 (Sentinel) on a public interface.
+Never expose ports 2379/2380 (etcd), 5432 (PostgreSQL), 8008 (Patroni), 8080 (Spilo's read-only stats), 6379 (Redis) or 26379 (Sentinel) on a public interface.
 :::
+
+The control plane also requires authentication, so a machine that does get onto the private network cannot take over failover:
+
+- **etcd**: the `etcd-auth` service turns authentication on once the cluster is up (on every site, idempotent). Patroni uses a `patroni` user limited to its own keys (`ETCD_PATRONI_PASSWORD`); `root` (`ETCD_ROOT_PASSWORD`) is for you.
+- **Sentinel**: clients and the other Sentinels authenticate with `REDIS_SENTINEL_PASSWORD`.
+- **Patroni REST API**: switchover, restart and reinitialize need `patroni` / `PATRONI_API_PASSWORD`; read-only health checks stay open.
+- **Redis** and **Sentinel** run as the `redis` user; `FLUSHALL`, `FLUSHDB` and `DEBUG` are disabled.
+
+`docker compose exec` commands keep working without extra flags: the containers carry the credentials for `etcdctl` and `redis-cli`.
 
 ## Setup
 
@@ -138,6 +147,16 @@ docker compose exec etcd etcdctl endpoint health --cluster
 3. Restore into the new primary: `pg_restore --no-owner --role=<DB_USER> -d <DB_NAME>`.
 4. Copy the old `uploads` volume into `uploads_data` on dc1: the app imports those files into the database at startup.
 5. Reuse the old `NUXT_SESSION_SECRET` and `IP_HASH_SECRET` so sessions and passkeys keep working.
+
+## Upgrading a cluster set up before control plane auth
+
+Authentication has to be turned on in order, or a site still running without credentials loses etcd or Sentinel:
+
+1. On every site, add `REDIS_SENTINEL_PASSWORD`, `ETCD_ROOT_PASSWORD`, `ETCD_PATRONI_PASSWORD` and `PATRONI_API_PASSWORD` to `.env` (same values everywhere).
+2. Sentinels, site by site: `docker compose up -d --no-deps sentinel redis`.
+3. App and tracker, site by site: `docker compose up -d --no-deps app tracker`.
+4. Patroni, standby first: `docker compose up -d --no-deps postgres` on dc2, then `docker compose exec postgres patronictl switchover` to move the primary there, then the same on dc1. Patroni now sends credentials, which etcd accepts while its auth is still off.
+5. Last, on every site: `docker compose up -d`. `etcd-auth` turns etcd authentication on.
 
 ## Limitations
 
