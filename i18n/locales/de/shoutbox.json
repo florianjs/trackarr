@@ -1,0 +1,83 @@
+{
+  "shoutbox": {
+    "title": "Shoutbox",
+    "nav": "Shoutbox",
+    "channels": "Kanäle",
+    "loadEarlier": "Ältere Nachrichten laden",
+    "empty": "Noch keine Nachrichten. Sag Hallo!",
+    "staff": "Team",
+    "deleted": "Nachricht gelöscht",
+    "deletedByModeration": "Nachricht von der Moderation entfernt",
+    "reactionLabel": "{emoji}: {n} Reaktion | {emoji}: {n} Reaktionen",
+    "addReaction": "Reaktion hinzufügen",
+    "otherEmoji": "Anderes Emoji",
+    "placeholder": "Nachricht an #{channel}",
+    "send": "Senden",
+    "readOnly": "Du kannst diesen Kanal lesen, aber nicht darin schreiben.",
+    "mutedUntil": "Du bist in der Shoutbox bis {date} stummgeschaltet.",
+    "delete": "Löschen",
+    "muteUser": "{name} stummschalten",
+    "muteDuration": "Dauer der Stummschaltung",
+    "muteReason": "Grund (optional)",
+    "mute": "Stummschalten",
+    "cancel": "Abbrechen",
+    "error": "Etwas ist schiefgelaufen",
+    "durations": {
+      "10": "10 Minuten",
+      "60": "1 Stunde",
+      "1440": "24 Stunden",
+      "10080": "7 Tage"
+    },
+    "adminNav": {
+      "label": "Shoutbox",
+      "description": "Shoutbox ein- oder ausschalten und ihre Kanäle verwalten"
+    },
+    "modNav": {
+      "label": "Shoutbox",
+      "description": "In der Shoutbox stummgeschaltete Mitglieder"
+    },
+    "admin": {
+      "settings": "Shoutbox",
+      "enabled": "Shoutbox aktiviert",
+      "enabledHint": "Ausgeschaltet verschwindet die Shoutbox für Mitglieder (Menü, Startseite), ihre Nachrichten bleiben erhalten.",
+      "channels": "Kanäle",
+      "addChannel": "Neuer Kanal",
+      "editChannel": "Kanal bearbeiten",
+      "deleteChannel": "Kanal löschen",
+      "confirmDelete": "Mit allen Nachrichten löschen",
+      "name": "Name",
+      "position": "Reihenfolge",
+      "description": "Beschreibung",
+      "readAccess": "Wer darf lesen",
+      "writeAccess": "Wer darf schreiben",
+      "read": {
+        "all": "Alle Mitglieder",
+        "roles": "Bestimmte Rollen",
+        "staff": "Nur Team"
+      },
+      "write": {
+        "members": "Alle Leser",
+        "staff": "Team",
+        "admins": "Admins"
+      },
+      "roles": "Erlaubte Rollen",
+      "noRoles": "Noch keine Rollen: Erstelle sie unter Admin > Rollen.",
+      "rolesHint": "Moderatoren und Admins sehen immer alle Kanäle.",
+      "reactions": "Mitglieder können mit Emojis reagieren",
+      "save": "Speichern",
+      "saved": "Gespeichert",
+      "actions": "Aktionen",
+      "noChannels": "Keine Kanäle."
+    },
+    "mutes": {
+      "title": "Stummgeschaltete Mitglieder",
+      "hint": "Fahre in der Shoutbox über eine Nachricht eines Mitglieds, um es stummzuschalten.",
+      "member": "Mitglied",
+      "until": "Bis",
+      "reason": "Grund",
+      "by": "Von",
+      "unmute": "Aufheben",
+      "empty": "Niemand ist stummgeschaltet."
+    }
+  }
+}

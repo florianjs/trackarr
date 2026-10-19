@@ -1,0 +1,140 @@
+{
+  "bonus": {
+    "points": "{n} Pkt.",
+    "disabled": "Das Bonussystem ist derzeit deaktiviert.",
+    "shop": {
+      "title": "Bonus-Shop",
+      "subtitle": "Gib die Punkte aus, die du durchs Seeden verdienst",
+      "balance": "Dein Guthaben",
+      "seedingNow": "Torrents, die gerade Punkte bringen",
+      "howToEarn": "So verdienst du Punkte",
+      "earnSeed": "{points} Pkt. pro Torrent und Seed-Tag (max. {max} Torrents gleichzeitig)",
+      "earnSeedNote": "Es zählen nur Torrents, die du hochgeladen oder vollständig heruntergeladen hast.",
+      "earnUpload": "{points} Pkt., wenn einer deiner Uploads freigegeben wird",
+      "earnBounty": "Erfülle eine Bounty, um ihre Belohnung zu erhalten",
+      "items": "Artikel",
+      "noItems": "Noch keine Artikel im Angebot.",
+      "buy": "Kaufen",
+      "owned": "Gekauft",
+      "confirmBuy": "„{name}“ für {price} Punkte kaufen?",
+      "bought": "Gekauft: {name}",
+      "notEnough": "Nicht genug Punkte",
+      "itemUpload": "+{size} Upload-Guthaben",
+      "itemInvite": "keine Einladung | +1 Einladung | +{count} Einladungen",
+      "itemGifAvatar": "Schaltet animierte Avatare frei (GIF, WebP, APNG)",
+      "history": "Verlauf",
+      "noHistory": "Noch keine Transaktionen."
+    },
+    "tx": {
+      "upload": "Upload freigegeben",
+      "purchase": "Kauf",
+      "bounty_create": "Bounty eröffnet",
+      "bounty_contribute": "Beitrag zu Bounty",
+      "bounty_reward": "Bounty-Belohnung",
+      "bounty_refund": "Bounty-Erstattung",
+      "admin": "Korrektur"
+    },
+    "avatar": {
+      "title": "Avatar",
+      "upload": "Avatar hochladen",
+      "remove": "Entfernen",
+      "hint": "PNG, JPEG oder WebP, max. 512 KB.",
+      "hintGif": "PNG, JPEG, WebP oder animiertes GIF/WebP/APNG, max. 2 MB.",
+      "updated": "Avatar aktualisiert",
+      "removed": "Avatar entfernt",
+      "confirmRemove": "Deinen Avatar entfernen?"
+    },
+    "bounties": {
+      "title": "Bounties",
+      "subtitle": "Fordere Torrents an, die noch nicht auf dem Tracker sind",
+      "new": "Neue Bounty",
+      "search": "Bounties suchen…",
+      "status": {
+        "all": "Alle",
+        "open": "Offen",
+        "claimed": "In Prüfung",
+        "filled": "Erfüllt",
+        "cancelled": "Abgebrochen"
+      },
+      "empty": "Hier gibt es keine Bounties.",
+      "reward": "Belohnung",
+      "requestedBy": "Angefragt von {user}",
+      "form": {
+        "title": "Titel",
+        "titlePlaceholder": "z. B. The Matrix (1999) 2160p UHD BluRay",
+        "description": "Details",
+        "descriptionPlaceholder": "Edition, Qualität, Sprache, Untertitel…",
+        "imdb": "IMDb (optional)",
+        "category": "Kategorie (optional)",
+        "points": "Anfangsbelohnung",
+        "pointsHint": "Mindestens {min} Punkte, die sofort von deinem Guthaben abgezogen und bei Abbruch erstattet werden.",
+        "submit": "Bounty eröffnen",
+        "cancel": "Abbrechen"
+      },
+      "detail": {
+        "back": "Alle Bounties",
+        "contributors": "Unterstützer",
+        "contribute": "Punkte hinzufügen",
+        "contributePlaceholder": "Punkte",
+        "fill": "Diese Bounty erfüllen",
+        "fillHint": "Füge den Info-Hash eines freigegebenen Torrents auf dem Tracker ein. Sein Uploader erhält die Belohnung, sobald der Anfragende zustimmt.",
+        "fillPlaceholder": "Info-Hash (40 Hex-Zeichen)",
+        "fillSubmit": "Einreichen",
+        "proposed": "Vorgeschlagener Torrent",
+        "uploader": "Hochgeladen von {user}",
+        "accept": "Annehmen und zahlen",
+        "reject": "Ablehnen",
+        "cancelBounty": "Bounty abbrechen",
+        "confirmCancel": "Diese Bounty abbrechen? Alle Beiträge werden erstattet.",
+        "confirmAccept": "Diesen Torrent annehmen? Die Belohnung wird an seinen Uploader ausgezahlt.",
+        "filledBy": "Erfüllt von {user}"
+      }
+    },
+    "admin": {
+      "title": "Bonus & Shop",
+      "settings": "Verdienstregeln",
+      "enabled": "Bonussystem aktivieren",
+      "pointsPerSeedDay": "Punkte pro Torrent und Seed-Tag",
+      "maxSeedingTorrents": "Max. gleichzeitig punktende Torrents",
+      "pointsPerUpload": "Punkte pro freigegebenem Upload",
+      "bountyMinPoints": "Mindestpunkte für eine Bounty",
+      "save": "Speichern",
+      "saved": "Gespeichert",
+      "items": "Shop-Artikel",
+      "addItem": "Artikel hinzufügen",
+      "editItem": "Artikel bearbeiten",
+      "name": "Name",
+      "description": "Beschreibung",
+      "type": "Typ",
+      "types": {
+        "upload_credit": "Upload-Guthaben",
+        "invite": "Einladungen",
+        "gif_avatar": "Animierter Avatar"
+      },
+      "price": "Preis (Punkte)",
+      "valueGb": "Upload-Guthaben (GB)",
+      "valueInvites": "Anzahl Einladungen",
+      "active": "Im Angebot",
+      "sortOrder": "Reihenfolge",
+      "delete": "Löschen",
+      "confirmDelete": "„{name}“ löschen?",
+      "grant": "Punkte vergeben oder abziehen",
+      "grantUser": "Benutzer-ID",
+      "grantAmount": "Betrag (negativ zum Abziehen)",
+      "grantReason": "Grund",
+      "grantSubmit": "Anwenden",
+      "granted": "Guthaben aktualisiert: {points} Pkt."
+    },
+    "nav": {
+      "shop": "Shop",
+      "bounties": "Bounties"
+    },
+    "menu": {
+      "shop": "Bonus-Shop"
+    },
+    "adminNav": {
+      "label": "Bonus & Shop",
+      "description": "Verdienstregeln, Shop-Artikel und Punktevergabe"
+    }
+  }
+}

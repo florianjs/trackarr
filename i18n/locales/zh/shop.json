@@ -1,0 +1,140 @@
+{
+  "bonus": {
+    "points": "{n} 魔力",
+    "disabled": "魔力值系统当前已关闭。",
+    "shop": {
+      "title": "魔力商城",
+      "subtitle": "消费你通过做种赚取的魔力值",
+      "balance": "你的余额",
+      "seedingNow": "正在产生魔力的种子",
+      "howToEarn": "如何获得魔力值",
+      "earnSeed": "每个种子每做种一天获得 {points} 魔力（同时最多计算 {max} 个种子）",
+      "earnSeedNote": "仅计算你发布的或已完整下载的种子。",
+      "earnUpload": "你发布的种子通过审核时获得 {points} 魔力",
+      "earnBounty": "完成悬赏即可获得其奖励",
+      "items": "商品",
+      "noItems": "暂无在售商品。",
+      "buy": "购买",
+      "owned": "已拥有",
+      "confirmBuy": "花费 {price} 魔力购买“{name}”？",
+      "bought": "已购买：{name}",
+      "notEnough": "魔力值不足",
+      "itemUpload": "+{size} 上传量",
+      "itemInvite": "无邀请 | +1 个邀请 | +{count} 个邀请",
+      "itemGifAvatar": "解锁动态头像（GIF、WebP、APNG）",
+      "history": "记录",
+      "noHistory": "暂无交易记录。"
+    },
+    "tx": {
+      "upload": "发布通过审核",
+      "purchase": "购买",
+      "bounty_create": "发起悬赏",
+      "bounty_contribute": "追加悬赏",
+      "bounty_reward": "悬赏奖励",
+      "bounty_refund": "悬赏退还",
+      "admin": "管理员调整"
+    },
+    "avatar": {
+      "title": "头像",
+      "upload": "上传头像",
+      "remove": "移除",
+      "hint": "PNG、JPEG 或 WebP，最大 512KB。",
+      "hintGif": "PNG、JPEG、WebP 或动态 GIF/WebP/APNG，最大 2MB。",
+      "updated": "头像已更新",
+      "removed": "头像已移除",
+      "confirmRemove": "移除你的头像？"
+    },
+    "bounties": {
+      "title": "悬赏",
+      "subtitle": "求取 Tracker 上还没有的种子",
+      "new": "发起悬赏",
+      "search": "搜索悬赏…",
+      "status": {
+        "all": "全部",
+        "open": "进行中",
+        "claimed": "待确认",
+        "filled": "已完成",
+        "cancelled": "已取消"
+      },
+      "empty": "暂无悬赏。",
+      "reward": "奖励",
+      "requestedBy": "由 {user} 发起",
+      "form": {
+        "title": "标题",
+        "titlePlaceholder": "例如 The Matrix (1999) 2160p UHD BluRay",
+        "description": "详细要求",
+        "descriptionPlaceholder": "版本、画质、语言、字幕…",
+        "imdb": "IMDb（可选）",
+        "category": "分类（可选）",
+        "points": "初始奖励",
+        "pointsHint": "最少 {min} 魔力，将立即从你的余额中扣除，取消悬赏时退还。",
+        "submit": "发起悬赏",
+        "cancel": "取消"
+      },
+      "detail": {
+        "back": "全部悬赏",
+        "contributors": "参与者",
+        "contribute": "追加魔力",
+        "contributePlaceholder": "魔力值",
+        "fill": "应征此悬赏",
+        "fillHint": "粘贴 Tracker 上一个已通过审核的种子的 Info Hash。发起人确认后，该种子的发布者将获得奖励。",
+        "fillPlaceholder": "Info Hash（40 位十六进制字符）",
+        "fillSubmit": "提交",
+        "proposed": "应征的种子",
+        "uploader": "由 {user} 发布",
+        "accept": "确认并支付",
+        "reject": "拒绝",
+        "cancelBounty": "取消悬赏",
+        "confirmCancel": "取消此悬赏？所有追加的魔力值都将退还。",
+        "confirmAccept": "确认采纳此种子？奖励将支付给其发布者。",
+        "filledBy": "由 {user} 完成"
+      }
+    },
+    "admin": {
+      "title": "魔力值与商城",
+      "settings": "获取规则",
+      "enabled": "启用魔力值系统",
+      "pointsPerSeedDay": "每个种子每做种一天获得的魔力值",
+      "maxSeedingTorrents": "同时计算魔力的最大种子数",
+      "pointsPerUpload": "每个通过审核的发布获得的魔力值",
+      "bountyMinPoints": "发起悬赏所需的最低魔力值",
+      "save": "保存",
+      "saved": "已保存",
+      "items": "商城商品",
+      "addItem": "添加商品",
+      "editItem": "编辑商品",
+      "name": "名称",
+      "description": "描述",
+      "type": "类型",
+      "types": {
+        "upload_credit": "上传量",
+        "invite": "邀请",
+        "gif_avatar": "动态头像"
+      },
+      "price": "价格（魔力值）",
+      "valueGb": "上传量（GB）",
+      "valueInvites": "邀请数量",
+      "active": "在售",
+      "sortOrder": "排序",
+      "delete": "删除",
+      "confirmDelete": "删除“{name}”？",
+      "grant": "发放或扣除魔力值",
+      "grantUser": "用户 ID",
+      "grantAmount": "数量（负数为扣除）",
+      "grantReason": "原因",
+      "grantSubmit": "执行",
+      "granted": "余额已更新：{points} 魔力"
+    },
+    "nav": {
+      "shop": "商城",
+      "bounties": "悬赏"
+    },
+    "menu": {
+      "shop": "魔力商城"
+    },
+    "adminNav": {
+      "label": "魔力值与商城",
+      "description": "获取规则、商城商品与魔力值发放"
+    }
+  }
+}
