@@ -61,7 +61,7 @@ The tracker is a separate service (`tracker/`, container `trackarr-tracker`). It
 | `TRACKER_HTTP_PORT`      | Announce/scrape port (HTTP)                                                 | `8080`          |
 | `TRACKER_INTERNAL_PORT`  | Private API port (`/health`, `/metrics`, `/internal/*`)                     | `8090`          |
 | `TRACKER_INTERNAL_TOKEN` | Bearer token for `/internal/*`, same value on the app (`_FILE` supported)   | —               |
-| `TRACKER_TRUST_PROXY`    | Trust `X-Forwarded-For`; `false` when the port is exposed without a proxy   | `true`          |
+| `TRACKER_TRUST_PROXY`    | Proxies setting `X-Forwarded-For`: `false`, `true` (one, e.g. Caddy) or a count. Never on a directly exposed port | `false`         |
 | `TRACKER_INTERVAL`       | Announce interval (seconds)                                                 | `600`           |
 | `TRACKER_MAX_RATE_MIBPS` | Credit ceiling per peer (MiB/s)                                             | `100`           |
 | `TRACKER_FLUSH_INTERVAL` | Seconds between credit writes to PostgreSQL                                 | `5`             |

@@ -2,13 +2,14 @@
 
 use std::env;
 
+use crate::client_ip::parse_trusted_hops;
 use crate::credit::DEFAULT_MAX_RATE_BYTES;
 
 #[derive(Debug, Clone)]
 pub struct Config {
     pub http_port: u16,
-    /// Trust `X-Forwarded-For` (set by Caddy). `TRACKER_TRUST_PROXY=false` when exposed directly.
-    pub trust_proxy: bool,
+    /// Reverse proxies in front that append to `X-Forwarded-For` (0: header ignored)
+    pub trusted_hops: usize,
     /// Seconds between announces sent to clients
     pub interval: u32,
     pub debug: bool,
@@ -33,7 +34,7 @@ impl Config {
         let interval = parse_or("TRACKER_INTERVAL", 600)?;
         Ok(Config {
             http_port: parse_or("TRACKER_HTTP_PORT", 8080)?,
-            trust_proxy: env::var("TRACKER_TRUST_PROXY").as_deref() != Ok("false"),
+            trusted_hops: parse_trusted_hops(env::var("TRACKER_TRUST_PROXY").ok().as_deref())?,
             interval,
             debug: env::var("TRACKER_DEBUG").as_deref() == Ok("true"),
             max_rate_bytes: max_rate_bytes(),

@@ -50,7 +50,7 @@ The snapshot holds raw peer IPs, like the tracker's memory: keep it on a local v
 | `TRACKER_HTTP_PORT` | Announce/scrape port | `8080` |
 | `TRACKER_INTERNAL_PORT` | Private API port | `8090` |
 | `TRACKER_INTERNAL_TOKEN` | Bearer token for `/internal/*` (`_FILE` supported). Unset: `/internal/*` returns 404 | — |
-| `TRACKER_TRUST_PROXY` | Trust `X-Forwarded-For`. Set `false` when the port is exposed without a proxy | `true` |
+| `TRACKER_TRUST_PROXY` | Reverse proxies in front that append to `X-Forwarded-For`: `false`, `true` (one, e.g. Caddy) or a count. The client is taken that many entries from the right. Never enable on a port clients reach directly | `false` |
 | `TRACKER_INTERVAL` | Announce interval sent to clients (seconds) | `600` |
 | `TRACKER_MAX_RATE_MIBPS` | Credit ceiling per peer (MiB/s) | `100` |
 | `TRACKER_FLUSH_INTERVAL` | Seconds between credit writes to PostgreSQL | `5` |

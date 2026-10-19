@@ -42,7 +42,7 @@ async fn announce(
         Err(reason) => return fail(reason),
     };
     let forwarded = headers.get("x-forwarded-for").and_then(|v| v.to_str().ok());
-    let Some(ip) = client_ip(remote, forwarded, tracker.config.trust_proxy) else {
+    let Some(ip) = client_ip(remote, forwarded, tracker.config.trusted_hops) else {
         return fail("invalid ip");
     };
     bencoded(tracker.announce(&request, ip).await)

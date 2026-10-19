@@ -208,6 +208,8 @@ services:
       REDIS_COMMAND_TIMEOUT_MS: "5000"
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
+      # Behind Caddy, which sets X-Forwarded-For: trust that one proxy
+      TRACKER_TRUST_PROXY: "true"
     volumes:
       # Swarms saved on stop, reloaded on start (no credit gap on deploys)
       - tracker_data:/data

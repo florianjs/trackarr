@@ -147,6 +147,8 @@ services:
       REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
+      # Behind Caddy, which sets X-Forwarded-For: trust that one proxy
+      TRACKER_TRUST_PROXY: "true"
       # Debug mode for verbose tracker logging
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
     volumes:

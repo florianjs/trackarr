@@ -65,7 +65,7 @@ services:
       TRACKER_TRUST_PROXY: "false"
     ports:
       - "8080:8080"   # Tracker HTTP (for load testing)
-      - "8090:8090"   # Metrics
+      - "127.0.0.1:8090:8090"   # Metrics and private API: local only
     volumes:
       # Swarms saved on stop, reloaded on start (no credit gap on deploys)
       - tracker_data:/data
