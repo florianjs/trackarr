@@ -359,6 +359,8 @@ services:
       - "8090"
     networks:
       - trackarr-internal
+      # Outbound access for alert notifications (email, webhooks)
+      - trackarr-public
     deploy:
       resources:
         limits:
@@ -376,18 +378,44 @@ services:
       - beszel_agent_data:/var/lib/beszel-agent
       # The hub reaches the agent through this socket: no port opened
       - beszel_socket:/beszel_socket
-      # Per-container stats and "container down" alerts. Read-only, but the
-      # Docker API behind it is powerful: remove this line to monitor the
-      # host only
-      - /var/run/docker.sock:/var/run/docker.sock:ro
     environment:
       LISTEN: /beszel_socket/beszel.sock
+      # Per-container stats and "container down" alerts, through the filtered
+      # proxy below. Set to "" to monitor the host only
+      DOCKER_HOST: tcp://127.0.0.1:2375
       KEY: ${BESZEL_AGENT_KEY:-}
       TOKEN: ${BESZEL_AGENT_TOKEN:-}
     deploy:
       resources:
         limits:
           memory: 64M
+
+  # Filtered Docker API for the agent: container stats only, read-only
+  docker-proxy:
+    image: lscr.io/linuxserver/socket-proxy:3.4.7-r0-ls103
+    container_name: trackarr-docker-proxy
+    profiles: [monitoring]
+    restart: always
+    environment:
+      CONTAINERS: 1
+      INFO: 1
+      VERSION: 1
+      EVENTS: 0
+      POST: 0
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    # Host loopback only: the agent runs in the host network
+    ports:
+      - "127.0.0.1:2375:2375"
+    networks:
+      - docker-proxy
+    read_only: true
+    tmpfs:
+      - /run
+    deploy:
+      resources:
+        limits:
+          memory: 32M
 
   # =============================================================================
   # OPTIONAL: Redis Sentinel for HA (uncomment for production HA)
@@ -403,6 +431,8 @@ services:
   # 
 networks:
   trackarr-public:
+    driver: bridge
+  docker-proxy:
     driver: bridge
   trackarr-internal:
     driver: bridge
