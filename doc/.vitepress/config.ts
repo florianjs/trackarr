@@ -48,6 +48,7 @@ export default defineConfig({
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Configuration', link: '/guide/configuration' },
             { text: 'Backup & Restore', link: '/guide/backup-restore' },
+            { text: 'High Availability', link: '/guide/high-availability' },
             { text: 'Local Production', link: '/guide/local-production' },
             { text: 'Roadmap', link: '/guide/roadmap' },
           ],

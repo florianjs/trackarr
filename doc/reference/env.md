@@ -100,3 +100,22 @@ TRACKER_MIN_INTERVAL=900
 ::: warning
 Never commit `.env` files to version control. Use `.env.example` as a template.
 :::
+
+## High Availability
+
+Only needed for a [replicated deployment](../guide/high-availability.md); every default keeps the single-server behaviour.
+
+| Variable                         | Description                                                             | Default     |
+| -------------------------------- | ----------------------------------------------------------------------- | ----------- |
+| `TRACKER_BACKUP_HTTP_URLS`       | Other sites' announce URLs (comma separated), fallback tiers in .torrent | —           |
+| `REDIS_SENTINELS`                | Sentinels as `host:port,host:port`; enables Sentinel mode               | —           |
+| `REDIS_SENTINEL_NAME`            | Sentinel master group name                                              | `mymaster`  |
+| `REDIS_SENTINEL_PASSWORD`        | Sentinel password, if they require one                                  | —           |
+| `REDIS_SENTINEL_TLS`             | `true` when Sentinels use TLS                                           | `false`     |
+| `REDIS_COMMAND_TIMEOUT_MS`       | Fail Redis commands that get no reply after this delay                  | — (no limit)|
+| `DB_CONNECT_TIMEOUT`             | PostgreSQL connect timeout (seconds)                                    | `10`        |
+| `DB_IDLE_TIMEOUT`                | Close idle connections after (seconds), `0` = never                     | `30`        |
+| `DB_KEEP_ALIVE`                  | Seconds before TCP keepalive probes on database connections            | `60`        |
+
+For several PostgreSQL nodes, list them in `DATABASE_URL` and keep only the primary:
+`postgres://user:pass@db1:5432,db2:5432/trackarr?target_session_attrs=primary`
