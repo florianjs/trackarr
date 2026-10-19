@@ -46,6 +46,9 @@ services:
       NUXT_PUBLIC_TRACKER_UDP_URL: ${TRACKER_UDP_URL:-}
       NUXT_PUBLIC_TRACKER_WS_URL: ${TRACKER_WS_URL:-}
       IP_HASH_SECRET: ${IP_HASH_SECRET}
+      # Port 3000 is published directly, without a proxy: never trust
+      # X-Forwarded-For / X-Real-IP from LAN or Docker addresses
+      TRUSTED_PROXIES: none
       # Tracker service private API (swarm peers, status)
       TRACKER_INTERNAL_URL: http://tracker:8090
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}

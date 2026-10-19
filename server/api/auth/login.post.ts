@@ -5,7 +5,12 @@ import { users, bannedIps } from '../../db/schema';
 import { validateBody, loginSchema } from '../../utils/schemas';
 import { redis } from '../../redis/client';
 import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
-import { getClientIP, protectEndpoint } from '../../utils/rateLimit';
+import {
+  assertAccountNotLocked,
+  getClientIP,
+  protectEndpoint,
+  recordAccountFailure,
+} from '../../utils/rateLimit';
 
 /**
  * POST /api/auth/login
@@ -17,6 +22,7 @@ export default defineEventHandler(async (event) => {
 
   // Validate request body with Zod (now expects username, challenge, proof)
   const body = await validateBody(event, loginSchema);
+  await assertAccountNotLocked(body.username);
 
   // Atomically consume the challenge: a concurrent request cannot reuse it
   const userId = await redis.getdel(`login:${body.challenge}`);
@@ -39,17 +45,10 @@ export default defineEventHandler(async (event) => {
           .then((r) => r[0]);
 
   if (!user || user.username !== body.username) {
+    await recordAccountFailure(body.username);
     throw createError({
       statusCode: 401,
       message: 'Invalid credentials',
-    });
-  }
-
-  // Check if user is banned
-  if (user.isBanned) {
-    throw createError({
-      statusCode: 403,
-      message: 'Your account has been banned',
     });
   }
 
@@ -91,9 +90,19 @@ export default defineEventHandler(async (event) => {
     providedProof.length !== expectedProof.length ||
     !timingSafeEqual(providedProof, expectedProof)
   ) {
+    await recordAccountFailure(body.username);
     throw createError({
       statusCode: 401,
       message: 'Invalid credentials',
+    });
+  }
+
+  // Only after the proof: before it, the answer would tell anyone guessing
+  // usernames that this account exists and is banned
+  if (user.isBanned) {
+    throw createError({
+      statusCode: 403,
+      message: 'Your account has been banned',
     });
   }
 

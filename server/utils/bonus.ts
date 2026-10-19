@@ -7,7 +7,7 @@
  */
 
 import { randomUUID } from 'crypto';
-import { and, eq, gte, sql } from 'drizzle-orm';
+import { and, eq, gte, inArray, sql } from 'drizzle-orm';
 import type { db as Db } from '../db';
 import { bonusTransactions, users } from '../db/schema';
 
@@ -189,7 +189,7 @@ export async function requireBonusEnabled(): Promise<void> {
  */
 export async function awardUploadBonus(
   database: typeof Db,
-  torrent: { id: string; uploaderId: string | null; name: string }
+  torrent: { id: string; infoHash: string; uploaderId: string | null; name: string }
 ): Promise<void> {
   if (!torrent.uploaderId) return;
 
@@ -197,6 +197,8 @@ export async function awardUploadBonus(
   const settings = await getBonusSettings();
   if (!settings.enabled || settings.pointsPerUpload <= 0) return;
 
+  // Keyed by info hash: deleting and re-uploading the same torrent creates a
+  // new row id and must not pay again. Older entries were keyed by row id.
   await database.transaction(async (tx) => {
     const [already] = await tx
       .select({ id: bonusTransactions.id })
@@ -204,7 +206,7 @@ export async function awardUploadBonus(
       .where(
         and(
           eq(bonusTransactions.type, 'upload'),
-          eq(bonusTransactions.refId, torrent.id)
+          inArray(bonusTransactions.refId, [torrent.infoHash, torrent.id])
         )
       )
       .limit(1);
@@ -215,7 +217,7 @@ export async function awardUploadBonus(
       amount: settings.pointsPerUpload,
       type: 'upload',
       description: torrent.name,
-      refId: torrent.id,
+      refId: torrent.infoHash,
     });
   });
 }

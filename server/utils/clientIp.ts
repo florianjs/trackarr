@@ -28,6 +28,40 @@ export function normalizeIP(ip: string): string {
   return trimmed;
 }
 
+/** Expand an IPv6 address to its 8 groups (no `::`, no embedded IPv4) */
+function ipv6Groups(ip: string): number[] | null {
+  const halves = ip.split('%')[0]!.split('::');
+  if (halves.length > 2) return null;
+  const parse = (part: string): number[] =>
+    part === ''
+      ? []
+      : part.split(':').flatMap((g) => {
+          if (isIP(g) === 4) {
+            const [a, b, c, d] = g.split('.').map(Number);
+            return [(a! << 8) | b!, (c! << 8) | d!];
+          }
+          return [parseInt(g, 16)];
+        });
+  const head = parse(halves[0]!);
+  const tail = halves.length === 2 ? parse(halves[1]!) : [];
+  const fill = 8 - head.length - tail.length;
+  if (fill < 0 || (halves.length === 1 && fill !== 0)) return null;
+  return [...head, ...Array<number>(fill).fill(0), ...tail];
+}
+
+/**
+ * Who a rate limit or ban applies to: the IPv4 address, or the IPv6 /64.
+ * A subscriber controls a whole /64 and can rotate through it at will, so
+ * limiting single IPv6 addresses limits nothing.
+ */
+export function rateLimitSubject(ip: string): string {
+  const normalized = normalizeIP(ip);
+  if (isIP(normalized) !== 6) return normalized;
+  const groups = ipv6Groups(normalized);
+  if (!groups || groups.some((g) => Number.isNaN(g))) return normalized;
+  return `${groups.slice(0, 4).map((g) => g.toString(16)).join(':')}::/64`;
+}
+
 export function buildTrustedProxyList(spec: string | undefined): BlockList {
   const list = new BlockList();
   const entries =

@@ -9,6 +9,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use chrono::Utc;
 use deadpool_postgres::Pool;
 
+use crate::abuse::{self, FailureLimiter};
 use crate::config::Config;
 use crate::credit::{self, SeedingSets};
 use crate::dedupe::Dedupe;
@@ -43,6 +44,7 @@ pub struct Tracker {
     pub completed: Completed,
     owners: Arc<Owners>,
     dedupe: Dedupe,
+    pub limiter: FailureLimiter,
     seeding: SeedingSets,
     settings: RwLock<Arc<Settings>>,
     /// Successful announces since start
@@ -68,9 +70,10 @@ impl Tracker {
             warmup_ms: AtomicU64::new(config.warmup * 1000),
             publish_state: tokio::sync::Mutex::default(),
             synced: AtomicBool::new(false),
+            swarms: Swarms::new(config.max_peers_per_user),
+            limiter: FailureLimiter::new(config.max_failures_per_minute),
             config,
             pool,
-            swarms: Swarms::default(),
             ledger: Ledger::default(),
             dedupe: Dedupe::default(),
             seeding: SeedingSets::default(),
@@ -103,12 +106,20 @@ impl Tracker {
         let Some(passkey) = request.passkey.as_deref() else {
             return Err("Passkey required".into());
         };
-        let user = self.lookups.user(passkey).await.map_err(internal)?;
+        let started = now_ms();
+        let user = self.lookup_user(passkey, ip, started).await?;
         let torrent = self
             .lookups
             .torrent(&request.info_hash)
             .await
             .map_err(internal)?;
+        if torrent.is_none() {
+            self.limiter
+                .counters
+                .unknown_torrent
+                .fetch_add(1, Ordering::Relaxed);
+            self.limiter.record_failure(ip, started);
+        }
         let settings = self.settings();
         let freeleech = settings.freeleech_active(Utc::now());
 
@@ -173,6 +184,14 @@ impl Tracker {
                 leechers = outcome.leechers,
                 "announce"
             );
+        }
+
+        if outcome.applied == Applied::TooManyPeers {
+            self.limiter
+                .counters
+                .too_many_peers
+                .fetch_add(1, Ordering::Relaxed);
+            return Err("Too many peers for this torrent".into());
         }
 
         if outcome.applied != Applied::NotOwner
@@ -321,18 +340,18 @@ impl Tracker {
 
     /// Bencoded scrape response. Private tracker: a valid passkey and explicit
     /// hashes are required, and only approved torrents are reported.
-    pub async fn scrape(&self, request: &ScrapeRequest) -> Vec<u8> {
-        match self.try_scrape(request).await {
+    pub async fn scrape(&self, request: &ScrapeRequest, ip: IpAddr) -> Vec<u8> {
+        match self.try_scrape(request, ip).await {
             Ok(body) => body,
             Err(reason) => response::failure(&reason),
         }
     }
 
-    async fn try_scrape(&self, request: &ScrapeRequest) -> Result<Vec<u8>, String> {
+    async fn try_scrape(&self, request: &ScrapeRequest, ip: IpAddr) -> Result<Vec<u8>, String> {
         let Some(passkey) = request.passkey.as_deref() else {
             return Err("Passkey required".into());
         };
-        match self.lookups.user(passkey).await.map_err(internal)? {
+        match self.lookup_user(passkey, ip, now_ms()).await? {
             Some(user) if !user.is_banned => {}
             _ => return Err("Invalid passkey".into()),
         }
@@ -362,6 +381,32 @@ impl Tracker {
             })
             .collect();
         Ok(response::scrape(&entries))
+    }
+
+    /// The user behind a passkey, unless the client is over its failure
+    /// budget: then nothing is looked up. Unknown passkeys count as failures.
+    async fn lookup_user(
+        &self,
+        passkey: &str,
+        ip: IpAddr,
+        now: u64,
+    ) -> Result<Option<Arc<TrackerUser>>, String> {
+        if self.limiter.is_blocked(ip, now) {
+            return Err("Too many invalid requests, try again later".into());
+        }
+        let user = if abuse::plausible_passkey(passkey) {
+            self.lookups.user(passkey).await.map_err(internal)?
+        } else {
+            None
+        };
+        if user.is_none() {
+            self.limiter
+                .counters
+                .invalid_passkey
+                .fetch_add(1, Ordering::Relaxed);
+            self.limiter.record_failure(ip, now);
+        }
+        Ok(user)
     }
 
     /// Periodic housekeeping: expired peers, bonus sets
@@ -576,6 +621,7 @@ pub fn spawn_jobs(tracker: Arc<Tracker>) {
             tick.tick().await;
             // Entries live 2 s: purged often, or a busy tracker holds millions
             t.dedupe.purge(now_ms());
+            t.limiter.purge(now_ms());
             t.flush().await;
             t.publish_dirty().await;
         }

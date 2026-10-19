@@ -1,3 +1,4 @@
+mod abuse;
 mod bencode;
 mod client_ip;
 mod config;
@@ -16,6 +17,7 @@ mod query;
 mod redis_store;
 mod response;
 mod rules;
+mod server;
 mod settings;
 mod snapshot;
 mod swarms;
@@ -109,11 +111,13 @@ async fn main() {
         token: internal_token,
         ip_secret,
     }));
-    tokio::spawn(async move {
-        if let Err(err) = axum::serve(internal_listener, internal_app).await {
-            tracing::error!("internal API error: {err}");
-        }
-    });
+    let limits = tracker.config.limits;
+    tokio::spawn(server::serve(
+        internal_listener,
+        internal_app,
+        limits,
+        std::future::pending(),
+    ));
     tracing::info!("internal API listening on port {}", internal_addr.port());
 
     // Dual-stack listener: IPv4 clients arrive as ::ffff:a.b.c.d
@@ -124,15 +128,13 @@ async fn main() {
         .unwrap_or_else(|err| exit_with(format!("cannot listen on {addr}: {err}")));
     tracing::info!("HTTP listening on port {port}");
 
-    let served = axum::serve(
+    server::serve(
         listener,
-        http::router(tracker.clone()).into_make_service_with_connect_info::<SocketAddr>(),
+        http::router(tracker.clone()),
+        limits,
+        shutdown_signal(),
     )
-    .with_graceful_shutdown(shutdown_signal())
     .await;
-    if let Err(err) = served {
-        tracing::error!("server error: {err}");
-    }
 
     // Credit earned since the last flush must not be lost on restart
     tracker.flush().await;

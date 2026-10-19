@@ -65,6 +65,8 @@ esac
 
 # Copy base config
 cp "$PROJECT_DIR/.env.example" "$PROJECT_DIR/.env"
+# Filled with every secret below: readable by the owner only
+chmod 600 "$PROJECT_DIR/.env"
 log_success "Created .env from .env.example"
 
 if [[ "$ENV_TYPE" == "development" ]]; then

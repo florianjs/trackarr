@@ -171,10 +171,16 @@ pub fn live(entries: Vec<Entry>, now: u64) -> Vec<Entry> {
         .collect()
 }
 
-/// Write atomically: a crash mid-write never leaves a half file to load
+/// Write atomically (a crash mid-write never leaves a half file to load),
+/// readable by the tracker user only: the file holds raw peer IPs.
 pub fn save(path: &Path, bytes: &[u8]) -> std::io::Result<()> {
+    use std::io::Write;
     let tmp = path.with_extension("tmp");
-    std::fs::write(&tmp, bytes)?;
+    let mut options = std::fs::OpenOptions::new();
+    options.write(true).create(true).truncate(true);
+    #[cfg(unix)]
+    std::os::unix::fs::OpenOptionsExt::mode(&mut options, 0o600);
+    options.open(&tmp)?.write_all(bytes)?;
     std::fs::rename(&tmp, path)
 }
 
@@ -248,6 +254,12 @@ mod tests {
         save(&path, b"data").unwrap();
         assert_eq!(std::fs::read(&path).unwrap(), b"data");
         assert!(!path.with_extension("tmp").exists());
+        #[cfg(unix)]
+        {
+            use std::os::unix::fs::PermissionsExt;
+            let mode = std::fs::metadata(&path).unwrap().permissions().mode();
+            assert_eq!(mode & 0o777, 0o600);
+        }
         std::fs::remove_dir_all(dir).unwrap();
     }
 }

@@ -20,7 +20,7 @@ use serde::Serialize;
 
 use crate::crypto::{hash_ip, secure_eq};
 use crate::invalidate::parse_hex_hash;
-use crate::tracker::Tracker;
+use crate::tracker::{Tracker, now_ms};
 
 pub struct InternalState {
     pub tracker: Arc<Tracker>,
@@ -61,6 +61,7 @@ async fn health() -> &'static str {
 async fn metrics(State(state): State<Arc<InternalState>>) -> Response {
     let tracker = &state.tracker;
     let (swarms, seeders, leechers) = tracker.swarms.totals();
+    let counters = &tracker.limiter.counters;
     let body = format!(
         "# TYPE trackarr_tracker_announces_total counter\n\
          trackarr_tracker_announces_total {}\n\
@@ -74,11 +75,23 @@ async fn metrics(State(state): State<Arc<InternalState>>) -> Response {
          # TYPE trackarr_tracker_published gauge\n\
          trackarr_tracker_published {}\n\
          # TYPE trackarr_tracker_uptime_seconds gauge\n\
-         trackarr_tracker_uptime_seconds {}\n",
+         trackarr_tracker_uptime_seconds {}\n\
+         # TYPE trackarr_tracker_rejected_total counter\n\
+         trackarr_tracker_rejected_total{{reason=\"invalid_passkey\"}} {}\n\
+         trackarr_tracker_rejected_total{{reason=\"unknown_torrent\"}} {}\n\
+         trackarr_tracker_rejected_total{{reason=\"too_many_peers\"}} {}\n\
+         trackarr_tracker_rejected_total{{reason=\"blocked_client\"}} {}\n\
+         # TYPE trackarr_tracker_blocked_clients gauge\n\
+         trackarr_tracker_blocked_clients {}\n",
         tracker.announces.load(Ordering::Relaxed),
         tracker.ledger.pending_len(),
         u8::from(tracker.is_synced()),
         tracker.uptime_ms() / 1000,
+        counters.invalid_passkey.load(Ordering::Relaxed),
+        counters.unknown_torrent.load(Ordering::Relaxed),
+        counters.too_many_peers.load(Ordering::Relaxed),
+        counters.blocked.load(Ordering::Relaxed),
+        tracker.limiter.blocked_clients(now_ms()),
     );
     ([(header::CONTENT_TYPE, "text/plain; version=0.0.4")], body).into_response()
 }

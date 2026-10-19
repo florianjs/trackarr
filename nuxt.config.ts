@@ -47,22 +47,9 @@ export default defineNuxtConfig({
   },
 
   runtimeConfig: {
-    databaseUrl: (() => {
-      const baseUrl =
-        process.env.DATABASE_URL ||
-        'postgres://tracker:tracker@localhost:5432/trackarr';
-      // Force SSL in production
-      if (
-        process.env.NODE_ENV === 'production' &&
-        !baseUrl.includes('sslmode=')
-      ) {
-        return (
-          baseUrl + (baseUrl.includes('?') ? '&' : '?') + 'sslmode=require'
-        );
-      }
-      return baseUrl;
-    })(),
-    redisUrl: process.env.REDIS_URL || 'redis://localhost:6379',
+    // No connection strings here: anything in runtimeConfig is inlined into
+    // the build output, so the image would carry the passwords. The server
+    // reads DATABASE_URL / REDIS_URL from the environment at runtime.
     // Sealed session cookies are stateless: bound their lifetime so a stolen
     // or stale cookie does not stay valid forever.
     session: {
