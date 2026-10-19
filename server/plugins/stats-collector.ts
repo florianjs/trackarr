@@ -1,6 +1,7 @@
 import { db, schema } from '../db';
 import { sql } from 'drizzle-orm';
 import { redis } from '../redis/client';
+import { claim } from '../redis/claim';
 import { v4 as uuidv4 } from 'uuid';
 
 export default defineNitroPlugin((nitroApp) => {
@@ -13,8 +14,12 @@ export default defineNitroPlugin((nitroApp) => {
   console.log(`[Stats Collector] Initialized with interval: ${INTERVAL}ms`);
 
   const collectStats = async () => {
-    console.log('[Stats Collector] Starting stats collection...');
     try {
+      // With several app nodes, only the first to claim this interval collects.
+      // The margin absorbs timer drift between nodes.
+      if (!(await claim(redis, 'job:stats-collector', INTERVAL * 0.9))) return;
+
+      console.log('[Stats Collector] Starting stats collection...');
       // 1. Users Count
       const usersCountResult = await db
         .select({ count: sql<number>`count(*)::int` })

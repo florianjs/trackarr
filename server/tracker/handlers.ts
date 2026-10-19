@@ -15,6 +15,8 @@ import { createHash } from 'crypto';
 import { computeCredit, getMaxRateBytes } from './credit';
 import { computeSeedingBonus } from './bonusAccrual';
 import { recordUserPeer, removeUserPeer } from '../redis/userActivity';
+import { redis } from '../redis/client';
+import { claim } from '../redis/claim';
 import { getTrackerTorrent, getTrackerUser, markSnatched } from './lookups';
 import { getFreeleechState } from '../utils/settings';
 
@@ -33,25 +35,9 @@ const TRACKER_DEBUG = process.env.TRACKER_DEBUG === 'true';
 // Deduplication Cache
 // Prevents processing the same announce multiple times when clients
 // announce on multiple network interfaces (IPv4, IPv6, localhost, etc.)
+// Kept in Redis so duplicates landing on different app nodes are caught too
 // ============================================================================
-interface DedupeEntry {
-  timestamp: number;
-  uploaded: number;
-  downloaded: number;
-}
-
-const announceDedupeCache = new Map<string, DedupeEntry>();
 const DEDUPE_WINDOW_MS = 2000; // 2 seconds window for deduplication
-
-// Cleanup old entries periodically
-setInterval(() => {
-  const now = Date.now();
-  for (const [key, entry] of announceDedupeCache) {
-    if (now - entry.timestamp > DEDUPE_WINDOW_MS * 2) {
-      announceDedupeCache.delete(key);
-    }
-  }
-}, 10000);
 
 // ============================================================================
 // Announce Handler
@@ -101,21 +87,11 @@ export async function handleAnnounce(params: {
   // Deduplication: Clients announce on ALL network interfaces (IPv4, IPv6, etc.)
   // We only process the first announce per peerId+infoHash+event within the window
   // ============================================================================
-  const dedupeKey = `${infoHash}:${peerId}:${event}`;
-  const now = Date.now();
-  const existingEntry = announceDedupeCache.get(dedupeKey);
-
-  if (existingEntry && now - existingEntry.timestamp < DEDUPE_WINDOW_MS) {
+  const dedupeKey = `announce:dedupe:${infoHash}:${peerId}:${event}`;
+  if (!(await claim(redis, dedupeKey, DEDUPE_WINDOW_MS))) {
     // Already processed this announce recently, skip
     return;
   }
-
-  // Store this announce in dedupe cache
-  announceDedupeCache.set(dedupeKey, {
-    timestamp: now,
-    uploaded: params.uploaded,
-    downloaded: params.downloaded,
-  });
 
   const ipHash = hashIP(params.ip);
   if (TRACKER_DEBUG) {

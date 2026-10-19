@@ -1,4 +1,6 @@
 import { securityLogger } from './logger';
+import { redis } from '../redis/client';
+import { claim } from '../redis/claim';
 
 export interface SecurityAlert {
   type: SecurityAlertType;
@@ -74,6 +76,13 @@ export async function sendSecurityAlert(
   }
 
   alertCooldowns.set(cooldownKey, now);
+
+  // Shared cooldown so several app nodes don't each send the same alert.
+  // Fail open: an alert must still go out when Redis is down.
+  const firstNode = await claim(redis, `alert:cooldown:${cooldownKey}`, ALERT_COOLDOWN).catch(
+    () => true
+  );
+  if (!firstNode) return;
 
   // Log the alert
   securityLogger.warn({ alert }, `Security Alert: ${alert.title}`);
