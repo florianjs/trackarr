@@ -6,9 +6,9 @@ set -e
 
 echo "🚀 Starting Trackarr..."
 
-# Run database schema push (migrations)
+# Run database schema push (migrations), one node at a time when replicated
 echo "📦 Running database migrations..."
-./scripts/db-push.sh
+node ./scripts/with-migration-lock.mjs ./scripts/db-push.sh
 
 # Seed default categories if needed
 if [ -f ./scripts/seed-categories.ts ]; then

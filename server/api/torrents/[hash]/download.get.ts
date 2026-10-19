@@ -1,6 +1,7 @@
 import { db, schema } from '../../../db';
 import { eq } from 'drizzle-orm';
 import bencode from 'bencode';
+import { personalizeAnnounce, trackerBackupUrls } from '../../../utils/announce';
 
 export default defineEventHandler(async (event) => {
   // Require authentication
@@ -58,17 +59,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Personalize announce URL
-  const trackerUrl = new URL(config.public.trackerHttpUrl as string);
-  trackerUrl.searchParams.set('passkey', passkey);
-  const personalizedUrl = trackerUrl.toString();
-
-  decoded.announce = Buffer.from(personalizedUrl);
-
-  // Also update announce-list if it exists
-  if (decoded['announce-list']) {
-    decoded['announce-list'] = [[Buffer.from(personalizedUrl)]];
-  }
+  // Personalize announce URL (plus backup nodes of a replicated deployment)
+  personalizeAnnounce(
+    decoded,
+    config.public.trackerHttpUrl as string,
+    trackerBackupUrls(),
+    passkey
+  );
 
   // Never touch the info dict here: changing it (e.g. the private flag)
   // changes the info hash, and clients would announce a hash unknown to the

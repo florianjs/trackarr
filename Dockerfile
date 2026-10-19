@@ -45,6 +45,7 @@ COPY --from=builder --chown=nuxtjs:nodejs /app/drizzle.config.ts ./drizzle.confi
 COPY --from=builder --chown=nuxtjs:nodejs /app/server/db ./server/db
 COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/seed-categories.ts ./scripts/seed-categories.ts
 COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/db-push.sh ./scripts/db-push.sh
+COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/with-migration-lock.mjs ./scripts/with-migration-lock.mjs
 COPY --from=builder --chown=nuxtjs:nodejs /app/scripts/entrypoint.sh ./scripts/entrypoint.sh
 COPY --from=builder --chown=nuxtjs:nodejs /app/node_modules ./node_modules
 

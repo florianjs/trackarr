@@ -17,8 +17,14 @@ function buildPostgresOptions(): Options<Record<string, never>> {
   const options: Options<Record<string, never>> = {
     // Connection pool settings (prevent resource exhaustion)
     max: parseInt(process.env.DB_POOL_MAX || '20'),
-    idle_timeout: 30,
-    connect_timeout: 10,
+    // Replicated deployments list several hosts: every reconnect tries them
+    // in order, so a dead datacenter costs connect_timeout each time. They
+    // lower the timeout and keep idle connections open (DB_IDLE_TIMEOUT=0).
+    idle_timeout: parseInt(process.env.DB_IDLE_TIMEOUT || '30'),
+    connect_timeout: parseInt(process.env.DB_CONNECT_TIMEOUT || '10'),
+    // Seconds before TCP keepalive probes: a datacenter that vanishes drops
+    // packets silently, and only probes notice the dead socket
+    keep_alive: parseInt(process.env.DB_KEEP_ALIVE || '60'),
 
     // Query settings
     prepare: true, // Use prepared statements (SQL injection protection)
