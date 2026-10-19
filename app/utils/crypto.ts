@@ -2,6 +2,7 @@
  * Zero Knowledge Encryption - Client-side crypto utilities
  * Uses @noble/hashes for Argon2id and SHA256
  */
+import { createPoWHasher, leadingZeroBitsOfWords } from './powHasher';
 
 /**
  * Credentials to send to server during registration
@@ -47,15 +48,6 @@ function randomBytes(length: number): Uint8Array {
 async function sha256(data: Uint8Array): Promise<Uint8Array> {
   const hashBuffer = await crypto.subtle.digest('SHA-256', data.buffer as ArrayBuffer);
   return new Uint8Array(hashBuffer);
-}
-
-/**
- * SHA256 hash to hex string (for PoW)
- */
-async function sha256Hex(input: string): Promise<string> {
-  const data = new TextEncoder().encode(input);
-  const hash = await sha256(data);
-  return Array.from(hash).map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
 /**
@@ -117,30 +109,32 @@ export async function deriveLoginVerifier(password: string, salt: string): Promi
 
 /**
  * Solve Proof of Work challenge
- * Finds nonce such that SHA256(challenge:nonce) starts with N zeros
+ * Finds nonce such that SHA256(challenge:nonce) starts with N zero bits
  */
 export async function solvePoW(
-  challenge: string, 
+  challenge: string,
   difficulty: number,
   onProgress?: (hashesComputed: number) => void
 ): Promise<PoWSolution> {
-  const target = '0'.repeat(difficulty);
+  // Synchronous hashing (see powHasher.ts), in chunks between which the
+  // main thread gets to repaint
+  const CHUNK = 50000;
+  const hashNonce = createPoWHasher(`${challenge}:`);
   let nonce = 0;
-  
+
   while (true) {
-    const input = `${challenge}:${nonce}`;
-    const hash = await sha256Hex(input);
-    
-    if (hash.startsWith(target)) {
-      return { challenge, nonce: nonce.toString(), hash };
+    const end = nonce + CHUNK;
+    for (; nonce < end; nonce++) {
+      if (leadingZeroBitsOfWords(hashNonce(nonce)) >= difficulty) {
+        // Send the hash as computed by WebCrypto
+        const digest = await sha256(new TextEncoder().encode(`${challenge}:${nonce}`));
+        const hash = Array.from(digest).map(b => b.toString(16).padStart(2, '0')).join('');
+        return { challenge, nonce: nonce.toString(), hash };
+      }
     }
-    
-    nonce++;
-    
-    // Report progress and yield to main thread every 5000 iterations
-    if (nonce % 5000 === 0) {
-      onProgress?.(nonce);
-      await new Promise(r => setTimeout(r, 0));
-    }
+
+    // Report progress and yield to main thread between chunks
+    onProgress?.(nonce);
+    await new Promise(r => setTimeout(r, 0));
   }
 }

@@ -378,8 +378,8 @@ async function handleRegister() {
       powChallenge.challenge,
       powChallenge.difficulty,
       (hashes) => {
-        // Estimate progress based on expected hashes (difficulty 5 = ~1M hashes avg)
-        const expectedHashes = Math.pow(16, powChallenge.difficulty);
+        // Estimate progress based on expected hashes (2^difficulty on average)
+        const expectedHashes = Math.pow(2, powChallenge.difficulty);
         powProgress.value = Math.min((hashes / expectedHashes) * 100, 95);
       }
     );

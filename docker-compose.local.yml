@@ -40,6 +40,8 @@ services:
       # Runtime override of the URLs baked at build time (issue #49)
       NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
       IP_HASH_SECRET: ${IP_HASH_SECRET}
+      # Registration proof of work, in bits (empty: built-in default)
+      POW_DIFFICULTY: ${POW_DIFFICULTY:-}
       # Port 3000 is published directly, without a proxy: never trust
       # X-Forwarded-For / X-Real-IP from LAN or Docker addresses
       TRUSTED_PROXIES: none
