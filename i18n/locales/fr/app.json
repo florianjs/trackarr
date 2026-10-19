@@ -1050,6 +1050,13 @@
     "requestTorrent": "Demander un torrent",
     "forum": "Derniers sujets du forum",
     "noTopics": "Aucun sujet pour l'instant.",
-    "startTopic": "Lancer la discussion"
+    "startTopic": "Lancer la discussion",
+    "site": {
+      "title": "Le tracker en chiffres",
+      "members": "Inscrits",
+      "activePeers": "Peers actifs",
+      "seededTorrents": "Torrents en seed",
+      "shared": "Données partagées"
+    }
   }
 }
