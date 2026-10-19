@@ -69,6 +69,8 @@ export const SETTINGS_KEYS = {
   // Global freeleech
   FREELEECH_ENABLED: 'freeleech_enabled',
   FREELEECH_UNTIL: 'freeleech_until',
+  // Legacy disk uploads copied into the database (done once, by any node)
+  UPLOADS_IMPORTED: 'uploads_imported',
 } as const;
 
 const settingsCache = new Map<

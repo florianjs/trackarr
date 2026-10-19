@@ -39,6 +39,9 @@ ufw allow 22/tcp
 ufw allow 80,443/tcp
 ufw allow 51820/udp            # WireGuard
 ufw allow in on wg0            # etcd, PostgreSQL, Redis, Sentinel between sites
+# The app container reaches this node's data services through its Docker
+# bridge (named br-trackarr in docker/ha/compose.yml)
+ufw allow in on br-trackarr to any port 5432,6379,26379 proto tcp
 ```
 
 ::: danger
@@ -50,6 +53,7 @@ Never expose ports 2379/2380 (etcd), 5432 (PostgreSQL), 8008 (Patroni), 6379 (Re
 On each site, copy the `docker/ha/` directory and create its `.env` from `docker/ha/.env.example`:
 
 - `NODE_NAME` and `NODE_IP` change per site
+- Passwords end up in connection URLs: generate URL-safe ones, e.g. `openssl rand -hex 24`
 - `COMPOSE_PROFILES=node` on dc1 and dc2, empty on the witness
 - `TRACKER_DOMAIN` is this site's tracker hostname (`tracker1.example.com` on dc1, `tracker2.example.com` on dc2)
 - Everything else (passwords, host lists, `TRACKER_HTTP_URL`, `TRACKER_BACKUP_HTTP_URLS`) is **identical on every site**

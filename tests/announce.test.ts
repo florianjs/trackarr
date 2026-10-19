@@ -13,6 +13,12 @@ describe('trackerBackupUrls', () => {
       'https://b/announce',
     ]);
   });
+
+  it('skips malformed entries instead of failing downloads', () => {
+    expect(trackerBackupUrls('tracker2.example.com/announce,https://ok/announce,ftp://x/a')).toEqual([
+      'https://ok/announce',
+    ]);
+  });
 });
 
 describe('personalizeAnnounce', () => {

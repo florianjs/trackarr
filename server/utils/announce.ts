@@ -7,11 +7,17 @@
  * so tracker failover needs no DNS change.
  */
 
+/** Valid backup URLs; a typo is skipped (and logged) rather than breaking every download */
 export function trackerBackupUrls(value = process.env.TRACKER_BACKUP_HTTP_URLS): string[] {
   return (value || '')
     .split(',')
     .map((url) => url.trim())
-    .filter(Boolean);
+    .filter((url) => {
+      if (!url) return false;
+      if (URL.canParse(url) && /^https?:$/.test(new URL(url).protocol)) return true;
+      console.warn(`[Tracker] Ignoring invalid TRACKER_BACKUP_HTTP_URLS entry: ${url}`);
+      return false;
+    });
 }
 
 function withPasskey(url: string, passkey: string): Buffer {

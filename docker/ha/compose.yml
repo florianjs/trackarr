@@ -196,6 +196,10 @@ services:
 
 networks:
   trackarr:
+    # Fixed name so the firewall can let the app reach the local data
+    # services (see doc/guide/high-availability.md)
+    driver_opts:
+      com.docker.network.bridge.name: br-trackarr
 
 volumes:
   etcd_data:

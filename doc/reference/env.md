@@ -111,7 +111,7 @@ Only needed for a [replicated deployment](../guide/high-availability.md); every 
 | `REDIS_SENTINELS`                | Sentinels as `host:port,host:port`; enables Sentinel mode               | —           |
 | `REDIS_SENTINEL_NAME`            | Sentinel master group name                                              | `mymaster`  |
 | `REDIS_SENTINEL_PASSWORD`        | Sentinel password, if they require one                                  | —           |
-| `REDIS_SENTINEL_TLS`             | `true` when Sentinels use TLS                                           | `false`     |
+| `REDIS_SENTINEL_TLS`             | `true` when Sentinels use TLS (the Redis nodes follow `REDIS_TLS`)      | `false`     |
 | `REDIS_COMMAND_TIMEOUT_MS`       | Fail Redis commands that get no reply after this delay                  | — (no limit)|
 | `DB_CONNECT_TIMEOUT`             | PostgreSQL connect timeout (seconds)                                    | `10`        |
 | `DB_IDLE_TIMEOUT`                | Close idle connections after (seconds), `0` = never                     | `30`        |

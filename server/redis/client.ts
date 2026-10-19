@@ -95,10 +95,16 @@ export const redis =
         name: process.env.REDIS_SENTINEL_NAME || 'mymaster',
         // Optional: Sentinels usually sit on the private network without auth
         sentinelPassword: readOptionalSecret('REDIS_SENTINEL_PASSWORD'),
-        enableTLSForSentinelMode: process.env.REDIS_SENTINEL_TLS === 'true',
+        // TLS to the Sentinels themselves
+        sentinelTLS: process.env.REDIS_SENTINEL_TLS === 'true' ? {} : undefined,
+        // TLS to the master they point to, with the REDIS_TLS* options
+        enableTLSForSentinelMode: Boolean(buildRedisOptions().tls),
         // Reconnect as soon as Sentinel announces a new master: a vanished
         // datacenter never closes our socket, so no error would tell us
         failoverDetector: true,
+        // A failover can outlast the single-server retry budget: never give
+        // up, or the app stays disconnected after the new master is up
+        retryStrategy: (times: number) => Math.min(times * 200, 3000),
       })
     : new Redis(redisUrl, buildRedisOptions());
 

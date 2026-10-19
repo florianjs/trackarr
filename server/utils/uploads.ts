@@ -2,6 +2,15 @@ import { readdir, readFile, unlink } from 'fs/promises';
 import { join } from 'path';
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../db';
+import { SETTINGS_KEYS, getSetting, setSetting } from './settings';
+
+/**
+ * Once the legacy directory is imported, the database is the only source:
+ * a file deleted on one node must not come back from another node's disk.
+ */
+async function diskImported(): Promise<boolean> {
+  return (await getSetting(SETTINGS_KEYS.UPLOADS_IMPORTED)) === 'true';
+}
 
 /**
  * Uploaded images (logos, favicons, avatars) are stored in Postgres so every
@@ -43,13 +52,14 @@ export async function saveUpload(name: string, data: Buffer): Promise<void> {
   });
 }
 
-/** Database first, then the legacy directory. Callers must validate `name`. */
+/** Database, then the legacy directory until it is imported. Callers must validate `name`. */
 export async function readUpload(name: string): Promise<Buffer | null> {
   const row = await db.query.uploads.findFirst({
     where: eq(schema.uploads.name, name),
     columns: { data: true },
   });
   if (row) return row.data;
+  if (await diskImported()) return null;
   try {
     return await readFile(join(getUploadsDir(), name));
   } catch {
@@ -68,16 +78,20 @@ export async function deleteUpload(name: string): Promise<void> {
 }
 
 /**
- * Copy files from the legacy directory into the database. Idempotent, and
- * safe to run from several nodes at once.
+ * Copy files from the legacy directory into the database, once for the whole
+ * deployment. Safe to run from several nodes at once.
  */
 export async function importDiskUploads(): Promise<number> {
+  if (await diskImported()) return 0;
   let names: string[];
   try {
-    names = await readdir(getUploadsDir());
+    names = (await readdir(getUploadsDir())).filter((name) => uploadMimeType(name));
   } catch {
-    return 0; // No legacy directory
+    names = []; // No legacy directory
   }
+  // Only the node holding the old files may close the import: a fresh node
+  // of a replicated deployment has none and must not mark it done
+  if (names.length === 0) return 0;
   let imported = 0;
   for (const name of names) {
     const contentType = uploadMimeType(name);
@@ -90,6 +104,7 @@ export async function importDiskUploads(): Promise<number> {
       .returning({ name: schema.uploads.name });
     imported += rows.length;
   }
+  await setSetting(SETTINGS_KEYS.UPLOADS_IMPORTED, 'true');
   return imported;
 }
 
