@@ -268,6 +268,9 @@ async function loadFeed(initial: boolean) {
     if (initial || stickToBottom) scrollToBottom();
   } catch (err) {
     if (initial) loadError.value = apiError(err);
+    // Channel deleted or no longer readable: refresh the list, which moves
+    // the member to a channel they can see
+    if ((err as { statusCode?: number }).statusCode === 404) loadChannels();
   }
 }
 
@@ -280,14 +283,17 @@ function olderThanPage(current: Shout[], page: Shout[]): Shout[] {
 
 async function loadOlder() {
   const oldest = feed.value?.messages[0];
-  if (!feed.value || !oldest || !activeId.value) return;
+  const channelId = activeId.value;
+  if (!feed.value || !oldest || !channelId) return;
   loadingOlder.value = true;
   const el = scroller.value;
   const fromBottom = el ? el.scrollHeight - el.scrollTop : 0;
   try {
-    const data = await $fetch<Feed>(`/api/shoutbox/channels/${activeId.value}/messages`, {
+    const data = await $fetch<Feed>(`/api/shoutbox/channels/${channelId}/messages`, {
       query: { before: oldest.createdAt },
     });
+    // The member switched channel while this request was in flight
+    if (channelId !== activeId.value || !feed.value) return;
     feed.value = { ...feed.value, hasMore: data.hasMore, messages: [...data.messages, ...feed.value.messages] };
     // Keep the message the member was looking at in place
     await nextTick();
@@ -420,8 +426,9 @@ const formatFull = (iso: string) =>
 
 let poll: ReturnType<typeof setInterval> | undefined;
 let channelsPoll: ReturnType<typeof setInterval> | undefined;
-onMounted(async () => {
-  await loadChannels();
+onMounted(() => {
+  // Timers first: if the member leaves before the channels load, onUnmounted
+  // still finds and clears them
   poll = setInterval(() => {
     if (document.visibilityState === 'visible') loadFeed(false);
   }, POLL_MS);
@@ -429,6 +436,7 @@ onMounted(async () => {
   channelsPoll = setInterval(() => {
     if (document.visibilityState === 'visible') loadChannels();
   }, 60_000);
+  loadChannels();
 });
 onUnmounted(() => {
   clearInterval(poll);

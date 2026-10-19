@@ -8,6 +8,7 @@ export const authUserColumns = {
   isAdmin: users.isAdmin,
   isModerator: users.isModerator,
   passkey: users.passkey,
+  roleId: users.roleId,
 };
 
 export interface AuthUserState {
@@ -15,6 +16,7 @@ export interface AuthUserState {
   isAdmin: boolean;
   isModerator: boolean;
   passkey: string;
+  roleId: string | null;
 }
 
 /**

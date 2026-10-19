@@ -30,6 +30,10 @@
           </tr>
         </tbody>
       </table>
+      <!-- A failed load must not read as "nobody is muted" -->
+      <p v-else-if="loadError" class="text-sm text-danger" role="alert">
+        {{ loadError.data?.message ?? t('shoutbox.error') }}
+      </p>
       <p v-else class="text-sm text-text-muted">{{ t('shoutbox.mutes.empty') }}</p>
     </div>
   </div>
@@ -45,7 +49,11 @@ interface Mute {
 }
 
 const { t, locale } = useI18n();
-const { data: mutes, refresh } = await useFetch<Mute[]>('/api/mod/shoutbox/mutes', { default: () => [] });
+const {
+  data: mutes,
+  error: loadError,
+  refresh,
+} = await useFetch<Mute[]>('/api/mod/shoutbox/mutes', { default: () => [] });
 const error = ref('');
 
 async function unmute(userId: string) {
