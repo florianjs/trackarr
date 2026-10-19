@@ -23,6 +23,18 @@ Trackarr implements distributed rate limiting to prevent abuse:
 | Auth | 5/5min | IP blacklisted after violations |
 | Tracker | 200/min | Distributed sliding window |
 
+## Sessions
+
+Sessions are sealed (encrypted) cookies valid 7 days. Each one carries the account's
+`session_version` from sign-in, checked against the database on every authenticated request:
+when the version changes, every older cookie is rejected at once (`401`) on every node.
+
+The version is bumped when:
+
+- a moderator or admin bans the account (sessions stay revoked after an unban)
+- the user clicks **Sign out other devices** in the account menu (the current session is kept)
+- panic mode encrypts the database (everyone is signed out)
+
 ## IP Privacy
 
 User IP addresses are **never stored in plaintext**. Instead:

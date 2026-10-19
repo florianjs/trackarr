@@ -1022,6 +1022,8 @@
       "copied": "Copiata",
       "points": "{n} punti",
       "signOut": "Esci",
+      "signOutOthers": "Disconnetti gli altri dispositivi",
+      "signedOutOthers": "Altri dispositivi disconnessi",
       "theme": "Tema",
       "language": "Lingua"
     },

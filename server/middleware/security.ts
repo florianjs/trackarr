@@ -11,7 +11,8 @@ import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
 import { getIpBan } from '../utils/bannedIps';
-import { authUserColumns } from '../utils/adminAuth';
+import { authUserColumns, sessionRejection } from '../utils/adminAuth';
+import { checkSession } from '../utils/sessionRules';
 
 // ============================================================================
 // Security Configuration
@@ -232,7 +233,7 @@ export default defineEventHandler(async (event) => {
     await detectDDoS(event);
   }
 
-  // 2. Check User Ban (for authenticated sessions)
+  // 2. Check User Ban and session revocation (for authenticated sessions)
   // Skip for auth routes and Torznab API (has its own passkey auth)
   if (!path.startsWith('/api/auth/') && !path.startsWith('/api/torznab')) {
     const session = await getUserSession(event);
@@ -245,21 +246,20 @@ export default defineEventHandler(async (event) => {
         .where(eq(users.id, session.user.id))
         .limit(1);
 
-      if (!dbUser || dbUser.isBanned) {
+      // Banned, or revoked: session_version bumped since the cookie was
+      // issued (ban, sign out everywhere, panic). Read on every request, so
+      // revocation applies at once on every node.
+      const check = checkSession(session.sessionVersion, dbUser);
+      if (check !== 'valid') {
         // Clear session immediately
         await clearUserSession(event);
 
-        // If it's an API request, throw 403
+        // API requests fail (403 banned, 401 revoked); pages render signed out
         if (path.startsWith('/api/')) {
-          throw createError({
-            statusCode: 403,
-            message: 'Your account has been banned',
-          });
+          throw sessionRejection(check);
         }
-      }
-
-      // Cache DB state to avoid redundant queries in requireAuthSession
-      if (dbUser && !dbUser.isBanned) {
+      } else {
+        // Cache DB state to avoid redundant queries in requireAuthSession
         event.context.authUser = dbUser;
       }
     }

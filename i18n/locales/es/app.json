@@ -1022,6 +1022,8 @@
       "copied": "Copiada",
       "points": "{n} puntos",
       "signOut": "Cerrar sesión",
+      "signOutOthers": "Cerrar sesión en otros dispositivos",
+      "signedOutOthers": "Sesión cerrada en otros dispositivos",
       "theme": "Tema",
       "language": "Idioma"
     },

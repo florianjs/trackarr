@@ -11,6 +11,8 @@ declare module '#auth-utils' {
   interface UserSession {
     user: User;
     loggedInAt: number;
+    // users.session_version at sign-in: a bump revokes the cookie
+    sessionVersion?: number;
   }
 }
 

@@ -1,7 +1,8 @@
 import type { H3Event } from 'h3';
-import { eq } from 'drizzle-orm';
+import { eq, sql } from 'drizzle-orm';
 import { db } from '../db';
 import { users } from '../db/schema';
+import { checkSession, type SessionCheck } from './sessionRules';
 
 export const authUserColumns = {
   isBanned: users.isBanned,
@@ -9,6 +10,7 @@ export const authUserColumns = {
   isModerator: users.isModerator,
   passkey: users.passkey,
   roleId: users.roleId,
+  sessionVersion: users.sessionVersion,
 };
 
 export interface AuthUserState {
@@ -17,6 +19,24 @@ export interface AuthUserState {
   isModerator: boolean;
   passkey: string;
   roleId: string | null;
+  sessionVersion: number;
+}
+
+/**
+ * SET value for users.session_version that revokes every session cookie
+ * issued before the update
+ */
+export function bumpedSessionVersion() {
+  return sql`${users.sessionVersion} + 1`;
+}
+
+/**
+ * Error for a session that may no longer be used (see checkSession)
+ */
+export function sessionRejection(check: SessionCheck) {
+  return check === 'revoked'
+    ? createError({ statusCode: 401, message: 'Session expired, please sign in again' })
+    : createError({ statusCode: 403, message: 'Your account has been banned' });
 }
 
 /**
@@ -37,12 +57,11 @@ export async function requireAuthSession(event: H3Event) {
       .limit(1);
   }
 
-  if (!dbUser || dbUser.isBanned) {
+  // Banned, or revoked by a session_version bump (ban, sign out everywhere)
+  const check = checkSession(session.sessionVersion, dbUser);
+  if (!dbUser || check !== 'valid') {
     await clearUserSession(event);
-    throw createError({
-      statusCode: 403,
-      message: 'Your account has been banned',
-    });
+    throw sessionRejection(check);
   }
 
   event.context.authUser = dbUser;

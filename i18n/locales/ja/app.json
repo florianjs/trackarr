@@ -1022,6 +1022,8 @@
       "copied": "コピーしました",
       "points": "{n} ポイント",
       "signOut": "ログアウト",
+      "signOutOthers": "他のデバイスからログアウト",
+      "signedOutOthers": "他のデバイスからログアウトしました",
       "theme": "テーマ",
       "language": "言語"
     },

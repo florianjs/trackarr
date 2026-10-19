@@ -84,6 +84,17 @@
           </div>
         </div>
 
+        <!-- Revokes every other session (lost device, stolen cookie) -->
+        <button
+          type="button"
+          class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+          role="menuitem"
+          :disabled="signingOutOthers"
+          @click="signOutOthers"
+        >
+          <Icon :name="signedOutOthers ? 'ph:check' : 'ph:devices'" class="text-text-muted" />{{ signedOutOthers ? t('shell.user.signedOutOthers') : t('shell.user.signOutOthers') }}
+        </button>
+
         <button
           type="button"
           class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-danger hover:bg-danger/10"
@@ -108,6 +119,8 @@ const passkey = ref<string | null>(null);
 const points = ref<number | null>(null);
 const avatarUrl = ref<string | null>(null);
 const copied = ref(false);
+const signingOutOthers = ref(false);
+const signedOutOthers = ref(false);
 
 // Passkey and balance are not in the client session: load them on demand.
 // The balance changes while seeding, so it is refreshed on every opening.
@@ -140,6 +153,19 @@ async function copyPasskey() {
   }
   copied.value = true;
   setTimeout(() => (copied.value = false), 1500);
+}
+
+async function signOutOthers() {
+  signingOutOthers.value = true;
+  try {
+    await $fetch('/api/auth/logout-others', { method: 'POST' });
+    signedOutOthers.value = true;
+    setTimeout(() => (signedOutOthers.value = false), 2000);
+  } catch {
+    // Rate limited or session already revoked: the next request will tell
+  } finally {
+    signingOutOthers.value = false;
+  }
 }
 
 function onClickOutside(event: MouseEvent) {
