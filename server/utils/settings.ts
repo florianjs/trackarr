@@ -69,6 +69,9 @@ export const SETTINGS_KEYS = {
   // Global freeleech
   FREELEECH_ENABLED: 'freeleech_enabled',
   FREELEECH_UNTIL: 'freeleech_until',
+  // Shoutbox
+  SHOUTBOX_ENABLED: 'shoutbox_enabled',
+  SHOUTBOX_SEEDED: 'shoutbox_seeded',
 } as const;
 
 const settingsCache = new Map<
@@ -171,6 +174,13 @@ export async function getMinRatio(): Promise<number> {
 export async function getStarterUpload(): Promise<number> {
   const value = await getSetting(SETTINGS_KEYS.STARTER_UPLOAD);
   return value ? parseInt(value, 10) : 0;
+}
+
+/**
+ * Check if the shoutbox is enabled (on by default)
+ */
+export async function isShoutboxEnabled(): Promise<boolean> {
+  return (await getSetting(SETTINGS_KEYS.SHOUTBOX_ENABLED)) !== 'false';
 }
 
 /**
