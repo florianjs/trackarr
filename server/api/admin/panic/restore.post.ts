@@ -113,15 +113,17 @@ export default defineEventHandler(async (event) => {
       // ===================================================================
       // Decrypt user data
       // ===================================================================
+      // Kept as is when not ciphertext: accounts registered and IPs recorded
+      // while encrypted are in clear
       const allUsers = await tx.select().from(users);
       for (const user of allUsers) {
         await tx
           .update(users)
           .set({
-            authSalt: decryptField(user.authSalt, key, legacyIv),
-            authVerifier: decryptField(user.authVerifier, key, legacyIv),
-            passkey: decryptField(user.passkey, key, legacyIv)!,
-            lastIp: decryptField(user.lastIp, key, legacyIv) ?? undefined,
+            authSalt: decryptOrKeep(user.authSalt, key, legacyIv),
+            authVerifier: decryptOrKeep(user.authVerifier, key, legacyIv),
+            passkey: decryptOrKeep(user.passkey, key, legacyIv)!,
+            lastIp: decryptOrKeep(user.lastIp, key, legacyIv) ?? undefined,
           })
           .where(eq(users.id, user.id));
       }

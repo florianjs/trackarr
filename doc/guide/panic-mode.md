@@ -93,7 +93,7 @@ Logs that hold passkeys or IPs are deleted from Redis, not encrypted, and are **
 
 ### While Encrypted
 
-The site keeps running, but nobody can log in (verifiers are encrypted) and the tracker refuses every announce (passkeys are encrypted). IP bans are inactive since banned IPs are encrypted too. Members already logged in may keep posting: posts, comments, messages and shouts written meanwhile stay in clear and are kept as is on restore.
+The site keeps running, but nobody can log in (verifiers are encrypted) and the tracker refuses every announce (passkeys are encrypted). IP bans are inactive since banned IPs are encrypted too. Members already logged in may keep posting: posts, comments, messages and shouts written meanwhile stay in clear and are kept as is on restore, like accounts registered meanwhile. Uploads are refused until restore.
 
 ## Restoration
 
