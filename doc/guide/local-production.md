@@ -33,20 +33,20 @@ Once the script completes, you can access the services at the following URLs:
 
 ### Standard Docker (localhost)
 
-| Service      | URL                              | Credentials       |
-| :----------- | :------------------------------- | :---------------- |
-| **Frontend** | `http://localhost:3000`          | -                 |
-| **Tracker**  | `http://localhost:8080/announce` | -                 |
-| **Grafana**  | `http://localhost:3001`          | `admin` / `admin` |
+| Service      | URL                              | Credentials                            |
+| :----------- | :------------------------------- | :------------------------------------- |
+| **Frontend** | `http://localhost:3000`          | -                                      |
+| **Tracker**  | `http://localhost:8080/announce` | -                                      |
+| **Beszel**   | `http://localhost:3001`          | Admin account created on first visit   |
 
 ### With OrbStack (Recommended)
 
 If you are using OrbStack, you can also use these convenient local domains:
 
-| Service      | URL                                      |
-| :----------- | :--------------------------------------- |
-| **Frontend** | `http://trackarr.orb.local:3000`         |
-| **Grafana**  | `http://trackarr-grafana.orb.local:3000` |
+| Service      | URL                                     |
+| :----------- | :-------------------------------------- |
+| **Frontend** | `http://trackarr.orb.local:3000`        |
+| **Beszel**   | `http://trackarr-beszel.orb.local:8090` |
 
 ## Manage the Environment
 

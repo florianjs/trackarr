@@ -12,7 +12,7 @@ Don't want to deal with server setup? I'll handle everything:
 - DNS and SSL setup
 - Trackarr installation and optimization
 - Security hardening
-- Monitoring setup (Prometheus + Grafana)
+- Monitoring setup (Beszel)
 
 **You get:** A fully working tracker, ready to use.
 

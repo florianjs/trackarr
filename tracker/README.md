@@ -91,7 +91,7 @@ The web app needs `TRACKER_INTERNAL_URL` (default `http://localhost:8090`, `http
 | Endpoint | Auth | Description |
 | --- | --- | --- |
 | `GET /health` | none | Liveness (`ok`) |
-| `GET /metrics` | none | Prometheus metrics (aggregates only) |
+| `GET /metrics` | none | Prometheus-format metrics (aggregates only), for your own Prometheus-compatible tooling: nothing in the stack scrapes it |
 | `GET /internal/status` | `Authorization: Bearer $TRACKER_INTERNAL_TOKEN` | Uptime, announces, swarms, seeders, leechers, pending accounting, published |
 | `GET /internal/swarms/{hash}` | `Authorization: Bearer $TRACKER_INTERNAL_TOKEN` | Peers of a swarm (hashed IPs only) |
 

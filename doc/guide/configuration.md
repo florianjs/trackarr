@@ -70,12 +70,14 @@ Replace `your-domain.com` with your actual tracker domain.
 
 The production compose file includes:
 
-- **app** — Main Trackarr application
-- **db** — PostgreSQL 16 database
+- **app** — Main Trackarr application (website and API)
+- **tracker** — BitTorrent tracker service in Rust (announces, scrapes)
+- **postgres** — PostgreSQL 16 database
+- **pgbouncer** — Connection pooling in front of PostgreSQL
 - **redis** — Redis 7 cache
 - **caddy** — Reverse proxy with automatic HTTPS
-- **prometheus** — Metrics collection
-- **grafana** — Dashboards and monitoring
+- **beszel** — Monitoring hub and UI ([Monitoring](/guide/monitoring))
+- **beszel-agent** — Host and container stats (Compose profile `monitoring`, starts once paired)
 
 ### Development (`docker-compose.yml`)
 
@@ -111,7 +113,7 @@ services:
 
 ## Caddy Configuration
 
-The production setup uses Caddy for automatic HTTPS. Configuration is in `docker/Caddyfile`:
+The production setup uses Caddy for automatic HTTPS. Configuration is in `docker/caddy/Caddyfile`:
 
 ```
 {$DOMAIN} {
@@ -122,13 +124,11 @@ announce.{$DOMAIN} {
     reverse_proxy app:3000
 }
 
-monitoring.{$DOMAIN} {
-    handle_path /grafana* {
-        reverse_proxy grafana:3000
+{$MONITORING_DOMAIN} {
+    basicauth {
+        {$MONITORING_USER:admin} {$MONITORING_PASSWORD_HASH}
     }
-    handle_path /prometheus* {
-        reverse_proxy prometheus:9090
-    }
+    reverse_proxy trackarr-beszel:8090
 }
 ```
 

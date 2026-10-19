@@ -28,7 +28,7 @@ features:
   - title: Dedicated Tracker
     details: A standalone Rust tracker service handles HTTP announces and scrapes, with swarms kept in memory and credit written to PostgreSQL in batches.
   - title: Built-in Monitoring
-    details: Prometheus metrics and Grafana dashboards out of the box. Track peers, announces, and system health in real-time.
+    details: Beszel for server and container stats with alerts, plus tracker health, growth charts and security alerts in the admin dashboard.
 ---
 
 ## Why Trackarr?
@@ -45,7 +45,7 @@ Trackarr is designed for communities that value **privacy** and **security** abo
 | Cache    | Redis 7                             | Swarm counters, sessions, rate limiting |
 | P2P      | Rust tracker service (`tracker/`)   | HTTP announces & scrapes            |
 | Crypto   | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption          |
-| Monitor  | Prometheus + Grafana                | Metrics, dashboards, alerting       |
+| Monitor  | Beszel + admin dashboard            | Host/container stats, alerting, app metrics |
 
 ---
 

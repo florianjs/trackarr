@@ -98,11 +98,16 @@ The web app reaches the tracker's private API with:
 
 ## Monitoring
 
-| Variable                 | Description            | Default |
-| ------------------------ | ---------------------- | ------- |
-| `GRAFANA_ADMIN_USER`     | Grafana admin username | `admin` |
-| `GRAFANA_ADMIN_PASSWORD` | Grafana admin password | `admin` |
-| `GF_SERVER_ROOT_URL`     | Grafana public URL     | —       |
+Production only. See [Monitoring](/guide/monitoring).
+
+| Variable                   | Description                                                                                     | Default |
+| -------------------------- | ----------------------------------------------------------------------------------------------- | ------- |
+| `MONITORING_DOMAIN`        | Domain serving Beszel through Caddy                                                             | `monitoring.localhost` |
+| `MONITORING_USER`          | Caddy basic auth user in front of Beszel                                                        | `admin` |
+| `MONITORING_PASSWORD_HASH` | Caddy basic auth password hash (`caddy hash-password`, every `$` doubled as `$$` in `.env`)     | —       |
+| `BESZEL_AGENT_KEY`         | Public key shown by Beszel when adding the system (host `/beszel_socket/beszel.sock`)            | —       |
+| `BESZEL_AGENT_TOKEN`       | Token shown by Beszel with the key                                                              | —       |
+| `COMPOSE_PROFILES`         | Set to `monitoring` once paired, so the Beszel agent starts                                     | —       |
 
 ## Example `.env` File
 
