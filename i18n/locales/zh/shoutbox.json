@@ -1,0 +1,83 @@
+{
+  "shoutbox": {
+    "title": "群聊区",
+    "nav": "群聊区",
+    "channels": "频道",
+    "loadEarlier": "加载更早的消息",
+    "empty": "还没有消息，来打个招呼吧！",
+    "staff": "管理组",
+    "deleted": "消息已删除",
+    "deletedByModeration": "消息已被管理组移除",
+    "reactionLabel": "{emoji}：{n} 个回应 | {emoji}：{n} 个回应",
+    "addReaction": "添加回应",
+    "otherEmoji": "其他表情",
+    "placeholder": "发送消息到 #{channel}",
+    "send": "发送",
+    "readOnly": "你可以查看此频道，但不能在此发言。",
+    "mutedUntil": "你在群聊区被禁言至 {date}。",
+    "delete": "删除",
+    "muteUser": "禁言 {name}",
+    "muteDuration": "禁言时长",
+    "muteReason": "原因（可选）",
+    "mute": "禁言",
+    "cancel": "取消",
+    "error": "出错了",
+    "durations": {
+      "10": "10 分钟",
+      "60": "1 小时",
+      "1440": "24 小时",
+      "10080": "7 天"
+    },
+    "adminNav": {
+      "label": "群聊区",
+      "description": "开启或关闭群聊区并管理其频道"
+    },
+    "modNav": {
+      "label": "群聊区",
+      "description": "在群聊区被禁言的会员"
+    },
+    "admin": {
+      "settings": "群聊区",
+      "enabled": "启用群聊区",
+      "enabledHint": "关闭后，群聊区将对会员隐藏（菜单、首页），其消息会被保留。",
+      "channels": "频道",
+      "addChannel": "新建频道",
+      "editChannel": "编辑频道",
+      "deleteChannel": "删除频道",
+      "confirmDelete": "连同消息一起删除",
+      "name": "名称",
+      "position": "排序",
+      "description": "描述",
+      "readAccess": "谁可以查看",
+      "writeAccess": "谁可以发言",
+      "read": {
+        "all": "所有会员",
+        "roles": "指定角色",
+        "staff": "仅限管理组"
+      },
+      "write": {
+        "members": "所有可查看者",
+        "staff": "管理组",
+        "admins": "管理员"
+      },
+      "roles": "允许的角色",
+      "noRoles": "暂无角色：请在 管理 > 角色 中创建。",
+      "rolesHint": "版主和管理员始终可以看到所有频道。",
+      "reactions": "会员可以使用表情回应",
+      "save": "保存",
+      "saved": "已保存",
+      "actions": "操作",
+      "noChannels": "暂无频道。"
+    },
+    "mutes": {
+      "title": "被禁言的会员",
+      "hint": "将鼠标悬停在会员的某条消息上，即可在群聊区将其禁言。",
+      "member": "会员",
+      "until": "截止时间",
+      "reason": "原因",
+      "by": "操作人",
+      "unmute": "解除禁言",
+      "empty": "没有被禁言的会员。"
+    }
+  }
+}

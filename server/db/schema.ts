@@ -741,6 +741,71 @@ export const uploads = pgTable('uploads', {
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
 
+// ============================================================================
+// Shoutbox
+// ============================================================================
+export const shoutChannels = pgTable('shout_channels', {
+  id: text('id').primaryKey(),
+  slug: text('slug').notNull().unique(),
+  name: text('name').notNull(),
+  description: text('description'),
+  position: integer('position').default(0).notNull(),
+  // Who can read: 'all' members, listed 'roles', or 'staff' (staff always can)
+  readAccess: text('read_access').default('all').notNull(),
+  roleIds: text('role_ids').array().default(sql`'{}'::text[]`).notNull(),
+  // Who can post among readers: 'members', 'staff' or 'admins'
+  writeAccess: text('write_access').default('members').notNull(),
+  reactionsEnabled: boolean('reactions_enabled').default(true).notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export const shoutMessages = pgTable(
+  'shout_messages',
+  {
+    id: text('id').primaryKey(),
+    channelId: text('channel_id')
+      .notNull()
+      .references(() => shoutChannels.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    body: text('body').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    // Soft delete: the line stays, the text is never sent again
+    deletedAt: timestamp('deleted_at'),
+    deletedBy: text('deleted_by'),
+  },
+  (table) => [index('shout_messages_channel_idx').on(table.channelId, table.createdAt)]
+);
+
+export const shoutReactions = pgTable(
+  'shout_reactions',
+  {
+    messageId: text('message_id')
+      .notNull()
+      .references(() => shoutMessages.id, { onDelete: 'cascade' }),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    emoji: text('emoji').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [uniqueIndex('shout_reactions_pk').on(table.messageId, table.userId, table.emoji)]
+);
+
+export const shoutMutes = pgTable('shout_mutes', {
+  userId: text('user_id')
+    .primaryKey()
+    .references(() => users.id, { onDelete: 'cascade' }),
+  until: timestamp('until').notNull(),
+  reason: text('reason'),
+  mutedBy: text('muted_by').notNull(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+});
+
+export type ShoutChannel = typeof shoutChannels.$inferSelect;
+export type ShoutMessage = typeof shoutMessages.$inferSelect;
+
 export type Invitation = typeof invitations.$inferSelect;
 export type NewInvitation = typeof invitations.$inferInsert;
 

@@ -1,0 +1,140 @@
+{
+  "bonus": {
+    "points": "{n} pt",
+    "disabled": "Il sistema bonus è attualmente disattivato.",
+    "shop": {
+      "title": "Negozio bonus",
+      "subtitle": "Spendi i punti che guadagni facendo seed",
+      "balance": "Il tuo saldo",
+      "seedingNow": "Torrent che ti fanno guadagnare ora",
+      "howToEarn": "Come guadagnare punti",
+      "earnSeed": "{points} pt per torrent per ogni giorno di seed (max {max} torrent contemporaneamente)",
+      "earnSeedNote": "Contano solo i torrent che hai caricato o scaricato completamente.",
+      "earnUpload": "{points} pt quando uno dei tuoi upload viene approvato",
+      "earnBounty": "Soddisfa una taglia per riceverne la ricompensa",
+      "items": "Articoli",
+      "noItems": "Ancora nessun articolo in vendita.",
+      "buy": "Compra",
+      "owned": "Posseduto",
+      "confirmBuy": "Comprare \"{name}\" per {price} punti?",
+      "bought": "Acquistato: {name}",
+      "notEnough": "Punti insufficienti",
+      "itemUpload": "+{size} di credito upload",
+      "itemInvite": "nessun invito | +1 invito | +{count} inviti",
+      "itemGifAvatar": "Sblocca gli avatar animati (GIF, WebP, APNG)",
+      "history": "Cronologia",
+      "noHistory": "Ancora nessuna transazione."
+    },
+    "tx": {
+      "upload": "Upload approvato",
+      "purchase": "Acquisto",
+      "bounty_create": "Taglia aperta",
+      "bounty_contribute": "Contributo a una taglia",
+      "bounty_reward": "Ricompensa della taglia",
+      "bounty_refund": "Rimborso della taglia",
+      "admin": "Rettifica"
+    },
+    "avatar": {
+      "title": "Avatar",
+      "upload": "Carica avatar",
+      "remove": "Rimuovi",
+      "hint": "PNG, JPEG o WebP, max 512KB.",
+      "hintGif": "PNG, JPEG, WebP o GIF/WebP/APNG animati, max 2MB.",
+      "updated": "Avatar aggiornato",
+      "removed": "Avatar rimosso",
+      "confirmRemove": "Rimuovere il tuo avatar?"
+    },
+    "bounties": {
+      "title": "Taglie",
+      "subtitle": "Richiedi torrent che non sono ancora sul tracker",
+      "new": "Nuova taglia",
+      "search": "Cerca taglie…",
+      "status": {
+        "all": "Tutte",
+        "open": "Aperta",
+        "claimed": "In attesa di verifica",
+        "filled": "Soddisfatta",
+        "cancelled": "Annullata"
+      },
+      "empty": "Nessuna taglia qui.",
+      "reward": "Ricompensa",
+      "requestedBy": "Richiesta da {user}",
+      "form": {
+        "title": "Titolo",
+        "titlePlaceholder": "es. The Matrix (1999) 2160p UHD BluRay",
+        "description": "Dettagli",
+        "descriptionPlaceholder": "Edizione, qualità, lingua, sottotitoli…",
+        "imdb": "IMDb (facoltativo)",
+        "category": "Categoria (facoltativa)",
+        "points": "Ricompensa iniziale",
+        "pointsHint": "Minimo {min} punti, prelevati subito dal tuo saldo e rimborsati se annulli.",
+        "submit": "Apri taglia",
+        "cancel": "Annulla"
+      },
+      "detail": {
+        "back": "Tutte le taglie",
+        "contributors": "Contributori",
+        "contribute": "Aggiungi punti",
+        "contributePlaceholder": "Punti",
+        "fill": "Soddisfa questa taglia",
+        "fillHint": "Incolla l'info hash di un torrent approvato sul tracker. Chi l'ha caricato riceve la ricompensa quando il richiedente accetta.",
+        "fillPlaceholder": "Info hash (40 caratteri esadecimali)",
+        "fillSubmit": "Invia",
+        "proposed": "Torrent proposto",
+        "uploader": "Caricato da {user}",
+        "accept": "Accetta e paga",
+        "reject": "Rifiuta",
+        "cancelBounty": "Annulla taglia",
+        "confirmCancel": "Annullare questa taglia? Tutti i contributi verranno rimborsati.",
+        "confirmAccept": "Accettare questo torrent? La ricompensa verrà pagata a chi l'ha caricato.",
+        "filledBy": "Soddisfatta da {user}"
+      }
+    },
+    "admin": {
+      "title": "Bonus e negozio",
+      "settings": "Regole di guadagno",
+      "enabled": "Attiva il sistema bonus",
+      "pointsPerSeedDay": "Punti per torrent per giorno di seed",
+      "maxSeedingTorrents": "Max torrent che fanno guadagnare contemporaneamente",
+      "pointsPerUpload": "Punti per upload approvato",
+      "bountyMinPoints": "Punti minimi per aprire una taglia",
+      "save": "Salva",
+      "saved": "Salvato",
+      "items": "Articoli del negozio",
+      "addItem": "Aggiungi articolo",
+      "editItem": "Modifica articolo",
+      "name": "Nome",
+      "description": "Descrizione",
+      "type": "Tipo",
+      "types": {
+        "upload_credit": "Credito upload",
+        "invite": "Inviti",
+        "gif_avatar": "Avatar animato"
+      },
+      "price": "Prezzo (punti)",
+      "valueGb": "Credito upload (GB)",
+      "valueInvites": "Numero di inviti",
+      "active": "In vendita",
+      "sortOrder": "Ordine",
+      "delete": "Elimina",
+      "confirmDelete": "Eliminare \"{name}\"?",
+      "grant": "Assegna o togli punti",
+      "grantUser": "ID utente",
+      "grantAmount": "Quantità (negativa per togliere)",
+      "grantReason": "Motivo",
+      "grantSubmit": "Applica",
+      "granted": "Saldo aggiornato: {points} pt"
+    },
+    "nav": {
+      "shop": "Negozio",
+      "bounties": "Taglie"
+    },
+    "menu": {
+      "shop": "Negozio bonus"
+    },
+    "adminNav": {
+      "label": "Bonus e negozio",
+      "description": "Regole di guadagno, articoli del negozio e assegnazione di punti"
+    }
+  }
+}

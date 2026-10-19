@@ -1,0 +1,83 @@
+{
+  "shoutbox": {
+    "title": "Shoutbox",
+    "nav": "Shoutbox",
+    "channels": "Channels",
+    "loadEarlier": "Load earlier messages",
+    "empty": "No messages yet. Say hi!",
+    "staff": "Staff",
+    "deleted": "Message deleted",
+    "deletedByModeration": "Message removed by the moderation",
+    "reactionLabel": "{emoji}: {n} reaction | {emoji}: {n} reactions",
+    "addReaction": "Add a reaction",
+    "otherEmoji": "Other emoji",
+    "placeholder": "Message #{channel}",
+    "send": "Send",
+    "readOnly": "You can read this channel but not post in it.",
+    "mutedUntil": "You are muted in the shoutbox until {date}.",
+    "delete": "Delete",
+    "muteUser": "Mute {name}",
+    "muteDuration": "Mute duration",
+    "muteReason": "Reason (optional)",
+    "mute": "Mute",
+    "cancel": "Cancel",
+    "error": "Something went wrong",
+    "durations": {
+      "10": "10 minutes",
+      "60": "1 hour",
+      "1440": "24 hours",
+      "10080": "7 days"
+    },
+    "adminNav": {
+      "label": "Shoutbox",
+      "description": "Turn the shoutbox on or off and manage its channels"
+    },
+    "modNav": {
+      "label": "Shoutbox",
+      "description": "Members muted in the shoutbox"
+    },
+    "admin": {
+      "settings": "Shoutbox",
+      "enabled": "Shoutbox enabled",
+      "enabledHint": "When off, the shoutbox disappears for members (menu, home page) and its messages are kept.",
+      "channels": "Channels",
+      "addChannel": "New channel",
+      "editChannel": "Edit channel",
+      "deleteChannel": "Delete channel",
+      "confirmDelete": "Delete with its messages",
+      "name": "Name",
+      "position": "Order",
+      "description": "Description",
+      "readAccess": "Who can read",
+      "writeAccess": "Who can post",
+      "read": {
+        "all": "All members",
+        "roles": "Some roles",
+        "staff": "Staff only"
+      },
+      "write": {
+        "members": "Every reader",
+        "staff": "Staff",
+        "admins": "Admins"
+      },
+      "roles": "Roles allowed",
+      "noRoles": "No roles yet: create them in Admin > Roles.",
+      "rolesHint": "Moderators and admins always see every channel.",
+      "reactions": "Members can react with emojis",
+      "save": "Save",
+      "saved": "Saved",
+      "actions": "Actions",
+      "noChannels": "No channels."
+    },
+    "mutes": {
+      "title": "Muted members",
+      "hint": "Mute a member from the shoutbox by hovering one of their messages.",
+      "member": "Member",
+      "until": "Until",
+      "reason": "Reason",
+      "by": "By",
+      "unmute": "Unmute",
+      "empty": "Nobody is muted."
+    }
+  }
+}

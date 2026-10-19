@@ -71,6 +71,9 @@ export const SETTINGS_KEYS = {
   FREELEECH_UNTIL: 'freeleech_until',
   // Legacy disk uploads copied into the database (done once, by any node)
   UPLOADS_IMPORTED: 'uploads_imported',
+  // Shoutbox
+  SHOUTBOX_ENABLED: 'shoutbox_enabled',
+  SHOUTBOX_SEEDED: 'shoutbox_seeded',
 } as const;
 
 const settingsCache = new Map<
@@ -173,6 +176,13 @@ export async function getMinRatio(): Promise<number> {
 export async function getStarterUpload(): Promise<number> {
   const value = await getSetting(SETTINGS_KEYS.STARTER_UPLOAD);
   return value ? parseInt(value, 10) : 0;
+}
+
+/**
+ * Check if the shoutbox is enabled (on by default)
+ */
+export async function isShoutboxEnabled(): Promise<boolean> {
+  return (await getSetting(SETTINGS_KEYS.SHOUTBOX_ENABLED)) !== 'false';
 }
 
 /**

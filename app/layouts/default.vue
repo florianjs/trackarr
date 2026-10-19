@@ -198,6 +198,7 @@ const { data: branding } = await useFetch<{
   pageTitleSuffix: string | null;
   footerLinks?: FooterLink[];
   footerTagline?: string | null;
+  shoutboxEnabled?: boolean;
 }>('/api/branding');
 
 // Footer links and tagline are editable by admins (Admin > Branding)

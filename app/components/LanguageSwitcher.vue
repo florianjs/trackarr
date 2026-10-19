@@ -1,23 +1,16 @@
 <template>
-  <div
-    class="inline-flex items-center gap-1 rounded border border-border bg-bg-secondary/60 p-0.5"
-    role="group"
-    :aria-label="t('common.language')"
-  >
-    <Icon name="ph:translate" class="text-sm text-text-muted mx-1" aria-hidden="true" />
-    <button
-      v-for="l in locales"
-      :key="l.code"
-      type="button"
-      class="px-2 py-0.5 rounded-sm text-[10px] font-bold font-mono uppercase tracking-widest transition-colors"
-      :class="l.code === locale ? 'bg-white/10 text-white' : 'text-text-muted hover:text-white'"
-      :aria-pressed="l.code === locale"
-      :title="l.name"
-      @click="setLocale(l.code)"
+  <label class="inline-flex items-center gap-1 rounded border border-border bg-bg-secondary/60 pl-1.5 pr-0.5 py-0.5">
+    <Icon name="ph:translate" class="text-sm text-text-muted" aria-hidden="true" />
+    <span class="sr-only">{{ t('common.language') }}</span>
+    <!-- Native names: members find their language without reading the current one -->
+    <select
+      class="bg-transparent text-xs text-text-primary py-0.5 pr-1 rounded-sm cursor-pointer focus:outline-none"
+      @change="setLocale(($event.target as HTMLSelectElement).value as typeof locale)"
     >
-      {{ l.code }}
-    </button>
-  </div>
+      <!-- :selected on the option: a :value on the select is set before its options exist -->
+      <option v-for="l in locales" :key="l.code" :value="l.code" :selected="l.code === locale">{{ l.name }}</option>
+    </select>
+  </label>
 </template>
 
 <script setup lang="ts">

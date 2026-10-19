@@ -1,0 +1,1062 @@
+{
+  "common": {
+    "language": "言語",
+    "save": "保存",
+    "saving": "保存中...",
+    "saveChanges": "変更を保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "deleting": "削除中...",
+    "edit": "編集",
+    "close": "閉じる",
+    "create": "作成",
+    "creating": "作成中...",
+    "add": "追加",
+    "remove": "削除",
+    "search": "検索",
+    "loading": "読み込み中...",
+    "refresh": "更新",
+    "reset": "リセット",
+    "copy": "コピー",
+    "copied": "コピーしました！",
+    "approve": "承認",
+    "reject": "却下",
+    "all": "すべて",
+    "unknown": "不明",
+    "never": "なし",
+    "optional": "任意",
+    "actions": "操作",
+    "name": "名前",
+    "description": "説明",
+    "enabled": "有効",
+    "disabled": "無効",
+    "active": "アクティブ",
+    "inactive": "非アクティブ",
+    "previous": "前へ",
+    "next": "次へ",
+    "error": "エラー",
+    "user": "ユーザー",
+    "username": "ユーザー名",
+    "password": "パスワード",
+    "role": "ロール",
+    "reason": "理由",
+    "category": "カテゴリ",
+    "tags": "タグ",
+    "size": "サイズ",
+    "seeders": "シーダー",
+    "leechers": "リーチャー",
+    "completed": "完了",
+    "ratio": "レシオ",
+    "uploaded": "アップロード",
+    "downloaded": "ダウンロード",
+    "admin": "管理者",
+    "moderator": "モデレーター",
+    "pageOf": "{page} / {pages} ページ",
+    "saveConfiguration": "設定を保存",
+    "saved": "保存しました"
+  },
+  "nav": {
+    "dashboard": "ダッシュボード",
+    "search": "検索",
+    "torrents": "トレント",
+    "forum": "フォーラム",
+    "admin": "管理",
+    "mod": "モデレーション"
+  },
+  "layout": {
+    "refreshStats": "統計を更新",
+    "passkey": "パスキー",
+    "signOut": "ログアウト",
+    "dismiss": "閉じる",
+    "p2pProtocol": "P2P プロトコル"
+  },
+  "auth": {
+    "defaultSubtitle": "プライベート BitTorrent トラッカー",
+    "usernamePlaceholder": "ユーザー名を入力",
+    "passwordPlaceholder": "パスワードを入力",
+    "status": {
+      "fetchingChallenge": "チャレンジを取得中...",
+      "generatingProof": "証明を生成中...",
+      "authenticating": "認証中...",
+      "gettingChallenge": "チャレンジを取得中...",
+      "solvingPow": "プルーフ・オブ・ワークを計算中...",
+      "generatingCredentials": "安全な認証情報を生成中..."
+    },
+    "login": {
+      "registrationsClosed": "現在、新規登録は受け付けていません。既存のメンバーのみログインできます。",
+      "signingIn": "ログイン中...",
+      "signIn": "ログイン",
+      "noAccount": "アカウントをお持ちでないですか？",
+      "createOne": "アカウントを作成",
+      "failed": "ログインに失敗しました"
+    },
+    "register": {
+      "closedTitle": "登録受付終了",
+      "closedText": "現在、新規登録は受け付けていません。招待をお持ちの場合は、管理者にお問い合わせください。",
+      "createAdminAccount": "管理者アカウントを作成",
+      "inviteOnlyTitle": "招待制の登録",
+      "createAccount": "アカウントを作成",
+      "firstAccountWarning": "これは最初のアカウントです。管理者権限が付与されます。",
+      "zkeTitle": "ゼロ知識暗号化：",
+      "zkeText": "パスワードがサーバーに送信されることはありません。パスワードを忘れた場合、アカウントは復旧できません。",
+      "inviteCode": "招待コード",
+      "inviteCodePlaceholder": "招待コードを入力",
+      "usernamePlaceholder": "3〜20 文字、英数字、_ または -",
+      "passwordPlaceholder": "8 文字以上",
+      "confirmPassword": "パスワードの確認",
+      "confirmPasswordPlaceholder": "パスワードを再入力",
+      "panicWarning": "パニックパスワードは緊急時のデータベース暗号化を有効にします。安全に保管してください。復旧も変更もできません。",
+      "panicPassword": "パニックパスワード",
+      "panicPasswordPlaceholder": "12 文字以上",
+      "confirmPanicPassword": "パニックパスワードの確認",
+      "confirmPanicPasswordPlaceholder": "パニックパスワードを再入力",
+      "creatingAccount": "アカウントを作成中...",
+      "haveAccount": "すでにアカウントをお持ちですか？",
+      "signInLink": "ログイン",
+      "failed": "登録に失敗しました",
+      "errors": {
+        "passwordMismatch": "パスワードが一致しません",
+        "passwordTooShort": "パスワードは 8 文字以上にしてください",
+        "panicMismatch": "パニックパスワードが一致しません",
+        "panicTooShort": "パニックパスワードは 12 文字以上にしてください"
+      }
+    }
+  },
+  "home": {
+    "statusBadge": "トラッカー稼働中",
+    "heroSubtitle": "高性能でミニマルな P2P トラッキングエンジン。検証済みトレントのインデックスから検索できます。",
+    "searchPlaceholder": "名前、タグ、infohash でトレントを検索...",
+    "torrentCount": "{count} 件のトレント | {count} 件のトレント | {count} 件のトレント",
+    "peerCount": "{count} ピア | {count} ピア | {count} ピア",
+    "lowLatency": "超低レイテンシ",
+    "recentlyIndexed": "最近登録されたトレント",
+    "browseAll": "すべて表示",
+    "features": {
+      "performance": {
+        "title": "高性能",
+        "description": "Node.js と Redis で構築され、ミリ秒未満の応答時間と高い同時接続性能を実現します。"
+      },
+      "protocols": {
+        "title": "マルチプロトコル",
+        "description": "HTTP、UDP、WebSocket プロトコルに対応し、あらゆる BitTorrent クライアントと高い互換性があります。"
+      },
+      "openSource": {
+        "title": "オープンソース",
+        "description": "完全に透明でコミュニティ主導。P2P エコシステムにおけるプライバシーと効率性を重視して設計されています。"
+      }
+    }
+  },
+  "searchBar": {
+    "placeholder": "検索...",
+    "clear": "クリア"
+  },
+  "sidebar": {
+    "categories": "カテゴリ",
+    "allTorrents": "すべてのトレント"
+  },
+  "report": {
+    "title": "{type}を通報",
+    "targetTypes": {
+      "torrent": "トレント",
+      "user": "ユーザー",
+      "post": "投稿",
+      "comment": "コメント"
+    },
+    "selectReason": "理由を選択...",
+    "reasons": {
+      "spam": "スパムまたは広告",
+      "fake": "偽物または誤解を招くコンテンツ",
+      "copyright": "著作権侵害",
+      "inappropriate": "不適切なコンテンツ",
+      "harassment": "嫌がらせまたは迷惑行為",
+      "other": "その他"
+    },
+    "details": "詳細情報",
+    "detailsPlaceholder": "補足情報があれば入力してください...",
+    "submit": "通報を送信",
+    "submitted": "通報を送信しました",
+    "failed": "通報の送信に失敗しました"
+  },
+  "mediaIds": {
+    "label": "外部 ID",
+    "imdbPlaceholder": "IMDb（tt0133093 または URL）",
+    "tmdbPlaceholder": "TMDb（603 または URL）",
+    "help": "Sonarr / Radarr がリリースを照合するために使用します。ID またはページの URL を貼り付けてください。"
+  },
+  "editor": {
+    "placeholder": "入力を開始...",
+    "bold": "太字",
+    "italic": "斜体",
+    "strikethrough": "取り消し線",
+    "heading1": "見出し 1",
+    "heading2": "見出し 2",
+    "heading3": "見出し 3",
+    "bulletList": "箇条書き",
+    "numberedList": "番号付きリスト",
+    "quote": "引用",
+    "codeBlock": "コードブロック",
+    "horizontalRule": "水平線",
+    "textColor": "文字色",
+    "clearFormatting": "書式をクリア",
+    "undo": "元に戻す",
+    "redo": "やり直す"
+  },
+  "markdown": {
+    "descriptionLabel": "説明（Markdown）",
+    "preview": "プレビュー",
+    "bold": "太字",
+    "italic": "斜体",
+    "link": "リンク",
+    "image": "画像",
+    "list": "リスト",
+    "quote": "引用",
+    "code": "コード",
+    "descriptionPlaceholder": "トレントの説明、画像などを入力...",
+    "nothingToPreview": "プレビューする内容がありません",
+    "placeholders": {
+      "bold": "太字テキスト",
+      "italic": "斜体テキスト",
+      "link": "リンクテキスト",
+      "image": "代替テキスト",
+      "list": "リスト項目",
+      "quote": "引用",
+      "code": "コード"
+    }
+  },
+  "torrents": {
+    "table": {
+      "hash": "ハッシュ",
+      "seedersShort": "S",
+      "leechersShort": "L",
+      "completedShort": "C",
+      "age": "経過",
+      "empty": "トレントが見つかりません",
+      "deleteTorrent": "トレントを削除",
+      "confirmDelete": "「{name}」を削除しますか？",
+      "deleteFailed": "トレントの削除に失敗しました",
+      "pending": "承認待ち"
+    },
+    "list": {
+      "title": "トレント",
+      "indexedCount": "トレントはありません | 1 件のトレント | {count} 件のトレント",
+      "searchPlaceholder": "名前またはハッシュで検索...",
+      "upload": "アップロード",
+      "noResults": "結果が見つかりません",
+      "noResultsHint": "検索条件に一致するトレントはありませんでした。",
+      "resetFilters": "フィルターをリセット",
+      "sort": "並べ替え",
+      "sortNewest": "新しい順",
+      "sortOldest": "古い順",
+      "sortLargest": "サイズの大きい順",
+      "sortSmallest": "サイズの小さい順",
+      "sortName": "名前",
+      "noMatch": "この条件に一致するトレントはありません。",
+      "previous": "前のページ",
+      "next": "次のページ"
+    },
+    "detail": {
+      "backToIndex": "すべてのトレント",
+      "object": "オブジェクト",
+      "copyHash": "ハッシュをコピー",
+      "download": "ダウンロード",
+      "infoHash": "Info Hash",
+      "createdAt": "作成日時",
+      "totalSize": "合計サイズ",
+      "activeSwarm": "アクティブなスウォーム（{count}）",
+      "endpoint": "エンドポイント",
+      "type": "種類",
+      "lastSeen": "最終確認",
+      "noPeers": "スウォームにアクティブなピアはいません",
+      "seeder": "シーダー",
+      "leecher": "リーチャー",
+      "confirmDeleteTitle": "削除の確認",
+      "confirmDeleteText": "このトレントを削除してもよろしいですか？この操作は取り消せません。",
+      "notFound": "トレントが見つかりません",
+      "deleteFailed": "トレントの削除に失敗しました",
+      "uploadedBy": "{user} がアップロード",
+      "report": "このトレントを通報",
+      "swarm": "スウォーム",
+      "comments": "コメントはありません | 1 件のコメント | {n} 件のコメント",
+      "commentPlaceholder": "コメントを追加…",
+      "postComment": "コメントを投稿",
+      "commentFailed": "コメントを投稿できませんでした。",
+      "confirmDeleteComment": "このコメントを削除しますか？",
+      "details": "詳細",
+      "commentDeleteFailed": "コメントを削除できませんでした。"
+    }
+  },
+  "search": {
+    "pageTitle": "トレント検索",
+    "titlePrefix": "検索",
+    "titleAccent": "トレント",
+    "placeholder": "名前、タグ、infohash で検索...",
+    "results": "検索結果",
+    "sortBy": "並べ替え：",
+    "newest": "新しい順",
+    "noResults": "結果が見つかりません",
+    "noResultsHint": "検索条件に一致するトレントは見つかりませんでした。別のキーワードやフィルターをお試しください。",
+    "searching": "データベースを検索中...",
+    "trending": "人気のトレント"
+  },
+  "edit": {
+    "title": "トレントを編集",
+    "torrentName": "トレント名",
+    "noCategory": "カテゴリなし",
+    "saveFailed": "変更の保存に失敗しました"
+  },
+  "upload": {
+    "title": "トレントをアップロード",
+    "dropFile": ".torrent ファイルをドロップ",
+    "orBrowse": "またはクリックしてファイルを選択",
+    "announceUrlLabel": "あなたのアナウンス URL",
+    "announceUrl": "アナウンス URL",
+    "copyAnnounce": "アナウンス URL をコピー",
+    "announceHint": "他人に教えないでください：パスキーが含まれています。",
+    "displayName": "表示名（任意）",
+    "displayNamePlaceholder": "未入力の場合は .torrent 内の名前を使用します",
+    "selectCategory": "カテゴリを選択...",
+    "processing": "処理中...",
+    "submit": "アップロード開始",
+    "successHint": "オブジェクトは正常に登録されました。",
+    "viewDetails": "詳細を表示",
+    "copyFailed": "クリップボードへのコピーに失敗しました",
+    "selectTorrentFile": ".torrent ファイルを選択してください",
+    "dropTorrentFile": ".torrent ファイルをドロップしてください",
+    "failed": "アップロードに失敗しました"
+  },
+  "forum": {
+    "title": "フォーラム",
+    "confirmDeleteTopic": "このトピックを削除してもよろしいですか？",
+    "index": {
+      "subtitle": "コミュニティの議論とお知らせ。",
+      "newCategory": "新しいカテゴリ",
+      "lastActivity": "最終アクティビティ",
+      "noTopics": "まだトピックはありません",
+      "editCategory": "カテゴリを編集",
+      "deleteCategory": "カテゴリを削除",
+      "createTitle": "新しいカテゴリを作成",
+      "editTitle": "カテゴリを編集",
+      "deleteTitle": "カテゴリを削除",
+      "namePlaceholder": "雑談",
+      "descriptionPlaceholder": "なんでも自由に話しましょう...",
+      "order": "表示順",
+      "deleteConfirm": "{name} を削除してもよろしいですか？このカテゴリ内のすべてのトピックと投稿が完全に削除されます。"
+    },
+    "newTopic": {
+      "breadcrumb": "新しいトピック",
+      "title": "新しいトピックを作成",
+      "selectCategory": "カテゴリを選択",
+      "topicTitle": "タイトル",
+      "titlePlaceholder": "何について話しますか？",
+      "content": "内容",
+      "contentPlaceholder": "投稿内容をここに入力...",
+      "submit": "トピックを作成"
+    },
+    "category": {
+      "newTopic": "新しいトピック",
+      "topic": "トピック",
+      "replies": "返信",
+      "lastPost": "最新の投稿",
+      "empty": "このカテゴリにはまだトピックがありません。",
+      "by": "投稿者",
+      "deleteTopic": "トピックを削除"
+    },
+    "topic": {
+      "breadcrumb": "トピック",
+      "pin": "ピン留め",
+      "unpin": "ピン留めを解除",
+      "lock": "ロック",
+      "unlock": "ロック解除",
+      "modBadge": "モデレーター",
+      "postedOn": "{date} に投稿",
+      "deletePost": "投稿を削除",
+      "confirmDeletePost": "この投稿を削除してもよろしいですか？",
+      "replyTitle": "返信を投稿",
+      "replyPlaceholder": "返信をここに入力...",
+      "posting": "投稿中...",
+      "postReply": "返信する",
+      "locked": "このトピックはロックされています。返信できません。"
+    }
+  },
+  "users": {
+    "profile": {
+      "notFound": "ユーザーが見つかりません",
+      "modBadge": "モデレーター",
+      "memberSince": "登録日",
+      "lastSeen": "最終ログイン",
+      "uploads": "アップロード数",
+      "uploadedTorrents": "アップロードしたトレント",
+      "noUploads": "まだアップロードはありません",
+      "seedersLeechers": "S/L",
+      "uploadedAt": "アップロード日",
+      "uncategorized": "未分類",
+      "pageTitle": "{username} - プロフィール",
+      "pageTitleFallback": "ユーザープロフィール"
+    }
+  },
+  "invites": {
+    "title": "招待",
+    "subtitle": "新しいメンバーをトラッカーに招待しましょう",
+    "remaining": "残りの招待数",
+    "generate": "招待を作成",
+    "yourInvites": "あなたの招待",
+    "clickToCopy": "クリックでコピー",
+    "createdAt": "作成日：{date}",
+    "usedBy": "使用者：",
+    "expiresAt": "有効期限：{date}",
+    "empty": "まだ招待はありません",
+    "emptyHint": "招待コードを作成して友人と共有しましょう",
+    "status": {
+      "used": "使用済み",
+      "expired": "期限切れ"
+    },
+    "toast": {
+      "generated": "招待コードを作成しました！",
+      "generateFailed": "招待の作成に失敗しました",
+      "copied": "招待コードをクリップボードにコピーしました！",
+      "copyFailed": "コードのコピーに失敗しました"
+    }
+  },
+  "mod": {
+    "layout": {
+      "title": "モデレーション"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "ダッシュボード",
+        "description": "モデレーションの概要とクイック操作"
+      },
+      "pending": {
+        "label": "承認待ちトレント",
+        "description": "承認待ちのトレントを確認・承認"
+      },
+      "users": {
+        "label": "ユーザー",
+        "description": "ユーザーアカウントと BAN の管理"
+      },
+      "reports": {
+        "label": "通報",
+        "description": "ユーザーからの通報を確認・対応"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "H&R 違反の監視と管理"
+      }
+    },
+    "dashboard": {
+      "pendingReports": "未対応の通報",
+      "pendingReportsHint": "通報セクションでユーザーからの苦情に対応してください。",
+      "viewReports": "通報を表示",
+      "recentHnr": "最近の H&R",
+      "recentHnrHint": "シードを返していないユーザーを監視します。",
+      "viewHnr": "H&R を表示"
+    }
+  },
+  "admin": {
+    "layout": {
+      "title": "管理",
+      "liveFeed": "トラッカーのライブフィード"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "ダッシュボード",
+        "description": "トラッカーの設定とノード管理"
+      },
+      "users": {
+        "label": "ユーザー",
+        "description": "ユーザーアカウントと権限の管理"
+      },
+      "roles": {
+        "label": "ロール",
+        "description": "ユーザーロールと権限の管理"
+      },
+      "reports": {
+        "label": "通報",
+        "description": "ユーザーからの通報を確認・対応"
+      },
+      "categories": {
+        "label": "カテゴリ",
+        "description": "トレントカテゴリの管理"
+      },
+      "tags": {
+        "label": "タグ",
+        "description": "トレントタグの管理"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "H&R 違反の監視と管理"
+      },
+      "invites": {
+        "label": "招待",
+        "description": "招待システムの管理"
+      },
+      "torznab": {
+        "label": "Torznab API",
+        "description": "*arr 連携とレート制限の設定"
+      },
+      "branding": {
+        "label": "ブランディング",
+        "description": "サイトの外観とブランディングのカスタマイズ"
+      },
+      "settings": {
+        "label": "設定",
+        "description": "登録とトラッカーのシステム全体の設定"
+      }
+    },
+    "dashboard": {
+      "noHistory": "まだ履歴データがありません",
+      "noHistoryHint": "統計の収集を開始したばかりです。1 時間後にもう一度確認してください。"
+    },
+    "branding": {
+      "authSubtitle": "認証ページのサブタイトル",
+      "authSubtitleDescription": "ログイン／登録ページのタイトル下に表示されるサブタイトル。",
+      "authSubtitlePlaceholder": "プライベート BitTorrent トラッカー",
+      "authTitle": "認証ページのタイトル",
+      "authTitleDescription": "ログイン／登録ページに表示されるタイトル。空欄の場合はサイト名を使用します。",
+      "authTitlePlaceholder": "認証ページのタイトルを入力...",
+      "bold": "太字",
+      "currentFavicon": "現在のファビコン",
+      "currentLogo": "現在のロゴ",
+      "dropFavicon": "ファビコンをドロップ、またはクリックしてアップロード",
+      "dropImage": "画像をドロップ、またはクリックしてアップロード",
+      "favicon": "ファビコン",
+      "faviconDescription": "カスタムファビコンをアップロード（ICO、PNG、SVG）。最大 1MB。ブラウザのタブに表示されます。",
+      "footerContent": "フッターの内容",
+      "footerContentDescription": "カスタムフッターの内容。リッチテキスト書式に対応しています。",
+      "icon": "アイコン",
+      "image": "画像",
+      "livePreview": "ライブプレビュー",
+      "logoIcon": "ロゴアイコン",
+      "logoIconDescription": "Phosphor のアイコン名を使用してください（例：ph:broadcast-bold）。",
+      "logoImage": "ロゴ画像",
+      "logoImageDescription": "カスタムロゴをアップロード（PNG、JPG、SVG、WebP）。最大 5MB。",
+      "logoType": "ロゴの種類",
+      "logoTypeDescription": "Phosphor アイコンとカスタム画像のどちらかを選択します。",
+      "pageTitleExample": "例：「トレント検索 {title}」",
+      "pageTitleSuffix": "ページタイトルの接尾辞",
+      "pageTitleSuffixDescription": "ブラウザのタブタイトルの末尾に追加されるテキスト。プレーンテキストのみ。",
+      "quickSelect": "クイック選択",
+      "saveBranding": "ブランディングを保存",
+      "saveTextBranding": "テキストブランディングを保存",
+      "siteName": "サイト名",
+      "siteNameColor": "サイト名の色",
+      "siteNameDescription": "ナビゲーションバーとブラウザのタイトルに表示されます。リッチテキストでスタイルを変更できます。",
+      "siteRules": "サイトのルール",
+      "siteRulesDescription": "ユーザーに表示されるルールと規約。リッチテキストに完全対応しています。",
+      "siteRulesPlaceholder": "サイトのルールとガイドラインを入力...",
+      "subtitle": "サブタイトル",
+      "subtitleDescription": "サイト名の下に表示されるテキスト。空欄の場合はバージョンを表示します。リッチテキストに対応しています。",
+      "subtitlePlaceholder": "空欄にするとバージョン番号を表示",
+      "textBranding": "テキストブランディング",
+      "textBrandingDescription": "サイト全体に表示されるテキストをカスタマイズします。高度な書式設定にはリッチテキストエディターを使用してください。",
+      "title": "サイトのブランディング",
+      "uploading": "アップロード中...",
+      "welcomeMessage": "スタッフからのお知らせ",
+      "welcomeMessageDescription": "すべてのメンバーのダッシュボード上部に表示されます。空欄にすると非表示になります。",
+      "welcomeMessagePlaceholder": "トラッカーコミュニティへようこそ..."
+    },
+    "categories": {
+      "addFailed": "カテゴリの追加に失敗しました",
+      "confirmDelete": "このカテゴリを削除してもよろしいですか？",
+      "confirmSeed": "推奨される Torznab 互換カテゴリを作成します。続行しますか？",
+      "deleteFailed": "カテゴリの削除に失敗しました",
+      "empty": "カテゴリが定義されていません",
+      "newCategoryPlaceholder": "新しいカテゴリ名...",
+      "newSubcategoryPlaceholder": "新しいサブカテゴリ名...",
+      "newznabId": "Newznab ID",
+      "newznabIdHint": "Newznab/Torznab のカテゴリ ID（例：Movies/HD は 2040）",
+      "newznabIdTitle": "Newznab/Torznab のカテゴリ ID",
+      "nzId": "NZ ID",
+      "rootCategory": "ルートカテゴリ",
+      "seed": "Torznab カテゴリを作成",
+      "seedFailed": "カテゴリの作成に失敗しました",
+      "seeded": "カテゴリは作成されませんでした | 1 件のカテゴリを作成しました | {count} 件のカテゴリを作成しました",
+      "subcategoriesCount": "サブカテゴリなし | 1 件のサブカテゴリ | {count} 件のサブカテゴリ",
+      "title": "カテゴリ管理",
+      "updateFailed": "カテゴリの更新に失敗しました"
+    },
+    "charts": {
+      "databaseSize": "データベースサイズ（MB）",
+      "day": "日",
+      "dbSize": "DB サイズ",
+      "growth": "ユーザーとトレントの推移",
+      "hour": "時間",
+      "month": "月",
+      "peers": "ピア",
+      "peersSeeders": "ピアとシーダー",
+      "redisMemory": "Redis メモリ",
+      "redisMemoryUsage": "Redis メモリ使用量（MB）",
+      "torrents": "トレント",
+      "users": "ユーザー",
+      "view": "表示：",
+      "week": "週"
+    },
+    "invites": {
+      "allCodesCopied": "すべてのコードをコピーしました！",
+      "clickToCopy": "クリックでコピー",
+      "codeCopied": "コードをコピーしました！",
+      "copyAll": "すべてコピー",
+      "copyCodeFailed": "コードのコピーに失敗しました",
+      "copyCodesFailed": "コードのコピーに失敗しました",
+      "count": "数",
+      "createdBy": "作成者：",
+      "empty": "招待が見つかりません",
+      "expires": "有効期限：{date}",
+      "expiresInDays": "有効期限（日数、任意）",
+      "generate": "作成",
+      "generateFailed": "コードの作成に失敗しました",
+      "generateTitle": "固有コードを作成",
+      "generatedCodes": "作成したコード",
+      "generatedToast": "招待コードは作成されませんでした | 1 件の招待コードを作成しました | {count} 件の招待コードを作成しました",
+      "grant": "付与",
+      "grantFailed": "招待の付与に失敗しました",
+      "grantTitle": "ユーザーに招待を付与",
+      "grantedToast": "ユーザーに招待は付与されませんでした | ユーザーに 1 件の招待を付与しました | ユーザーに {count} 件の招待を付与しました",
+      "statusExpired": "期限切れ",
+      "statusPending": "未使用",
+      "statusUsed": "使用済み",
+      "title": "招待",
+      "usedBy": "使用者：",
+      "userId": "ユーザー ID"
+    },
+    "panic": {
+      "confirmText": "データベース内のすべての機密データを暗号化します。パニックパスワードで復元するまで、データは読み取れなくなります。",
+      "confirmTitle": "データベース暗号化の確認",
+      "encryptButton": "パニック — データベースを暗号化",
+      "encryptFailed": "暗号化に失敗しました",
+      "encryptNow": "今すぐ暗号化",
+      "encryptedAt": "暗号化日時：{date}",
+      "encryptedText": "すべての機密データは現在暗号化されています。アクセスを復元するにはパニックパスワードを入力してください。",
+      "encryptedTitle": "データベースは暗号化されています",
+      "encrypting": "暗号化中...",
+      "intro": "すべての機密データを直ちに暗号化します。この操作を行うと、最初の登録時に設定したパニックパスワードなしではデータを読み取れなくなります。",
+      "irreversible": "パニックパスワードがなければ、この操作は元に戻せません。",
+      "password": "パニックパスワード",
+      "passwordPlaceholder": "パニックパスワードを入力",
+      "restore": "復元",
+      "restoreButton": "データベースを復元",
+      "restoreFailed": "復元に失敗しました",
+      "restoreText": "最初の管理者登録時に設定したパニックパスワードを入力して、すべてのデータを復号・復元します。",
+      "restoring": "復元中...",
+      "title": "緊急ロックダウン"
+    },
+    "registration": {
+      "closed": "停止中",
+      "currentStatus": "現在の状態：{status}",
+      "defaultInvitesDescription": "新規ユーザーが登録時に受け取る招待コードの数。",
+      "defaultInvitesLabel": "初期招待数",
+      "gb": "GB",
+      "inviteOnlyDescription": "登録に招待コードを必須にします。",
+      "inviteOnlyLabel": "招待制モード",
+      "minRatioDescription": "レシオがこの値を下回るユーザーはダウンロードできなくなります。0 にすると無効になります。",
+      "minRatioLabel": "最低レシオ",
+      "open": "受付中",
+      "openDescription": "新規ユーザーが自由にアカウントを作成できるようにします。",
+      "openLabel": "自由登録",
+      "starterCreditDescription": "登録直後にレシオでブロックされないよう、新規ユーザーに付与される初期アップロード量。",
+      "starterCreditLabel": "初期クレジット（GB）",
+      "statusClosed": "登録は停止中です",
+      "statusInviteOnly": "招待制で登録受付中",
+      "statusOpen": "誰でも登録できます",
+      "statusOpenInviteOptional": "登録受付中（招待は任意）",
+      "title": "登録"
+    },
+    "system": {
+      "backupWarning": "更新前にデータベースをバックアップしてください",
+      "checkUpdates": "更新を確認",
+      "confirmPassword": "パスワードの確認",
+      "confirmPasswordDescription": "確認のため新しいパスワードを再入力してください。",
+      "confirmPasswordPlaceholder": "新しいパスワードを確認",
+      "currentPassword": "現在のパスワード",
+      "currentPasswordDescription": "現在 Grafana へのログインに使用しているパスワード。",
+      "currentPasswordPlaceholder": "現在の Grafana パスワードを入力",
+      "currentVersion": "現在のバージョン",
+      "downtimeWarning": "更新中は短時間のダウンタイムが発生します",
+      "grafanaFailed": "Grafana パスワードの更新に失敗しました",
+      "grafanaIntro": "Grafana の管理者パスワードを変更します。現在のパスワードが必要です。",
+      "grafanaSuccess": "Grafana パスワードを更新しました",
+      "grafanaTitle": "Grafana パスワード",
+      "hideInstructions": "更新手順を隠す",
+      "installedVersion": "インストール済みの Trackarr のバージョン",
+      "newPassword": "新しいパスワード",
+      "newPasswordDescription": "8 文字以上にしてください。",
+      "newPasswordPlaceholder": "新しいパスワードを入力",
+      "published": "{date} 公開",
+      "showInstructions": "更新手順を表示",
+      "step": "ステップ {step}：{description}",
+      "upToDate": "最新バージョンを使用しています",
+      "updateAvailable": "更新があります：{version}",
+      "updateCommands": "更新コマンド",
+      "updateGrafanaPassword": "Grafana パスワードを更新",
+      "updating": "更新中...",
+      "versionTitle": "バージョンと更新",
+      "viewChangelog": "変更履歴を表示"
+    },
+    "torznabUsers": {
+      "blockAccess": "API アクセスをブロック",
+      "blockConfirm": "{username} による Torznab API の利用をブロックしてもよろしいですか？*arr アプリから検索やダウンロードができなくなります。",
+      "blockTitle": "API アクセスをブロック",
+      "blockUser": "ユーザーをブロック",
+      "daysAgo": "{n}日前",
+      "empty": "ユーザーが見つかりません",
+      "hits": "{count} ヒット | {count} ヒット | {count} ヒット",
+      "hoursAgo": "{n}時間前",
+      "justNow": "たった今",
+      "lastRequest": "最終リクエスト",
+      "logsTitle": "API ログ - {username}",
+      "minutesAgo": "{n}分前",
+      "passkey": "パスキー",
+      "rateLimits": "レート制限",
+      "requests": "リクエスト",
+      "resetPasskey": "パスキーをリセット",
+      "resetPasskeyConfirm": "{username} のパスキーをリセットしてもよろしいですか？新しいパスキーで *arr アプリを更新する必要があります。",
+      "resetPasskeyTitle": "パスキーをリセット",
+      "searchPlaceholder": "ユーザーを検索...",
+      "showing": "{total} 件中 {from} - {to} 件を表示",
+      "title": "API ユーザー",
+      "viewLogs": "ログを表示"
+    },
+    "stats": {
+      "activeTorrents": "アクティブなトレント",
+      "totalPeers": "総ピア数",
+      "trackerStatus": "トラッカーの状態",
+      "operational": "稼働中",
+      "offline": "オフライン"
+    },
+    "protocols": {
+      "title": "プロトコル"
+    },
+    "endpoints": {
+      "title": "エンドポイント",
+      "httpAnnounce": "HTTP アナウンス",
+      "udpAnnounce": "UDP アナウンス"
+    },
+    "torznabLogs": {
+      "title": "最近のリクエスト",
+      "totalRequests": "リクエストはありません | 合計 {count} 件のリクエスト | 合計 {count} 件のリクエスト",
+      "showing": "{total} 件中 {from} - {to} 件を表示",
+      "time": "日時",
+      "function": "関数",
+      "query": "クエリ",
+      "results": "結果",
+      "duration": "所要時間",
+      "empty": "ログはありません"
+    },
+    "torznabStats": {
+      "title": "Torznab API 統計",
+      "totalRequests": "総リクエスト数",
+      "last24h": "過去 24 時間",
+      "uniqueUsers": "ユニークユーザー",
+      "avgResponseTime": "平均応答時間",
+      "searchRequests": "検索リクエスト",
+      "tvSearches": "TV 検索",
+      "movieSearches": "映画検索",
+      "errors": "エラー"
+    },
+    "torznabConfig": {
+      "title": "API 設定",
+      "statusLabel": "Torznab API の状態",
+      "statusDescription": "全ユーザーに対して Torznab API を有効または無効にします。無効にすると、*arr アプリは接続できなくなります。",
+      "apiAccepting": "API はリクエストを受け付けています",
+      "apiDisabled": "API は無効です",
+      "loggingLabel": "リクエストのログ記録",
+      "loggingDescription": "デバッグと監視のためにすべての API リクエストを記録します。ログは 7 日間保存されます。",
+      "loggingEnabled": "ログ記録は有効です",
+      "loggingDisabled": "ログ記録は無効です",
+      "endpointLabel": "API エンドポイント",
+      "endpointDescription": "Torznab API のベース URL。ユーザーはこれを Prowlarr/Sonarr/Radarr に追加します。",
+      "copyUrl": "URL をコピー"
+    },
+    "torznabBlacklist": {
+      "title": "ブロック中の IP とユーザー",
+      "rateLimitedIps": "レート制限中の IP",
+      "noIps": "現在ブロック中の IP はありません",
+      "expiresIn": "解除まで",
+      "blockedUsers": "ブロック中の API ユーザー",
+      "noUsers": "現在ブロック中のユーザーはいません",
+      "unblock": "ブロック解除",
+      "unblocking": "ブロック解除中...",
+      "expired": "期限切れ",
+      "justNow": "たった今",
+      "minutesAgo": "{n}分前",
+      "hoursAgo": "{n}時間前",
+      "daysAgo": "{n}日前"
+    },
+    "torznabRateLimit": {
+      "title": "レート制限",
+      "intro": "API の乱用を防ぐためにレート制限を設定します。制限は指定した時間枠内でユーザー（パスキー）ごとに適用されます。",
+      "windowLabel": "時間枠",
+      "windowDescription": "レート制限を計算する期間（秒）。",
+      "seconds": "秒",
+      "searchLabel": "検索リクエストの上限",
+      "searchDescription": "ユーザーごと、時間枠あたりの検索リクエスト（search、tvsearch、movie）の最大数。",
+      "downloadLabel": "ダウンロードリクエストの上限",
+      "downloadDescription": "ユーザーごと、時間枠あたりのトレントファイルのダウンロードリクエストの最大数。",
+      "perWindow": "リクエスト / {window}",
+      "strict": "厳格",
+      "default": "標準",
+      "relaxed": "緩め",
+      "generous": "寛容",
+      "presets": "クイックプリセット",
+      "immediateNote": "変更は新しいリクエストに即座に適用されます。"
+    },
+    "tags": {
+      "add": "タグを追加",
+      "empty": "タグが設定されていません",
+      "addTitle": "新しいタグを追加",
+      "placeholder": "例：1080p",
+      "slug": "スラッグ",
+      "color": "色",
+      "confirmDelete": "このタグを削除しますか？"
+    },
+    "reports": {
+      "title": "通報",
+      "status": {
+        "pending": "未対応",
+        "resolved": "解決済み",
+        "dismissed": "却下"
+      },
+      "by": "通報者：",
+      "resolve": "解決",
+      "dismiss": "却下",
+      "empty": "通報はありません"
+    },
+    "homepage": {
+      "title": "ホームページのコンテンツ",
+      "heroSection": "ヒーローセクション",
+      "heroTitleLabel": "タイトル",
+      "heroTitleDescription": "ホームページのメイン見出し。リッチテキストでスタイル、色、フォントを変更できます。",
+      "subtitleLabel": "サブタイトル",
+      "subtitleDescription": "タイトルの下に表示される短い説明。リッチテキストに対応しています。",
+      "subtitlePlaceholder": "高性能でミニマルな P2P トラッキングエンジン...",
+      "badgeLabel": "ステータスバッジ",
+      "badgeDescription": "タイトル上のバッジに表示されるテキスト。",
+      "badgePlaceholder": "トラッカー稼働中",
+      "featureBoxes": "機能ボックス",
+      "featureLabel": "機能 {n}",
+      "featureDescription": "この機能カードのタイトルと説明。リッチテキストに対応しています。",
+      "featureTitleLabel": "タイトル",
+      "featureTitlePlaceholder": "機能のタイトル",
+      "featureDescriptionPlaceholder": "機能の説明...",
+      "save": "ホームページのコンテンツを保存"
+    },
+    "announcements": {
+      "title": "サイトのお知らせ",
+      "enableLabel": "お知らせを有効にする",
+      "enableDescription": "すべてのページでメインナビゲーションバーの下にバナーを表示します。",
+      "messageLabel": "メッセージ",
+      "messageDescription": "お知らせの内容。短く分かりやすくしてください。",
+      "messagePlaceholder": "お知らせのメッセージを入力...",
+      "typeLabel": "バナーの種類",
+      "typeDescription": "お知らせバナーの色とアイコンを決定します。",
+      "typeInfo": "情報",
+      "typeWarning": "警告",
+      "preview": "ライブプレビュー",
+      "save": "お知らせを保存"
+    },
+    "pending": {
+      "title": "承認待ちトレント",
+      "uncategorized": "未分類",
+      "empty": "承認待ちのトレントはありません",
+      "allModerated": "すべてのトレントがモデレーション済みです",
+      "approveFailed": "トレントの承認に失敗しました",
+      "rejectPrompt": "却下の理由（任意）：",
+      "rejectFailed": "トレントの却下に失敗しました"
+    },
+    "hnr": {
+      "title": "Hit & Run の追跡",
+      "hitAndRun": "Hit & Run",
+      "pending": "保留中",
+      "checkNew": "新しい H&R を確認",
+      "seedTime": "シード時間：",
+      "downloadedAt": "ダウンロード日：{date}",
+      "clear": "H&R を解除",
+      "exempt": "免除する",
+      "exempted": "免除済み",
+      "empty": "H&R の記録はありません"
+    },
+    "roles": {
+      "title": "ロール管理",
+      "createTitle": "新しいロールを作成",
+      "namePlaceholder": "ロール名...",
+      "color": "色",
+      "skipModeration": "モデレーションを省略",
+      "canBypass": "モデレーションを省略できます",
+      "requiresModeration": "モデレーションが必要です",
+      "skipMod": "承認不要",
+      "delete": "ロールを削除",
+      "empty": "まだロールはありません",
+      "createFailed": "ロールの作成に失敗しました",
+      "updateFailed": "ロールの更新に失敗しました",
+      "confirmDelete": "ロール「{name}」を削除してもよろしいですか？",
+      "deleteFailed": "ロールの削除に失敗しました"
+    },
+    "users": {
+      "title": "ユーザー管理",
+      "searchPlaceholder": "ユーザー名またはメールアドレスで検索...",
+      "ban": "BAN",
+      "noRole": "ロールなし",
+      "mod": "モデレーター",
+      "empty": "ユーザーが見つかりません",
+      "updateRoleFailed": "ユーザーロールの更新に失敗しました",
+      "confirmBan": "{name} を BAN してもよろしいですか？",
+      "confirmUnban": "{name} の BAN を解除してもよろしいですか？",
+      "banFailed": "ユーザーの BAN に失敗しました",
+      "unbanFailed": "ユーザーの BAN 解除に失敗しました",
+      "assignRoleFailed": "ロールの割り当てに失敗しました"
+    },
+    "footer": {
+      "title": "フッターのリンク",
+      "description": "すべてのページの右下に表示されるアイコン。リンクは新しいタブで開きます。",
+      "icon": "アイコン",
+      "label": "ラベル",
+      "url": "URL",
+      "add": "リンクを追加",
+      "remove": "削除",
+      "moveUp": "上へ移動",
+      "moveDown": "下へ移動",
+      "empty": "リンクはありません：フッターには何も表示されません。",
+      "max": "リンクは最大 {max} 件です。",
+      "tagline": "フッターのキャッチフレーズ",
+      "taglineDescription": "著作権表示の横に表示される短いテキスト。空欄にすると非表示になります。",
+      "taglineDefault": "デフォルトのテキスト",
+      "resetTagline": "デフォルトを使用",
+      "resetLinks": "デフォルトのリンクに戻す",
+      "save": "フッターを保存",
+      "saved": "保存しました",
+      "invalid": "各リンクにはラベルと、http(s) または mailto の URL が必要です。"
+    }
+  },
+  "time": {
+    "justNow": "たった今",
+    "minutesAgo": "{count}分前 | {count}分前",
+    "hoursAgo": "{count}時間前 | {count}時間前",
+    "daysAgo": "{count}日前 | {count}日前",
+    "monthsAgo": "{count}か月前 | {count}か月前",
+    "yearsAgo": "{count}年前 | {count}年前"
+  },
+  "freeleech": {
+    "banner": "フリーリーチ実施中：ダウンロード量はレシオに計上されません。",
+    "bannerUntil": "{date} までフリーリーチ実施中：ダウンロード量はレシオに計上されません。",
+    "admin": {
+      "title": "全体フリーリーチ",
+      "description": "有効な間、ダウンロード量は計上されず（アップロード量は計上されます）、最低レシオは一時停止されます。Torznab はダウンロード係数 0 を報告します。",
+      "active": "実施中",
+      "activeUntil": "{date} まで実施中",
+      "activeForever": "実施中（終了日なし）",
+      "inactive": "停止中",
+      "duration": "期間（時間）",
+      "durationHint": "空欄にすると終了日なしになります。",
+      "start": "フリーリーチを開始",
+      "update": "更新",
+      "stop": "フリーリーチを終了",
+      "confirmStop": "全体フリーリーチを今すぐ終了しますか？"
+    }
+  },
+  "shell": {
+    "skip": "コンテンツへスキップ",
+    "groups": {
+      "browse": "閲覧",
+      "community": "コミュニティ",
+      "account": "マイアカウント",
+      "staff": "スタッフ"
+    },
+    "nav": {
+      "home": "ホーム",
+      "torrents": "トレント",
+      "bounties": "バウンティ",
+      "forum": "フォーラム",
+      "shop": "ボーナスショップ",
+      "invites": "招待",
+      "profile": "マイプロフィール",
+      "mod": "モデレーション",
+      "admin": "管理"
+    },
+    "menu": {
+      "open": "ナビゲーションを開く",
+      "close": "ナビゲーションを閉じる",
+      "label": "メインナビゲーション"
+    },
+    "search": {
+      "trigger": "検索",
+      "placeholder": "トレント、IMDb ID、info hash を検索",
+      "pages": "ページ",
+      "torrents": "トレント",
+      "seeAll": "「{q}」のすべての結果を表示",
+      "empty": "「{q}」に一致するトレントはありません",
+      "loading": "検索中…",
+      "close": "検索を閉じる",
+      "hint": "で移動、Enter で開く"
+    },
+    "meter": {
+      "uploaded": "アップロード",
+      "downloaded": "ダウンロード",
+      "ratio": "レシオ",
+      "refresh": "統計を更新",
+      "label": "あなたの転送量"
+    },
+    "freeleech": {
+      "pill": "フリーリーチ",
+      "until": "{time} までフリーリーチ"
+    },
+    "user": {
+      "open": "アカウントメニュー",
+      "passkey": "パスキー",
+      "copy": "パスキーをコピー",
+      "copied": "コピーしました",
+      "points": "{n} ポイント",
+      "signOut": "ログアウト",
+      "theme": "テーマ",
+      "language": "言語"
+    },
+    "theme": {
+      "label": "テーマ",
+      "light": "ライト",
+      "system": "システム",
+      "dark": "ダーク"
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "おはようございます、{name} さん",
+      "afternoon": "こんにちは、{name} さん",
+      "evening": "こんばんは、{name} さん",
+      "neutral": "こんにちは、{name} さん"
+    },
+    "memberSince": "{date} から登録",
+    "browse": "トレントを閲覧",
+    "upload": "トレントをアップロード",
+    "account": "あなたのアカウント",
+    "seeding": "シード中",
+    "leeching": "リーチ中のトレントはありません | 1 件のトレントをリーチ中 | {n} 件のトレントをリーチ中",
+    "points": "ボーナスポイント",
+    "spendPoints": "ショップで使いましょう",
+    "hnr": "Hit & Run",
+    "hnrNone": "対応が必要なものはありません",
+    "hnrWarning": "解消するにはシードを続けてください",
+    "latest": "新着トレント",
+    "seeAll": "すべて表示",
+    "columns": {
+      "name": "名前",
+      "size": "サイズ",
+      "seeders": "シーダー",
+      "leechers": "リーチャー",
+      "age": "追加日"
+    },
+    "noTorrents": "まだトレントはありません。",
+    "uploadFirst": "最初のトレントをアップロード",
+    "bounties": "受付中のバウンティ",
+    "noBounties": "受付中のバウンティはありません。",
+    "requestTorrent": "トレントをリクエスト",
+    "forum": "フォーラムの最新情報",
+    "noTopics": "まだトピックはありません。",
+    "startTopic": "トピックを作成",
+    "site": {
+      "title": "数字で見るトラッカー",
+      "members": "メンバー",
+      "activePeers": "アクティブなピア",
+      "seededTorrents": "シード中のトレント",
+      "shared": "共有データ量"
+    }
+  }
+}

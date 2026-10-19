@@ -394,6 +394,10 @@ export const RATE_LIMITS = {
 
   // Download - moderate
   download: { windowSec: 60, maxRequests: 20, prefix: 'dl' },
+
+  // Shoutbox - chat pace, without auto-blacklist
+  shout: { windowSec: 30, maxRequests: 10, prefix: 'shout' },
+  shoutReact: { windowSec: 30, maxRequests: 30, prefix: 'shreact' },
 };
 
 // ============================================================================

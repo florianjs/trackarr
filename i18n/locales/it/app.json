@@ -1,0 +1,1062 @@
+{
+  "common": {
+    "language": "Lingua",
+    "save": "Salva",
+    "saving": "Salvataggio...",
+    "saveChanges": "Salva modifiche",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "deleting": "Eliminazione...",
+    "edit": "Modifica",
+    "close": "Chiudi",
+    "create": "Crea",
+    "creating": "Creazione...",
+    "add": "Aggiungi",
+    "remove": "Rimuovi",
+    "search": "Cerca",
+    "loading": "Caricamento...",
+    "refresh": "Aggiorna",
+    "reset": "Reimposta",
+    "copy": "Copia",
+    "copied": "Copiato!",
+    "approve": "Approva",
+    "reject": "Rifiuta",
+    "all": "Tutti",
+    "unknown": "Sconosciuto",
+    "never": "Mai",
+    "optional": "facoltativo",
+    "actions": "Azioni",
+    "name": "Nome",
+    "description": "Descrizione",
+    "enabled": "Attivato",
+    "disabled": "Disattivato",
+    "active": "Attivo",
+    "inactive": "Inattivo",
+    "previous": "Precedente",
+    "next": "Successivo",
+    "error": "Errore",
+    "user": "Utente",
+    "username": "Nome utente",
+    "password": "Password",
+    "role": "Ruolo",
+    "reason": "Motivo",
+    "category": "Categoria",
+    "tags": "Tag",
+    "size": "Dimensione",
+    "seeders": "Seeder",
+    "leechers": "Leecher",
+    "completed": "Completati",
+    "ratio": "Ratio",
+    "uploaded": "Upload",
+    "downloaded": "Download",
+    "admin": "Admin",
+    "moderator": "Moderatore",
+    "pageOf": "Pagina {page} / {pages}",
+    "saveConfiguration": "Salva configurazione",
+    "saved": "Salvato"
+  },
+  "nav": {
+    "dashboard": "Dashboard",
+    "search": "Cerca",
+    "torrents": "Torrent",
+    "forum": "Forum",
+    "admin": "Admin",
+    "mod": "Mod"
+  },
+  "layout": {
+    "refreshStats": "Aggiorna statistiche",
+    "passkey": "Passkey",
+    "signOut": "Esci",
+    "dismiss": "Ignora",
+    "p2pProtocol": "Protocollo P2P"
+  },
+  "auth": {
+    "defaultSubtitle": "Tracker BitTorrent privato",
+    "usernamePlaceholder": "Inserisci il tuo nome utente",
+    "passwordPlaceholder": "Inserisci la tua password",
+    "status": {
+      "fetchingChallenge": "Recupero della challenge...",
+      "generatingProof": "Generazione della prova...",
+      "authenticating": "Autenticazione...",
+      "gettingChallenge": "Recupero della challenge...",
+      "solvingPow": "Risoluzione della proof of work...",
+      "generatingCredentials": "Generazione di credenziali sicure..."
+    },
+    "login": {
+      "registrationsClosed": "Le registrazioni sono attualmente chiuse. Solo i membri esistenti possono accedere.",
+      "signingIn": "Accesso in corso...",
+      "signIn": "Accedi",
+      "noAccount": "Non hai un account?",
+      "createOne": "Creane uno",
+      "failed": "Accesso non riuscito"
+    },
+    "register": {
+      "closedTitle": "Registrazioni chiuse",
+      "closedText": "Al momento non si accettano nuove registrazioni. Se hai un invito, contatta un amministratore.",
+      "createAdminAccount": "Crea account amministratore",
+      "inviteOnlyTitle": "Registrazione solo su invito",
+      "createAccount": "Crea account",
+      "firstAccountWarning": "Questo è il primo account. Avrà i privilegi di amministratore.",
+      "zkeTitle": "Crittografia Zero Knowledge:",
+      "zkeText": "La tua password non viene mai inviata al server. Se la dimentichi, il tuo account non potrà essere recuperato.",
+      "inviteCode": "Codice invito",
+      "inviteCodePlaceholder": "Inserisci il tuo codice invito",
+      "usernamePlaceholder": "3-20 caratteri, lettere, numeri, _ o -",
+      "passwordPlaceholder": "Almeno 8 caratteri",
+      "confirmPassword": "Conferma password",
+      "confirmPasswordPlaceholder": "Reinserisci la password",
+      "panicWarning": "La password di emergenza attiva la crittografia d'emergenza del database. Conservala al sicuro: non può essere recuperata né modificata.",
+      "panicPassword": "Password di emergenza",
+      "panicPasswordPlaceholder": "Almeno 12 caratteri",
+      "confirmPanicPassword": "Conferma password di emergenza",
+      "confirmPanicPasswordPlaceholder": "Reinserisci la password di emergenza",
+      "creatingAccount": "Creazione account...",
+      "haveAccount": "Hai già un account?",
+      "signInLink": "Accedi",
+      "failed": "Registrazione non riuscita",
+      "errors": {
+        "passwordMismatch": "Le password non coincidono",
+        "passwordTooShort": "La password deve contenere almeno 8 caratteri",
+        "panicMismatch": "Le password di emergenza non coincidono",
+        "panicTooShort": "La password di emergenza deve contenere almeno 12 caratteri"
+      }
+    }
+  },
+  "home": {
+    "statusBadge": "Tracker online e operativo",
+    "heroSubtitle": "Motore di tracking P2P minimalista e ad alte prestazioni. Cerca nel nostro database di torrent verificati.",
+    "searchPlaceholder": "Cerca torrent per nome, tag o infohash...",
+    "torrentCount": "{count} torrent | {count} torrent | {count} torrent",
+    "peerCount": "{count} peer | {count} peer | {count} peer",
+    "lowLatency": "Latenza bassissima",
+    "recentlyIndexed": "Aggiunti di recente",
+    "browseAll": "Vedi tutti",
+    "features": {
+      "performance": {
+        "title": "Alte prestazioni",
+        "description": "Basato su Node.js e Redis per tempi di risposta inferiori al millisecondo e un'elevata gestione della concorrenza."
+      },
+      "protocols": {
+        "title": "Multiprotocollo",
+        "description": "Supporta i protocolli HTTP, UDP e WebSocket per la massima compatibilità con tutti i client BitTorrent."
+      },
+      "openSource": {
+        "title": "Open source",
+        "description": "Totalmente trasparente e guidato dalla community. Pensato per la privacy e l'efficienza nell'ecosistema P2P."
+      }
+    }
+  },
+  "searchBar": {
+    "placeholder": "Cerca...",
+    "clear": "Cancella"
+  },
+  "sidebar": {
+    "categories": "Categorie",
+    "allTorrents": "Tutti i torrent"
+  },
+  "report": {
+    "title": "Segnala {type}",
+    "targetTypes": {
+      "torrent": "torrent",
+      "user": "utente",
+      "post": "post",
+      "comment": "commento"
+    },
+    "selectReason": "Seleziona un motivo...",
+    "reasons": {
+      "spam": "Spam o pubblicità",
+      "fake": "Contenuto falso o ingannevole",
+      "copyright": "Violazione del copyright",
+      "inappropriate": "Contenuto inappropriato",
+      "harassment": "Molestie o abusi",
+      "other": "Altro"
+    },
+    "details": "Dettagli aggiuntivi",
+    "detailsPlaceholder": "Aggiungi eventuali informazioni utili...",
+    "submit": "Invia segnalazione",
+    "submitted": "Segnalazione inviata",
+    "failed": "Invio della segnalazione non riuscito"
+  },
+  "mediaIds": {
+    "label": "ID esterni",
+    "imdbPlaceholder": "IMDb (tt0133093 o URL)",
+    "tmdbPlaceholder": "TMDb (603 o URL)",
+    "help": "Usati da Sonarr / Radarr per riconoscere le release. Incolla un ID o l'URL della pagina."
+  },
+  "editor": {
+    "placeholder": "Inizia a scrivere...",
+    "bold": "Grassetto",
+    "italic": "Corsivo",
+    "strikethrough": "Barrato",
+    "heading1": "Titolo 1",
+    "heading2": "Titolo 2",
+    "heading3": "Titolo 3",
+    "bulletList": "Elenco puntato",
+    "numberedList": "Elenco numerato",
+    "quote": "Citazione",
+    "codeBlock": "Blocco di codice",
+    "horizontalRule": "Linea orizzontale",
+    "textColor": "Colore testo",
+    "clearFormatting": "Rimuovi formattazione",
+    "undo": "Annulla",
+    "redo": "Ripeti"
+  },
+  "markdown": {
+    "descriptionLabel": "Descrizione (Markdown)",
+    "preview": "Anteprima",
+    "bold": "Grassetto",
+    "italic": "Corsivo",
+    "link": "Link",
+    "image": "Immagine",
+    "list": "Elenco",
+    "quote": "Citazione",
+    "code": "Codice",
+    "descriptionPlaceholder": "Inserisci la descrizione del torrent, immagini, ecc...",
+    "nothingToPreview": "Niente da visualizzare",
+    "placeholders": {
+      "bold": "testo in grassetto",
+      "italic": "testo in corsivo",
+      "link": "testo del link",
+      "image": "testo alternativo",
+      "list": "elemento dell'elenco",
+      "quote": "citazione",
+      "code": "codice"
+    }
+  },
+  "torrents": {
+    "table": {
+      "hash": "Hash",
+      "seedersShort": "S",
+      "leechersShort": "L",
+      "completedShort": "C",
+      "age": "Età",
+      "empty": "Nessun torrent trovato",
+      "deleteTorrent": "Elimina torrent",
+      "confirmDelete": "Eliminare \"{name}\"?",
+      "deleteFailed": "Eliminazione del torrent non riuscita",
+      "pending": "In attesa"
+    },
+    "list": {
+      "title": "Torrent",
+      "indexedCount": "Nessun torrent | 1 torrent | {count} torrent",
+      "searchPlaceholder": "Cerca per nome o hash...",
+      "upload": "Carica",
+      "noResults": "Nessun risultato",
+      "noResultsHint": "La ricerca non corrisponde a nessun torrent indicizzato.",
+      "resetFilters": "Reimposta filtri",
+      "sort": "Ordina",
+      "sortNewest": "Più recenti",
+      "sortOldest": "Meno recenti",
+      "sortLargest": "Più grandi",
+      "sortSmallest": "Più piccoli",
+      "sortName": "Nome",
+      "noMatch": "Nessun torrent corrisponde a questi filtri.",
+      "previous": "Pagina precedente",
+      "next": "Pagina successiva"
+    },
+    "detail": {
+      "backToIndex": "Tutti i torrent",
+      "object": "Oggetto",
+      "copyHash": "Copia hash",
+      "download": "Scarica",
+      "infoHash": "Info hash",
+      "createdAt": "Creato il",
+      "totalSize": "Dimensione totale",
+      "activeSwarm": "Swarm attivo ({count})",
+      "endpoint": "Endpoint",
+      "type": "Tipo",
+      "lastSeen": "Ultima attività",
+      "noPeers": "Nessun peer attivo nello swarm",
+      "seeder": "Seeder",
+      "leecher": "Leecher",
+      "confirmDeleteTitle": "Conferma eliminazione",
+      "confirmDeleteText": "Vuoi davvero eliminare questo torrent? L'operazione non può essere annullata.",
+      "notFound": "Torrent non trovato",
+      "deleteFailed": "Eliminazione del torrent non riuscita",
+      "uploadedBy": "caricato da {user}",
+      "report": "Segnala questo torrent",
+      "swarm": "Swarm",
+      "comments": "Nessun commento | 1 commento | {n} commenti",
+      "commentPlaceholder": "Aggiungi un commento…",
+      "postComment": "Pubblica commento",
+      "commentFailed": "Impossibile pubblicare il commento.",
+      "confirmDeleteComment": "Eliminare questo commento?",
+      "details": "Dettagli",
+      "commentDeleteFailed": "Impossibile eliminare il commento."
+    }
+  },
+  "search": {
+    "pageTitle": "Cerca torrent",
+    "titlePrefix": "Cerca",
+    "titleAccent": "torrent",
+    "placeholder": "Cerca per nome, tag o infohash...",
+    "results": "Risultati della ricerca",
+    "sortBy": "Ordina per:",
+    "newest": "Più recenti",
+    "noResults": "Nessun risultato",
+    "noResultsHint": "Nessun torrent corrisponde ai tuoi criteri di ricerca. Prova con altre parole chiave o altri filtri.",
+    "searching": "Ricerca nel database...",
+    "trending": "Torrent di tendenza"
+  },
+  "edit": {
+    "title": "Modifica torrent",
+    "torrentName": "Nome del torrent",
+    "noCategory": "Nessuna categoria",
+    "saveFailed": "Salvataggio delle modifiche non riuscito"
+  },
+  "upload": {
+    "title": "Carica torrent",
+    "dropFile": "Trascina qui il file .torrent",
+    "orBrowse": "o clicca per sfogliare i file",
+    "announceUrlLabel": "Il tuo URL di announce",
+    "announceUrl": "URL di announce",
+    "copyAnnounce": "Copia URL di announce",
+    "announceHint": "Tienilo privato: contiene la tua passkey.",
+    "displayName": "Nome visualizzato (facoltativo)",
+    "displayNamePlaceholder": "Per impostazione predefinita, il nome contenuto nel .torrent",
+    "selectCategory": "Seleziona una categoria...",
+    "processing": "Elaborazione...",
+    "submit": "Avvia upload",
+    "successHint": "L'oggetto è stato indicizzato correttamente.",
+    "viewDetails": "Vedi dettagli",
+    "copyFailed": "Copia negli appunti non riuscita",
+    "selectTorrentFile": "Seleziona un file .torrent",
+    "dropTorrentFile": "Trascina un file .torrent",
+    "failed": "Upload non riuscito"
+  },
+  "forum": {
+    "title": "Forum",
+    "confirmDeleteTopic": "Vuoi davvero eliminare questa discussione?",
+    "index": {
+      "subtitle": "Discussioni e annunci della community.",
+      "newCategory": "Nuova categoria",
+      "lastActivity": "Ultima attività",
+      "noTopics": "Ancora nessuna discussione",
+      "editCategory": "Modifica categoria",
+      "deleteCategory": "Elimina categoria",
+      "createTitle": "Crea nuova categoria",
+      "editTitle": "Modifica categoria",
+      "deleteTitle": "Elimina categoria",
+      "namePlaceholder": "Discussioni generali",
+      "descriptionPlaceholder": "Parla di qualsiasi cosa qui...",
+      "order": "Ordine",
+      "deleteConfirm": "Vuoi davvero eliminare {name}? Tutte le discussioni e i messaggi di questa categoria verranno eliminati definitivamente."
+    },
+    "newTopic": {
+      "breadcrumb": "Nuova discussione",
+      "title": "Crea nuova discussione",
+      "selectCategory": "Seleziona una categoria",
+      "topicTitle": "Titolo",
+      "titlePlaceholder": "A cosa stai pensando?",
+      "content": "Contenuto",
+      "contentPlaceholder": "Scrivi qui il tuo messaggio...",
+      "submit": "Crea discussione"
+    },
+    "category": {
+      "newTopic": "Nuova discussione",
+      "topic": "Discussione",
+      "replies": "Risposte",
+      "lastPost": "Ultimo messaggio",
+      "empty": "Ancora nessuna discussione in questa categoria.",
+      "by": "di",
+      "deleteTopic": "Elimina discussione"
+    },
+    "topic": {
+      "breadcrumb": "Discussione",
+      "pin": "Metti in evidenza",
+      "unpin": "Togli dall'evidenza",
+      "lock": "Chiudi",
+      "unlock": "Riapri",
+      "modBadge": "Mod",
+      "postedOn": "Pubblicato il {date}",
+      "deletePost": "Elimina messaggio",
+      "confirmDeletePost": "Vuoi davvero eliminare questo messaggio?",
+      "replyTitle": "Rispondi",
+      "replyPlaceholder": "Scrivi qui la tua risposta...",
+      "posting": "Pubblicazione...",
+      "postReply": "Invia risposta",
+      "locked": "Questa discussione è chiusa. Non puoi rispondere."
+    }
+  },
+  "users": {
+    "profile": {
+      "notFound": "Utente non trovato",
+      "modBadge": "Mod",
+      "memberSince": "Membro dal",
+      "lastSeen": "Ultimo accesso",
+      "uploads": "Upload",
+      "uploadedTorrents": "Torrent caricati",
+      "noUploads": "Ancora nessun upload",
+      "seedersLeechers": "S/L",
+      "uploadedAt": "Caricato",
+      "uncategorized": "Senza categoria",
+      "pageTitle": "{username} - Profilo",
+      "pageTitleFallback": "Profilo utente"
+    }
+  },
+  "invites": {
+    "title": "I miei inviti",
+    "subtitle": "Invita nuovi membri nel tracker",
+    "remaining": "Inviti rimanenti",
+    "generate": "Genera invito",
+    "yourInvites": "I tuoi inviti",
+    "clickToCopy": "Clicca per copiare",
+    "createdAt": "Creato: {date}",
+    "usedBy": "Usato da:",
+    "expiresAt": "Scade: {date}",
+    "empty": "Ancora nessun invito",
+    "emptyHint": "Genera un codice invito da condividere con gli amici",
+    "status": {
+      "used": "Usato",
+      "expired": "Scaduto"
+    },
+    "toast": {
+      "generated": "Codice invito generato!",
+      "generateFailed": "Generazione dell'invito non riuscita",
+      "copied": "Codice invito copiato negli appunti!",
+      "copyFailed": "Copia del codice non riuscita"
+    }
+  },
+  "mod": {
+    "layout": {
+      "title": "Moderazione"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "Dashboard",
+        "description": "Panoramica della moderazione e azioni rapide"
+      },
+      "pending": {
+        "label": "Torrent in attesa",
+        "description": "Esamina e approva i torrent caricati in attesa"
+      },
+      "users": {
+        "label": "Utenti",
+        "description": "Gestisci account utente e ban"
+      },
+      "reports": {
+        "label": "Segnalazioni",
+        "description": "Esamina e gestisci le segnalazioni degli utenti"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "Monitora e gestisci le violazioni H&R"
+      }
+    },
+    "dashboard": {
+      "pendingReports": "Segnalazioni in attesa",
+      "pendingReportsHint": "Controlla la sezione segnalazioni per gestire i reclami degli utenti.",
+      "viewReports": "Vedi segnalazioni",
+      "recentHnr": "H&R recenti",
+      "recentHnrHint": "Monitora gli utenti che non restano in seed.",
+      "viewHnr": "Vedi H&R"
+    }
+  },
+  "admin": {
+    "layout": {
+      "title": "Amministrazione",
+      "liveFeed": "Attività del tracker in tempo reale"
+    },
+    "nav": {
+      "dashboard": {
+        "label": "Dashboard",
+        "description": "Configurazione del tracker e gestione dei nodi"
+      },
+      "users": {
+        "label": "Utenti",
+        "description": "Gestisci account utente e permessi"
+      },
+      "roles": {
+        "label": "Ruoli",
+        "description": "Gestisci ruoli e permessi degli utenti"
+      },
+      "reports": {
+        "label": "Segnalazioni",
+        "description": "Esamina e gestisci le segnalazioni degli utenti"
+      },
+      "categories": {
+        "label": "Categorie",
+        "description": "Gestisci le categorie dei torrent"
+      },
+      "tags": {
+        "label": "Tag",
+        "description": "Gestisci i tag dei torrent"
+      },
+      "hnr": {
+        "label": "Hit & Run",
+        "description": "Monitora e gestisci le violazioni H&R"
+      },
+      "invites": {
+        "label": "Inviti",
+        "description": "Gestisci il sistema di inviti"
+      },
+      "torznab": {
+        "label": "API Torznab",
+        "description": "Configura l'integrazione *arr e il rate limiting"
+      },
+      "branding": {
+        "label": "Branding",
+        "description": "Personalizza aspetto e branding del sito"
+      },
+      "settings": {
+        "label": "Impostazioni",
+        "description": "Impostazioni globali di registrazione e del tracker"
+      }
+    },
+    "dashboard": {
+      "noHistory": "Ancora nessun dato storico",
+      "noHistoryHint": "La raccolta delle statistiche è appena iniziata. Ricontrolla tra un'ora."
+    },
+    "branding": {
+      "authSubtitle": "Sottotitolo pagina di accesso",
+      "authSubtitleDescription": "Sottotitolo mostrato sotto il titolo nelle pagine di accesso e registrazione.",
+      "authSubtitlePlaceholder": "Tracker BitTorrent privato",
+      "authTitle": "Titolo pagina di accesso",
+      "authTitleDescription": "Titolo mostrato nelle pagine di accesso e registrazione. Lascia vuoto per usare il nome del sito.",
+      "authTitlePlaceholder": "Inserisci il titolo della pagina di accesso...",
+      "bold": "Grassetto",
+      "currentFavicon": "Favicon attuale",
+      "currentLogo": "Logo attuale",
+      "dropFavicon": "Trascina la favicon o clicca per caricarla",
+      "dropImage": "Trascina un'immagine o clicca per caricarla",
+      "favicon": "Favicon",
+      "faviconDescription": "Carica una favicon personalizzata (ICO, PNG, SVG). Max 1MB. Mostrata nelle schede del browser.",
+      "footerContent": "Contenuto del footer",
+      "footerContentDescription": "Contenuto personalizzato del footer. Supporta la formattazione avanzata.",
+      "icon": "Icona",
+      "image": "Immagine",
+      "livePreview": "Anteprima in tempo reale",
+      "logoIcon": "Icona del logo",
+      "logoIconDescription": "Usa i nomi delle icone Phosphor (es. ph:broadcast-bold).",
+      "logoImage": "Immagine del logo",
+      "logoImageDescription": "Carica un logo personalizzato (PNG, JPG, SVG, WebP). Max 5MB.",
+      "logoType": "Tipo di logo",
+      "logoTypeDescription": "Scegli tra un'icona Phosphor o un'immagine personalizzata.",
+      "pageTitleExample": "Esempio: \"Cerca torrent {title}\"",
+      "pageTitleSuffix": "Suffisso del titolo di pagina",
+      "pageTitleSuffixDescription": "Testo aggiunto ai titoli delle schede del browser. Solo testo semplice.",
+      "quickSelect": "Selezione rapida",
+      "saveBranding": "Salva branding",
+      "saveTextBranding": "Salva testi",
+      "siteName": "Nome del sito",
+      "siteNameColor": "Colore del nome del sito",
+      "siteNameDescription": "Mostrato nella barra di navigazione e nel titolo del browser. Usa il testo formattato per uno stile personalizzato.",
+      "siteRules": "Regole del sito",
+      "siteRulesDescription": "Regole e condizioni mostrate agli utenti. Supporta la formattazione avanzata completa.",
+      "siteRulesPlaceholder": "Inserisci le regole e le linee guida del sito...",
+      "subtitle": "Sottotitolo",
+      "subtitleDescription": "Testo sotto il nome del sito. Lascia vuoto per mostrare la versione. Supporta il testo formattato.",
+      "subtitlePlaceholder": "Lascia vuoto per il numero di versione",
+      "textBranding": "Testi del sito",
+      "textBrandingDescription": "Personalizza i testi che compaiono in tutto il sito. Usa l'editor di testo formattato per una formattazione avanzata.",
+      "title": "Branding del sito",
+      "uploading": "Caricamento...",
+      "welcomeMessage": "Nota dallo staff",
+      "welcomeMessageDescription": "Mostrata in cima alla dashboard di ogni membro. Lascia vuoto per nasconderla.",
+      "welcomeMessagePlaceholder": "Benvenuto nella nostra community..."
+    },
+    "categories": {
+      "addFailed": "Aggiunta della categoria non riuscita",
+      "confirmDelete": "Vuoi davvero eliminare questa categoria?",
+      "confirmSeed": "Verranno create le categorie consigliate compatibili con Torznab. Continuare?",
+      "deleteFailed": "Eliminazione della categoria non riuscita",
+      "empty": "Nessuna categoria definita",
+      "newCategoryPlaceholder": "Nome della nuova categoria...",
+      "newSubcategoryPlaceholder": "Nome della nuova sottocategoria...",
+      "newznabId": "ID Newznab",
+      "newznabIdHint": "ID categoria Newznab/Torznab (es. 2040 per Movies/HD)",
+      "newznabIdTitle": "ID categoria Newznab/Torznab",
+      "nzId": "ID NZ",
+      "rootCategory": "Categoria principale",
+      "seed": "Crea categorie Torznab",
+      "seedFailed": "Creazione delle categorie non riuscita",
+      "seeded": "Nessuna categoria creata | 1 categoria creata | {count} categorie create",
+      "subcategoriesCount": "nessuna sottocategoria | 1 sottocategoria | {count} sottocategorie",
+      "title": "Gestione categorie",
+      "updateFailed": "Aggiornamento della categoria non riuscito"
+    },
+    "charts": {
+      "databaseSize": "Dimensione database (MB)",
+      "day": "Giorno",
+      "dbSize": "Dim. DB",
+      "growth": "Crescita utenti e torrent",
+      "hour": "Ora",
+      "month": "Mese",
+      "peers": "Peer",
+      "peersSeeders": "Peer e seeder",
+      "redisMemory": "Memoria Redis",
+      "redisMemoryUsage": "Uso memoria Redis (MB)",
+      "torrents": "Torrent",
+      "users": "Utenti",
+      "view": "Vista:",
+      "week": "Settimana"
+    },
+    "invites": {
+      "allCodesCopied": "Tutti i codici copiati!",
+      "clickToCopy": "Clicca per copiare",
+      "codeCopied": "Codice copiato!",
+      "copyAll": "Copia tutti",
+      "copyCodeFailed": "Copia del codice non riuscita",
+      "copyCodesFailed": "Copia dei codici non riuscita",
+      "count": "Quantità",
+      "createdBy": "Creato da:",
+      "empty": "Nessun invito trovato",
+      "expires": "Scade: {date}",
+      "expiresInDays": "Scadenza in giorni (facoltativo)",
+      "generate": "Genera",
+      "generateFailed": "Generazione dei codici non riuscita",
+      "generateTitle": "Genera codici univoci",
+      "generatedCodes": "Codici generati",
+      "generatedToast": "Nessun codice invito generato | 1 codice invito generato | {count} codici invito generati",
+      "grant": "Assegna",
+      "grantFailed": "Assegnazione degli inviti non riuscita",
+      "grantTitle": "Assegna inviti a un utente",
+      "grantedToast": "Nessun invito assegnato all'utente | 1 invito assegnato all'utente | {count} inviti assegnati all'utente",
+      "statusExpired": "Scaduto",
+      "statusPending": "In attesa",
+      "statusUsed": "Usato",
+      "title": "Inviti",
+      "usedBy": "Usato da:",
+      "userId": "ID utente"
+    },
+    "panic": {
+      "confirmText": "Tutti i dati sensibili del database verranno crittografati. I dati resteranno illeggibili finché non verranno ripristinati con la password di emergenza.",
+      "confirmTitle": "Conferma crittografia del database",
+      "encryptButton": "PANIC — Crittografa il database",
+      "encryptFailed": "Crittografia non riuscita",
+      "encryptNow": "Crittografa ora",
+      "encryptedAt": "Crittografato il: {date}",
+      "encryptedText": "Tutti i dati sensibili sono attualmente crittografati. Inserisci la password di emergenza per ripristinare l'accesso.",
+      "encryptedTitle": "Il database è crittografato",
+      "encrypting": "Crittografia in corso...",
+      "intro": "Crittografa immediatamente tutti i dati sensibili. Questa azione rende i dati illeggibili senza la password di emergenza impostata durante la prima registrazione.",
+      "irreversible": "Questa azione è irreversibile senza la password di emergenza.",
+      "password": "Password di emergenza",
+      "passwordPlaceholder": "Inserisci la password di emergenza",
+      "restore": "Ripristina",
+      "restoreButton": "Ripristina database",
+      "restoreFailed": "Ripristino non riuscito",
+      "restoreText": "Inserisci la password di emergenza impostata durante la registrazione del primo amministratore per decrittografare e ripristinare tutti i dati.",
+      "restoring": "Ripristino in corso...",
+      "title": "Blocco di emergenza"
+    },
+    "registration": {
+      "closed": "Chiusa",
+      "currentStatus": "Stato attuale: {status}",
+      "defaultInvitesDescription": "Numero di codici invito che ogni nuovo utente riceve alla registrazione.",
+      "defaultInvitesLabel": "Inviti predefiniti",
+      "gb": "GB",
+      "inviteOnlyDescription": "Richiedi un codice invito per registrarsi.",
+      "inviteOnlyLabel": "Modalità solo su invito",
+      "minRatioDescription": "Gli utenti con una ratio inferiore a questo valore non potranno scaricare. Imposta 0 per disattivare.",
+      "minRatioLabel": "Ratio minima",
+      "open": "Aperta",
+      "openDescription": "Consenti a chiunque di creare un account.",
+      "openLabel": "Registrazione aperta",
+      "starterCreditDescription": "Upload iniziale assegnato ai nuovi utenti per evitare un blocco immediato per ratio.",
+      "starterCreditLabel": "Credito iniziale (GB)",
+      "statusClosed": "La registrazione è chiusa",
+      "statusInviteOnly": "Registrazione solo su invito",
+      "statusOpen": "La registrazione è aperta a tutti",
+      "statusOpenInviteOptional": "Registrazione aperta (invito facoltativo)",
+      "title": "Registrazione"
+    },
+    "system": {
+      "backupWarning": "Esegui un backup del database prima di aggiornare",
+      "checkUpdates": "Verifica aggiornamenti",
+      "confirmPassword": "Conferma password",
+      "confirmPasswordDescription": "Reinserisci la nuova password per verificarla.",
+      "confirmPasswordPlaceholder": "Conferma la nuova password",
+      "currentPassword": "Password attuale",
+      "currentPasswordDescription": "La password che usi attualmente per accedere a Grafana.",
+      "currentPasswordPlaceholder": "Inserisci la password attuale di Grafana",
+      "currentVersion": "Versione attuale",
+      "downtimeWarning": "L'aggiornamento causerà una breve interruzione del servizio",
+      "grafanaFailed": "Aggiornamento della password di Grafana non riuscito",
+      "grafanaIntro": "Modifica la password di amministrazione di Grafana. Ti servirà la password attuale.",
+      "grafanaSuccess": "Password di Grafana aggiornata",
+      "grafanaTitle": "Password di Grafana",
+      "hideInstructions": "Nascondi istruzioni di aggiornamento",
+      "installedVersion": "Versione installata di Trackarr",
+      "newPassword": "Nuova password",
+      "newPasswordDescription": "Deve contenere almeno 8 caratteri.",
+      "newPasswordPlaceholder": "Inserisci la nuova password",
+      "published": "Pubblicata il {date}",
+      "showInstructions": "Mostra istruzioni di aggiornamento",
+      "step": "Passo {step}: {description}",
+      "upToDate": "Stai usando l'ultima versione",
+      "updateAvailable": "Aggiornamento disponibile: {version}",
+      "updateCommands": "Comandi di aggiornamento",
+      "updateGrafanaPassword": "Aggiorna password di Grafana",
+      "updating": "Aggiornamento...",
+      "versionTitle": "Versione e aggiornamenti",
+      "viewChangelog": "Vedi changelog"
+    },
+    "torznabUsers": {
+      "blockAccess": "Blocca accesso API",
+      "blockConfirm": "Vuoi davvero impedire a {username} di usare l'API Torznab? Non potrà più cercare né scaricare tramite le app *arr.",
+      "blockTitle": "Blocca accesso API",
+      "blockUser": "Blocca utente",
+      "daysAgo": "{n} g fa",
+      "empty": "Nessun utente trovato",
+      "hits": "{count} richieste | {count} richiesta | {count} richieste",
+      "hoursAgo": "{n} h fa",
+      "justNow": "Adesso",
+      "lastRequest": "Ultima richiesta",
+      "logsTitle": "Log API - {username}",
+      "minutesAgo": "{n} min fa",
+      "passkey": "Passkey",
+      "rateLimits": "Limiti di richieste",
+      "requests": "Richieste",
+      "resetPasskey": "Reimposta passkey",
+      "resetPasskeyConfirm": "Vuoi davvero reimpostare la passkey di {username}? Dovrà aggiornare le sue app *arr con la nuova passkey.",
+      "resetPasskeyTitle": "Reimposta passkey",
+      "searchPlaceholder": "Cerca utenti...",
+      "showing": "Da {from} a {to} di {total}",
+      "title": "Utenti API",
+      "viewLogs": "Vedi log"
+    },
+    "stats": {
+      "activeTorrents": "Torrent attivi",
+      "totalPeers": "Peer totali",
+      "trackerStatus": "Stato del tracker",
+      "operational": "Operativo",
+      "offline": "Offline"
+    },
+    "protocols": {
+      "title": "Protocolli"
+    },
+    "endpoints": {
+      "title": "Endpoint",
+      "httpAnnounce": "Announce HTTP",
+      "udpAnnounce": "Announce UDP"
+    },
+    "torznabLogs": {
+      "title": "Richieste recenti",
+      "totalRequests": "nessuna richiesta | {count} richiesta in totale | {count} richieste in totale",
+      "showing": "Da {from} a {to} di {total}",
+      "time": "Ora",
+      "function": "Funzione",
+      "query": "Query",
+      "results": "Risultati",
+      "duration": "Durata",
+      "empty": "Nessun log disponibile"
+    },
+    "torznabStats": {
+      "title": "Statistiche API Torznab",
+      "totalRequests": "Richieste totali",
+      "last24h": "Ultime 24 h",
+      "uniqueUsers": "Utenti unici",
+      "avgResponseTime": "Tempo di risposta medio",
+      "searchRequests": "Richieste di ricerca",
+      "tvSearches": "Ricerche serie TV",
+      "movieSearches": "Ricerche film",
+      "errors": "Errori"
+    },
+    "torznabConfig": {
+      "title": "Configurazione API",
+      "statusLabel": "Stato API Torznab",
+      "statusDescription": "Attiva o disattiva l'API Torznab per tutti gli utenti. Se disattivata, le app *arr non potranno connettersi.",
+      "apiAccepting": "L'API accetta richieste",
+      "apiDisabled": "L'API è disattivata",
+      "loggingLabel": "Log delle richieste",
+      "loggingDescription": "Registra tutte le richieste API per debug e monitoraggio. I log vengono conservati per 7 giorni.",
+      "loggingEnabled": "Log attivato",
+      "loggingDisabled": "Log disattivato",
+      "endpointLabel": "Endpoint API",
+      "endpointDescription": "L'URL di base dell'API Torznab. Gli utenti lo aggiungono in Prowlarr/Sonarr/Radarr.",
+      "copyUrl": "Copia URL"
+    },
+    "torznabBlacklist": {
+      "title": "IP e utenti bloccati",
+      "rateLimitedIps": "IP limitati",
+      "noIps": "Nessun IP bloccato al momento",
+      "expiresIn": "Scade tra",
+      "blockedUsers": "Utenti API bloccati",
+      "noUsers": "Nessun utente bloccato al momento",
+      "unblock": "Sblocca",
+      "unblocking": "Sblocco...",
+      "expired": "Scaduto",
+      "justNow": "Adesso",
+      "minutesAgo": "{n} min fa",
+      "hoursAgo": "{n} h fa",
+      "daysAgo": "{n} g fa"
+    },
+    "torznabRateLimit": {
+      "title": "Rate limiting",
+      "intro": "Configura i limiti di richieste per prevenire abusi dell'API. Questi limiti si applicano per utente (passkey) nella finestra di tempo indicata.",
+      "windowLabel": "Finestra di tempo",
+      "windowDescription": "La durata (in secondi) usata per calcolare i limiti.",
+      "seconds": "secondi",
+      "searchLabel": "Limite richieste di ricerca",
+      "searchDescription": "Numero massimo di richieste di ricerca (search, tvsearch, movie) per finestra e per utente.",
+      "downloadLabel": "Limite richieste di download",
+      "downloadDescription": "Numero massimo di download di file torrent per finestra e per utente.",
+      "perWindow": "richieste / {window}",
+      "strict": "Rigido",
+      "default": "Predefinito",
+      "relaxed": "Tollerante",
+      "generous": "Generoso",
+      "presets": "Preimpostazioni rapide",
+      "immediateNote": "Le modifiche si applicano subito alle nuove richieste."
+    },
+    "tags": {
+      "add": "Aggiungi tag",
+      "empty": "Nessun tag configurato",
+      "addTitle": "Aggiungi nuovo tag",
+      "placeholder": "es. 1080p",
+      "slug": "Slug",
+      "color": "Colore",
+      "confirmDelete": "Eliminare questo tag?"
+    },
+    "reports": {
+      "title": "Segnalazioni",
+      "status": {
+        "pending": "In attesa",
+        "resolved": "Risolta",
+        "dismissed": "Archiviata"
+      },
+      "by": "Da:",
+      "resolve": "Risolvi",
+      "dismiss": "Archivia",
+      "empty": "Nessuna segnalazione trovata"
+    },
+    "homepage": {
+      "title": "Contenuto della home",
+      "heroSection": "Sezione principale",
+      "heroTitleLabel": "Titolo",
+      "heroTitleDescription": "Il titolo principale della home. Usa il testo formattato per stili, colori e font personalizzati.",
+      "subtitleLabel": "Sottotitolo",
+      "subtitleDescription": "Una breve descrizione sotto il titolo. Supporta il testo formattato.",
+      "subtitlePlaceholder": "Motore di tracking P2P minimalista e ad alte prestazioni...",
+      "badgeLabel": "Badge di stato",
+      "badgeDescription": "Testo mostrato nel badge sopra il titolo.",
+      "badgePlaceholder": "Tracker online e operativo",
+      "featureBoxes": "Riquadri delle funzionalità",
+      "featureLabel": "Funzionalità {n}",
+      "featureDescription": "Titolo e descrizione di questa scheda. Supporta il testo formattato.",
+      "featureTitleLabel": "Titolo",
+      "featureTitlePlaceholder": "Titolo della funzionalità",
+      "featureDescriptionPlaceholder": "Descrizione della funzionalità...",
+      "save": "Salva contenuto della home"
+    },
+    "announcements": {
+      "title": "Annuncio del sito",
+      "enableLabel": "Attiva annuncio",
+      "enableDescription": "Mostra un banner sotto la barra di navigazione principale in tutte le pagine.",
+      "messageLabel": "Messaggio",
+      "messageDescription": "Il contenuto dell'annuncio. Mantienilo breve e chiaro.",
+      "messagePlaceholder": "Inserisci il messaggio dell'annuncio...",
+      "typeLabel": "Tipo di banner",
+      "typeDescription": "Determina il colore e l'icona del banner.",
+      "typeInfo": "Info",
+      "typeWarning": "Avviso",
+      "preview": "Anteprima in tempo reale",
+      "save": "Salva annuncio"
+    },
+    "pending": {
+      "title": "Torrent in attesa",
+      "uncategorized": "Senza categoria",
+      "empty": "Nessun torrent in attesa",
+      "allModerated": "Tutti i torrent sono stati moderati",
+      "approveFailed": "Approvazione del torrent non riuscita",
+      "rejectPrompt": "Motivo del rifiuto (facoltativo):",
+      "rejectFailed": "Rifiuto del torrent non riuscito"
+    },
+    "hnr": {
+      "title": "Monitoraggio Hit & Run",
+      "hitAndRun": "Hit & Run",
+      "pending": "In attesa",
+      "checkNew": "Cerca nuovi H&R",
+      "seedTime": "Tempo di seed:",
+      "downloadedAt": "Scaricato: {date}",
+      "clear": "Rimuovi H&R",
+      "exempt": "Esenta",
+      "exempted": "Esentato",
+      "empty": "Nessun H&R trovato"
+    },
+    "roles": {
+      "title": "Gestione ruoli",
+      "createTitle": "Crea nuovo ruolo",
+      "namePlaceholder": "Nome del ruolo...",
+      "color": "Colore",
+      "skipModeration": "Salta moderazione",
+      "canBypass": "Può saltare la moderazione",
+      "requiresModeration": "Richiede moderazione",
+      "skipMod": "Salta mod.",
+      "delete": "Elimina ruolo",
+      "empty": "Ancora nessun ruolo creato",
+      "createFailed": "Creazione del ruolo non riuscita",
+      "updateFailed": "Aggiornamento del ruolo non riuscito",
+      "confirmDelete": "Vuoi davvero eliminare il ruolo \"{name}\"?",
+      "deleteFailed": "Eliminazione del ruolo non riuscita"
+    },
+    "users": {
+      "title": "Gestione utenti",
+      "searchPlaceholder": "Cerca per nome utente o email...",
+      "ban": "Banna",
+      "noRole": "Nessun ruolo",
+      "mod": "Mod",
+      "empty": "Nessun utente trovato",
+      "updateRoleFailed": "Aggiornamento del ruolo dell'utente non riuscito",
+      "confirmBan": "Vuoi davvero bannare {name}?",
+      "confirmUnban": "Vuoi davvero rimuovere il ban a {name}?",
+      "banFailed": "Ban dell'utente non riuscito",
+      "unbanFailed": "Rimozione del ban non riuscita",
+      "assignRoleFailed": "Assegnazione del ruolo non riuscita"
+    },
+    "footer": {
+      "title": "Link del footer",
+      "description": "Icone mostrate in basso a destra in ogni pagina. I link si aprono in una nuova scheda.",
+      "icon": "Icona",
+      "label": "Etichetta",
+      "url": "URL",
+      "add": "Aggiungi link",
+      "remove": "Rimuovi",
+      "moveUp": "Sposta su",
+      "moveDown": "Sposta giù",
+      "empty": "Nessun link: il footer non ne mostra nessuno.",
+      "max": "Massimo {max} link.",
+      "tagline": "Slogan del footer",
+      "taglineDescription": "Breve testo accanto al copyright. Lascia vuoto per nasconderlo.",
+      "taglineDefault": "Testo predefinito",
+      "resetTagline": "Usa predefinito",
+      "resetLinks": "Ripristina link predefiniti",
+      "save": "Salva footer",
+      "saved": "Salvato",
+      "invalid": "Ogni link deve avere un'etichetta e un URL http(s) o mailto."
+    }
+  },
+  "time": {
+    "justNow": "adesso",
+    "minutesAgo": "{count} min fa | {count} min fa",
+    "hoursAgo": "{count} h fa | {count} h fa",
+    "daysAgo": "{count} giorno fa | {count} giorni fa",
+    "monthsAgo": "{count} mese fa | {count} mesi fa",
+    "yearsAgo": "{count} anno fa | {count} anni fa"
+  },
+  "freeleech": {
+    "banner": "Freeleech attivo: i download non contano per la tua ratio.",
+    "bannerUntil": "Freeleech attivo fino al {date}: i download non contano per la tua ratio.",
+    "admin": {
+      "title": "Freeleech globale",
+      "description": "Mentre è attivo, i dati scaricati non vengono conteggiati (l'upload sì) e la ratio minima è sospesa. Torznab indica un download factor pari a 0.",
+      "active": "Attivo",
+      "activeUntil": "Attivo fino al {date}",
+      "activeForever": "Attivo, senza scadenza",
+      "inactive": "Inattivo",
+      "duration": "Durata (ore)",
+      "durationHint": "Lascia vuoto per nessuna scadenza.",
+      "start": "Avvia freeleech",
+      "update": "Aggiorna",
+      "stop": "Ferma freeleech",
+      "confirmStop": "Fermare subito il freeleech globale?"
+    }
+  },
+  "shell": {
+    "skip": "Vai al contenuto",
+    "groups": {
+      "browse": "Esplora",
+      "community": "Community",
+      "account": "Il mio account",
+      "staff": "Staff"
+    },
+    "nav": {
+      "home": "Home",
+      "torrents": "Torrent",
+      "bounties": "Taglie",
+      "forum": "Forum",
+      "shop": "Negozio bonus",
+      "invites": "Inviti",
+      "profile": "Il mio profilo",
+      "mod": "Moderazione",
+      "admin": "Amministrazione"
+    },
+    "menu": {
+      "open": "Apri navigazione",
+      "close": "Chiudi navigazione",
+      "label": "Navigazione principale"
+    },
+    "search": {
+      "trigger": "Cerca",
+      "placeholder": "Cerca torrent, ID IMDb o info hash",
+      "pages": "Pagine",
+      "torrents": "Torrent",
+      "seeAll": "Mostra tutti i risultati per “{q}”",
+      "empty": "Nessun torrent corrisponde a “{q}”",
+      "loading": "Ricerca…",
+      "close": "Chiudi ricerca",
+      "hint": "per navigare, Invio per aprire"
+    },
+    "meter": {
+      "uploaded": "Upload",
+      "downloaded": "Download",
+      "ratio": "Ratio",
+      "refresh": "Aggiorna le mie statistiche",
+      "label": "Il tuo traffico"
+    },
+    "freeleech": {
+      "pill": "Freeleech",
+      "until": "Freeleech fino a {time}"
+    },
+    "user": {
+      "open": "Menu account",
+      "passkey": "Passkey",
+      "copy": "Copia passkey",
+      "copied": "Copiata",
+      "points": "{n} punti",
+      "signOut": "Esci",
+      "theme": "Tema",
+      "language": "Lingua"
+    },
+    "theme": {
+      "label": "Tema",
+      "light": "Chiaro",
+      "system": "Sistema",
+      "dark": "Scuro"
+    }
+  },
+  "dashboard": {
+    "greeting": {
+      "morning": "Buongiorno, {name}",
+      "afternoon": "Buon pomeriggio, {name}",
+      "evening": "Buonasera, {name}",
+      "neutral": "Ciao, {name}"
+    },
+    "memberSince": "Membro dal {date}",
+    "browse": "Esplora i torrent",
+    "upload": "Carica un torrent",
+    "account": "Il tuo account",
+    "seeding": "In seed",
+    "leeching": "nessuno in leech | 1 torrent in leech | {n} torrent in leech",
+    "points": "Punti bonus",
+    "spendPoints": "Spendili nel negozio",
+    "hnr": "Hit & Run",
+    "hnrNone": "Nessun H&R in sospeso",
+    "hnrWarning": "Continua a fare seed per eliminarli",
+    "latest": "Nuovi torrent",
+    "seeAll": "Vedi tutti",
+    "columns": {
+      "name": "Nome",
+      "size": "Dimensione",
+      "seeders": "Seeder",
+      "leechers": "Leecher",
+      "age": "Aggiunto"
+    },
+    "noTorrents": "Ancora nessun torrent.",
+    "uploadFirst": "Carica il primo",
+    "bounties": "Taglie aperte",
+    "noBounties": "Nessuna taglia aperta.",
+    "requestTorrent": "Richiedi un torrent",
+    "forum": "Ultime dal forum",
+    "noTopics": "Ancora nessuna discussione.",
+    "startTopic": "Aprine una",
+    "site": {
+      "title": "Il tracker in numeri",
+      "members": "Membri",
+      "activePeers": "Peer attivi",
+      "seededTorrents": "Torrent in seed",
+      "shared": "Dati condivisi"
+    }
+  }
+}

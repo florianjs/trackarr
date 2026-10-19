@@ -1,0 +1,83 @@
+{
+  "shoutbox": {
+    "title": "Shoutbox",
+    "nav": "Shoutbox",
+    "channels": "Canales",
+    "loadEarlier": "Cargar mensajes anteriores",
+    "empty": "Aún no hay mensajes. ¡Saluda!",
+    "staff": "Staff",
+    "deleted": "Mensaje eliminado",
+    "deletedByModeration": "Mensaje retirado por la moderación",
+    "reactionLabel": "{emoji}: {n} reacción | {emoji}: {n} reacciones",
+    "addReaction": "Añadir una reacción",
+    "otherEmoji": "Otro emoji",
+    "placeholder": "Mensaje en #{channel}",
+    "send": "Enviar",
+    "readOnly": "Puedes leer este canal, pero no publicar en él.",
+    "mutedUntil": "Estás silenciado en la shoutbox hasta el {date}.",
+    "delete": "Eliminar",
+    "muteUser": "Silenciar a {name}",
+    "muteDuration": "Duración del silencio",
+    "muteReason": "Motivo (opcional)",
+    "mute": "Silenciar",
+    "cancel": "Cancelar",
+    "error": "Algo ha salido mal",
+    "durations": {
+      "10": "10 minutos",
+      "60": "1 hora",
+      "1440": "24 horas",
+      "10080": "7 días"
+    },
+    "adminNav": {
+      "label": "Shoutbox",
+      "description": "Activa o desactiva la shoutbox y gestiona sus canales"
+    },
+    "modNav": {
+      "label": "Shoutbox",
+      "description": "Miembros silenciados en la shoutbox"
+    },
+    "admin": {
+      "settings": "Shoutbox",
+      "enabled": "Shoutbox activada",
+      "enabledHint": "Si está desactivada, la shoutbox desaparece para los miembros (menú, página de inicio) y sus mensajes se conservan.",
+      "channels": "Canales",
+      "addChannel": "Nuevo canal",
+      "editChannel": "Editar canal",
+      "deleteChannel": "Eliminar canal",
+      "confirmDelete": "Eliminar junto con sus mensajes",
+      "name": "Nombre",
+      "position": "Orden",
+      "description": "Descripción",
+      "readAccess": "Quién puede leer",
+      "writeAccess": "Quién puede publicar",
+      "read": {
+        "all": "Todos los miembros",
+        "roles": "Algunos roles",
+        "staff": "Solo el staff"
+      },
+      "write": {
+        "members": "Todos los lectores",
+        "staff": "Staff",
+        "admins": "Admins"
+      },
+      "roles": "Roles permitidos",
+      "noRoles": "Aún no hay roles: créalos en Admin > Roles.",
+      "rolesHint": "Los moderadores y administradores siempre ven todos los canales.",
+      "reactions": "Los miembros pueden reaccionar con emojis",
+      "save": "Guardar",
+      "saved": "Guardado",
+      "actions": "Acciones",
+      "noChannels": "No hay canales."
+    },
+    "mutes": {
+      "title": "Miembros silenciados",
+      "hint": "Silencia a un miembro de la shoutbox pasando el cursor sobre uno de sus mensajes.",
+      "member": "Miembro",
+      "until": "Hasta",
+      "reason": "Motivo",
+      "by": "Por",
+      "unmute": "Quitar silencio",
+      "empty": "No hay nadie silenciado."
+    }
+  }
+}

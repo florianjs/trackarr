@@ -12,6 +12,7 @@ import {
   getPageTitleSuffix,
   getFooterLinks,
   getFooterTagline,
+  isShoutboxEnabled,
 } from '../utils/settings';
 import { sanitizeRichText } from '../utils/sanitize';
 
@@ -31,9 +32,10 @@ export default defineEventHandler(async () => {
   const authSubtitle = await getAuthSubtitle();
   const footerText = await getFooterText();
   const pageTitleSuffix = await getPageTitleSuffix();
-  const [footerLinks, footerTagline] = await Promise.all([
+  const [footerLinks, footerTagline, shoutboxEnabled] = await Promise.all([
     getFooterLinks(),
     getFooterTagline(),
+    isShoutboxEnabled(),
   ]);
 
   // Rich text fields are rendered with v-html: sanitize on the way out so
@@ -52,5 +54,6 @@ export default defineEventHandler(async () => {
     pageTitleSuffix, // Rendered as text in <title>, never as HTML
     footerLinks, // Validated: known icons, http(s)/mailto URLs only
     footerTagline, // Plain text; null = default, '' = hidden
+    shoutboxEnabled, // Hides the shoutbox link and widget when off
   };
 });

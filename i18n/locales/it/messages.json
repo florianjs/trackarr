@@ -1,0 +1,30 @@
+{
+  "messages": {
+    "title": "Messaggi",
+    "new": "Nuovo messaggio",
+    "empty": "Ancora nessuna conversazione.",
+    "emptyHint": "Iniziane una dal profilo di un membro o con Nuovo messaggio.",
+    "you": "Tu: ",
+    "select": "Seleziona una conversazione o iniziane una nuova.",
+    "to": "A",
+    "toPlaceholder": "Nome utente del membro",
+    "bodyPlaceholder": "Scrivi un messaggio…",
+    "send": "Invia",
+    "sending": "Invio…",
+    "sendHint": "Invio per inviare, Maiusc+Invio per andare a capo",
+    "loadEarlier": "Carica messaggi precedenti",
+    "back": "Torna alle conversazioni",
+    "profile": "Vedi profilo",
+    "block": "Blocca questo membro",
+    "unblock": "Sblocca questo membro",
+    "hide": "Nascondi conversazione",
+    "confirmBlock": "Bloccare {name}? Non potrà più inviarti messaggi.",
+    "confirmHide": "Nascondere questa conversazione? Ricomparirà se arriva un nuovo messaggio.",
+    "youBlocked": "Hai bloccato questo membro. Sbloccalo per rispondere.",
+    "blockedYou": "Questo membro non accetta i tuoi messaggi.",
+    "deletedUser": "Membro eliminato",
+    "nav": "Messaggi",
+    "sendMessage": "Invia un messaggio",
+    "unreadCount": "nessuna conversazione non letta | 1 conversazione non letta | {n} conversazioni non lette"
+  }
+}

@@ -929,10 +929,10 @@
   },
   "time": {
     "justNow": "just now",
-    "minutesAgo": "{count}m ago",
-    "hoursAgo": "{count}h ago",
-    "daysAgo": "{count}d ago",
-    "monthsAgo": "{count}mo ago",
+    "minutesAgo": "{count}m ago | {count}m ago",
+    "hoursAgo": "{count}h ago | {count}h ago",
+    "daysAgo": "{count}d ago | {count}d ago",
+    "monthsAgo": "{count}mo ago | {count}mo ago",
     "yearsAgo": "{count}y ago | {count}y ago"
   },
   "freeleech": {
@@ -1050,6 +1050,13 @@
     "requestTorrent": "Request a torrent",
     "forum": "Latest on the forum",
     "noTopics": "No topic yet.",
-    "startTopic": "Start one"
+    "startTopic": "Start one",
+    "site": {
+      "title": "The tracker in numbers",
+      "members": "Members",
+      "activePeers": "Active peers",
+      "seededTorrents": "Seeded torrents",
+      "shared": "Data shared"
+    }
   }
 }

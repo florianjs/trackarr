@@ -929,10 +929,10 @@
   },
   "time": {
     "justNow": "à l'instant",
-    "minutesAgo": "il y a {count} min",
-    "hoursAgo": "il y a {count} h",
-    "daysAgo": "il y a {count} j",
-    "monthsAgo": "il y a {count} mois",
+    "minutesAgo": "il y a {count} min | il y a {count} min",
+    "hoursAgo": "il y a {count} h | il y a {count} h",
+    "daysAgo": "il y a {count} j | il y a {count} j",
+    "monthsAgo": "il y a {count} mois | il y a {count} mois",
     "yearsAgo": "il y a {count} an | il y a {count} ans"
   },
   "freeleech": {
@@ -1050,6 +1050,13 @@
     "requestTorrent": "Demander un torrent",
     "forum": "Derniers sujets du forum",
     "noTopics": "Aucun sujet pour l'instant.",
-    "startTopic": "Lancer la discussion"
+    "startTopic": "Lancer la discussion",
+    "site": {
+      "title": "Le tracker en chiffres",
+      "members": "Inscrits",
+      "activePeers": "Peers actifs",
+      "seededTorrents": "Torrents en seed",
+      "shared": "Données partagées"
+    }
   }
 }
