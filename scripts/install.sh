@@ -483,13 +483,13 @@ setup_repository() {
 # BUILD DOCKER IMAGE
 # =============================================================================
 build_application() {
-    log_step "Building Trackarr Docker image..."
+    log_step "Building Trackarr Docker images (app, tracker)..."
     
     cd "$INSTALL_DIR"
     
     # Build through compose so the tracker URLs from .env are passed as build
     # args (a plain docker build baked localhost into the image, issue #49)
-    docker compose -f docker-compose.prod.yml build app
+    docker compose -f docker-compose.prod.yml build app tracker
     
     log_success "Docker image built successfully"
 }
