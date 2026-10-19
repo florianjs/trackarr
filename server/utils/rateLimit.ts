@@ -7,7 +7,7 @@
 import { redis } from '../redis/client';
 import {
   getClientIPOptions,
-  normalizeIP,
+  rateLimitSubject,
   resolveClientIP,
 } from './clientIp';
 
@@ -90,7 +90,7 @@ const MAX_BLACKLIST_DURATION = 86400; // 24 hours max
  * Check if an IP is blacklisted
  */
 export async function isBlacklisted(ip: string): Promise<boolean> {
-  const normalizedIP = normalizeIP(ip);
+  const normalizedIP = rateLimitSubject(ip);
 
   try {
     const data = await redis.hget(BLACKLIST_KEY, normalizedIP);
@@ -122,7 +122,7 @@ export async function blacklistIP(
   reason: string,
   previousViolations: number = 0
 ): Promise<void> {
-  const normalizedIP = normalizeIP(ip);
+  const normalizedIP = rateLimitSubject(ip);
   const violations = previousViolations + 1;
 
   // Progressive penalty: doubles each time, up to max
@@ -154,7 +154,7 @@ export async function blacklistIP(
  * Get violation count for an IP
  */
 async function getViolationCount(ip: string): Promise<number> {
-  const normalizedIP = normalizeIP(ip);
+  const normalizedIP = rateLimitSubject(ip);
 
   try {
     const data = await redis.hget(BLACKLIST_KEY, normalizedIP);
@@ -269,7 +269,7 @@ export async function rateLimit(
   } = options;
 
   const ip = getClientIP(event);
-  const normalizedIP = normalizeIP(ip);
+  const normalizedIP = rateLimitSubject(ip);
 
   // Check blacklist first
   if (await isBlacklisted(normalizedIP)) {
@@ -322,7 +322,7 @@ const DDOS_THRESHOLD = 100; // 100 requests in 10 seconds = attack
  */
 export async function detectDDoS(event: any): Promise<void> {
   const ip = getClientIP(event);
-  const normalizedIP = normalizeIP(ip);
+  const normalizedIP = rateLimitSubject(ip);
 
   if (await isBlacklisted(normalizedIP)) {
     throw createError({
@@ -413,4 +413,49 @@ export async function protectEndpoint(
 ): Promise<number> {
   await detectDDoS(event);
   return rateLimit(event, RATE_LIMITS[limitType]);
+}
+
+// ============================================================================
+// Per-account login failures
+// ============================================================================
+// IP limits do not stop a distributed guesser: failures are also counted per
+// username. Every username is counted, existing or not, so a lockout never
+// tells whether an account exists. Trade-off: anyone can lock an account out
+// of password logins for the window.
+
+const ACCOUNT_FAILURE_WINDOW_SEC = 15 * 60;
+const ACCOUNT_MAX_FAILURES = 10;
+
+function accountFailureKey(username: string): string {
+  return `ratelimit:login-fail:${username.trim().toLowerCase()}`;
+}
+
+/** Throws 429 once the username has too many recent failed logins */
+export async function assertAccountNotLocked(username: string): Promise<void> {
+  const key = accountFailureKey(username);
+  const since = Date.now() - ACCOUNT_FAILURE_WINDOW_SEC * 1000;
+  try {
+    await redis.zremrangebyscore(key, 0, since);
+    if ((await redis.zcard(key)) >= ACCOUNT_MAX_FAILURES) {
+      throw createError({
+        statusCode: 429,
+        message: 'Too many failed attempts for this account, try again later',
+      });
+    }
+  } catch (err) {
+    if ((err as { statusCode?: number }).statusCode === 429) throw err;
+    // Redis down: the per-IP limits still apply
+    console.warn('[RateLimit] Account lockout check skipped:', (err as Error).message);
+  }
+}
+
+export async function recordAccountFailure(username: string): Promise<void> {
+  const key = accountFailureKey(username);
+  const now = Date.now();
+  await redis
+    .multi()
+    .zadd(key, now, `${now}:${Math.random()}`)
+    .expire(key, ACCOUNT_FAILURE_WINDOW_SEC)
+    .exec()
+    .catch((err) => console.warn('[RateLimit] Account failure not recorded:', err.message));
 }

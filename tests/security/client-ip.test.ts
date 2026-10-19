@@ -3,6 +3,7 @@ import {
   buildTrustedProxyList,
   resolveClientIP,
   normalizeIP,
+  rateLimitSubject,
 } from '../../server/utils/clientIp';
 
 const defaults = {
@@ -105,5 +106,26 @@ describe('resolveClientIP', () => {
         defaults
       )
     ).toBe('203.0.113.7');
+  });
+});
+
+describe('rateLimitSubject', () => {
+  it('keeps IPv4 addresses as they are', () => {
+    expect(rateLimitSubject('203.0.113.7')).toBe('203.0.113.7');
+    expect(rateLimitSubject('::ffff:203.0.113.7')).toBe('203.0.113.7');
+  });
+
+  it('groups IPv6 addresses by /64', () => {
+    const subject = '2001:db8:1:2::/64';
+    expect(rateLimitSubject('2001:db8:1:2::1')).toBe(subject);
+    expect(rateLimitSubject('2001:0db8:0001:0002:ffff:ffff:ffff:ffff')).toBe(subject);
+    expect(rateLimitSubject('2001:db8:1:2:abcd::9')).toBe(subject);
+    expect(rateLimitSubject('2001:db8:1:3::1')).not.toBe(subject);
+    expect(rateLimitSubject('::1')).toBe('0:0:0:0::/64');
+    expect(rateLimitSubject('fe80::1%eth0')).toBe('fe80:0:0:0::/64');
+  });
+
+  it('leaves unparsable input untouched', () => {
+    expect(rateLimitSubject('unknown')).toBe('unknown');
   });
 });

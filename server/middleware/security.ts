@@ -169,9 +169,10 @@ export default defineEventHandler(async (event) => {
   if (ip) {
     const banReason = await getIpBan(ip);
     if (banReason !== undefined) {
+      // The reason names the banned user: never show it to whoever shares the IP
       throw createError({
         statusCode: 403,
-        message: `Access denied: ${banReason || 'IP banned'}`,
+        message: 'Access denied: IP banned',
       });
     }
   }

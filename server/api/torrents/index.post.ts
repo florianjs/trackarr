@@ -154,12 +154,16 @@ export default defineEventHandler(async (event) => {
   });
 
   if (existing) {
-    // Return existing torrent
+    // Only what the uploader's own file already tells: the existing row may
+    // be another user's pending torrent (description, uploader, status)
     return {
       success: true,
       message: 'Torrent already exists',
       data: {
-        ...existing,
+        id: existing.id,
+        infoHash: existing.infoHash,
+        name: existing.name,
+        size: existing.size,
         magnetLink: generateMagnetLink(infoHash, name),
       },
     };
@@ -208,7 +212,7 @@ export default defineEventHandler(async (event) => {
   });
 
   if (canBypassModeration) {
-    await awardUploadBonus(db, { id, uploaderId: user.id, name }).catch((err) =>
+    await awardUploadBonus(db, { id, infoHash, uploaderId: user.id, name }).catch((err) =>
       console.error('[Bonus] Upload bonus failed:', err)
     );
   }

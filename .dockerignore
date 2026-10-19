@@ -1,0 +1,25 @@
+# Never send secrets or local state into the image build context
+.env
+.env.*
+!.env.example
+secrets/
+CREDENTIALS.txt
+certs/
+*.pem
+*.key
+docker/pgbouncer/userlist.txt
+
+# Rebuilt inside the image or irrelevant to it
+.git
+node_modules
+.output
+.nuxt
+.nitro
+.data
+.cache
+.ignore
+.claude
+tracker/target
+doc/node_modules
+doc/.vitepress/cache
+doc/.vitepress/dist
