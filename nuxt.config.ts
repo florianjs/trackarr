@@ -19,8 +19,8 @@ export default defineNuxtConfig({
     strategy: 'no_prefix',
     defaultLocale: 'en',
     locales: [
-      { code: 'en', language: 'en-US', name: 'English', files: ['en/app.json', 'en/shop.json', 'en/messages.json'] },
-      { code: 'fr', language: 'fr-FR', name: 'Français', files: ['fr/app.json', 'fr/shop.json', 'fr/messages.json'] },
+      { code: 'en', language: 'en-US', name: 'English', files: ['en/app.json', 'en/shop.json', 'en/messages.json', 'en/shoutbox.json'] },
+      { code: 'fr', language: 'fr-FR', name: 'Français', files: ['fr/app.json', 'fr/shop.json', 'fr/messages.json', 'fr/shoutbox.json'] },
     ],
     // English unless the user picks another language (stored in a cookie by
     // app/plugins/locale-cookie.ts); the browser language is not used

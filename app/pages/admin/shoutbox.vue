@@ -1,0 +1,3 @@
+<template>
+  <AdminShoutbox />
+</template>

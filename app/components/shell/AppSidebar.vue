@@ -95,7 +95,7 @@ interface NavGroup {
   staff?: 'mod' | 'admin';
 }
 
-defineProps<{
+const props = defineProps<{
   open: boolean;
   branding: {
     siteName?: string;
@@ -103,6 +103,7 @@ defineProps<{
     siteLogoImage?: string | null;
     siteNameColor?: string | null;
     siteNameBold?: boolean;
+    shoutboxEnabled?: boolean;
   } | null;
 }>();
 const emit = defineEmits<{ close: [] }>();
@@ -124,7 +125,12 @@ const groups = computed<NavGroup[]>(() => [
   },
   {
     label: 'shell.groups.community',
-    items: [{ to: '/forum', label: 'shell.nav.forum', icon: 'ph:chats-circle' }],
+    items: [
+      { to: '/forum', label: 'shell.nav.forum', icon: 'ph:chats-circle' },
+      ...(props.branding?.shoutboxEnabled
+        ? [{ to: '/shoutbox', label: 'shoutbox.nav', icon: 'ph:chat-teardrop-dots' }]
+        : []),
+    ],
   },
   {
     label: 'shell.groups.account',

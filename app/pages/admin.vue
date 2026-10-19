@@ -145,6 +145,12 @@ const menuItems = computed(() => [
     icon: 'ph:coins',
     description: t('bonus.adminNav.description'),
   },
+  {
+    label: t('shoutbox.adminNav.label'),
+    path: '/admin/shoutbox',
+    icon: 'ph:chat-teardrop-dots',
+    description: t('shoutbox.adminNav.description'),
+  },
 ]);
 
 const currentItem = computed(
