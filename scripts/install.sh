@@ -321,39 +321,59 @@ generate_secrets() {
     SECRETS_DIR="$INSTALL_DIR/secrets"
     mkdir -p "$SECRETS_DIR"
     chmod 700 "$SECRETS_DIR"
+
+    # Re-running on an existing install keeps its secrets: new ones would no
+    # longer open the database, and would void every session and IP hash
+    REUSED_SECRETS=false
+    if [[ -f "$INSTALL_DIR/.env" ]]; then
+        log_info "Existing .env found: keeping its secrets"
+        REUSED_SECRETS=true
+    fi
+    existing_secret() {
+        # Always succeeds: under set -e a missing .env must not abort
+        if [[ -f "$INSTALL_DIR/.env" ]]; then
+            grep -m1 "^$1=" "$INSTALL_DIR/.env" | cut -d= -f2- || true
+        fi
+    }
     
     # Database password (32 chars, alphanumeric)
-    DB_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
+    DB_PASSWORD=$(existing_secret DB_PASSWORD)
+    [[ -z "$DB_PASSWORD" ]] && DB_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
     echo -n "$DB_PASSWORD" > "$SECRETS_DIR/db_password.txt"
-    log_info "Generated database password"
+    log_info "Prepared database password"
     
     # Redis password (32 chars)
-    REDIS_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
+    REDIS_PASSWORD=$(existing_secret REDIS_PASSWORD)
+    [[ -z "$REDIS_PASSWORD" ]] && REDIS_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
     echo -n "$REDIS_PASSWORD" > "$SECRETS_DIR/redis_password.txt"
-    log_info "Generated Redis password"
+    log_info "Prepared Redis password"
     
     # Grafana admin password (32 chars)
-    GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
+    GRAFANA_ADMIN_PASSWORD=$(existing_secret GRAFANA_ADMIN_PASSWORD)
+    [[ -z "$GRAFANA_ADMIN_PASSWORD" ]] && GRAFANA_ADMIN_PASSWORD=$(openssl rand -base64 32 | tr -d '/+=' | head -c 32)
     echo -n "$GRAFANA_ADMIN_PASSWORD" > "$SECRETS_DIR/grafana_admin_password.txt"
-    log_info "Generated Grafana admin password"
+    log_info "Prepared Grafana admin password"
     
     # IP hash secret (64 chars)
-    IP_HASH_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
+    IP_HASH_SECRET=$(existing_secret IP_HASH_SECRET)
+    [[ -z "$IP_HASH_SECRET" ]] && IP_HASH_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
     echo -n "$IP_HASH_SECRET" > "$SECRETS_DIR/ip_hash_secret.txt"
-    log_info "Generated IP hash secret"
+    log_info "Prepared IP hash secret"
 
     # Token between the app and the tracker service's private API (64 chars)
-    TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)
+    TRACKER_INTERNAL_TOKEN=$(existing_secret TRACKER_INTERNAL_TOKEN)
+    [[ -z "$TRACKER_INTERNAL_TOKEN" ]] && TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)
     echo -n "$TRACKER_INTERNAL_TOKEN" > "$SECRETS_DIR/tracker_internal_token.txt"
-    log_info "Generated tracker internal token"
+    log_info "Prepared tracker internal token"
     
     # Nuxt session secret (64 chars)
-    NUXT_SESSION_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
+    NUXT_SESSION_SECRET=$(existing_secret NUXT_SESSION_SECRET)
+    [[ -z "$NUXT_SESSION_SECRET" ]] && NUXT_SESSION_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
     echo -n "$NUXT_SESSION_SECRET" > "$SECRETS_DIR/nuxt_session_secret.txt"
-    log_info "Generated Nuxt session secret"
+    log_info "Prepared Nuxt session secret"
     
     # Generate Caddy password hash
-    MONITORING_PASSWORD_HASH=$(docker run --rm caddy:2-alpine caddy hash-password --plaintext "$MONITORING_PASSWORD" 2>/dev/null || echo "")
+    MONITORING_PASSWORD_HASH=$(printf '%s\n' "$MONITORING_PASSWORD" | docker run --rm -i caddy:2-alpine caddy hash-password 2>/dev/null || echo "")
     if [[ -z "$MONITORING_PASSWORD_HASH" ]]; then
         log_warn "Could not generate Caddy password hash. Will generate after Docker pull."
     fi
@@ -375,7 +395,7 @@ create_env_file() {
     # Generate monitoring password hash if not done yet
     if [[ -z "$MONITORING_PASSWORD_HASH" ]]; then
         log_info "Generating Caddy password hash..."
-        MONITORING_PASSWORD_HASH=$(docker run --rm caddy:2-alpine caddy hash-password --plaintext "$MONITORING_PASSWORD" 2>/dev/null)
+        MONITORING_PASSWORD_HASH=$(printf '%s\n' "$MONITORING_PASSWORD" | docker run --rm -i caddy:2-alpine caddy hash-password 2>/dev/null)
     fi
     
     cat > "$ENV_FILE" << EOF
@@ -465,7 +485,12 @@ setup_repository() {
             log_info "Installation directory exists (local copy mode)"
             cd "$INSTALL_DIR"
         else
-            log_warn "Directory exists but appears incomplete. Re-cloning..."
+            log_warn "$INSTALL_DIR exists, is not empty and holds no Trackarr install."
+            read -p "Delete everything in $INSTALL_DIR and clone Trackarr there? (yes/no): " CONFIRM_RECLONE
+            if [[ "$CONFIRM_RECLONE" != "yes" ]]; then
+                log_error "Aborted: choose another INSTALL_DIR or empty this one"
+                exit 1
+            fi
             rm -rf "$INSTALL_DIR"
             git clone --branch "$BRANCH" "$REPO_URL" "$INSTALL_DIR"
             cd "$INSTALL_DIR"
@@ -502,18 +527,23 @@ start_services() {
     
     cd "$INSTALL_DIR"
     
-    # Check for existing postgres volume with potentially old credentials
-    if docker volume ls -q | grep -q "trackarr_postgres_data"; then
-        log_warn "Existing database volume detected!"
-        log_warn "This may contain data with different credentials than the newly generated ones."
+    # Existing database volume: with reused secrets it is simply this install
+    # being updated. Without them its credentials may not match; deleting it
+    # destroys every user and torrent, so it is never the default.
+    if [[ "$REUSED_SECRETS" != "true" ]] && docker volume ls -q | grep -q "trackarr_postgres_data"; then
+        log_warn "Existing database volume detected, but no .env with its credentials!"
         echo ""
         echo -e "${YELLOW}Options:${NC}"
-        echo "  1) Delete existing volumes and start fresh (RECOMMENDED for new installs)"
-        echo "  2) Keep existing volumes (use if upgrading and you want to preserve data)"
+        echo "  1) Keep existing volumes (default; restore the matching .env to use them)"
+        echo "  2) DELETE all existing data and start fresh"
         echo ""
-        read -p "Choose option (1/2): " VOLUME_CHOICE
-        
-        if [[ "$VOLUME_CHOICE" == "1" ]]; then
+        read -p "Choose option (1/2) [1]: " VOLUME_CHOICE
+        if [[ "$VOLUME_CHOICE" == "2" ]]; then
+            read -p "Type 'delete' to confirm that ALL data will be lost: " CONFIRM_DELETE
+            [[ "$CONFIRM_DELETE" == "delete" ]] || VOLUME_CHOICE=1
+        fi
+
+        if [[ "$VOLUME_CHOICE" == "2" ]]; then
             log_info "Removing existing volumes..."
             docker compose -f docker-compose.prod.yml down -v 2>/dev/null || true
             log_success "Volumes removed"
@@ -644,8 +674,7 @@ print_summary() {
     echo ""
     echo -e "${BOLD}Grafana Credentials:${NC}"
     echo -e "  Username: ${CYAN}admin${NC}"
-    echo -e "  Password: ${CYAN}admin${NC} (default)"
-    echo -e "  ${YELLOW}⚠️  Change this password at: https://${MONITORING_DOMAIN}/grafana${NC}"
+    echo -e "  Password: ${CYAN}${GRAFANA_ADMIN_PASSWORD}${NC} (also in ${INSTALL_DIR}/.env)"
     echo ""
     echo -e "${BOLD}Important Files:${NC}"
     echo -e "  Installation:     ${CYAN}${INSTALL_DIR}${NC}"
