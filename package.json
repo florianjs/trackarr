@@ -38,7 +38,7 @@
     "create-torrent": "^6.1.0",
     "dompurify": "^3.4.16",
     "drizzle-orm": "^0.45.1",
-    "ioredis": "^5.8.2",
+    "ioredis": "^6.0.0",
     "marked": "^18.1.1",
     "nuxt": "^4.2.2",
     "nuxt-auth-utils": "^0.5.26",
