@@ -152,8 +152,6 @@ sed_inplace "s/^TRACKER_INTERNAL_TOKEN=.*/TRACKER_INTERNAL_TOKEN=$TRACKER_INTERN
 
 # Tracker URLs
 sed_inplace "s|^TRACKER_HTTP_URL=.*|TRACKER_HTTP_URL=https://$TRACKER_DOMAIN/announce|" "$PROJECT_DIR/.env"
-sed_inplace "s|^TRACKER_UDP_URL=.*|TRACKER_UDP_URL=udp://$TRACKER_DOMAIN:8081/announce|" "$PROJECT_DIR/.env"
-sed_inplace "s|^TRACKER_WS_URL=.*|TRACKER_WS_URL=wss://$TRACKER_DOMAIN/ws|" "$PROJECT_DIR/.env"
 
 # Monitoring basic auth ($ doubled for Docker Compose)
 if [[ -n "$MONITORING_PASSWORD_HASH" ]]; then

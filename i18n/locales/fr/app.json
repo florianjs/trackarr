@@ -713,8 +713,7 @@
     },
     "endpoints": {
       "title": "Points d'accès",
-      "httpAnnounce": "Announce HTTP",
-      "udpAnnounce": "Announce UDP"
+      "httpAnnounce": "Announce HTTP"
     },
     "torznabLogs": {
       "title": "Requêtes récentes",

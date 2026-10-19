@@ -713,8 +713,7 @@
     },
     "endpoints": {
       "title": "Endpunkte",
-      "httpAnnounce": "HTTP-Announce",
-      "udpAnnounce": "UDP-Announce"
+      "httpAnnounce": "HTTP-Announce"
     },
     "torznabLogs": {
       "title": "Letzte Anfragen",

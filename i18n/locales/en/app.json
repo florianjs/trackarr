@@ -713,8 +713,7 @@
     },
     "endpoints": {
       "title": "Endpoints",
-      "httpAnnounce": "HTTP Announce",
-      "udpAnnounce": "UDP Announce"
+      "httpAnnounce": "HTTP Announce"
     },
     "torznabLogs": {
       "title": "Recent Requests",

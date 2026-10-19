@@ -713,8 +713,7 @@
     },
     "endpoints": {
       "title": "Адреса",
-      "httpAnnounce": "HTTP-анонс",
-      "udpAnnounce": "UDP-анонс"
+      "httpAnnounce": "HTTP-анонс"
     },
     "torznabLogs": {
       "title": "Последние запросы",
