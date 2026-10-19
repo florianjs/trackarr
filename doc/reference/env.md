@@ -13,6 +13,7 @@ These must be set for the application to run:
 | `NUXT_SESSION_PASSWORD` | Session encryption key (32+ chars) | Random string                         |
 | `TRACKER_SECRET`        | Secret for passkey generation      | Random string                         |
 | `IP_HASH_SECRET`        | Secret for IP hashing              | Random string                         |
+| `TRACKER_INTERNAL_TOKEN` | Token between the app and the tracker service | `openssl rand -hex 32`          |
 
 ## Application Settings
 
@@ -53,11 +54,30 @@ These must be set for the application to run:
 
 ## Tracker
 
-| Variable               | Description                     | Default |
-| ---------------------- | ------------------------------- | ------- |
-| `TRACKER_INTERVAL`     | Announce interval (seconds)     | `1800`  |
-| `TRACKER_MIN_INTERVAL` | Minimum announce interval       | `900`   |
-| `TRACKER_MAX_PEERS`    | Max peers returned per announce | `50`    |
+The tracker is a separate service (`tracker/`, container `trackarr-tracker`). It also reads `DATABASE_URL`, `DB_POOL_MAX` (default `16`), `DB_CONNECT_TIMEOUT`, `DB_KEEP_ALIVE`, `REDIS_URL`, `REDIS_PASSWORD`, the Sentinel variables, `REDIS_COMMAND_TIMEOUT_MS` (default `5000`), `REDIS_KEY_PREFIX` (default `ot:`) and `IP_HASH_SECRET` (≥ 32 characters with `NODE_ENV=production`). `DB_SSL=true` and Redis TLS are not supported by the tracker yet. See [`tracker/README.md`](https://github.com/florianjs/trackarr/blob/main/tracker/README.md).
+
+| Variable                 | Description                                                                 | Default         |
+| ------------------------ | --------------------------------------------------------------------------- | --------------- |
+| `TRACKER_HTTP_PORT`      | Announce/scrape port (HTTP)                                                 | `8080`          |
+| `TRACKER_INTERNAL_PORT`  | Private API port (`/health`, `/metrics`, `/internal/*`)                     | `8090`          |
+| `TRACKER_INTERNAL_TOKEN` | Bearer token for `/internal/*`, same value on the app (`_FILE` supported)   | —               |
+| `TRACKER_TRUST_PROXY`    | Trust `X-Forwarded-For`; `false` when the port is exposed without a proxy   | `true`          |
+| `TRACKER_INTERVAL`       | Announce interval (seconds)                                                 | `600`           |
+| `TRACKER_MAX_RATE_MIBPS` | Credit ceiling per peer (MiB/s)                                             | `100`           |
+| `TRACKER_FLUSH_INTERVAL` | Seconds between credit writes to PostgreSQL                                 | `5`             |
+| `TRACKER_STATS_INTERVAL` | Seconds between counter publications to Redis                               | `60`            |
+| `TRACKER_WARMUP`         | Seconds after start before publishing counters                              | interval + 60   |
+| `TRACKER_CACHE_CAPACITY` | Entries per lookup cache (users, torrents)                                  | `500000`        |
+| `TRACKER_SNAPSHOT_PATH`  | Swarm snapshot written on graceful stop, loaded on start (unset: disabled)  | `/data/swarms.bin` in the image |
+| `TRACKER_DEBUG`          | Enable the tracker's debug logs                                             | `false`         |
+| `RUST_LOG`               | Log filter, overrides `TRACKER_DEBUG` (driver debug logs print passkeys)    | —               |
+
+The web app reaches the tracker's private API with:
+
+| Variable                 | Description                                  | Default                                              |
+| ------------------------ | -------------------------------------------- | ---------------------------------------------------- |
+| `TRACKER_INTERNAL_URL`   | Tracker private API URL                      | `http://localhost:8090` (`http://tracker:8090` in Docker Compose) |
+| `TRACKER_INTERNAL_TOKEN` | Same value as the tracker                    | —                                                    |
 
 ## Monitoring
 
@@ -93,8 +113,7 @@ IP_HASH_SECRET="your-ip-hashing-secret"
 POW_DIFFICULTY=5
 
 # Tracker
-TRACKER_INTERVAL=1800
-TRACKER_MIN_INTERVAL=900
+TRACKER_INTERNAL_TOKEN="output-of-openssl-rand-hex-32"
 ```
 
 ::: warning

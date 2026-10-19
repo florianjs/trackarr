@@ -216,7 +216,8 @@ e21V5@postgres:5432/trackarr = host=postgres port=5432 auth_user=tracker
 
 **Causes:**
 
-- `IP_HASH_SECRET` environment variable not set
+- The `tracker` service is not running (with `NODE_ENV=production` it refuses to start without an `IP_HASH_SECRET` of at least 32 characters)
+- The tracker just started without a snapshot (crash, failover, first start): counters are published only after the warm-up (`TRACKER_WARMUP`, ~11 minutes by default), then every 60 s. Until then the site keeps the last published counters (none on a fresh install). A graceful restart reloads its swarm snapshot and publishes right away.
 - Peers not announcing correctly
 - Redis cache issues
 
@@ -224,15 +225,17 @@ e21V5@postgres:5432/trackarr = host=postgres port=5432 auth_user=tracker
 
 1. Verify `IP_HASH_SECRET` is set in your `.env` file.
 
-2. Restart the application:
+2. Check the tracker status (`GET /api/admin/debug/tracker-status` as admin). `unreachable` means the app cannot reach the tracker's private API: check that `TRACKER_INTERNAL_TOKEN` is set in `.env`.
+
+3. Restart the tracker:
 
    ```bash
-   docker compose -f docker-compose.prod.yml restart app
+   docker compose -f docker-compose.prod.yml restart tracker
    ```
 
-3. Check tracker logs for announce activity:
+4. Check tracker logs (`TRACKER_DEBUG=true` for more detail):
    ```bash
-   docker compose -f docker-compose.prod.yml logs -f app | grep tracker
+   docker compose -f docker-compose.prod.yml logs -f tracker
    ```
 
 ---
@@ -417,6 +420,7 @@ docker compose -f docker-compose.prod.yml logs -f
 
 ```bash
 docker compose -f docker-compose.prod.yml logs -f app    # Application
+docker compose -f docker-compose.prod.yml logs -f tracker # Tracker
 docker compose -f docker-compose.prod.yml logs -f db     # PostgreSQL
 docker compose -f docker-compose.prod.yml logs -f redis  # Redis
 docker compose -f docker-compose.prod.yml logs -f caddy  # Reverse proxy

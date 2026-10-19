@@ -38,6 +38,10 @@ Trackarr is configured primarily through environment variables. This page covers
 | `TRACKER_UDP_URL`  | UDP announce URL                            | `udp://localhost:8081/announce`  |
 | `TRACKER_WS_URL`   | WebSocket URL                               | `ws://localhost:8082`            |
 | `TRACKER_DEBUG`    | Enable verbose tracker logging              | `false`                          |
+| `TRACKER_INTERNAL_URL`   | Tracker service private API (app side)  | `http://localhost:8090`          |
+| `TRACKER_INTERNAL_TOKEN` | Shared token between the app and the tracker service | —                       |
+
+The tracker runs as a separate service (`trackarr-tracker`, HTTP only). UDP and WebSocket announces are not served: `TRACKER_UDP_URL` and `TRACKER_WS_URL` are only displayed. Tracker service settings are listed in the [environment reference](../reference/env.md#tracker).
 
 ::: tip Configuring Tracker URLs
 These URLs are embedded in `.torrent` files and displayed in the admin dashboard. Configure them with your actual domain:

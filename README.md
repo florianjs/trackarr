@@ -27,7 +27,7 @@ Built with Nuxt 4 • PostgreSQL • Redis
 
 | **Privacy & Authentication**        | **Performance**                   |
 | ----------------------------------- | --------------------------------- |
-| Zero-Knowledge Authentication       | Redis-powered sub-ms peer lookups |
+| Zero-Knowledge Authentication       | Rust tracker, in-memory swarms    |
 | Proof of Work anti-abuse            | PostgreSQL with full-text search  |
 | Private torrents (DHT/PEX disabled) | HTTP announce with passkeys       |
 | Ratio tracking & enforcement        | Optimized for high concurrency    |
@@ -235,7 +235,7 @@ docker exec -it trackarr-grafana grafana cli admin reset-admin-password <new-pas
 git clone https://github.com/florianjs/trackarr.git && cd trackarr
 cp .env.example .env
 
-# Start all services (app + postgres + redis)
+# Start all services (app + tracker + postgres + redis)
 docker compose up -d
 
 # View logs
@@ -299,8 +299,8 @@ docker compose logs -f app
 | i18n     | @nuxtjs/i18n                        | 8 UI languages                      |
 | Backend  | Nitro Server Engine                 | API routes, middleware              |
 | Database | PostgreSQL 16 + Drizzle ORM         | Data persistence, full-text search  |
-| Cache    | Redis 7                             | Peer lists, sessions, rate limiting |
-| P2P      | bittorrent-tracker                  | HTTP announces (UDP & WebSocket disabled) |
+| Cache    | Redis 7                             | Swarm counters, sessions, rate limiting |
+| Tracker  | Rust (Tokio, axum), [`tracker/`](tracker/README.md) | HTTP announces & scrapes (no UDP / WebSocket) |
 | Crypto   | Web Crypto API, scrypt, AES-256-GCM | ZKE auth, Panic encryption          |
 | Monitor  | Prometheus + Grafana                | Metrics, dashboards, alerting       |
 
@@ -320,6 +320,7 @@ docker compose down -v            # Stop + remove volumes
 ```bash
 docker exec trackarr-db pg_isready           # PostgreSQL
 docker exec trackarr-redis redis-cli ping    # Redis
+docker exec trackarr-tracker /trackarr-tracker --healthcheck && echo ok  # Tracker
 ```
 
 ### Updating
@@ -335,6 +336,8 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 > **Note**: This will rebuild the containers with the latest code. Your data (PostgreSQL, Redis) is persisted in Docker volumes and will not be affected. Schema changes are applied automatically at startup.
+>
+> **Upgrading to the Rust tracker?** The tracker now runs as a separate `tracker` service. Add a shared token to `.env` before rebuilding, or the stack will not start: `echo "TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)" >> .env`, then `docker compose -f docker-compose.prod.yml up -d --build`. Swarms refill as clients re-announce (up to 10 minutes); transfer between the last announce before the upgrade and the first one after is not credited.
 >
 > **Upgrading from 0.5.x to 0.6.x?** Follow the steps in the [v0.6.0 release notes](https://github.com/florianjs/trackarr/releases/tag/v0.6.0) (rotate `NUXT_SESSION_PASSWORD`, new required secrets, RSS now needs a passkey).
 
@@ -361,6 +364,7 @@ docker compose -f docker-compose.prod.yml up -d --build --force-recreate
 ```bash
 docker compose -f docker-compose.prod.yml logs -f
 docker compose -f docker-compose.prod.yml logs -f app  # App only
+docker compose -f docker-compose.prod.yml logs -f tracker  # Tracker only
 ```
 
 ---
@@ -368,12 +372,14 @@ docker compose -f docker-compose.prod.yml logs -f app  # App only
 ## 🧪 Development
 
 ```bash
-npm run dev              # Start dev server (HMR)
+npm run dev              # Start dev server (HMR), without the tracker
 npm run build            # Production build
 npm test                 # Unit & security tests (Vitest)
 npx drizzle-kit push     # Push schema changes
 npx drizzle-kit studio   # Database GUI
 ```
+
+**Tracker**: `npm run dev` does not start a tracker. Either keep the `tracker` container from `docker compose up -d` (port 8080), or run it from source with Rust 1.95+: `cd tracker && cargo run`, with `DATABASE_URL`, `REDIS_URL`, `REDIS_PASSWORD` and the same `TRACKER_INTERNAL_TOKEN` as the app. See [`tracker/README.md`](tracker/README.md).
 
 **Translations**: strings live in `i18n/locales/<code>/*.json` (en, fr, es, de, it, zh, ja, ru). To add a language, copy `i18n/locales/en/`, translate it, and declare the locale in `nuxt.config.ts` (`i18n.locales`). `tests/i18n-locales.test.ts` checks every locale against English (keys, placeholders, plural forms); languages with more plural forms than English get a rule in `i18n/plural.ts` (Russian has one).
 
@@ -403,7 +409,7 @@ Trackarr is built on the shoulders of giants. We'd like to thank the following o
 | ---------------------------------------------------------------------- | --------------------------- |
 | [Nuxt](https://nuxt.com)                                               | Fullstack Vue framework     |
 | [Vue.js](https://vuejs.org)                                            | Reactive frontend framework |
-| [bittorrent-tracker](https://github.com/webtorrent/bittorrent-tracker) | BitTorrent tracker library  |
+| [Tokio](https://tokio.rs) & [axum](https://github.com/tokio-rs/axum)   | Async runtime & HTTP server for the tracker |
 | [Drizzle ORM](https://orm.drizzle.team)                                | TypeScript ORM              |
 | [PostgreSQL](https://www.postgresql.org)                               | Database                    |
 | [Redis](https://redis.io)                                              | In-memory cache             |
