@@ -1,0 +1,50 @@
+name: Tracker
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'tracker/**'
+      - '.github/workflows/tracker.yml'
+  pull_request:
+    paths:
+      - 'tracker/**'
+      - '.github/workflows/tracker.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: tracker
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Rust
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.95'
+          components: rustfmt, clippy
+
+      - name: Cache cargo
+        uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: tracker
+
+      - name: Format
+        run: cargo fmt --check
+
+      - name: Lint
+        run: cargo clippy --all-targets --locked -- -D warnings
+
+      - name: Test
+        run: cargo test --locked
+
+      - name: Docker image
+        run: docker build -t trackarr-tracker:ci .
