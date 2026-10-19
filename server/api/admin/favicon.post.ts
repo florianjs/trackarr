@@ -1,9 +1,7 @@
 import { requireAdminSession } from '../../utils/adminAuth';
 import { setSetting, SETTINGS_KEYS } from '../../utils/settings';
+import { deleteUpload, saveUpload } from '../../utils/uploads';
 import { randomBytes } from 'crypto';
-import { writeFile, mkdir, unlink } from 'fs/promises';
-import { join } from 'path';
-import { existsSync } from 'fs';
 
 /**
  * POST /api/admin/favicon
@@ -68,22 +66,12 @@ export default defineEventHandler(async (event) => {
   // Generate unique filename
   const filename = `favicon-${randomBytes(8).toString('hex')}.${ext}`;
 
-  // Ensure uploads directory exists
-  const isProduction = process.env.NODE_ENV === 'production';
-  const uploadsDir = isProduction
-    ? '/app/public/uploads'
-    : join(process.cwd(), 'public', 'uploads');
-  if (!existsSync(uploadsDir)) {
-    await mkdir(uploadsDir, { recursive: true });
-  }
-
   // Get current favicon to delete old one
   const { getSiteFavicon } = await import('../../utils/settings');
   const currentFavicon = await getSiteFavicon();
 
   // Save file
-  const filePath = join(uploadsDir, filename);
-  await writeFile(filePath, file.data);
+  await saveUpload(filename, file.data);
 
   // File URL (relative to public folder)
   const fileUrl = `/uploads/${filename}`;
@@ -98,14 +86,9 @@ export default defineEventHandler(async (event) => {
     ? currentFavicon.slice('/uploads/'.length)
     : null;
   if (oldName && /^(logo|favicon)-[a-f0-9]{16}\.[a-z]+$/.test(oldName)) {
-    const oldPath = join(uploadsDir, oldName);
-    try {
-      if (existsSync(oldPath)) {
-        await unlink(oldPath);
-      }
-    } catch {
+    await deleteUpload(oldName).catch(() => {
       // Ignore deletion errors
-    }
+    });
   }
 
   return {

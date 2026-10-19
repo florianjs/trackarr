@@ -1,12 +1,9 @@
 import { randomBytes } from 'crypto';
-import { existsSync } from 'fs';
-import { mkdir, writeFile } from 'fs/promises';
-import { join } from 'path';
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../../../db';
 import { detectImage } from '../../../utils/imageType';
 import { rateLimit, RATE_LIMITS } from '../../../utils/rateLimit';
-import { getUploadsDir, removeAvatarFile } from '../../../utils/uploadsDir';
+import { removeAvatarFile, saveUpload } from '../../../utils/uploads';
 
 const MAX_STATIC_BYTES = 512 * 1024;
 const MAX_ANIMATED_BYTES = 2 * 1024 * 1024;
@@ -59,13 +56,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  const uploadsDir = getUploadsDir();
-  if (!existsSync(uploadsDir)) {
-    await mkdir(uploadsDir, { recursive: true });
-  }
-
   const filename = `avatar-${randomBytes(8).toString('hex')}.${image.ext}`;
-  await writeFile(join(uploadsDir, filename), file.data);
+  await saveUpload(filename, file.data);
 
   const avatarUrl = `/uploads/${filename}`;
   await db

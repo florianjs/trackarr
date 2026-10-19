@@ -1,10 +1,8 @@
-import { join } from 'path';
-import { readFile, stat } from 'fs/promises';
-import { createReadStream } from 'fs';
+import { readUpload, uploadMimeType } from '../../utils/uploads';
 
 /**
  * GET /uploads/[name]
- * Serve uploaded files directly from the persistent storage
+ * Serve uploaded files from the database (legacy disk files as fallback)
  */
 export default defineEventHandler(async (event) => {
   const name = getRouterParam(event, 'name');
@@ -16,56 +14,26 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Path to the uploads directory in the container
-  // In production, use absolute path since process.cwd() may differ after Nuxt build
-  const isProduction = process.env.NODE_ENV === 'production';
-  const uploadsDir = isProduction
-    ? '/app/public/uploads'
-    : join(process.cwd(), 'public', 'uploads');
-  const filePath = join(uploadsDir, name);
-
-  try {
-    // Check if file exists and get stats
-    const stats = await stat(filePath);
-
-    if (!stats.isFile()) {
-      throw createError({ statusCode: 404, statusMessage: 'File not found' });
-    }
-
-    // Set appropriate headers
-    const ext = name.split('.').pop()?.toLowerCase();
-    const mimeTypes: Record<string, string> = {
-      png: 'image/png',
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      svg: 'image/svg+xml',
-      webp: 'image/webp',
-      gif: 'image/gif',
-    };
-
-    if (ext && mimeTypes[ext]) {
-      setHeader(event, 'Content-Type', mimeTypes[ext]);
-    }
-
-    // Uploaded SVGs can carry scripts: never let them run on our origin
-    setHeader(event, 'X-Content-Type-Options', 'nosniff');
-    setHeader(
-      event,
-      'Content-Security-Policy',
-      "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox"
-    );
-    setHeader(event, 'Content-Length', stats.size);
-    setHeader(event, 'Cache-Control', 'public, max-age=86400, immutable');
-
-    // Serve file stream
-    return sendStream(event, createReadStream(filePath));
-  } catch (error: any) {
-    if (error.code === 'ENOENT') {
-      throw createError({
-        statusCode: 404,
-        statusMessage: 'File not found',
-      });
-    }
-    throw error;
+  const data = await readUpload(name);
+  if (!data) {
+    throw createError({ statusCode: 404, statusMessage: 'File not found' });
   }
+
+  const mimeType = uploadMimeType(name);
+  if (mimeType) {
+    setHeader(event, 'Content-Type', mimeType);
+  }
+
+  // Uploaded SVGs can carry scripts: never let them run on our origin
+  setHeader(event, 'X-Content-Type-Options', 'nosniff');
+  setHeader(
+    event,
+    'Content-Security-Policy',
+    "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox"
+  );
+  setHeader(event, 'Content-Length', data.length);
+  // Names are random and never reused, so the content never changes
+  setHeader(event, 'Cache-Control', 'public, max-age=86400, immutable');
+
+  return data;
 });
