@@ -13,7 +13,7 @@ Built with Nuxt 4 • Rust • PostgreSQL • Redis
 [![License](https://img.shields.io/badge/License-MIT-blue?style=flat)](LICENSE)
 [![Discord](https://img.shields.io/badge/Discord-Join%20us-5865F2?style=flat&logo=discord&logoColor=white)](https://discord.gg/bbbkCPkdRk)
 
-[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](https://florianjs.github.io/trackarr/) • [Live Demo](https://tracker.florianargaud.com/) • [Discord](https://discord.gg/bbbkCPkdRk)
+[Features](#-features) • [Quick Start](#-quick-start) • [Security](#-security-architecture) • [Documentation](https://florianjs.github.io/trackarr/) • [Live Demo](https://trackarr.florianargaud.com/) • [Discord](https://discord.gg/bbbkCPkdRk)
 
 <picture>
   <source media="(prefers-color-scheme: dark)" srcset="public/images/dashboard.png">

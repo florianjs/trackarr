@@ -14,7 +14,7 @@ hero:
       link: https://github.com/florianjs/trackarr
     - theme: alt
       text: Live Demo
-      link: https://tracker.florianargaud.com/
+      link: https://trackarr.florianargaud.com/
 
 features:
   - title: Zero-Knowledge Auth
