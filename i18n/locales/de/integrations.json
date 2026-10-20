@@ -1,0 +1,59 @@
+{
+  "integrations": {
+    "nav": "Integrationen",
+    "title": "Integrationen",
+    "subtitle": "Prowlarr, Sonarr, Radarr und andere Torznab-Apps verbinden",
+    "credentials": "Torznab-Einstellungen",
+    "credentialsHint": "Füge diese Werte in deine App ein. Der API-Schlüssel hält deinen Passkey aus den Einstellungen deiner Apps heraus, und ein neuer Schlüssel sperrt Apps mit dem alten. Damit heruntergeladene Torrents enthalten trotzdem deinen Passkey: Wenn der Schlüssel durchsickert, erzeuge ihn neu und setze unten deinen Passkey zurück.",
+    "url": "URL",
+    "apiPath": "API-Pfad",
+    "apiKey": "API-Schlüssel",
+    "fullUrl": "Vollständiger Endpunkt",
+    "copy": "Kopieren",
+    "copied": "Kopiert",
+    "copyFailed": "Kopieren in die Zwischenablage fehlgeschlagen",
+    "show": "Schlüssel anzeigen",
+    "hide": "Schlüssel verbergen",
+    "test": "Verbindung testen",
+    "testing": "Wird getestet…",
+    "testOk": "Verbindung funktioniert",
+    "testFailed": "Verbindung fehlgeschlagen: {reason}",
+    "unreachable": "Tracker nicht erreichbar",
+    "rotate": "Schlüssel neu erzeugen",
+    "rotateConfirm": "API-Schlüssel neu erzeugen? Apps mit dem aktuellen Schlüssel funktionieren erst wieder, wenn du den neuen einfügst.",
+    "rotated": "Neuer API-Schlüssel erzeugt",
+    "rotateFailed": "Schlüssel konnte nicht neu erzeugt werden",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "Öffne in Prowlarr Indexers und klicke auf Add Indexer.",
+        "step2": "Suche nach Generic Torznab und wähle es aus.",
+        "step3": "Fülle URL, API Path und API Key mit den Werten oben aus.",
+        "step4": "Klicke auf Test, dann auf Save. Prowlarr synchronisiert den Indexer mit deinen verbundenen Sonarr, Radarr und Lidarr."
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "Öffne Settings → Indexers und klicke auf +.",
+        "step2": "Wähle Torznab.",
+        "step3": "Fülle URL, API Path und API Key mit den Werten oben aus.",
+        "step4": "Klicke auf Test, dann auf Save. Mehrere Apps? Nutze lieber Prowlarr: Der Indexer wird nur einmal eingerichtet."
+      },
+      "other": {
+        "name": "Andere Apps",
+        "step1": "Jeder Torznab-Client funktioniert: Nutze den vollständigen Endpunkt oben.",
+        "step2": "Die Fähigkeiten stehen am Endpunkt mit t=caps, ohne Schlüssel.",
+        "step3": "Suchergebnisse verlinken .torrent-Dateien über deinen API-Schlüssel.",
+        "step4": "Heruntergeladene .torrent-Dateien enthalten bereits deinen Passkey: Im Torrent-Client ist nichts einzurichten."
+      }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "Dein Passkey steckt in jeder heruntergeladenen .torrent-Datei und identifiziert dich beim Tracker. Setze ihn zurück, wenn eine .torrent-Datei oder dein API-Schlüssel durchgesickert ist. Vorher heruntergeladene Torrents funktionieren dann nicht mehr: Lade sie erneut herunter (oder ändere ihre Tracker-URL), um weiter zu seeden.",
+      "reset": "Passkey zurücksetzen",
+      "confirm": "Passkey zurücksetzen? Alle vorher heruntergeladenen Torrents müssen erneut heruntergeladen werden, um weiter zu seeden.",
+      "done": "Passkey zurückgesetzt",
+      "doneHint": "Lade deine aktiven Torrents erneut herunter, damit sie mit dem neuen Passkey melden.",
+      "failed": "Passkey konnte nicht zurückgesetzt werden"
+    }
+  }
+}

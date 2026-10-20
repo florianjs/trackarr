@@ -1,0 +1,59 @@
+{
+  "integrations": {
+    "nav": "集成",
+    "title": "集成",
+    "subtitle": "连接 Prowlarr、Sonarr、Radarr 及其他 Torznab 应用",
+    "credentials": "Torznab 设置",
+    "credentialsHint": "将这些值粘贴到你的应用中。API 密钥让你的 passkey 不必出现在应用设置里，重新生成后使用旧密钥的应用将失效。但用它下载的种子仍包含你的 passkey：如果密钥泄露，请重新生成，并在下方重置你的 passkey。",
+    "url": "URL",
+    "apiPath": "API 路径",
+    "apiKey": "API 密钥",
+    "fullUrl": "完整端点",
+    "copy": "复制",
+    "copied": "已复制",
+    "copyFailed": "无法复制到剪贴板",
+    "show": "显示密钥",
+    "hide": "隐藏密钥",
+    "test": "测试连接",
+    "testing": "测试中…",
+    "testOk": "连接正常",
+    "testFailed": "连接失败：{reason}",
+    "unreachable": "无法访问 tracker",
+    "rotate": "重新生成密钥",
+    "rotateConfirm": "重新生成 API 密钥？在你粘贴新密钥之前，使用当前密钥的应用将无法工作。",
+    "rotated": "已生成新的 API 密钥",
+    "rotateFailed": "无法重新生成密钥",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "在 Prowlarr 中打开 Indexers，点击 Add Indexer。",
+        "step2": "搜索 Generic Torznab 并选择它。",
+        "step3": "用上面的值填写 URL、API Path 和 API Key。",
+        "step4": "点击 Test，然后点击 Save。Prowlarr 会将索引器同步到已连接的 Sonarr、Radarr 和 Lidarr。"
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "打开 Settings → Indexers，点击 +。",
+        "step2": "选择 Torznab。",
+        "step3": "用上面的值填写 URL、API Path 和 API Key。",
+        "step4": "点击 Test，然后点击 Save。使用多个应用？建议改用 Prowlarr：索引器只需配置一次。"
+      },
+      "other": {
+        "name": "其他应用",
+        "step1": "任何 Torznab 客户端都可使用：请使用上面的完整端点。",
+        "step2": "在端点加上 t=caps 即可查看功能列表，无需密钥。",
+        "step3": "搜索结果通过你的 API 密钥链接到 .torrent 文件。",
+        "step4": "下载的 .torrent 文件已包含你的 passkey：无需在 torrent 客户端中配置。"
+      }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "你的 passkey 包含在每个下载的 .torrent 文件中，用于在 tracker 上识别你。如果 .torrent 文件或 API 密钥泄露，请重置它。之前下载的种子将失效：请重新下载（或更新其 tracker 地址）以继续做种。",
+      "reset": "重置 passkey",
+      "confirm": "重置 passkey？之前下载的所有种子都需要重新下载才能继续做种。",
+      "done": "passkey 已重置",
+      "doneHint": "请重新下载正在做种的种子，使其使用新的 passkey 汇报。",
+      "failed": "无法重置 passkey"
+    }
+  }
+}

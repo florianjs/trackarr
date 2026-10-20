@@ -11,16 +11,16 @@ Torznab is an extension of the Newznab API tailored for torrent indexers. It pro
 - 🔍 **Full-text search** with category filtering
 - 📺 **TV search** with season/episode parsing
 - 🎬 **Movie search** with IMDB support
-- 🔐 **Passkey authentication** for secure API access
+- 🔐 **Dedicated API key**, revocable without touching your passkey
 - 📦 **Personalized downloads** with announce URL injection
 
 ## Setup with Prowlarr
 
-### Step 1: Get Your Passkey
+### Step 1: Open the Integrations page
 
 1. Log in to Trackarr
-2. Click your username in the top-right → **Passkey**
-3. Copy your **Passkey** (40-character hex string)
+2. Click your username in the top-right → **Integrations**
+3. The page lists every value to paste, with copy buttons, and a **Test connection** button
 
 ### Step 2: Add Indexer in Prowlarr
 
@@ -28,11 +28,12 @@ Torznab is an extension of the Newznab API tailored for torrent indexers. It pro
 2. Select **Generic Torznab**
 3. Configure:
 
-| Field   | Value                                  |
-| ------- | -------------------------------------- |
-| Name    | `Trackarr`                             |
-| URL     | `https://your-tracker.com/api/torznab` |
-| API Key | Your passkey from Step 1               |
+| Field    | Value                                  |
+| -------- | -------------------------------------- |
+| Name     | `Trackarr`                             |
+| URL      | `https://your-tracker.com/api/torznab` |
+| API Path | `/api` (the default)                   |
+| API Key  | Your API key (`tk_…`) from Step 1      |
 
 4. Click **Test** to verify the connection
 5. Click **Save**
@@ -41,12 +42,26 @@ Torznab is an extension of the Newznab API tailored for torrent indexers. It pro
 
 Prowlarr will automatically sync Trackarr as an indexer to your connected Sonarr, Radarr, and Lidarr instances.
 
+::: tip Without Prowlarr
+Sonarr, Radarr and Lidarr can also add Trackarr directly: **Settings → Indexers → + → Torznab**, with the same URL, API Path and API Key.
+:::
+
+## API Key
+
+The API key (`tk_` followed by 40 hex characters) is only for Torznab apps. It is created the first time you open the Integrations page.
+
+- **Regenerate key** on the Integrations page rotates it: apps using the old key stop working, your passkey and downloaded `.torrent` files are untouched
+- The API key keeps the passkey out of app settings and logs, but it is **not a separate identity**: `.torrent` files downloaded with it carry the passkey. If the key leaks, regenerate it **and** reset your passkey at the bottom of the Integrations page (then re-download your active torrents)
+- Downloaded `.torrent` files still carry your **passkey** in their announce URL, so nothing changes in your torrent client
+- Indexers set up with the passkey as API key keep working, but switching to the API key is recommended: a leaked passkey means rotating it in every torrent
+- An admin **passkey reset** also revokes the API key. A Torznab API block set by an admin survives any passkey reset
+
 ## API Endpoints
 
-All endpoints are accessed via a single base URL with function parameters:
+All functions are served by a single endpoint (URL + API Path):
 
 ```
-GET /api/torznab?t={function}&apikey={passkey}&...
+GET /api/torznab/api?t={function}&apikey={apiKey}&...
 ```
 
 ### Capabilities (`t=caps`)
@@ -54,7 +69,7 @@ GET /api/torznab?t={function}&apikey={passkey}&...
 Returns XML describing indexer capabilities. No authentication required.
 
 ```bash
-curl "https://your-tracker.com/api/torznab?t=caps"
+curl "https://your-tracker.com/api/torznab/api?t=caps"
 ```
 
 **Response:** XML with supported search types and categories.
@@ -64,7 +79,7 @@ curl "https://your-tracker.com/api/torznab?t=caps"
 General torrent search.
 
 ```bash
-curl "https://your-tracker.com/api/torznab?t=search&apikey=YOUR_PASSKEY&q=ubuntu"
+curl "https://your-tracker.com/api/torznab/api?t=search&apikey=YOUR_API_KEY&q=ubuntu"
 ```
 
 | Parameter | Type    | Required | Description                          |
@@ -79,7 +94,7 @@ curl "https://your-tracker.com/api/torznab?t=search&apikey=YOUR_PASSKEY&q=ubuntu
 Search with TV-specific parameters.
 
 ```bash
-curl "https://your-tracker.com/api/torznab?t=tvsearch&apikey=YOUR_PASSKEY&q=Breaking+Bad&season=1&ep=1"
+curl "https://your-tracker.com/api/torznab/api?t=tvsearch&apikey=YOUR_API_KEY&q=Breaking+Bad&season=1&ep=1"
 ```
 
 | Parameter | Type   | Description    |
@@ -92,7 +107,7 @@ curl "https://your-tracker.com/api/torznab?t=tvsearch&apikey=YOUR_PASSKEY&q=Brea
 Search with movie-specific parameters.
 
 ```bash
-curl "https://your-tracker.com/api/torznab?t=movie&apikey=YOUR_PASSKEY&imdbid=tt0111161"
+curl "https://your-tracker.com/api/torznab/api?t=movie&apikey=YOUR_API_KEY&imdbid=tt0111161"
 ```
 
 | Parameter | Type   | Description                 |
@@ -101,10 +116,10 @@ curl "https://your-tracker.com/api/torznab?t=movie&apikey=YOUR_PASSKEY&imdbid=tt
 
 ### Download
 
-Download a torrent file with your passkey embedded.
+Download a torrent file with your passkey embedded in the announce URL.
 
 ```bash
-curl -O "https://your-tracker.com/api/torznab/download?id=INFO_HASH&apikey=YOUR_PASSKEY"
+curl -O "https://your-tracker.com/api/torznab/download?id=INFO_HASH&apikey=YOUR_API_KEY"
 ```
 
 ## Category Mapping
@@ -192,8 +207,8 @@ Errors are returned as XML:
 
 ## Security Notes
 
-- **HTTPS Only**: Always use HTTPS to protect your passkey
-- **Passkey = Identity**: Treat your passkey as a secret; anyone with it can download as you
+- **HTTPS Only**: Always use HTTPS to protect your API key
+- **API key = Identity**: anyone with it can search and download as you, and read your passkey from the downloaded `.torrent` files. If it leaks, regenerate it and reset your passkey from the Integrations page
 - **Rate Limits**: API is rate limited to prevent abuse (see below)
 
 ## Rate Limits
@@ -220,7 +235,7 @@ Admins can also:
 - Enable/disable request logging
 - View real-time API statistics and usage
 - Block specific users from API access
-- Reset user passkeys
+- Reset user passkeys (also revokes their API key)
 - View blocked IPs and users
   :::
 
@@ -272,7 +287,8 @@ The Torznab API admin panel (`/admin/torznab`) provides comprehensive management
 
 ### "Incorrect user credentials" error
 
-- Verify your passkey is correct (40 hex characters)
+- Copy the API key again from the Integrations page (`tk_` + 40 hex characters), it may have been regenerated
+- Use **Test connection** on the Integrations page to check the key from the tracker itself
 - Check that your account is not banned
 - Ensure you're using the correct tracker URL
 

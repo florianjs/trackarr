@@ -7,6 +7,7 @@ import { H3Event, createError } from 'h3';
 import { db, schema } from '../../../db';
 import { eq } from 'drizzle-orm';
 import { buildErrorXml, TORZNAB_ERRORS } from './xml';
+import { parseTorznabCredential } from '../../../utils/apiKey';
 
 export interface TorznabUser {
   id: string;
@@ -15,17 +16,18 @@ export interface TorznabUser {
   isBanned: boolean;
   isAdmin: boolean;
   isModerator: boolean;
+  /** Credential the request used, echoed in download links */
+  apikey: string;
 }
 
 /**
- * Authenticate user via Torznab API key (passkey)
+ * Authenticate user via Torznab API key (or legacy passkey)
  * Returns user if valid, throws error otherwise
  */
 export async function authenticateTorznab(
   event: H3Event
 ): Promise<TorznabUser> {
-  const query = getQuery(event);
-  const apikey = query.apikey as string | undefined;
+  const apikey = getQuery(event).apikey;
 
   if (!apikey) {
     throw createTorznabError(
@@ -35,16 +37,19 @@ export async function authenticateTorznab(
     );
   }
 
-  // Validate passkey format (32 or 40 hex chars - supports legacy and new passkeys)
-  if (!/^[a-f0-9]{32}$/i.test(apikey) && !/^[a-f0-9]{40}$/i.test(apikey)) {
+  const credential = parseTorznabCredential(apikey);
+  if (!credential) {
     throw createTorznabError(
       event,
       TORZNAB_ERRORS.INCORRECT_CREDENTIALS,
-      `Invalid API key format. Expected 32 or 40 hex characters (your passkey), got ${apikey.length} characters`
+      'Invalid API key format. Use the API key from your Integrations page'
     );
   }
 
-  // Look up user by passkey
+  // API key, or the passkey for indexers set up before API keys existed
+  const column =
+    credential.kind === 'apiKey' ? schema.users.apiKey : schema.users.passkey;
+
   const users = await db
     .select({
       id: schema.users.id,
@@ -55,7 +60,7 @@ export async function authenticateTorznab(
       isModerator: schema.users.isModerator,
     })
     .from(schema.users)
-    .where(eq(schema.users.passkey, apikey.toLowerCase()))
+    .where(eq(column, credential.value))
     .limit(1);
 
   const user = users[0];
@@ -68,7 +73,7 @@ export async function authenticateTorznab(
     throw createTorznabError(event, TORZNAB_ERRORS.ACCOUNT_SUSPENDED);
   }
 
-  return user;
+  return { ...user, apikey: credential.value };
 }
 
 /**

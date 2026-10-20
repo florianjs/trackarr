@@ -1,0 +1,59 @@
+{
+  "integrations": {
+    "nav": "Integrazioni",
+    "title": "Integrazioni",
+    "subtitle": "Collega Prowlarr, Sonarr, Radarr e altre app Torznab",
+    "credentials": "Impostazioni Torznab",
+    "credentialsHint": "Incolla questi valori nella tua app. La chiave API evita di mettere la tua passkey nelle impostazioni delle app, e rigenerarla blocca le app che usano quella vecchia. I torrent scaricati con essa contengono comunque la tua passkey: se la chiave trapela, rigenerala e reimposta la passkey qui sotto.",
+    "url": "URL",
+    "apiPath": "Percorso API",
+    "apiKey": "Chiave API",
+    "fullUrl": "Endpoint completo",
+    "copy": "Copia",
+    "copied": "Copiato",
+    "copyFailed": "Impossibile copiare negli appunti",
+    "show": "Mostra chiave",
+    "hide": "Nascondi chiave",
+    "test": "Prova connessione",
+    "testing": "Prova in corso…",
+    "testOk": "La connessione funziona",
+    "testFailed": "Connessione fallita: {reason}",
+    "unreachable": "tracker irraggiungibile",
+    "rotate": "Rigenera chiave",
+    "rotateConfirm": "Rigenerare la chiave API? Le app che usano la chiave attuale smettono di funzionare finché non incolli quella nuova.",
+    "rotated": "Nuova chiave API generata",
+    "rotateFailed": "Impossibile rigenerare la chiave",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "In Prowlarr, apri Indexers e fai clic su Add Indexer.",
+        "step2": "Cerca Generic Torznab e selezionalo.",
+        "step3": "Compila URL, API Path e API Key con i valori qui sopra.",
+        "step4": "Fai clic su Test, poi su Save. Prowlarr sincronizza l'indexer con i tuoi Sonarr, Radarr e Lidarr collegati."
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "Apri Settings → Indexers e fai clic su +.",
+        "step2": "Scegli Torznab.",
+        "step3": "Compila URL, API Path e API Key con i valori qui sopra.",
+        "step4": "Fai clic su Test, poi su Save. Più app? Usa piuttosto Prowlarr: l'indexer si configura una volta sola."
+      },
+      "other": {
+        "name": "Altre app",
+        "step1": "Qualsiasi client Torznab funziona: usa l'endpoint completo qui sopra.",
+        "step2": "Le capacità sono elencate all'endpoint con t=caps, senza chiave.",
+        "step3": "I risultati di ricerca puntano ai file .torrent tramite la tua chiave API.",
+        "step4": "I file .torrent scaricati contengono già la tua passkey: niente da configurare nel client torrent."
+      }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "La tua passkey è in ogni file .torrent scaricato e ti identifica presso il tracker. Reimpostala se un file .torrent o la tua chiave API sono trapelati. I torrent scaricati prima smettono di funzionare: scaricali di nuovo (o aggiorna il loro URL del tracker) per continuare a fare seed.",
+      "reset": "Reimposta passkey",
+      "confirm": "Reimpostare la passkey? Ogni torrent scaricato prima dovrà essere scaricato di nuovo per continuare a fare seed.",
+      "done": "Passkey reimpostata",
+      "doneHint": "Scarica di nuovo i tuoi torrent attivi perché annuncino con la nuova passkey.",
+      "failed": "Impossibile reimpostare la passkey"
+    }
+  }
+}

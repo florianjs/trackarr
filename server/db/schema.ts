@@ -31,6 +31,8 @@ export const users = pgTable(
     authSalt: text('auth_salt'), // Client-generated salt (base64) - nullable for migration
     authVerifier: text('auth_verifier'), // Derived verifier (base64) - nullable for migration
     passkey: text('passkey').notNull().unique(), // For private tracker auth
+    // Torznab key for Prowlarr & co, rotated without touching the passkey
+    apiKey: text('api_key').unique(),
     isAdmin: boolean('is_admin').default(false).notNull(),
     isModerator: boolean('is_moderator').default(false).notNull(),
     isBanned: boolean('is_banned').default(false).notNull(),
