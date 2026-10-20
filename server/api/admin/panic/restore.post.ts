@@ -13,6 +13,7 @@ import {
   shoutMessages,
   reports,
   bonusTransactions,
+  statAdjustments,
   bounties,
 } from '../../../db/schema';
 import { protectEndpoint } from '../../../utils/rateLimit';
@@ -315,6 +316,14 @@ export default defineEventHandler(async (event) => {
             description: decryptOrKeep(transaction.description, key, legacyIv),
           })
           .where(eq(bonusTransactions.id, transaction.id));
+      }
+
+      const allAdjustments = await tx.select().from(statAdjustments);
+      for (const adjustment of allAdjustments) {
+        await tx
+          .update(statAdjustments)
+          .set({ reason: decryptOrKeep(adjustment.reason, key, legacyIv)! })
+          .where(eq(statAdjustments.id, adjustment.id));
       }
 
       // ===================================================================

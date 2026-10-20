@@ -905,7 +905,23 @@
       "confirmUnban": "¿Seguro que quieres desbanear a {name}?",
       "banFailed": "No se pudo banear al usuario",
       "unbanFailed": "No se pudo desbanear al usuario",
-      "assignRoleFailed": "No se pudo asignar el rol"
+      "assignRoleFailed": "No se pudo asignar el rol",
+      "stats": {
+        "open": "Ratio",
+        "uploaded": "Subido",
+        "downloaded": "Descargado",
+        "operation": "Añadir o quitar",
+        "add": "Añadir",
+        "remove": "Quitar",
+        "unit": "Unidad",
+        "reason": "Motivo",
+        "reasonPlaceholder": "Visible en el historial, p. ej. compensación por la caída del tracker",
+        "apply": "Aplicar",
+        "history": "Correcciones anteriores",
+        "deletedAdmin": "Admin eliminado",
+        "applied": "Totales de {name} actualizados",
+        "failed": "No se pudieron actualizar los totales"
+      }
     },
     "footer": {
       "title": "Enlaces del pie de página",

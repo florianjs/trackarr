@@ -905,7 +905,23 @@
       "confirmUnban": "Are you sure you want to unban {name}?",
       "banFailed": "Failed to ban user",
       "unbanFailed": "Failed to unban user",
-      "assignRoleFailed": "Failed to assign role"
+      "assignRoleFailed": "Failed to assign role",
+      "stats": {
+        "open": "Ratio",
+        "uploaded": "Uploaded",
+        "downloaded": "Downloaded",
+        "operation": "Add or remove",
+        "add": "Add",
+        "remove": "Remove",
+        "unit": "Unit",
+        "reason": "Reason",
+        "reasonPlaceholder": "Shown in the history, e.g. compensation for the tracker outage",
+        "apply": "Apply",
+        "history": "Previous corrections",
+        "deletedAdmin": "Deleted admin",
+        "applied": "Totals of {name} updated",
+        "failed": "Could not update the totals"
+      }
     },
     "footer": {
       "title": "Footer links",
