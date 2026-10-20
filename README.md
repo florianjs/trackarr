@@ -216,7 +216,7 @@ The installer will:
 
 > **Monitoring**: After installation, open `https://monitoring.your-domain.com` right away. It is protected by basic auth (user `admin`, password shown at the end of the install); behind it, the first visitor creates the Beszel admin account.
 >
-> Then pair the agent once: in Beszel, click **Add system**, use host `/beszel_socket/beszel.sock`, copy the public key and token into `.env` as `BESZEL_AGENT_KEY` and `BESZEL_AGENT_TOKEN`, add `COMPOSE_PROFILES=monitoring`, and run `docker compose -f docker-compose.prod.yml up -d`. See the [Monitoring guide](https://florianjs.github.io/trackarr/guide/monitoring).
+> Then pair the agent once: in Beszel, click **Add system** with host `/beszel_socket/beszel.sock`, then run `sudo ./scripts/pair-monitoring.sh` on the server and paste the public key and token it shows. Step by step in the [Monitoring guide](https://florianjs.github.io/trackarr/guide/monitoring#pairing-the-agent).
 >
 > Application and tracker figures (growth charts, tracker health, security alerts) are in the Trackarr admin dashboard.
 

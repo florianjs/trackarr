@@ -30,24 +30,68 @@ In production, Caddy puts basic auth in front of Beszel (`MONITORING_USER` / `MO
 
 ### Pairing the agent
 
-Do this once, after the first start (or after upgrading from Grafana):
+Do this once, after the first install (or after upgrading from Grafana). It connects the agent, which collects the stats, to the Beszel web UI. Until then, Beszel shows no system.
 
-1. Open the monitoring URL **right away**: the first visitor creates the Beszel admin account, which is why basic auth stays in front of it.
-2. Create the admin account.
-3. Click **Add system** and use `/beszel_socket/beszel.sock` as the host.
-4. Copy the public key and token shown into `.env`, and enable the profile:
+You need two windows: a **browser** for Beszel, and a **terminal on the server** for the agent.
 
-   ```bash
-   BESZEL_AGENT_KEY=<public key shown by Beszel>
-   BESZEL_AGENT_TOKEN=<token shown by Beszel>
-   COMPOSE_PROFILES=monitoring
-   ```
+#### 1. Create the Beszel admin account
 
-5. Start the agent:
+Open `https://monitoring.your-domain.com` **right away**: the first visitor creates the Beszel admin account.
 
-   ```bash
-   docker compose -f docker-compose.prod.yml up -d
-   ```
+1. The browser first asks for the basic auth login: user `admin`, and the monitoring password shown at the end of the install.
+2. Beszel then asks you to create its own admin account (email and password). Keep them: this is your Beszel login from now on.
+
+#### 2. Add the server in Beszel
+
+1. Click **Add system** (top right).
+2. Fill in the form:
+
+   | Field     | Value                        |
+   | --------- | ---------------------------- |
+   | Name      | anything, e.g. `trackarr`    |
+   | Host / IP | `/beszel_socket/beszel.sock` |
+
+   The host is a socket shared by the two containers, not an address: the **Port** field disappears once you type it.
+3. Below, the dialog shows a **public key** (starts with `ssh-ed25519`) and a **token**, each with a copy button. You will paste them on the server in the next step.
+4. Click **Add system**. The system appears with a yellow dot: it is waiting for the agent.
+
+#### 3. Start the agent on the server
+
+Connect to the server and go to the Trackarr directory (`/opt/trackarr` when installed with `install.sh`):
+
+```bash
+ssh root@your-server
+cd /opt/trackarr
+sudo ./scripts/pair-monitoring.sh
+```
+
+Paste the public key, then the token, when asked. The script writes them to `.env`, turns the monitoring profile on, starts the agent and checks it stays up.
+
+The dot turns green in Beszel within a minute.
+
+::: details Doing it by hand instead
+Open `.env` in the Trackarr directory (`nano .env`). The installer left three commented lines for the agent: uncomment them and fill in the values, without quotes:
+
+```bash
+BESZEL_AGENT_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAA...
+BESZEL_AGENT_TOKEN=0d1e2f3a-...
+COMPOSE_PROFILES=monitoring
+```
+
+Save (<kbd>Ctrl</kbd>+<kbd>O</kbd>, <kbd>Enter</kbd>, <kbd>Ctrl</kbd>+<kbd>X</kbd> in nano), then start the agent:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d
+```
+:::
+
+For the local production stack, run `./scripts/pair-monitoring.sh --local` (it uses `.env.local-prod`).
+
+#### If the dot does not turn green
+
+- Check the agent: `docker compose -f docker-compose.prod.yml ps beszel-agent` should say `running`.
+- Read its logs: `docker compose -f docker-compose.prod.yml logs beszel-agent`. A key or token error means a copy/paste mistake: run the script again with the values from Beszel. To see them again, click **⋯** at the end of the system's row, then **Edit**.
+- More cases in [Troubleshooting](/guide/troubleshooting).
 
 The installers keep `BESZEL_AGENT_KEY`, `BESZEL_AGENT_TOKEN` and `COMPOSE_PROFILES` when you re-run them.
 
