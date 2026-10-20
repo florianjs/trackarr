@@ -6,15 +6,37 @@ import {
   torrents,
   panicState,
   forumPosts,
+  forumTopics,
   torrentComments,
+  bannedIps,
+  privateMessages,
+  shoutMessages,
+  reports,
+  bonusTransactions,
+  bounties,
 } from '../../../db/schema';
 import { protectEndpoint } from '../../../utils/rateLimit';
-import { deriveKey, decryptField, decrypt } from '../../../utils/panic';
+import {
+  deriveKey,
+  decryptField,
+  decryptOrKeep,
+  decrypt,
+} from '../../../utils/panic';
+import { invalidateBannedIps } from '../../../utils/bannedIps';
 import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/client';
 
 const bodySchema = z.object({
   panicPassword: z.string().min(1).max(256),
 });
+
+/** Torrent columns hidden in the description prefix (media ids added later) */
+interface PanicTorrentMeta {
+  size?: number;
+  categoryId?: string | null;
+  imdbId?: string | null;
+  tmdbId?: number | null;
+  tvdbId?: number | null;
+}
 
 /**
  * POST /api/admin/panic/restore
@@ -91,15 +113,17 @@ export default defineEventHandler(async (event) => {
       // ===================================================================
       // Decrypt user data
       // ===================================================================
+      // Kept as is when not ciphertext: accounts registered and IPs recorded
+      // while encrypted are in clear
       const allUsers = await tx.select().from(users);
       for (const user of allUsers) {
         await tx
           .update(users)
           .set({
-            authSalt: decryptField(user.authSalt, key, legacyIv),
-            authVerifier: decryptField(user.authVerifier, key, legacyIv),
-            passkey: decryptField(user.passkey, key, legacyIv)!,
-            lastIp: decryptField(user.lastIp, key, legacyIv) ?? undefined,
+            authSalt: decryptOrKeep(user.authSalt, key, legacyIv),
+            authVerifier: decryptOrKeep(user.authVerifier, key, legacyIv),
+            passkey: decryptOrKeep(user.passkey, key, legacyIv)!,
+            lastIp: decryptOrKeep(user.lastIp, key, legacyIv) ?? undefined,
           })
           .where(eq(users.id, user.id));
       }
@@ -117,15 +141,24 @@ export default defineEventHandler(async (event) => {
         let decryptedDesc: string | null = null;
         let originalSize: number = torrent.size;
         let originalCategoryId: string | null = torrent.categoryId;
+        // Absent from metadata saved by older versions, which left them in place
+        let originalImdbId: string | null = torrent.imdbId;
+        let originalTmdbId: number | null = torrent.tmdbId;
+        let originalTvdbId: number | null = torrent.tvdbId;
 
         if (panicMetaMatch) {
           // Extract and decrypt metadata
           const encryptedMeta = panicMetaMatch[1]!;
           const encryptedDescPart = panicMetaMatch[2] || null;
 
-          const meta = JSON.parse(decrypt(encryptedMeta, key, legacyIv));
+          const meta: PanicTorrentMeta = JSON.parse(
+            decrypt(encryptedMeta, key, legacyIv)
+          );
           originalSize = meta.size ?? 0;
           originalCategoryId = meta.categoryId ?? null;
+          if ('imdbId' in meta) originalImdbId = meta.imdbId ?? null;
+          if ('tmdbId' in meta) originalTmdbId = meta.tmdbId ?? null;
+          if ('tvdbId' in meta) originalTvdbId = meta.tvdbId ?? null;
 
           // Decrypt the description part (after the metadata prefix)
           decryptedDesc = encryptedDescPart
@@ -152,8 +185,29 @@ export default defineEventHandler(async (event) => {
             torrentData: decryptedTorrentData,
             size: originalSize,
             categoryId: originalCategoryId,
+            imdbId: originalImdbId,
+            tmdbId: originalTmdbId,
+            tvdbId: originalTvdbId,
           })
           .where(eq(torrents.id, torrent.id));
+      }
+
+      // ===================================================================
+      // Content below may be in clear: left so by older versions, or written
+      // while encrypted (sessions stay valid). Plaintext is kept, not an error.
+      // ===================================================================
+
+      // ===================================================================
+      // Decrypt forum topic titles
+      // ===================================================================
+      const allTopics = await tx.select().from(forumTopics);
+      for (const topic of allTopics) {
+        await tx
+          .update(forumTopics)
+          .set({
+            title: decryptOrKeep(topic.title, key, legacyIv) ?? topic.title,
+          })
+          .where(eq(forumTopics.id, topic.id));
       }
 
       // ===================================================================
@@ -165,7 +219,7 @@ export default defineEventHandler(async (event) => {
           .update(forumPosts)
           .set({
             content:
-              decryptField(post.content, key, legacyIv) ?? post.content,
+              decryptOrKeep(post.content, key, legacyIv) ?? post.content,
           })
           .where(eq(forumPosts.id, post.id));
       }
@@ -179,9 +233,88 @@ export default defineEventHandler(async (event) => {
           .update(torrentComments)
           .set({
             content:
-              decryptField(comment.content, key, legacyIv) ?? comment.content,
+              decryptOrKeep(comment.content, key, legacyIv) ?? comment.content,
           })
           .where(eq(torrentComments.id, comment.id));
+      }
+
+      // ===================================================================
+      // Decrypt private messages and shoutbox messages
+      // ===================================================================
+      const allMessages = await tx.select().from(privateMessages);
+      for (const message of allMessages) {
+        await tx
+          .update(privateMessages)
+          .set({
+            body: decryptOrKeep(message.body, key, legacyIv) ?? message.body,
+          })
+          .where(eq(privateMessages.id, message.id));
+      }
+
+      const allShouts = await tx.select().from(shoutMessages);
+      for (const shout of allShouts) {
+        await tx
+          .update(shoutMessages)
+          .set({ body: decryptOrKeep(shout.body, key, legacyIv) ?? shout.body })
+          .where(eq(shoutMessages.id, shout.id));
+      }
+
+      // ===================================================================
+      // Decrypt banned IPs. Rewritten rather than updated: a ban added while
+      // encrypted (from a user's encrypted last IP) may decrypt to an IP
+      // already banned, which would break the primary key.
+      // ===================================================================
+      const allBans = await tx.select().from(bannedIps);
+      await tx.delete(bannedIps);
+      // Chunked: one insert is capped at 65535 bound parameters
+      for (let i = 0; i < allBans.length; i += 1000) {
+        await tx
+          .insert(bannedIps)
+          .values(
+            allBans.slice(i, i + 1000).map((ban) => ({
+              ip: decryptOrKeep(ban.ip, key, legacyIv) ?? ban.ip,
+              reason: decryptOrKeep(ban.reason, key, legacyIv),
+              createdAt: ban.createdAt,
+            }))
+          )
+          .onConflictDoNothing();
+      }
+
+      // ===================================================================
+      // Decrypt reports, bounties and the bonus ledger
+      // ===================================================================
+      const allReports = await tx.select().from(reports);
+      for (const report of allReports) {
+        await tx
+          .update(reports)
+          .set({
+            reason: decryptOrKeep(report.reason, key, legacyIv) ?? report.reason,
+            details: decryptOrKeep(report.details, key, legacyIv),
+            resolution: decryptOrKeep(report.resolution, key, legacyIv),
+          })
+          .where(eq(reports.id, report.id));
+      }
+
+      const allBounties = await tx.select().from(bounties);
+      for (const bounty of allBounties) {
+        await tx
+          .update(bounties)
+          .set({
+            title: decryptOrKeep(bounty.title, key, legacyIv) ?? bounty.title,
+            description: decryptOrKeep(bounty.description, key, legacyIv),
+            imdbId: decryptOrKeep(bounty.imdbId, key, legacyIv),
+          })
+          .where(eq(bounties.id, bounty.id));
+      }
+
+      const allTransactions = await tx.select().from(bonusTransactions);
+      for (const transaction of allTransactions) {
+        await tx
+          .update(bonusTransactions)
+          .set({
+            description: decryptOrKeep(transaction.description, key, legacyIv),
+          })
+          .where(eq(bonusTransactions.id, transaction.id));
       }
 
       // ===================================================================
@@ -208,6 +341,7 @@ export default defineEventHandler(async (event) => {
   // Passkeys and torrents changed: drop tracker caches
   invalidateTrackerUsers();
   invalidateTrackerTorrents();
+  invalidateBannedIps();
 
   return {
     success: true,

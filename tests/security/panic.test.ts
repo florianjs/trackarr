@@ -6,6 +6,7 @@ import {
   decrypt,
   encryptField,
   decryptField,
+  decryptOrKeep,
   generateLegacyIv,
 } from '../../server/utils/panic';
 
@@ -60,5 +61,27 @@ describe('Panic encryption', () => {
     const key = await deriveKey('pw', salt);
     expect(encryptField(null, key)).toBeNull();
     expect(decryptField(undefined, key)).toBeNull();
+    expect(decryptOrKeep(null, key)).toBeNull();
+  });
+
+  it('decrypts our ciphertext and keeps plaintext as is', async () => {
+    const key = await deriveKey('pw', salt);
+    expect(decryptOrKeep(encrypt('hello: world', key), key)).toBe('hello: world');
+    // Written in clear while encrypted, or by a version that left it in clear
+    expect(decryptOrKeep('see you at 10:30', key)).toBe('see you at 10:30');
+    expect(decryptOrKeep('a:b:c', key)).toBe('a:b:c');
+    expect(decryptOrKeep('203.0.113.7', key)).toBe('203.0.113.7');
+  });
+
+  it('decrypts legacy values and keeps plaintext with a legacy IV', async () => {
+    const key = await deriveKey('legacy-hash', salt);
+    const iv = generateLegacyIv();
+    const cipher = createCipheriv('aes-256-gcm', key, iv);
+    let enc = cipher.update('old data', 'utf8', 'base64');
+    enc += cipher.final('base64');
+    const legacy = `${enc}:${cipher.getAuthTag().toString('base64')}`;
+
+    expect(decryptOrKeep(legacy, key, iv)).toBe('old data');
+    expect(decryptOrKeep('left in clear', key, iv)).toBe('left in clear');
   });
 });
