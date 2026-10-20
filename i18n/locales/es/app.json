@@ -1008,6 +1008,9 @@
       "copied": "Copiada",
       "points": "{n} puntos",
       "signOut": "Cerrar sesión",
+      "signOutOthers": "Cerrar sesión en otros dispositivos",
+      "signedOutOthers": "Sesión cerrada en otros dispositivos",
+      "signOutOthersFailed": "No se pudo cerrar la sesión en otros dispositivos, inténtalo de nuevo",
       "theme": "Tema",
       "language": "Idioma"
     },

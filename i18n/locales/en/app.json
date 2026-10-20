@@ -1008,6 +1008,9 @@
       "copied": "Copied",
       "points": "{n} points",
       "signOut": "Sign out",
+      "signOutOthers": "Sign out other devices",
+      "signedOutOthers": "Other devices signed out",
+      "signOutOthersFailed": "Could not sign out other devices, try again",
       "theme": "Theme",
       "language": "Language"
     },

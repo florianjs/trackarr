@@ -84,6 +84,17 @@
           </div>
         </div>
 
+        <!-- Revokes every other session (lost device, stolen cookie) -->
+        <button
+          type="button"
+          class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+          role="menuitem"
+          :disabled="signingOutOthers"
+          @click="signOutOthers"
+        >
+          <Icon :name="signOutOthersIcon" class="text-text-muted" />{{ signOutOthersLabel }}
+        </button>
+
         <button
           type="button"
           class="w-full flex items-center gap-2 px-4 py-2.5 text-sm text-danger hover:bg-danger/10"
@@ -108,6 +119,19 @@ const passkey = ref<string | null>(null);
 const points = ref<number | null>(null);
 const avatarUrl = ref<string | null>(null);
 const copied = ref(false);
+const signingOutOthers = ref(false);
+const signedOutOthers = ref(false);
+const signOutOthersFailed = ref(false);
+const signOutOthersIcon = computed(() =>
+  signedOutOthers.value ? 'ph:check' : signOutOthersFailed.value ? 'ph:warning' : 'ph:devices'
+);
+const signOutOthersLabel = computed(() =>
+  signedOutOthers.value
+    ? t('shell.user.signedOutOthers')
+    : signOutOthersFailed.value
+      ? t('shell.user.signOutOthersFailed')
+      : t('shell.user.signOutOthers')
+);
 
 // Passkey and balance are not in the client session: load them on demand.
 // The balance changes while seeding, so it is refreshed on every opening.
@@ -140,6 +164,22 @@ async function copyPasskey() {
   }
   copied.value = true;
   setTimeout(() => (copied.value = false), 1500);
+}
+
+async function signOutOthers() {
+  signingOutOthers.value = true;
+  signOutOthersFailed.value = false;
+  try {
+    await $fetch('/api/auth/logout-others', { method: 'POST' });
+    signedOutOthers.value = true;
+    setTimeout(() => (signedOutOthers.value = false), 2000);
+  } catch {
+    // Other sessions are still active: say so, so the user can retry
+    signOutOthersFailed.value = true;
+    setTimeout(() => (signOutOthersFailed.value = false), 4000);
+  } finally {
+    signingOutOthers.value = false;
+  }
 }
 
 function onClickOutside(event: MouseEvent) {

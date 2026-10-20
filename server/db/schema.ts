@@ -34,6 +34,8 @@ export const users = pgTable(
     isAdmin: boolean('is_admin').default(false).notNull(),
     isModerator: boolean('is_moderator').default(false).notNull(),
     isBanned: boolean('is_banned').default(false).notNull(),
+    // Bumped to revoke every sealed session cookie issued before (ban, sign out everywhere)
+    sessionVersion: integer('session_version').default(0).notNull(),
     roleId: text('role_id'),
     lastIp: text('last_ip'),
     uploaded: bigint('uploaded', { mode: 'number' }).default(0).notNull(),

@@ -1008,6 +1008,9 @@
       "copied": "Kopiert",
       "points": "{n} Punkte",
       "signOut": "Abmelden",
+      "signOutOthers": "Andere Geräte abmelden",
+      "signedOutOthers": "Andere Geräte abgemeldet",
+      "signOutOthersFailed": "Abmelden anderer Geräte fehlgeschlagen, bitte erneut versuchen",
       "theme": "Design",
       "language": "Sprache"
     },
