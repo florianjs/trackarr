@@ -6,8 +6,9 @@ This guide will help you get Trackarr up and running in minutes.
 
 Before you begin, ensure you have:
 
-- **Node.js** 20 or higher
+- **Node.js** 24 or higher
 - **Docker** and Docker Compose
+- **OpenSSL** (used by `scripts/setup.sh` to generate secrets)
 - **npm** package manager
 
 ## DNS Configuration
