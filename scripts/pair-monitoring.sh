@@ -42,20 +42,27 @@ esac
 [[ -f $ENV_FILE ]] || die "$ENV_FILE not found: run the installer first"
 COMPOSE=(docker compose -f "$COMPOSE_FILE" --env-file "$ENV_FILE")
 LOGS_CMD="${COMPOSE[*]} logs beszel-agent"
-[[ -w $ENV_FILE ]] || die "Cannot write $ENV_FILE: run with sudo"
+[[ -w $ENV_FILE && -w $PROJECT_DIR ]] || die "Cannot write $ENV_FILE: run with sudo"
 command -v docker >/dev/null || die "Docker is not installed"
 
-# Replace KEY=... (or a commented # KEY=...) in .env, or append it
+# Replace KEY=... (or a commented # KEY=...) in .env, or append it.
+# Written to a copy next to .env, then renamed over it: a failed write
+# (full disk) never leaves a truncated .env, which holds every secret
 set_env() {
     local key=$1 value=$2 tmp
-    tmp=$(mktemp)
-    awk -v k="$key" -v v="$value" '
+    tmp=$(mktemp "$ENV_FILE.XXXXXX")
+    if ! awk -v k="$key" -v v="$value" '
         $0 ~ "^#? *" k "=" { if (!done) print k "=" v; done = 1; next }
         { print }
         END { if (!done) print k "=" v }
-    ' "$ENV_FILE" > "$tmp"
-    cat "$tmp" > "$ENV_FILE"
-    rm -f "$tmp"
+    ' "$ENV_FILE" > "$tmp"; then
+        rm -f "$tmp"
+        die "Could not update $ENV_FILE (disk full?): it was left unchanged"
+    fi
+    # Keep the original mode and owner (GNU stat, then BSD stat)
+    chmod "$(stat -c %a "$ENV_FILE" 2>/dev/null || stat -f %Lp "$ENV_FILE")" "$tmp"
+    chown "$(stat -c %u:%g "$ENV_FILE" 2>/dev/null || stat -f %u:%g "$ENV_FILE")" "$tmp" 2>/dev/null || true
+    mv -f "$tmp" "$ENV_FILE"
 }
 
 current_value() {
@@ -73,12 +80,14 @@ KEY=${BESZEL_AGENT_KEY:-}
 TOKEN=${BESZEL_AGENT_TOKEN:-}
 while [[ ! $KEY =~ ^ssh-ed25519\ [A-Za-z0-9+/=]+$ ]]; do
     [[ -n $KEY ]] && warn "That is not a Beszel public key (it starts with ssh-ed25519)"
-    read -rp "  Public key: " KEY
+    read -rp "  Public key: " KEY \
+        || die "No input: unattended, set BESZEL_AGENT_KEY and BESZEL_AGENT_TOKEN to valid values"
     KEY=$(echo "$KEY" | xargs)
 done
 while [[ ! $TOKEN =~ ^[A-Za-z0-9_-]+$ ]]; do
     [[ -n $TOKEN ]] && warn "That token contains unexpected characters"
-    read -rp "  Token: " TOKEN
+    read -rp "  Token: " TOKEN \
+        || die "No input: unattended, set BESZEL_AGENT_KEY and BESZEL_AGENT_TOKEN to valid values"
     TOKEN=$(echo "$TOKEN" | xargs)
 done
 
