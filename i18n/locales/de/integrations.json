@@ -4,7 +4,7 @@
     "title": "Integrationen",
     "subtitle": "Prowlarr, Sonarr, Radarr und andere Torznab-Apps verbinden",
     "credentials": "Torznab-Einstellungen",
-    "credentialsHint": "Füge diese Werte in deine App ein. Der API-Schlüssel hält deinen Passkey aus den Einstellungen deiner Apps heraus, und ein neuer Schlüssel sperrt Apps mit dem alten. Damit heruntergeladene Torrents enthalten trotzdem deinen Passkey: Wenn der Schlüssel durchsickert, erzeuge ihn neu und bitte das Team, auch deinen Passkey zurückzusetzen.",
+    "credentialsHint": "Füge diese Werte in deine App ein. Der API-Schlüssel hält deinen Passkey aus den Einstellungen deiner Apps heraus, und ein neuer Schlüssel sperrt Apps mit dem alten. Damit heruntergeladene Torrents enthalten trotzdem deinen Passkey: Wenn der Schlüssel durchsickert, erzeuge ihn neu und setze unten deinen Passkey zurück.",
     "url": "URL",
     "apiPath": "API-Pfad",
     "apiKey": "API-Schlüssel",
@@ -45,6 +45,15 @@
         "step3": "Suchergebnisse verlinken .torrent-Dateien über deinen API-Schlüssel.",
         "step4": "Heruntergeladene .torrent-Dateien enthalten bereits deinen Passkey: Im Torrent-Client ist nichts einzurichten."
       }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "Dein Passkey steckt in jeder heruntergeladenen .torrent-Datei und identifiziert dich beim Tracker. Setze ihn zurück, wenn eine .torrent-Datei oder dein API-Schlüssel durchgesickert ist. Vorher heruntergeladene Torrents funktionieren dann nicht mehr: Lade sie erneut herunter (oder ändere ihre Tracker-URL), um weiter zu seeden.",
+      "reset": "Passkey zurücksetzen",
+      "confirm": "Passkey zurücksetzen? Alle vorher heruntergeladenen Torrents müssen erneut heruntergeladen werden, um weiter zu seeden.",
+      "done": "Passkey zurückgesetzt",
+      "doneHint": "Lade deine aktiven Torrents erneut herunter, damit sie mit dem neuen Passkey melden.",
+      "failed": "Passkey konnte nicht zurückgesetzt werden"
     }
   }
 }

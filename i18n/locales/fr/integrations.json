@@ -4,7 +4,7 @@
     "title": "Intégrations",
     "subtitle": "Connectez Prowlarr, Sonarr, Radarr et les autres apps Torznab",
     "credentials": "Paramètres Torznab",
-    "credentialsHint": "Collez ces valeurs dans votre app. La clé API évite de mettre votre passkey dans la configuration de vos apps, et la régénérer coupe les apps qui utilisent l'ancienne. Les torrents téléchargés avec elle contiennent quand même votre passkey : si la clé fuite, régénérez-la et demandez aussi au staff de réinitialiser votre passkey.",
+    "credentialsHint": "Collez ces valeurs dans votre app. La clé API évite de mettre votre passkey dans la configuration de vos apps, et la régénérer coupe les apps qui utilisent l'ancienne. Les torrents téléchargés avec elle contiennent quand même votre passkey : si la clé fuite, régénérez-la et réinitialisez votre passkey ci-dessous.",
     "url": "URL",
     "apiPath": "Chemin de l'API",
     "apiKey": "Clé API",
@@ -45,6 +45,15 @@
         "step3": "Les résultats de recherche pointent vers les fichiers .torrent via votre clé API.",
         "step4": "Les fichiers .torrent téléchargés contiennent déjà votre passkey : rien à configurer dans votre client torrent."
       }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "Votre passkey figure dans chaque fichier .torrent téléchargé et vous identifie auprès du tracker. Réinitialisez-le si un fichier .torrent ou votre clé API a fuité. Les torrents téléchargés avant cessent de fonctionner : téléchargez-les à nouveau (ou mettez à jour leur URL de tracker) pour continuer à seeder.",
+      "reset": "Réinitialiser le passkey",
+      "confirm": "Réinitialiser votre passkey ? Chaque torrent téléchargé avant devra être téléchargé à nouveau pour continuer à seeder.",
+      "done": "Passkey réinitialisé",
+      "doneHint": "Téléchargez à nouveau vos torrents actifs pour qu'ils annoncent avec le nouveau passkey.",
+      "failed": "Impossible de réinitialiser le passkey"
     }
   }
 }

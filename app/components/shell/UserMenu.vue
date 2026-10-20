@@ -154,11 +154,10 @@ async function loadAccount() {
 function toggle() {
   open.value = !open.value;
   if (!open.value) return;
-  if (!passkey.value) {
-    $fetch<{ passkey: string }>('/api/auth/passkey')
-      .then((res) => (passkey.value = res.passkey))
-      .catch(() => {});
-  }
+  // Every opening: the passkey can be reset from the Integrations page
+  $fetch<{ passkey: string }>('/api/auth/passkey')
+    .then((res) => (passkey.value = res.passkey))
+    .catch(() => {});
   loadAccount();
 }
 

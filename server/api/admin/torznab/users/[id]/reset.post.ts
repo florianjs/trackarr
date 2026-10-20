@@ -7,7 +7,7 @@ import { requireAdminSession } from '../../../../../utils/adminAuth';
 import { db, schema } from '../../../../../db';
 import { eq } from 'drizzle-orm';
 import { generatePasskey } from '../../../../../utils/auth';
-import { clearTorznabUserStats } from '../../../../../utils/torznabStats';
+import { clearTorznabUserStats, copyTorznabBlock, unblockTorznabUser } from '../../../../../utils/torznabStats';
 import { invalidateTrackerUsers } from '~~/server/tracker/client';
 
 export default defineEventHandler(async (event) => {
@@ -38,8 +38,10 @@ export default defineEventHandler(async (event) => {
 
   const oldPasskey = existingUsers[0].passkey;
 
-  // Generate new passkey
+  // Generate new passkey; an API block follows it (copied first, see
+  // copyTorznabBlock)
   const newPasskey = generatePasskey();
+  const wasBlocked = await copyTorznabBlock(oldPasskey, newPasskey);
 
   // Revoke the API key too: indexers stop working until the user takes a new one
   await db
@@ -48,6 +50,7 @@ export default defineEventHandler(async (event) => {
     .where(eq(schema.users.id, userId));
 
   // Clear old stats
+  if (wasBlocked) await unblockTorznabUser(oldPasskey);
   await clearTorznabUserStats(oldPasskey);
 
   // Tracker caches the row for a few seconds

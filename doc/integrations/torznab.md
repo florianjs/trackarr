@@ -51,10 +51,10 @@ Sonarr, Radarr and Lidarr can also add Trackarr directly: **Settings → Indexer
 The API key (`tk_` followed by 40 hex characters) is only for Torznab apps. It is created the first time you open the Integrations page.
 
 - **Regenerate key** on the Integrations page rotates it: apps using the old key stop working, your passkey and downloaded `.torrent` files are untouched
-- The API key keeps the passkey out of app settings and logs, but it is **not a separate identity**: `.torrent` files downloaded with it carry the passkey. If the key leaks, regenerate it **and** ask an admin to reset your passkey (then re-download your active torrents)
+- The API key keeps the passkey out of app settings and logs, but it is **not a separate identity**: `.torrent` files downloaded with it carry the passkey. If the key leaks, regenerate it **and** reset your passkey at the bottom of the Integrations page (then re-download your active torrents)
 - Downloaded `.torrent` files still carry your **passkey** in their announce URL, so nothing changes in your torrent client
 - Indexers set up with the passkey as API key keep working, but switching to the API key is recommended: a leaked passkey means rotating it in every torrent
-- An admin **passkey reset** also revokes the API key
+- An admin **passkey reset** also revokes the API key. A Torznab API block set by an admin survives any passkey reset
 
 ## API Endpoints
 
@@ -208,7 +208,7 @@ Errors are returned as XML:
 ## Security Notes
 
 - **HTTPS Only**: Always use HTTPS to protect your API key
-- **API key = Identity**: anyone with it can search and download as you, and read your passkey from the downloaded `.torrent` files. If it leaks, regenerate it and have an admin reset your passkey
+- **API key = Identity**: anyone with it can search and download as you, and read your passkey from the downloaded `.torrent` files. If it leaks, regenerate it and reset your passkey from the Integrations page
 - **Rate Limits**: API is rate limited to prevent abuse (see below)
 
 ## Rate Limits

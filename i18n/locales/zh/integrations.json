@@ -4,7 +4,7 @@
     "title": "集成",
     "subtitle": "连接 Prowlarr、Sonarr、Radarr 及其他 Torznab 应用",
     "credentials": "Torznab 设置",
-    "credentialsHint": "将这些值粘贴到你的应用中。API 密钥让你的 passkey 不必出现在应用设置里，重新生成后使用旧密钥的应用将失效。但用它下载的种子仍包含你的 passkey：如果密钥泄露，请重新生成，并请管理员同时重置你的 passkey。",
+    "credentialsHint": "将这些值粘贴到你的应用中。API 密钥让你的 passkey 不必出现在应用设置里，重新生成后使用旧密钥的应用将失效。但用它下载的种子仍包含你的 passkey：如果密钥泄露，请重新生成，并在下方重置你的 passkey。",
     "url": "URL",
     "apiPath": "API 路径",
     "apiKey": "API 密钥",
@@ -45,6 +45,15 @@
         "step3": "搜索结果通过你的 API 密钥链接到 .torrent 文件。",
         "step4": "下载的 .torrent 文件已包含你的 passkey：无需在 torrent 客户端中配置。"
       }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "你的 passkey 包含在每个下载的 .torrent 文件中，用于在 tracker 上识别你。如果 .torrent 文件或 API 密钥泄露，请重置它。之前下载的种子将失效：请重新下载（或更新其 tracker 地址）以继续做种。",
+      "reset": "重置 passkey",
+      "confirm": "重置 passkey？之前下载的所有种子都需要重新下载才能继续做种。",
+      "done": "passkey 已重置",
+      "doneHint": "请重新下载正在做种的种子，使其使用新的 passkey 汇报。",
+      "failed": "无法重置 passkey"
     }
   }
 }

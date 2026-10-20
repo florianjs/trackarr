@@ -4,7 +4,7 @@
     "title": "Integraciones",
     "subtitle": "Conecta Prowlarr, Sonarr, Radarr y otras apps Torznab",
     "credentials": "Ajustes de Torznab",
-    "credentialsHint": "Pega estos valores en tu app. La clave API evita poner tu passkey en la configuración de tus apps, y regenerarla corta las apps que usan la anterior. Los torrents descargados con ella siguen llevando tu passkey: si la clave se filtra, regenérala y pide también al staff que restablezca tu passkey.",
+    "credentialsHint": "Pega estos valores en tu app. La clave API evita poner tu passkey en la configuración de tus apps, y regenerarla corta las apps que usan la anterior. Los torrents descargados con ella siguen llevando tu passkey: si la clave se filtra, regénérala y restablece tu passkey más abajo.",
     "url": "URL",
     "apiPath": "Ruta de la API",
     "apiKey": "Clave API",
@@ -45,6 +45,15 @@
         "step3": "Los resultados de búsqueda enlazan los archivos .torrent mediante tu clave API.",
         "step4": "Los archivos .torrent descargados ya llevan tu passkey: nada que configurar en tu cliente torrent."
       }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "Tu passkey está en cada archivo .torrent que descargas y te identifica ante el tracker. Restablécelo si un archivo .torrent o tu clave API se filtró. Los torrents descargados antes dejan de funcionar: vuelve a descargarlos (o actualiza su URL de tracker) para seguir compartiendo.",
+      "reset": "Restablecer passkey",
+      "confirm": "¿Restablecer tu passkey? Todos los torrents descargados antes deberán descargarse de nuevo para seguir compartiendo.",
+      "done": "Passkey restablecido",
+      "doneHint": "Vuelve a descargar tus torrents activos para que anuncien con el nuevo passkey.",
+      "failed": "No se pudo restablecer el passkey"
     }
   }
 }

@@ -101,6 +101,23 @@
         </ol>
       </div>
     </div>
+
+    <!-- Passkey reset: the way out of a leaked API key or .torrent file -->
+    <div class="card mt-6 border-danger/40">
+      <div class="card-header">
+        <div class="flex items-center gap-2">
+          <Icon name="ph:key" class="text-danger" />
+          <h3 class="text-sm font-medium text-text-primary">{{ t('integrations.passkey.title') }}</h3>
+        </div>
+      </div>
+      <div class="card-body flex flex-wrap items-center justify-between gap-4">
+        <p class="text-sm text-text-muted max-w-2xl">{{ t('integrations.passkey.hint') }}</p>
+        <button type="button" class="btn btn-secondary text-danger" :disabled="resettingPasskey" @click="resetPasskey">
+          <Icon :name="resettingPasskey ? 'ph:circle-notch' : 'ph:arrows-clockwise'" :class="{ 'animate-spin': resettingPasskey }" />
+          {{ t('integrations.passkey.reset') }}
+        </button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -186,6 +203,21 @@ async function rotateKey() {
     notifications.error(message || t('integrations.rotateFailed'));
   } finally {
     rotating.value = false;
+  }
+}
+
+const resettingPasskey = ref(false);
+async function resetPasskey() {
+  if (!confirm(t('integrations.passkey.confirm'))) return;
+  resettingPasskey.value = true;
+  try {
+    await $fetch('/api/auth/passkey', { method: 'POST' });
+    notifications.success(t('integrations.passkey.done'), t('integrations.passkey.doneHint'));
+  } catch (error) {
+    const message = (error as { data?: { message?: string } }).data?.message;
+    notifications.error(t('integrations.passkey.failed'), message);
+  } finally {
+    resettingPasskey.value = false;
   }
 }
 
