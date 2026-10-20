@@ -23,7 +23,7 @@ services:
       DB_NAME: ${DB_NAME:-trackarr}
       DB_SSL: "false"
       REDIS_URL: redis://redis:6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-loadtest-redis-password}
       REDIS_HOST: redis
       REDIS_PORT: 6379
       IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret-not-for-production}
@@ -55,7 +55,7 @@ services:
       DATABASE_URL: postgres://${DB_USER:-tracker}:${DB_PASSWORD:-tracker}@postgres:5432/${DB_NAME:-trackarr}
       DB_SSL: "false"
       REDIS_URL: redis://redis:6379
-      REDIS_PASSWORD: ${REDIS_PASSWORD:-}
+      REDIS_PASSWORD: ${REDIS_PASSWORD:-loadtest-redis-password}
       IP_HASH_SECRET: ${IP_HASH_SECRET:-loadtest-ip-hash-secret-not-for-production}
       TRACKER_INTERNAL_TOKEN: loadtest-internal-token
       TRACKER_DEBUG: ${TRACKER_DEBUG:-false}
@@ -106,13 +106,19 @@ services:
     image: redis:7-alpine
     container_name: trackarr-loadtest-redis
     restart: unless-stopped
+    # The app refuses to start without a Redis password. Kept out of argv,
+    # like the other compose files
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:-loadtest-redis-password}
     command: >
-      redis-server
+      sh -c 'printf "requirepass %s\n" "$$REDISCLI_AUTH" > /tmp/auth.conf &&
+      chown redis /tmp/auth.conf &&
+      exec docker-entrypoint.sh redis-server /tmp/auth.conf
       --appendonly no
       --save ""
       --maxmemory 512mb
       --maxmemory-policy allkeys-lru
-      --maxclients 5000
+      --maxclients 5000'
     ports:
       - "127.0.0.1:6379:6379"
     healthcheck:

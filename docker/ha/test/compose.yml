@@ -7,6 +7,7 @@ name: trackarr-ha-test
 
 x-common: &common
   REDIS_PASSWORD: test-redis
+  REDIS_SENTINEL_PASSWORD: test-sentinel
   REDIS_INITIAL_MASTER_IP: 172.30.8.1
   SENTINEL_DOWN_AFTER_MS: "5000"
 
@@ -21,6 +22,23 @@ x-etcd-env: &etcd-env
   ETCD_INITIAL_CLUSTER_TOKEN: trackarr
   ETCD_HEARTBEAT_INTERVAL: 250
   ETCD_ELECTION_TIMEOUT: 2500
+  ETCDCTL_USER: root:test-etcd-root
+
+x-etcd-auth: &etcd-auth
+  build:
+    dockerfile_inline: |
+      FROM quay.io/coreos/etcd:v3.5.17 AS etcd
+      FROM alpine:3.20
+      COPY --from=etcd /usr/local/bin/etcdctl /usr/local/bin/etcdctl
+  image: trackarr-etcdctl:3.5.17
+  restart: on-failure
+  entrypoint: ["/bin/sh", "/ha/etcd-auth.sh"]
+  volumes:
+    - ../etcd-auth.sh:/ha/etcd-auth.sh:ro
+
+x-etcd-auth-env: &etcd-auth-env
+  ETCD_ROOT_PASSWORD: test-etcd-root
+  ETCD_PATRONI_PASSWORD: test-etcd-patroni
 
 x-sentinel: &sentinel
   image: redis:7.4
@@ -40,6 +58,9 @@ x-postgres: &postgres
   image: ghcr.io/zalando/spilo-16:3.3-p3
   restart: unless-stopped
   shm_size: 256m
+  depends_on:
+    etcd-auth1:
+      condition: service_completed_successfully
 
 x-postgres-env: &postgres-env
   SCOPE: trackarr
@@ -49,6 +70,8 @@ x-postgres-env: &postgres-env
   PGPASSWORD_STANDBY: test-repl
   PGPASSWORD_ADMIN: test-admin
   ALLOW_NOSSL: "true"
+  ETCD3_USERNAME: patroni
+  ETCD3_PASSWORD: test-etcd-patroni
 
 x-app: &app
   image: trackarr:ha-test
@@ -82,6 +105,7 @@ x-tracker-env: &tracker-env
   REDIS_COMMAND_TIMEOUT_MS: "5000"
   REDIS_SENTINELS: 172.30.8.1:26379,172.30.8.2:26379,172.30.8.3:26379
   REDIS_PASSWORD: test-redis
+  REDIS_SENTINEL_PASSWORD: test-sentinel
   IP_HASH_SECRET: test-ip-hash-secret-at-least-32-characters
   TRACKER_INTERNAL_TOKEN: test-internal-token
 
@@ -95,6 +119,7 @@ x-app-env: &app-env
   REDIS_COMMAND_TIMEOUT_MS: "5000"
   REDIS_SENTINELS: 172.30.8.1:26379,172.30.8.2:26379,172.30.8.3:26379
   REDIS_PASSWORD: test-redis
+  REDIS_SENTINEL_PASSWORD: test-sentinel
   TRACKER_HTTP_URL: http://tracker1.test/announce
   NUXT_PUBLIC_TRACKER_HTTP_URL: http://tracker1.test/announce
   TRACKER_BACKUP_HTTP_URLS: http://tracker2.test/announce
@@ -145,19 +170,33 @@ services:
       ETCD_INITIAL_ADVERTISE_PEER_URLS: http://172.30.8.3:2380
       ETCD_ADVERTISE_CLIENT_URLS: http://172.30.8.3:2379
 
+  # One per site, like docker/ha/compose.yml: concurrent runs must agree
+  etcd-auth1:
+    <<: *etcd-auth
+    network_mode: service:site1
+    environment: { <<: *etcd-auth-env, NODE_IP: 172.30.8.1 }
+  etcd-auth2:
+    <<: *etcd-auth
+    network_mode: service:site2
+    environment: { <<: *etcd-auth-env, NODE_IP: 172.30.8.2 }
+  etcd-auth3:
+    <<: *etcd-auth
+    network_mode: service:site3
+    environment: { <<: *etcd-auth-env, NODE_IP: 172.30.8.3 }
+
   # --- Sentinel ----------------------------------------------------------------
   sentinel1:
     <<: *sentinel
     network_mode: service:site1
-    environment: { <<: *common, NODE_IP: 172.30.8.1 }
+    environment: { <<: *common, NODE_IP: 172.30.8.1, REDISCLI_AUTH: test-sentinel }
   sentinel2:
     <<: *sentinel
     network_mode: service:site2
-    environment: { <<: *common, NODE_IP: 172.30.8.2 }
+    environment: { <<: *common, NODE_IP: 172.30.8.2, REDISCLI_AUTH: test-sentinel }
   sentinel3:
     <<: *sentinel
     network_mode: service:site3
-    environment: { <<: *common, NODE_IP: 172.30.8.3 }
+    environment: { <<: *common, NODE_IP: 172.30.8.3, REDISCLI_AUTH: test-sentinel }
 
   # --- Redis -------------------------------------------------------------------
   redis1:
@@ -176,16 +215,20 @@ services:
     environment:
       <<: *postgres-env
       POD_IP: 172.30.8.1
-      PATRONI_POSTGRESQL_LISTEN: 172.30.8.1,127.0.0.1:5432
-      PATRONI_RESTAPI_LISTEN: 172.30.8.1:8008
+      SPILO_CONFIGURATION: >-
+        {postgresql: {listen: "172.30.8.1,127.0.0.1:5432"},
+        restapi: {listen: "172.30.8.1:8008",
+        authentication: {username: patroni, password: "test-patroni-api"}}}
   pg2:
     <<: *postgres
     network_mode: service:site2
     environment:
       <<: *postgres-env
       POD_IP: 172.30.8.2
-      PATRONI_POSTGRESQL_LISTEN: 172.30.8.2,127.0.0.1:5432
-      PATRONI_RESTAPI_LISTEN: 172.30.8.2:8008
+      SPILO_CONFIGURATION: >-
+        {postgresql: {listen: "172.30.8.2,127.0.0.1:5432"},
+        restapi: {listen: "172.30.8.2:8008",
+        authentication: {username: patroni, password: "test-patroni-api"}}}
 
   db-init:
     image: postgres:16-alpine
