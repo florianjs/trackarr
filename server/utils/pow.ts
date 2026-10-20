@@ -4,10 +4,11 @@
  */
 import { randomBytes, createHash } from 'crypto';
 import { redis } from '../redis/client';
+import { leadingZeroBits, parsePoWDifficulty } from '../../shared/utils/pow';
 
-// Difficulty: number of leading zeros required in hash
-// 4 = ~0.5s, 5 = ~2-5s, 6 = ~30s on modern hardware
-const POW_DIFFICULTY = 5;
+// Leading zero bits required in the hash (POW_DIFFICULTY): each extra bit
+// doubles the client's work, verification stays a single hash
+const POW_DIFFICULTY = parsePoWDifficulty(process.env.POW_DIFFICULTY);
 const CHALLENGE_TTL = 300; // 5 minutes
 
 export interface PoWChallenge {
@@ -38,6 +39,20 @@ export async function generatePoWChallenge(): Promise<PoWChallenge> {
 }
 
 /**
+ * Check a solution's hash and work, without touching the challenge store
+ */
+export function isValidPoWHash(solution: PoWSolution, difficulty: number): boolean {
+  const input = `${solution.challenge}:${solution.nonce}`;
+  const computed = createHash('sha256').update(input).digest();
+
+  // Check hash matches what client sent, and has enough leading zero bits
+  return (
+    computed.toString('hex') === solution.hash &&
+    leadingZeroBits(computed) >= difficulty
+  );
+}
+
+/**
  * Verify a PoW solution
  * Returns true if valid, false otherwise
  * Consumes the challenge before verification to prevent reuse
@@ -49,23 +64,8 @@ export async function verifyPoWSolution(solution: PoWSolution): Promise<boolean>
   if (consumed !== 1) {
     return false;
   }
-  
-  // Verify the hash computation
-  const input = `${solution.challenge}:${solution.nonce}`;
-  const computed = createHash('sha256').update(input).digest('hex');
-  
-  // Check hash matches what client sent
-  if (computed !== solution.hash) {
-    return false;
-  }
-  
-  // Check hash has required leading zeros
-  const target = '0'.repeat(POW_DIFFICULTY);
-  if (!solution.hash.startsWith(target)) {
-    return false;
-  }
 
-  return true;
+  return isValidPoWHash(solution, POW_DIFFICULTY);
 }
 
 /**

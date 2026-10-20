@@ -12,6 +12,7 @@ import { db } from '../db';
 import { users } from '../db/schema';
 import { getIpBan } from '../utils/bannedIps';
 import { authUserColumns, sessionRejection } from '../utils/adminAuth';
+import { buildCsp } from '../utils/csp';
 import { checkSession } from '../utils/sessionRules';
 
 // ============================================================================
@@ -107,19 +108,8 @@ function applySecurityHeaders(event: any): void {
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
     'X-DNS-Prefetch-Control': 'off',
-    // Content Security Policy - Strict security rules
-    'Content-Security-Policy': [
-      "default-src 'self'",
-      "script-src 'self' 'unsafe-inline'", // Nuxt requires unsafe-inline for HMR
-      "style-src 'self' 'unsafe-inline'", // Tailwind requires unsafe-inline
-      "img-src 'self' data: https:",
-      "font-src 'self' data:",
-      "connect-src 'self'",
-      "frame-ancestors 'none'",
-      "base-uri 'self'",
-      "form-action 'self'",
-      'upgrade-insecure-requests',
-    ].join('; '),
+    // Content Security Policy - pages get a nonce (server/plugins/csp-nonce.ts)
+    'Content-Security-Policy': buildCsp(),
   };
 
   // Add HSTS in production

@@ -54,11 +54,19 @@ Replace `your-domain.com` with your actual tracker domain.
 
 ### Security
 
-| Variable            | Description                     | Default |
-| ------------------- | ------------------------------- | ------- |
-| `POW_DIFFICULTY`    | Proof of Work difficulty (1-10) | `5`     |
-| `RATE_LIMIT_WINDOW` | Rate limit window in seconds    | `60`    |
-| `RATE_LIMIT_MAX`    | Max requests per window         | `100`   |
+| Variable            | Description                                              | Default |
+| ------------------- | -------------------------------------------------------- | ------- |
+| `POW_DIFFICULTY`    | Registration Proof of Work, in leading zero bits (16-32) | `22`    |
+| `RATE_LIMIT_WINDOW` | Rate limit window in seconds                             | `60`    |
+| `RATE_LIMIT_MAX`    | Max requests per window                                  | `100`   |
+
+Registering requires finding a nonce such that `SHA256(challenge:nonce)` starts
+with `POW_DIFFICULTY` zero bits: `2^POW_DIFFICULTY` hashes on average, each
+extra bit doubling the work, while the server checks it with a single hash. The
+browser solver does about 2 million hashes per second on a recent laptop, so
+the default 22 (~4 million hashes) takes 1-2 s there, longer on phones. A value
+outside 16-32 is ignored with a warning and the default is used (older docs
+described a 1-10 scale, which the server never applied).
 
 ## Docker Compose Configuration
 

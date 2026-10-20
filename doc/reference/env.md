@@ -45,12 +45,12 @@ These must be set for the application to run:
 
 ## Security
 
-| Variable            | Description                     | Default           |
-| ------------------- | ------------------------------- | ----------------- |
-| `POW_DIFFICULTY`    | Proof of Work difficulty (1-10) | `5`               |
-| `RATE_LIMIT_WINDOW` | Rate limit window (seconds)     | `60`              |
-| `RATE_LIMIT_MAX`    | Max requests per window         | `100`             |
-| `SESSION_MAX_AGE`   | Session lifetime (seconds)      | `604800` (7 days) |
+| Variable            | Description                                                                                         | Default           |
+| ------------------- | --------------------------------------------------------------------------------------------------- | ----------------- |
+| `POW_DIFFICULTY`    | Registration Proof of Work in bits (16-32), see [configuration](../guide/configuration.md#security) | `22`              |
+| `RATE_LIMIT_WINDOW` | Rate limit window (seconds)                                                                         | `60`              |
+| `RATE_LIMIT_MAX`    | Max requests per window                                                                             | `100`             |
+| `SESSION_MAX_AGE`   | Session lifetime (seconds)                                                                          | `604800` (7 days) |
 
 ### Security alerts
 
@@ -132,7 +132,7 @@ REDIS_PASSWORD=redispassword
 NUXT_SESSION_PASSWORD="your-32-character-session-password-here"
 TRACKER_SECRET="your-tracker-secret-for-passkeys"
 IP_HASH_SECRET="your-ip-hashing-secret"
-POW_DIFFICULTY=5
+POW_DIFFICULTY=22
 
 # Tracker
 TRACKER_INTERNAL_TOKEN="output-of-openssl-rand-hex-32"

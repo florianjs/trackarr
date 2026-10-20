@@ -82,6 +82,8 @@ services:
       NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL:-http://localhost:8080/announce}
       # Security: Secret for hashing peer IPs
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
+      # Registration proof of work, in bits (empty: built-in default)
+      POW_DIFFICULTY: ${POW_DIFFICULTY:-}
       # Tracker service private API (swarm peers, status)
       TRACKER_INTERNAL_URL: http://tracker:8090
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
