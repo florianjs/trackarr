@@ -130,21 +130,7 @@
     "peerCount": "{count} peer | {count} peer | {count} peer",
     "lowLatency": "Latenza bassissima",
     "recentlyIndexed": "Aggiunti di recente",
-    "browseAll": "Vedi tutti",
-    "features": {
-      "performance": {
-        "title": "Alte prestazioni",
-        "description": "Basato su Node.js e Redis per tempi di risposta inferiori al millisecondo e un'elevata gestione della concorrenza."
-      },
-      "protocols": {
-        "title": "Multiprotocollo",
-        "description": "Supporta i protocolli HTTP, UDP e WebSocket per la massima compatibilità con tutti i client BitTorrent."
-      },
-      "openSource": {
-        "title": "Open source",
-        "description": "Totalmente trasparente e guidato dalla community. Pensato per la privacy e l'efficienza nell'ecosistema P2P."
-      }
-    }
+    "browseAll": "Vedi tutti"
   },
   "searchBar": {
     "placeholder": "Cerca...",
@@ -1022,6 +1008,9 @@
       "copied": "Copiata",
       "points": "{n} punti",
       "signOut": "Esci",
+      "signOutOthers": "Disconnetti gli altri dispositivi",
+      "signedOutOthers": "Altri dispositivi disconnessi",
+      "signOutOthersFailed": "Impossibile disconnettere gli altri dispositivi, riprova",
       "theme": "Tema",
       "language": "Lingua"
     },

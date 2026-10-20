@@ -6,7 +6,14 @@ import {
   torrents,
   panicState,
   forumPosts,
+  forumTopics,
   torrentComments,
+  bannedIps,
+  privateMessages,
+  shoutMessages,
+  reports,
+  bonusTransactions,
+  bounties,
 } from '../../../db/schema';
 import { requireAdminSession } from '../../../utils/adminAuth';
 import { protectEndpoint } from '../../../utils/rateLimit';
@@ -16,6 +23,8 @@ import {
   encryptField,
   encrypt,
 } from '../../../utils/panic';
+import { purgePanicRedisData } from '../../../utils/panicPurge';
+import { invalidateBannedIps } from '../../../utils/bannedIps';
 import { invalidateTrackerTorrents, invalidateTrackerUsers } from '../../../tracker/client';
 
 const bodySchema = z.object({
@@ -101,10 +110,14 @@ export default defineEventHandler(async (event) => {
     // =====================================================================
     const allTorrents = await tx.select().from(torrents);
     for (const torrent of allTorrents) {
-      // Store original metadata for restoration (size, categoryId)
+      // Store original metadata for restoration (size, categoryId, and the
+      // media ids, which would name the content as well as the title)
       const originalMeta = JSON.stringify({
         size: torrent.size,
         categoryId: torrent.categoryId,
+        imdbId: torrent.imdbId,
+        tmdbId: torrent.tmdbId,
+        tvdbId: torrent.tvdbId,
       });
       const encryptedMeta = encrypt(originalMeta, key);
 
@@ -128,8 +141,22 @@ export default defineEventHandler(async (event) => {
           torrentData: encryptedTorrentData,
           size: 0, // Hide real size
           categoryId: null, // Clear category reference
+          imdbId: null,
+          tmdbId: null,
+          tvdbId: null,
         })
         .where(eq(torrents.id, torrent.id));
+    }
+
+    // =====================================================================
+    // Encrypt forum topic titles
+    // =====================================================================
+    const allTopics = await tx.select().from(forumTopics);
+    for (const topic of allTopics) {
+      await tx
+        .update(forumTopics)
+        .set({ title: encryptField(topic.title, key) ?? '[ENCRYPTED]' })
+        .where(eq(forumTopics.id, topic.id));
     }
 
     // =====================================================================
@@ -156,6 +183,77 @@ export default defineEventHandler(async (event) => {
           content: encryptField(comment.content, key) ?? '[ENCRYPTED]',
         })
         .where(eq(torrentComments.id, comment.id));
+    }
+
+    // =====================================================================
+    // Encrypt private messages and shoutbox messages
+    // =====================================================================
+    const allMessages = await tx.select().from(privateMessages);
+    for (const message of allMessages) {
+      await tx
+        .update(privateMessages)
+        .set({ body: encryptField(message.body, key) ?? '[ENCRYPTED]' })
+        .where(eq(privateMessages.id, message.id));
+    }
+
+    const allShouts = await tx.select().from(shoutMessages);
+    for (const shout of allShouts) {
+      await tx
+        .update(shoutMessages)
+        .set({ body: encryptField(shout.body, key) ?? '[ENCRYPTED]' })
+        .where(eq(shoutMessages.id, shout.id));
+    }
+
+    // =====================================================================
+    // Encrypt banned IPs. The ban check compares IPs in clear, so bans are
+    // inactive until restore: accepted, nobody can log in or announce
+    // meanwhile (verifiers and passkeys are encrypted).
+    // =====================================================================
+    const allBans = await tx.select().from(bannedIps);
+    for (const ban of allBans) {
+      await tx
+        .update(bannedIps)
+        .set({
+          ip: encryptField(ban.ip, key)!,
+          reason: encryptField(ban.reason, key),
+        })
+        .where(eq(bannedIps.ip, ban.ip));
+    }
+
+    // =====================================================================
+    // Encrypt reports, bounties and the bonus ledger (descriptions hold
+    // torrent names and bounty titles)
+    // =====================================================================
+    const allReports = await tx.select().from(reports);
+    for (const report of allReports) {
+      await tx
+        .update(reports)
+        .set({
+          reason: encryptField(report.reason, key) ?? '[ENCRYPTED]',
+          details: encryptField(report.details, key),
+          resolution: encryptField(report.resolution, key),
+        })
+        .where(eq(reports.id, report.id));
+    }
+
+    const allBounties = await tx.select().from(bounties);
+    for (const bounty of allBounties) {
+      await tx
+        .update(bounties)
+        .set({
+          title: encryptField(bounty.title, key) ?? '[ENCRYPTED]',
+          description: encryptField(bounty.description, key),
+          imdbId: encryptField(bounty.imdbId, key),
+        })
+        .where(eq(bounties.id, bounty.id));
+    }
+
+    const allTransactions = await tx.select().from(bonusTransactions);
+    for (const transaction of allTransactions) {
+      await tx
+        .update(bonusTransactions)
+        .set({ description: encryptField(transaction.description, key) })
+        .where(eq(bonusTransactions.id, transaction.id));
     }
 
     // =====================================================================
@@ -186,6 +284,15 @@ export default defineEventHandler(async (event) => {
   // Passkeys and torrents changed: drop tracker caches
   invalidateTrackerUsers();
   invalidateTrackerTorrents();
+  invalidateBannedIps();
+
+  // After the commit: logs keyed by passkey or holding IPs are deleted, not
+  // encrypted. A Redis failure must not hide that the database is encrypted.
+  try {
+    await purgePanicRedisData();
+  } catch (err) {
+    console.error('[Panic] Redis logs not purged:', err);
+  }
 
   return {
     success: true,

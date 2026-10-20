@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '~~/server/db';
 import { users, bannedIps } from '~~/server/db/schema';
-import { requireModeratorSession } from '~~/server/utils/adminAuth';
+import { bumpedSessionVersion, requireModeratorSession } from '~~/server/utils/adminAuth';
 import {
   validateBody,
   validateParam,
@@ -55,8 +55,12 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Update user status
-  await db.update(users).set({ isBanned: true }).where(eq(users.id, userId));
+  // Update user status; the version bump keeps their open sessions revoked
+  // even if they are unbanned later
+  await db
+    .update(users)
+    .set({ isBanned: true, sessionVersion: bumpedSessionVersion() })
+    .where(eq(users.id, userId));
 
   // Ban their IP if available
   if (user.lastIp) {

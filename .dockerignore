@@ -7,7 +7,6 @@ CREDENTIALS.txt
 certs/
 *.pem
 *.key
-docker/pgbouncer/userlist.txt
 
 # Rebuilt inside the image or irrelevant to it
 .git

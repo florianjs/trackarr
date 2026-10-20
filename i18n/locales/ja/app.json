@@ -130,21 +130,7 @@
     "peerCount": "{count} ピア | {count} ピア | {count} ピア",
     "lowLatency": "超低レイテンシ",
     "recentlyIndexed": "最近登録されたトレント",
-    "browseAll": "すべて表示",
-    "features": {
-      "performance": {
-        "title": "高性能",
-        "description": "Node.js と Redis で構築され、ミリ秒未満の応答時間と高い同時接続性能を実現します。"
-      },
-      "protocols": {
-        "title": "マルチプロトコル",
-        "description": "HTTP、UDP、WebSocket プロトコルに対応し、あらゆる BitTorrent クライアントと高い互換性があります。"
-      },
-      "openSource": {
-        "title": "オープンソース",
-        "description": "完全に透明でコミュニティ主導。P2P エコシステムにおけるプライバシーと効率性を重視して設計されています。"
-      }
-    }
+    "browseAll": "すべて表示"
   },
   "searchBar": {
     "placeholder": "検索...",
@@ -1022,6 +1008,9 @@
       "copied": "コピーしました",
       "points": "{n} ポイント",
       "signOut": "ログアウト",
+      "signOutOthers": "他のデバイスからログアウト",
+      "signedOutOthers": "他のデバイスからログアウトしました",
+      "signOutOthersFailed": "他のデバイスからログアウトできませんでした。もう一度お試しください",
       "theme": "テーマ",
       "language": "言語"
     },

@@ -137,6 +137,7 @@ export default defineEventHandler(async (event) => {
       downloaded: user.downloaded,
     },
     loggedInAt: Date.now(),
+    sessionVersion: user.sessionVersion,
   });
 
   return {
