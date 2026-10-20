@@ -134,6 +134,12 @@ const menuItems = computed(() => [
     description: t('admin.nav.branding.description'),
   },
   {
+    label: t('appearance.nav.label'),
+    path: '/admin/appearance',
+    icon: 'ph:palette',
+    description: t('appearance.nav.description'),
+  },
+  {
     label: t('admin.nav.settings.label'),
     path: '/admin/settings',
     icon: 'ph:gear',

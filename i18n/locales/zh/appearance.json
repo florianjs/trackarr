@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "外观",
+      "description": "颜色、字体、图片、登录页和文本"
+    },
+    "tabs": {
+      "theme": "主题",
+      "typography": "字体排版",
+      "images": "图片",
+      "login": "登录页",
+      "texts": "文本"
+    },
+    "unsaved": "有未保存的更改",
+    "discard": "放弃",
+    "previewHint": "保存之前，更改仅对你在整个站点上预览。",
+    "saved": "外观已保存",
+    "saveFailed": "无法保存外观",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "午夜",
+      "forest": "森林",
+      "sunset": "日落",
+      "mono": "单色",
+      "contrast": "高对比度"
+    },
+    "theme": {
+      "presets": "预设",
+      "presetsHint": "浅色和深色主题的起点。选择预设会清除手动设置的颜色。",
+      "colors": "颜色",
+      "colorsHint": "调整浅色和深色主题的每种颜色。成员仍可选择浅色、深色或跟随系统。",
+      "light": "浅色",
+      "dark": "深色",
+      "resetColors": "恢复预设",
+      "groups": {
+        "surfaces": "表面",
+        "text": "文本",
+        "meaning": "含义色"
+      },
+      "tokens": {
+        "bg": "页面背景",
+        "surface": "卡片",
+        "raised": "凸起区域",
+        "hover": "悬停",
+        "line": "边框",
+        "line-strong": "强调边框",
+        "ink": "主要文本",
+        "ink-2": "次要文本",
+        "ink-3": "弱化文本",
+        "contrast": "主要按钮",
+        "contrast-inv": "主要按钮文字",
+        "free": "强调色与免费",
+        "seed": "上传与做种",
+        "leech": "下载与吸血",
+        "danger": "错误与危险"
+      },
+      "radius": "圆角",
+      "radiusHint": "按钮、输入框和卡片的圆角程度。",
+      "radii": {
+        "none": "直角",
+        "small": "小",
+        "default": "默认",
+        "large": "大",
+        "round": "圆"
+      }
+    },
+    "typography": {
+      "sans": "正文",
+      "sansHint": "整个界面的字体。",
+      "heading": "标题",
+      "headingHint": "页面和区块标题的字体。",
+      "mono": "数字与代码",
+      "monoHint": "大小、分享率、哈希和代码的字体。",
+      "sample": "敏捷的棕色狐狸在做种"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "系统字体"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "系统等宽字体"
+      }
+    },
+    "images": {
+      "loginImage": "登录页图片",
+      "loginImageHint": "在“分栏”和“背景”设计中显示。",
+      "homeBanner": "首页横幅",
+      "homeBannerHint": "显示在成员仪表板顶部的宽幅图片。",
+      "none": "无图片",
+      "upload": "上传",
+      "replace": "替换",
+      "remove": "移除",
+      "formats": "PNG、JPEG 或 WebP，最大 8 MB。立即保存。",
+      "failed": "无法更新图片"
+    },
+    "login": {
+      "layout": "设计",
+      "layoutHint": "用于登录页和注册页。",
+      "layouts": {
+        "centered": "居中",
+        "centeredHint": "标志和表单位于页面中央。",
+        "split": "分栏",
+        "splitHint": "左侧图片，右侧表单。",
+        "background": "背景",
+        "backgroundHint": "全页图片之上的半透明卡片。",
+        "minimal": "极简",
+        "minimalHint": "简洁、左对齐、无标志方块。"
+      },
+      "imageHint": "没有图片时，此设计使用强调色。请在“图片”标签页中添加。",
+      "preview": "预览"
+    },
+    "texts": {
+      "hint": "按语言替换界面中的任何文本。留空则保留原始文本。",
+      "locale": "语言",
+      "search": "搜索键名或文本…",
+      "onlyModified": "仅已修改",
+      "results": "没有文本 | 1 条文本 | {n} 条文本",
+      "empty": "没有匹配的文本。",
+      "placeholders": "请保留原文中花括号内的词：它们会被替换为名称或数字等值。复数形式之间用两侧带空格的竖线分隔。"
+    }
+  }
+}

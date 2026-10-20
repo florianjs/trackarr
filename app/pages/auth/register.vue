@@ -1,284 +1,251 @@
 <template>
-  <div class="relative min-h-screen bg-bg-primary flex items-center justify-center px-4">
-    <div class="absolute top-4 right-4">
-      <LanguageSwitcher />
+  <AuthShell>
+    <!-- Registration Closed -->
+    <div
+      v-if="
+        !status?.registrationOpen &&
+        !status?.inviteEnabled &&
+        !status?.needsSetup
+      "
+      class="bg-bg-secondary border border-border rounded-lg p-6 text-center"
+    >
+      <Icon
+        name="ph:lock-simple"
+        class="text-4xl text-text-muted mx-auto mb-4"
+      />
+      <h2 class="text-lg font-semibold mb-2">{{ t('auth.register.closedTitle') }}</h2>
+      <p class="text-text-muted text-sm mb-6">
+        {{ t('auth.register.closedText') }}
+      </p>
+      <NuxtLink
+        to="/auth/login"
+        class="inline-block bg-white text-black font-medium px-6 py-2 rounded hover:bg-gray-200 transition-colors"
+      >
+        {{ t('auth.login.signIn') }}
+      </NuxtLink>
     </div>
-    <div class="w-full max-w-md">
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <div
-          class="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 overflow-hidden"
-        >
-          <img
-            v-if="branding?.siteLogoImage"
-            :src="branding.siteLogoImage"
-            alt="Logo"
-            class="w-full h-full object-contain"
-          />
-          <Icon
-            v-else
-            :name="branding?.siteLogo || 'ph:broadcast-bold'"
-            class="text-black text-4xl"
+
+    <!-- Register Form -->
+    <div v-else class="bg-bg-secondary border border-border rounded-lg p-6">
+      <h2 class="text-lg font-semibold mb-6">
+        {{
+          status?.needsSetup
+            ? t('auth.register.createAdminAccount')
+            : !status?.registrationOpen && status?.inviteEnabled
+              ? t('auth.register.inviteOnlyTitle')
+              : t('auth.register.createAccount')
+        }}
+      </h2>
+
+      <div
+        v-if="status?.needsSetup"
+        class="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded"
+      >
+        <p class="text-amber-400 text-sm">
+          <Icon name="ph:warning" class="inline-block align-[-2px] mr-1" />
+          {{ t('auth.register.firstAccountWarning') }}
+        </p>
+      </div>
+
+      <!-- ZKE Warning -->
+      <div class="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded">
+        <p class="text-red-400 text-sm">
+          <Icon name="ph:shield-warning" class="inline-block align-[-2px] mr-1" />
+          <strong>{{ t('auth.register.zkeTitle') }}</strong>
+          {{ t('auth.register.zkeText') }}
+        </p>
+      </div>
+
+      <form @submit.prevent="handleRegister" class="space-y-4">
+        <!-- Invite Code (Required if registration closed) -->
+        <div v-if="status?.inviteEnabled">
+          <label
+            for="inviteCode"
+            class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+          >
+            {{ t('auth.register.inviteCode') }}
+            <span
+              v-if="status?.registrationOpen"
+              class="text-text-muted/50 normal-case tracking-normal ml-1"
+            >
+              ({{ t('common.optional') }})
+            </span>
+          </label>
+          <input
+            id="inviteCode"
+            v-model="form.inviteCode"
+            type="text"
+            :required="!status?.registrationOpen"
+            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors font-mono"
+            :placeholder="t('auth.register.inviteCodePlaceholder')"
           />
         </div>
-        <h1
-          class="text-2xl font-bold tracking-tighter"
-          v-html="branding?.authTitle || branding?.siteName || 'TRACKARR'"
-        ></h1>
-        <div
-          class="text-text-muted text-sm mt-1 [&>p]:m-0"
-          v-html="branding?.authSubtitle || t('auth.defaultSubtitle')"
-        ></div>
-      </div>
 
-      <!-- Registration Closed -->
-      <div
-        v-if="
-          !status?.registrationOpen &&
-          !status?.inviteEnabled &&
-          !status?.needsSetup
-        "
-        class="bg-bg-secondary border border-border rounded-lg p-6 text-center"
-      >
-        <Icon
-          name="ph:lock-simple"
-          class="text-4xl text-text-muted mx-auto mb-4"
-        />
-        <h2 class="text-lg font-semibold mb-2">{{ t('auth.register.closedTitle') }}</h2>
-        <p class="text-text-muted text-sm mb-6">
-          {{ t('auth.register.closedText') }}
-        </p>
-        <NuxtLink
-          to="/auth/login"
-          class="inline-block bg-white text-black font-medium px-6 py-2 rounded hover:bg-gray-200 transition-colors"
-        >
-          {{ t('auth.login.signIn') }}
-        </NuxtLink>
-      </div>
+        <div>
+          <label
+            for="username"
+            class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+          >
+            {{ t('common.username') }}
+          </label>
+          <input
+            id="username"
+            v-model="form.username"
+            type="text"
+            required
+            autocomplete="username"
+            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+            :placeholder="t('auth.register.usernamePlaceholder')"
+          />
+        </div>
 
-      <!-- Register Form -->
-      <div v-else class="bg-bg-secondary border border-border rounded-lg p-6">
-        <h2 class="text-lg font-semibold mb-6">
-          {{
-            status?.needsSetup
-              ? t('auth.register.createAdminAccount')
-              : !status?.registrationOpen && status?.inviteEnabled
-                ? t('auth.register.inviteOnlyTitle')
-                : t('auth.register.createAccount')
-          }}
-        </h2>
+        <div>
+          <label
+            for="password"
+            class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+          >
+            {{ t('common.password') }}
+          </label>
+          <input
+            id="password"
+            v-model="form.password"
+            type="password"
+            required
+            autocomplete="new-password"
+            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+            :placeholder="t('auth.register.passwordPlaceholder')"
+          />
+        </div>
 
+        <div>
+          <label
+            for="confirmPassword"
+            class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+          >
+            {{ t('auth.register.confirmPassword') }}
+          </label>
+          <input
+            id="confirmPassword"
+            v-model="form.confirmPassword"
+            type="password"
+            required
+            autocomplete="new-password"
+            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+            :placeholder="t('auth.register.confirmPasswordPlaceholder')"
+          />
+        </div>
+
+        <!-- Panic Password (First Admin Only) -->
         <div
           v-if="status?.needsSetup"
-          class="mb-6 p-3 bg-amber-500/10 border border-amber-500/20 rounded"
+          class="pt-4 mt-4 border-t border-border"
         >
-          <p class="text-amber-400 text-sm">
-            <Icon name="ph:warning" class="inline-block align-[-2px] mr-1" />
-            {{ t('auth.register.firstAccountWarning') }}
-          </p>
-        </div>
-
-        <!-- ZKE Warning -->
-        <div class="mb-6 p-3 bg-red-500/10 border border-red-500/20 rounded">
-          <p class="text-red-400 text-sm">
-            <Icon name="ph:shield-warning" class="inline-block align-[-2px] mr-1" />
-            <strong>{{ t('auth.register.zkeTitle') }}</strong>
-            {{ t('auth.register.zkeText') }}
-          </p>
-        </div>
-
-        <form @submit.prevent="handleRegister" class="space-y-4">
-          <!-- Invite Code (Required if registration closed) -->
-          <div v-if="status?.inviteEnabled">
-            <label
-              for="inviteCode"
-              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-            >
-              {{ t('auth.register.inviteCode') }}
-              <span
-                v-if="status?.registrationOpen"
-                class="text-text-muted/50 normal-case tracking-normal ml-1"
-              >
-                ({{ t('common.optional') }})
-              </span>
-            </label>
-            <input
-              id="inviteCode"
-              v-model="form.inviteCode"
-              type="text"
-              :required="!status?.registrationOpen"
-              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors font-mono"
-              :placeholder="t('auth.register.inviteCodePlaceholder')"
-            />
-          </div>
-
-          <div>
-            <label
-              for="username"
-              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-            >
-              {{ t('common.username') }}
-            </label>
-            <input
-              id="username"
-              v-model="form.username"
-              type="text"
-              required
-              autocomplete="username"
-              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-              :placeholder="t('auth.register.usernamePlaceholder')"
-            />
-          </div>
-
-          <div>
-            <label
-              for="password"
-              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-            >
-              {{ t('common.password') }}
-            </label>
-            <input
-              id="password"
-              v-model="form.password"
-              type="password"
-              required
-              autocomplete="new-password"
-              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-              :placeholder="t('auth.register.passwordPlaceholder')"
-            />
-          </div>
-
-          <div>
-            <label
-              for="confirmPassword"
-              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-            >
-              {{ t('auth.register.confirmPassword') }}
-            </label>
-            <input
-              id="confirmPassword"
-              v-model="form.confirmPassword"
-              type="password"
-              required
-              autocomplete="new-password"
-              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-              :placeholder="t('auth.register.confirmPasswordPlaceholder')"
-            />
-          </div>
-
-          <!-- Panic Password (First Admin Only) -->
           <div
-            v-if="status?.needsSetup"
-            class="pt-4 mt-4 border-t border-border"
+            class="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded"
           >
-            <div
-              class="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded"
+            <p class="text-red-400 text-sm">
+              <Icon name="ph:shield-warning" class="inline-block align-[-2px] mr-1" />
+              {{ t('auth.register.panicWarning') }}
+            </p>
+          </div>
+
+          <div class="mb-4">
+            <label
+              for="panicPassword"
+              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
             >
-              <p class="text-red-400 text-sm">
-                <Icon name="ph:shield-warning" class="inline-block align-[-2px] mr-1" />
-                {{ t('auth.register.panicWarning') }}
-              </p>
-            </div>
-
-            <div class="mb-4">
-              <label
-                for="panicPassword"
-                class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-              >
-                {{ t('auth.register.panicPassword') }}
-              </label>
-              <input
-                id="panicPassword"
-                v-model="form.panicPassword"
-                type="password"
-                required
-                class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-                :placeholder="t('auth.register.panicPasswordPlaceholder')"
-              />
-            </div>
-
-            <div>
-              <label
-                for="confirmPanicPassword"
-                class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-              >
-                {{ t('auth.register.confirmPanicPassword') }}
-              </label>
-              <input
-                id="confirmPanicPassword"
-                v-model="form.confirmPanicPassword"
-                type="password"
-                required
-                class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-                :placeholder="t('auth.register.confirmPanicPasswordPlaceholder')"
-              />
-            </div>
-          </div>
-
-          <div v-if="error" class="text-red-400 text-sm">
-            {{ error }}
-          </div>
-
-          <!-- Status indicator for PoW and ZKE processing -->
-          <div v-if="authStatus" class="space-y-2">
-            <div class="text-text-muted text-xs flex items-center gap-2">
-              <Icon name="ph:spinner" class="animate-spin" />
-              {{ authStatus }}
-            </div>
-            <!-- PoW Progress Bar -->
-            <div
-              v-if="powProgress > 0"
-              class="w-full bg-bg-tertiary rounded-full h-1"
-            >
-              <div
-                class="bg-white h-1 rounded-full transition-all duration-300"
-                :style="{ width: `${Math.min(powProgress, 100)}%` }"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="loading"
-            class="w-full bg-white text-black font-medium py-2.5 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <span v-if="loading">{{ t('auth.register.creatingAccount') }}</span>
-            <span v-else>{{
-              status?.needsSetup
-                ? t('auth.register.createAdminAccount')
-                : t('auth.register.createAccount')
-            }}</span>
-          </button>
-          <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
-          <div class="sr-only" aria-hidden="true">
+              {{ t('auth.register.panicPassword') }}
+            </label>
             <input
-              v-model="form.hpot_field"
-              type="text"
-              name="hpot_field"
-              tabindex="-1"
-              autocomplete="off"
+              id="panicPassword"
+              v-model="form.panicPassword"
+              type="password"
+              required
+              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+              :placeholder="t('auth.register.panicPasswordPlaceholder')"
             />
           </div>
-        </form>
 
-        <div
-          v-if="!status?.needsSetup"
-          class="mt-6 pt-6 border-t border-border text-center"
-        >
-          <p class="text-text-muted text-sm">
-            {{ t('auth.register.haveAccount') }}
-            <NuxtLink
-              to="/auth/login"
-              class="text-white hover:underline font-medium"
+          <div>
+            <label
+              for="confirmPanicPassword"
+              class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
             >
-              {{ t('auth.register.signInLink') }}
-            </NuxtLink>
-          </p>
+              {{ t('auth.register.confirmPanicPassword') }}
+            </label>
+            <input
+              id="confirmPanicPassword"
+              v-model="form.confirmPanicPassword"
+              type="password"
+              required
+              class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+              :placeholder="t('auth.register.confirmPanicPasswordPlaceholder')"
+            />
+          </div>
         </div>
-      </div>
 
+        <div v-if="error" class="text-red-400 text-sm">
+          {{ error }}
+        </div>
+
+        <!-- Status indicator for PoW and ZKE processing -->
+        <div v-if="authStatus" class="space-y-2">
+          <div class="text-text-muted text-xs flex items-center gap-2">
+            <Icon name="ph:spinner" class="animate-spin" />
+            {{ authStatus }}
+          </div>
+          <!-- PoW Progress Bar -->
+          <div
+            v-if="powProgress > 0"
+            class="w-full bg-bg-tertiary rounded-full h-1"
+          >
+            <div
+              class="bg-white h-1 rounded-full transition-all duration-300"
+              :style="{ width: `${Math.min(powProgress, 100)}%` }"
+            />
+          </div>
+        </div>
+
+        <button
+          type="submit"
+          :disabled="loading"
+          class="w-full bg-white text-black font-medium py-2.5 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          <span v-if="loading">{{ t('auth.register.creatingAccount') }}</span>
+          <span v-else>{{
+            status?.needsSetup
+              ? t('auth.register.createAdminAccount')
+              : t('auth.register.createAccount')
+          }}</span>
+        </button>
+        <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
+        <div class="sr-only" aria-hidden="true">
+          <input
+            v-model="form.hpot_field"
+            type="text"
+            name="hpot_field"
+            tabindex="-1"
+            autocomplete="off"
+          />
+        </div>
+      </form>
+
+      <div
+        v-if="!status?.needsSetup"
+        class="mt-6 pt-6 border-t border-border text-center"
+      >
+        <p class="text-text-muted text-sm">
+          {{ t('auth.register.haveAccount') }}
+          <NuxtLink
+            to="/auth/login"
+            class="text-white hover:underline font-medium"
+          >
+            {{ t('auth.register.signInLink') }}
+          </NuxtLink>
+        </p>
+      </div>
     </div>
-  </div>
+  </AuthShell>
 </template>
 
 <script setup lang="ts">

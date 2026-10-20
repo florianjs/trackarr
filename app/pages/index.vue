@@ -1,5 +1,13 @@
 <template>
   <div class="space-y-6">
+    <!-- Banner set in Admin → Appearance → Images -->
+    <img
+      v-if="appearance.images.homeBanner"
+      :src="appearance.images.homeBanner"
+      alt=""
+      class="w-full h-36 md:h-52 object-cover rounded-lg border border-border"
+    />
+
     <!-- Greeting -->
     <div class="flex flex-wrap items-end justify-between gap-4">
       <div>
@@ -192,6 +200,7 @@ interface Dashboard {
 }
 
 const { t, locale } = useI18n();
+const appearance = useAppearance();
 const { user } = useUserSession();
 const { data, refresh } = await useFetch<Dashboard>('/api/dashboard');
 // Shared with the layout's request (same key): no extra call

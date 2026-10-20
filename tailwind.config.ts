@@ -50,15 +50,21 @@ export default {
         scrim: 'rgb(0 0 0 / <alpha-value>)',
         paper: 'rgb(255 255 255 / <alpha-value>)'
       },
+      // Variables set in main.css, overridden by the admin appearance
       fontFamily: {
-        sans: ['"IBM Plex Sans"', 'system-ui', 'sans-serif'],
-        mono: ['"IBM Plex Mono"', 'ui-monospace', 'monospace']
+        sans: 'var(--font-sans)',
+        heading: 'var(--font-heading)',
+        mono: 'var(--font-mono)'
       },
       fontSize: {
         '2xs': ['0.6875rem', { lineHeight: '1rem' }]
       },
+      // Scaled from --radius (admin appearance); default values unchanged
       borderRadius: {
-        DEFAULT: '0.3125rem'
+        sm: 'calc(var(--radius) * 0.4)',
+        DEFAULT: 'var(--radius)',
+        md: 'calc(var(--radius) * 1.2)',
+        lg: 'calc(var(--radius) * 1.6)'
       }
     }
   },

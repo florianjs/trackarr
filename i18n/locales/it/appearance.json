@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "Aspetto",
+      "description": "Colori, font, immagini, pagina di accesso e testi"
+    },
+    "tabs": {
+      "theme": "Tema",
+      "typography": "Tipografia",
+      "images": "Immagini",
+      "login": "Pagina di accesso",
+      "texts": "Testi"
+    },
+    "unsaved": "Modifiche non salvate",
+    "discard": "Annulla",
+    "previewHint": "Le modifiche sono visibili in anteprima su tutto il sito, solo per te, finché non le salvi.",
+    "saved": "Aspetto salvato",
+    "saveFailed": "Impossibile salvare l'aspetto",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "Mezzanotte",
+      "forest": "Foresta",
+      "sunset": "Tramonto",
+      "mono": "Monocromatico",
+      "contrast": "Contrasto elevato"
+    },
+    "theme": {
+      "presets": "Predefinito",
+      "presetsHint": "Una base per i temi chiaro e scuro. Sceglierne uno cancella i colori impostati a mano.",
+      "colors": "Colori",
+      "colorsHint": "Regola ogni colore dei temi chiaro e scuro. I membri scelgono sempre chiaro, scuro o sistema.",
+      "light": "Chiaro",
+      "dark": "Scuro",
+      "resetColors": "Torna al predefinito",
+      "groups": {
+        "surfaces": "Superfici",
+        "text": "Testo",
+        "meaning": "Colori con significato"
+      },
+      "tokens": {
+        "bg": "Sfondo della pagina",
+        "surface": "Schede",
+        "raised": "Aree in rilievo",
+        "hover": "Passaggio del mouse",
+        "line": "Bordi",
+        "line-strong": "Bordi marcati",
+        "ink": "Testo principale",
+        "ink-2": "Testo secondario",
+        "ink-3": "Testo attenuato",
+        "contrast": "Pulsanti principali",
+        "contrast-inv": "Testo dei pulsanti principali",
+        "free": "Accento e freeleech",
+        "seed": "Upload e seeder",
+        "leech": "Download e leecher",
+        "danger": "Errori e pericolo"
+      },
+      "radius": "Angoli",
+      "radiusHint": "Arrotondamento di pulsanti, campi e schede.",
+      "radii": {
+        "none": "Squadrati",
+        "small": "Piccoli",
+        "default": "Predefiniti",
+        "large": "Grandi",
+        "round": "Rotondi"
+      }
+    },
+    "typography": {
+      "sans": "Testo",
+      "sansHint": "Font di tutta l'interfaccia.",
+      "heading": "Titoli",
+      "headingHint": "Font dei titoli di pagine e sezioni.",
+      "mono": "Numeri e codice",
+      "monoHint": "Font di dimensioni, ratio, hash e codice.",
+      "sample": "Quel vituperabile xenofobo zelante"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "Font di sistema"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "Monospazio di sistema"
+      }
+    },
+    "images": {
+      "loginImage": "Immagine della pagina di accesso",
+      "loginImageHint": "Mostrata dai design Diviso e Sfondo.",
+      "homeBanner": "Banner della home",
+      "homeBannerHint": "Immagine larga in cima alla dashboard dei membri.",
+      "none": "Nessuna immagine",
+      "upload": "Carica",
+      "replace": "Sostituisci",
+      "remove": "Rimuovi",
+      "formats": "PNG, JPEG o WebP, max 8 MB. Salvata subito.",
+      "failed": "Impossibile aggiornare l'immagine"
+    },
+    "login": {
+      "layout": "Design",
+      "layoutHint": "Usato dalle pagine di accesso e di registrazione.",
+      "layouts": {
+        "centered": "Centrato",
+        "centeredHint": "Logo e modulo al centro della pagina.",
+        "split": "Diviso",
+        "splitHint": "Immagine a sinistra, modulo a destra.",
+        "background": "Sfondo",
+        "backgroundHint": "Immagine a tutta pagina dietro una scheda traslucida.",
+        "minimal": "Minimale",
+        "minimalHint": "Sobrio, allineato a sinistra, senza logo."
+      },
+      "imageHint": "Senza immagine, questo design usa il colore d'accento. Aggiungine una nella scheda Immagini.",
+      "preview": "Anteprima"
+    },
+    "texts": {
+      "hint": "Sostituisci qualsiasi testo dell'interfaccia, lingua per lingua. Lascia un campo vuoto per mantenere il testo originale.",
+      "locale": "Lingua",
+      "search": "Cerca una chiave o un testo…",
+      "onlyModified": "Solo modificati",
+      "results": "Nessun testo | 1 testo | {n} testi",
+      "empty": "Nessun testo corrisponde.",
+      "placeholders": "Mantieni le parole tra parentesi graffe del testo originale: vengono sostituite da valori come nomi o numeri. Le forme plurali sono separate da una barra verticale circondata da spazi."
+    }
+  }
+}

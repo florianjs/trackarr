@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "Appearance",
+      "description": "Colours, fonts, images, login page and texts"
+    },
+    "tabs": {
+      "theme": "Theme",
+      "typography": "Typography",
+      "images": "Images",
+      "login": "Login page",
+      "texts": "Texts"
+    },
+    "unsaved": "Unsaved changes",
+    "discard": "Discard",
+    "previewHint": "Changes are previewed on the whole site for you only, until you save them.",
+    "saved": "Appearance saved",
+    "saveFailed": "Could not save the appearance",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "Midnight",
+      "forest": "Forest",
+      "sunset": "Sunset",
+      "mono": "Monochrome",
+      "contrast": "High contrast"
+    },
+    "theme": {
+      "presets": "Preset",
+      "presetsHint": "A starting point for both light and dark themes. Picking one clears the colours set by hand.",
+      "colors": "Colours",
+      "colorsHint": "Adjust each colour of the light and dark themes. Members still choose light, dark or system.",
+      "light": "Light",
+      "dark": "Dark",
+      "resetColors": "Reset to preset",
+      "groups": {
+        "surfaces": "Surfaces",
+        "text": "Text",
+        "meaning": "Meaningful colours"
+      },
+      "tokens": {
+        "bg": "Page background",
+        "surface": "Cards",
+        "raised": "Raised areas",
+        "hover": "Hover",
+        "line": "Borders",
+        "line-strong": "Strong borders",
+        "ink": "Main text",
+        "ink-2": "Secondary text",
+        "ink-3": "Muted text",
+        "contrast": "Primary buttons",
+        "contrast-inv": "Text on primary buttons",
+        "free": "Accent and freeleech",
+        "seed": "Upload and seeders",
+        "leech": "Download and leechers",
+        "danger": "Errors and danger"
+      },
+      "radius": "Corners",
+      "radiusHint": "Roundness of buttons, fields and cards.",
+      "radii": {
+        "none": "Square",
+        "small": "Small",
+        "default": "Default",
+        "large": "Large",
+        "round": "Round"
+      }
+    },
+    "typography": {
+      "sans": "Body text",
+      "sansHint": "Font of the whole interface.",
+      "heading": "Headings",
+      "headingHint": "Font of page and section titles.",
+      "mono": "Numbers and code",
+      "monoHint": "Font of sizes, ratios, hashes and code.",
+      "sample": "The quick brown fox seeds"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "System font"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "System monospace"
+      }
+    },
+    "images": {
+      "loginImage": "Login page picture",
+      "loginImageHint": "Shown by the Split and Background login designs.",
+      "homeBanner": "Home banner",
+      "homeBannerHint": "Wide picture at the top of the member dashboard.",
+      "none": "No picture",
+      "upload": "Upload",
+      "replace": "Replace",
+      "remove": "Remove",
+      "formats": "PNG, JPEG or WebP, 8 MB max. Saved right away.",
+      "failed": "Could not update the picture"
+    },
+    "login": {
+      "layout": "Design",
+      "layoutHint": "Used by the sign-in and sign-up pages.",
+      "layouts": {
+        "centered": "Centered",
+        "centeredHint": "Logo and form in the middle of the page.",
+        "split": "Split",
+        "splitHint": "Picture on the left, form on the right.",
+        "background": "Background",
+        "backgroundHint": "Full-page picture behind a translucent card.",
+        "minimal": "Minimal",
+        "minimalHint": "Plain, left-aligned, without logo tile."
+      },
+      "imageHint": "Without a picture, this design uses the accent colour. Add one in the Images tab.",
+      "preview": "Preview"
+    },
+    "texts": {
+      "hint": "Replace any text of the interface, language by language. Leave a field empty to keep the shipped text.",
+      "locale": "Language",
+      "search": "Search a key or a text…",
+      "onlyModified": "Modified only",
+      "results": "No text | 1 text | {n} texts",
+      "empty": "No text matches.",
+      "placeholders": "Keep the words between braces of the original text: they are replaced by values such as names or numbers. Plural forms are separated by a vertical bar surrounded by spaces."
+    }
+  }
+}

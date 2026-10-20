@@ -1,4 +1,5 @@
 import { eq } from 'drizzle-orm';
+import { parseAppearance, type Appearance } from '../../shared/utils/appearance';
 import { db } from '../db';
 import { settings } from '../db/schema';
 import { invalidateTracker } from '../tracker/client';
@@ -75,6 +76,8 @@ export const SETTINGS_KEYS = {
   // Shoutbox
   SHOUTBOX_ENABLED: 'shoutbox_enabled',
   SHOUTBOX_SEEDED: 'shoutbox_seeded',
+  // Theme, fonts, login design, images, text overrides (shared/utils/appearance.ts)
+  APPEARANCE: 'appearance',
 } as const;
 
 const settingsCache = new Map<
@@ -526,4 +529,15 @@ export async function getFooterLinks(): Promise<FooterLink[]> {
  */
 export async function getFooterTagline(): Promise<string | null> {
   return getSetting(SETTINGS_KEYS.FOOTER_TAGLINE);
+}
+
+/**
+ * Site appearance; every section falls back to its default
+ */
+export async function getAppearance(): Promise<Appearance> {
+  return parseAppearance(await getSetting(SETTINGS_KEYS.APPEARANCE));
+}
+
+export async function setAppearance(appearance: Appearance): Promise<void> {
+  await setSetting(SETTINGS_KEYS.APPEARANCE, JSON.stringify(appearance));
 }
