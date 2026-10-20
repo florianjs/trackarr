@@ -449,6 +449,18 @@ export async function unblockTorznabUser(passkey: string): Promise<void> {
 }
 
 /**
+ * Copy an API block to a new passkey before a reset, so the reset does not
+ * lift it. Throws on Redis errors: better no reset than a lost block.
+ * Returns whether there was a block.
+ */
+export async function copyTorznabBlock(oldPasskey: string, newPasskey: string): Promise<boolean> {
+  const data = await redis.hget(KEYS.BLOCKED, oldPasskey);
+  if (!data) return false;
+  await redis.hset(KEYS.BLOCKED, newPasskey, data);
+  return true;
+}
+
+/**
  * Check if a user is blocked
  */
 export async function isTorznabUserBlocked(

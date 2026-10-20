@@ -1,0 +1,59 @@
+{
+  "integrations": {
+    "nav": "Integrations",
+    "title": "Integrations",
+    "subtitle": "Connect Prowlarr, Sonarr, Radarr and other Torznab apps",
+    "credentials": "Torznab settings",
+    "credentialsHint": "Paste these values into your app. The API key keeps your passkey out of your apps' settings, and regenerating it cuts off apps using the old one. Torrents downloaded with it still carry your passkey: if the key leaks, regenerate it and reset your passkey below.",
+    "url": "URL",
+    "apiPath": "API Path",
+    "apiKey": "API Key",
+    "fullUrl": "Full endpoint",
+    "copy": "Copy",
+    "copied": "Copied",
+    "copyFailed": "Could not copy to the clipboard",
+    "show": "Show key",
+    "hide": "Hide key",
+    "test": "Test connection",
+    "testing": "Testing…",
+    "testOk": "Connection works",
+    "testFailed": "Connection failed: {reason}",
+    "unreachable": "tracker unreachable",
+    "rotate": "Regenerate key",
+    "rotateConfirm": "Regenerate the API key? Apps using the current key stop working until you paste the new one.",
+    "rotated": "New API key generated",
+    "rotateFailed": "Could not regenerate the key",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "In Prowlarr, open Indexers and click Add Indexer.",
+        "step2": "Search for Generic Torznab and select it.",
+        "step3": "Fill URL, API Path and API Key with the values above.",
+        "step4": "Click Test, then Save. Prowlarr syncs the indexer to your connected Sonarr, Radarr and Lidarr."
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "Open Settings → Indexers and click +.",
+        "step2": "Pick Torznab.",
+        "step3": "Fill URL, API Path and API Key with the values above.",
+        "step4": "Click Test, then Save. Running several apps? Use Prowlarr instead: you set the indexer up once."
+      },
+      "other": {
+        "name": "Other apps",
+        "step1": "Any Torznab client works: use the full endpoint above.",
+        "step2": "Capabilities are listed at the endpoint with t=caps, no key needed.",
+        "step3": "Search results link to .torrent files through your API key.",
+        "step4": "Downloaded .torrent files already carry your passkey: nothing to configure in your torrent client."
+      }
+    },
+    "passkey": {
+      "title": "Passkey",
+      "hint": "Your passkey is in every .torrent file you download and identifies you to the tracker. Reset it if a .torrent file or your API key leaked. Torrents downloaded before stop working: download them again (or update their tracker URL) to keep seeding.",
+      "reset": "Reset passkey",
+      "confirm": "Reset your passkey? Every torrent downloaded before must be downloaded again to keep seeding.",
+      "done": "Passkey reset",
+      "doneHint": "Download your active torrents again so they announce with the new passkey.",
+      "failed": "Could not reset the passkey"
+    }
+  }
+}
