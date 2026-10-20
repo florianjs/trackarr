@@ -241,15 +241,23 @@ prompt_configuration() {
     step "Configuration"
 
     # Re-run: the previous answers are the defaults
-    KEEP_MONITORING_HASH=""
+    KEEP_MONITORING_PASSWORD=""
+    LEGACY_MONITORING=false
+    BESZEL_ADMIN_EMAIL=""
     if [[ -f "$INSTALL_DIR/.env" ]]; then
         log_info "Existing install in $INSTALL_DIR: its settings are the defaults"
         DOMAIN=${DOMAIN:-$(existing_value DOMAIN)}
         TRACKER_DOMAIN=${TRACKER_DOMAIN:-$(existing_value TRACKER_DOMAIN)}
         MONITORING_DOMAIN=${MONITORING_DOMAIN:-$(existing_value MONITORING_DOMAIN)}
         ACME_EMAIL=${ACME_EMAIL:-$(existing_value ACME_EMAIL)}
-        # Stored with $ doubled for Docker Compose
-        KEEP_MONITORING_HASH=$(existing_value MONITORING_PASSWORD_HASH | sed 's/\$\$/$/g')
+        # Beszel only reads its login on the first start: keep it as is
+        KEEP_MONITORING_PASSWORD=$(existing_value BESZEL_ADMIN_PASSWORD)
+        BESZEL_ADMIN_EMAIL=$(existing_value BESZEL_ADMIN_EMAIL)
+        # Installed before the Beszel login moved to .env: its account was
+        # created in the Beszel UI, behind the old basic auth
+        if [[ -z $KEEP_MONITORING_PASSWORD && -n $(existing_value MONITORING_PASSWORD_HASH) ]]; then
+            LEGACY_MONITORING=true
+        fi
     fi
 
     if [[ $ASSUME_YES == true ]]; then
@@ -271,22 +279,27 @@ prompt_configuration() {
         ask TRACKER_DOMAIN "Tracker (announce) domain" "${TRACKER_DOMAIN:-announce.$DOMAIN}" is_domain "Not a valid domain name"
         ask MONITORING_DOMAIN "Monitoring domain" "${MONITORING_DOMAIN:-monitoring.$DOMAIN}" is_domain "Not a valid domain name"
         ask ACME_EMAIL "Email for Let's Encrypt (expiry notices)" "$ACME_EMAIL" is_email "Not a valid email address"
-        if [[ -z $MONITORING_PASSWORD ]]; then
-            if [[ -n $KEEP_MONITORING_HASH ]]; then
-                read -rsp "  Monitoring password (Enter to keep the current one): " MONITORING_PASSWORD
-            else
-                read -rsp "  Monitoring password (Enter to generate one): " MONITORING_PASSWORD
-            fi
-            echo ""
+        if [[ -z $MONITORING_PASSWORD && -z $KEEP_MONITORING_PASSWORD && $LEGACY_MONITORING != true ]]; then
+            while true; do
+                read -rsp "  Monitoring login password, 8+ characters (Enter to generate one): " MONITORING_PASSWORD
+                echo ""
+                [[ -z $MONITORING_PASSWORD || ${#MONITORING_PASSWORD} -ge 8 ]] && break
+                log_error "At least 8 characters"
+            done
         fi
     fi
 
+    BESZEL_ADMIN_EMAIL=${BESZEL_ADMIN_EMAIL:-$ACME_EMAIL}
     GENERATED_MONITORING_PASSWORD=false
-    if [[ -n $MONITORING_PASSWORD ]]; then
-        KEEP_MONITORING_HASH=""
-    elif [[ -z $KEEP_MONITORING_HASH ]]; then
+    if [[ -n $KEEP_MONITORING_PASSWORD ]]; then
+        MONITORING_PASSWORD=$KEEP_MONITORING_PASSWORD
+    elif [[ $LEGACY_MONITORING == true ]]; then
+        MONITORING_PASSWORD=""
+    elif [[ -z $MONITORING_PASSWORD ]]; then
         MONITORING_PASSWORD=$(random_string 16)
         GENERATED_MONITORING_PASSWORD=true
+    elif [[ ${#MONITORING_PASSWORD} -lt 8 ]]; then
+        die "MONITORING_PASSWORD needs at least 8 characters"
     fi
 
     check_dns
@@ -321,13 +334,19 @@ check_dns() {
 confirm_plan() {
     local secrets="generated" password="generated (shown at the end)"
     [[ -f "$INSTALL_DIR/.env" ]] && secrets="kept from the existing .env"
-    [[ -n $KEEP_MONITORING_HASH ]] && password="unchanged"
-    [[ $GENERATED_MONITORING_PASSWORD != true && -n $MONITORING_PASSWORD ]] && password="the one you entered"
+    if [[ -n $KEEP_MONITORING_PASSWORD ]]; then
+        password="unchanged"
+    elif [[ $LEGACY_MONITORING == true ]]; then
+        password="your existing Beszel account"
+    elif [[ $GENERATED_MONITORING_PASSWORD != true ]]; then
+        password="the one you entered"
+    fi
     echo ""
     echo -e "  ${BOLD}Summary${NC}"
     echo -e "    Website              ${CYAN}https://${DOMAIN}${NC}"
     echo -e "    Announce URL         ${CYAN}https://${TRACKER_DOMAIN}/announce${NC}"
-    echo -e "    Monitoring           ${CYAN}https://${MONITORING_DOMAIN}${NC} (password: ${password})"
+    echo -e "    Monitoring           ${CYAN}https://${MONITORING_DOMAIN}${NC}"
+    echo -e "    Monitoring login     ${BESZEL_ADMIN_EMAIL} (password: ${password})"
     echo -e "    Let's Encrypt email  ${ACME_EMAIL}"
     echo -e "    Directory            ${INSTALL_DIR}"
     echo -e "    Secrets              ${secrets}"
@@ -515,16 +534,6 @@ generate_secrets() {
         log_success "Secrets generated in $SECRETS_DIR"
     fi
 
-    # Caddy's basic auth hash, the password going through stdin (never in
-    # the process list)
-    if [[ -n $KEEP_MONITORING_HASH ]]; then
-        MONITORING_PASSWORD_HASH=$KEEP_MONITORING_HASH
-    else
-        run "Downloading Caddy" docker pull -q caddy:2-alpine
-        MONITORING_PASSWORD_HASH=$(printf '%s\n' "$MONITORING_PASSWORD" | docker run --rm -i caddy:2-alpine caddy hash-password 2>>"$LOG_FILE") \
-            || die "Could not hash the monitoring password (see $LOG_FILE)"
-    fi
-
     create_env_file
 }
 
@@ -541,6 +550,13 @@ create_env_file() {
         BESZEL_ENV=$(printf 'BESZEL_AGENT_KEY=%s\nBESZEL_AGENT_TOKEN=%s\nCOMPOSE_PROFILES=monitoring' "$key" "$token")
     else
         BESZEL_ENV=$(printf '# BESZEL_AGENT_KEY=\n# BESZEL_AGENT_TOKEN=\n# COMPOSE_PROFILES=monitoring')
+    fi
+
+    # Beszel login, created on its first start only
+    if [[ $LEGACY_MONITORING == true ]]; then
+        BESZEL_LOGIN=$(printf '# Account created in the Beszel UI: these only apply to a new Beszel\n# BESZEL_ADMIN_EMAIL=\n# BESZEL_ADMIN_PASSWORD=')
+    else
+        BESZEL_LOGIN=$(printf 'BESZEL_ADMIN_EMAIL=%s\nBESZEL_ADMIN_PASSWORD=%s' "$BESZEL_ADMIN_EMAIL" "$MONITORING_PASSWORD")
     fi
 
     cat > "$ENV_FILE" << EOF
@@ -581,10 +597,9 @@ ACME_EMAIL=${ACME_EMAIL}
 # Tracker Announce URLs (displayed in admin dashboard)
 TRACKER_HTTP_URL=https://${TRACKER_DOMAIN}/announce
 
-# Monitoring
-MONITORING_USER=admin
-# Note: $ escaped as $$ for Docker Compose compatibility
-MONITORING_PASSWORD_HASH=$(echo "${MONITORING_PASSWORD_HASH}" | sed 's/\$/\$\$/g')
+# Monitoring (Beszel): login read on its first start only, change the
+# password in Beszel afterwards
+${BESZEL_LOGIN}
 # Beszel agent, once paired in the monitoring UI (see the Monitoring guide)
 ${BESZEL_ENV}
 EOF
@@ -716,12 +731,16 @@ print_summary() {
     echo -e "    Announce URL  ${CYAN}https://${TRACKER_DOMAIN}/announce${NC}"
     echo -e "    Monitoring    ${CYAN}https://${MONITORING_DOMAIN}${NC}"
     echo ""
-    echo -e "  ${BOLD}Monitoring login${NC} (browser prompt)"
-    echo -e "    User          ${CYAN}admin${NC}"
-    if [[ -n $KEEP_MONITORING_HASH ]]; then
-        echo -e "    Password      unchanged"
+    echo -e "  ${BOLD}Monitoring login${NC} (Beszel)"
+    if [[ $LEGACY_MONITORING == true ]]; then
+        echo -e "    Your existing Beszel account (the browser login prompt is gone)"
     else
-        echo -e "    Password      ${CYAN}${MONITORING_PASSWORD}${NC}"
+        echo -e "    Email         ${CYAN}${BESZEL_ADMIN_EMAIL}${NC}"
+        if [[ -n $KEEP_MONITORING_PASSWORD ]]; then
+            echo -e "    Password      unchanged (BESZEL_ADMIN_PASSWORD in .env)"
+        else
+            echo -e "    Password      ${CYAN}${MONITORING_PASSWORD}${NC}"
+        fi
     fi
     echo ""
     echo -e "  ${BOLD}Next steps${NC}"
@@ -733,8 +752,8 @@ print_summary() {
     if [[ $MONITORING_PAIRED == true ]]; then
         echo -e "    2. Monitoring is paired and running."
     else
-        echo -e "    2. Open ${CYAN}https://${MONITORING_DOMAIN}${NC} now: the first visitor creates the"
-        echo -e "       Beszel admin. Click Add system, host ${CYAN}/beszel_socket/beszel.sock${NC}, then run"
+        echo -e "    2. Open ${CYAN}https://${MONITORING_DOMAIN}${NC} and log in with the monitoring login."
+        echo -e "       Click Add system, host ${CYAN}/beszel_socket/beszel.sock${NC}, then run"
         echo -e "       ${CYAN}sudo ${INSTALL_DIR}/scripts/pair-monitoring.sh${NC} and paste the key and token."
         echo -e "       Step by step: ${CYAN}${DOCS_URL}/guide/monitoring#pairing-the-agent${NC}"
     fi
@@ -846,7 +865,8 @@ Environment variables:
   TRACKER_DOMAIN      Tracker announce domain (default: announce.DOMAIN)
   MONITORING_DOMAIN   Monitoring domain (default: monitoring.DOMAIN)
   ACME_EMAIL          Email for Let's Encrypt
-  MONITORING_PASSWORD Monitoring password (default: kept, or generated)
+  MONITORING_PASSWORD Monitoring (Beszel) password for a new install,
+                      8+ characters (default: generated)
   INSTALL_DIR         Installation directory (default: /opt/trackarr)
   REPO_URL            Git repository URL
   BRANCH              Git branch to check out (default: main)

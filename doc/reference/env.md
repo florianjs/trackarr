@@ -103,8 +103,8 @@ Production only. See [Monitoring](/guide/monitoring).
 | Variable                   | Description                                                                                     | Default |
 | -------------------------- | ----------------------------------------------------------------------------------------------- | ------- |
 | `MONITORING_DOMAIN`        | Domain serving Beszel through Caddy                                                             | `monitoring.localhost` |
-| `MONITORING_USER`          | Caddy basic auth user in front of Beszel                                                        | `admin` |
-| `MONITORING_PASSWORD_HASH` | Caddy basic auth password hash (`caddy hash-password`, every `$` doubled as `$$` in `.env`)     | —       |
+| `BESZEL_ADMIN_EMAIL`       | Beszel login email, account created on Beszel's first start only                                | —       |
+| `BESZEL_ADMIN_PASSWORD`    | Beszel login password (8+ characters), first start only: change it in Beszel afterwards          | —       |
 | `BESZEL_AGENT_KEY`         | Public key shown by Beszel when adding the system (host `/beszel_socket/beszel.sock`)            | —       |
 | `BESZEL_AGENT_TOKEN`       | Token shown by Beszel with the key                                                              | —       |
 | `COMPOSE_PROFILES`         | Set to `monitoring` once paired, so the Beszel agent starts                                     | —       |

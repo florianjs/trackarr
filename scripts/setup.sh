@@ -113,8 +113,6 @@ TRACKER_INTERNAL_TOKEN=$(openssl rand -hex 32)
 DB_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=')
 REDIS_PASSWORD=$(openssl rand -base64 24 | tr -d '/+=')
 MONITORING_PASSWORD=$(openssl rand -base64 16 | tr -d '/+=')
-# Caddy basic auth in front of the monitoring UI (password via stdin, not argv)
-MONITORING_PASSWORD_HASH=$(printf '%s\n' "$MONITORING_PASSWORD" | docker run --rm -i caddy:2-alpine caddy hash-password 2>/dev/null || true)
 
 # Update .env file
 log_info "Updating .env file..."
@@ -153,14 +151,9 @@ sed_inplace "s/^TRACKER_INTERNAL_TOKEN=.*/TRACKER_INTERNAL_TOKEN=$TRACKER_INTERN
 # Tracker URLs
 sed_inplace "s|^TRACKER_HTTP_URL=.*|TRACKER_HTTP_URL=https://$TRACKER_DOMAIN/announce|" "$PROJECT_DIR/.env"
 
-# Monitoring basic auth ($ doubled for Docker Compose)
-if [[ -n "$MONITORING_PASSWORD_HASH" ]]; then
-    ESCAPED_HASH=$(printf '%s' "$MONITORING_PASSWORD_HASH" | sed 's/\$/\$\$/g')
-    sed_inplace "s|^# MONITORING_USER=.*|MONITORING_USER=admin|" "$PROJECT_DIR/.env"
-    sed_inplace "s|^# MONITORING_PASSWORD_HASH=.*|MONITORING_PASSWORD_HASH=$ESCAPED_HASH|" "$PROJECT_DIR/.env"
-else
-    log_warn "Could not hash the monitoring password (Docker unavailable): set MONITORING_PASSWORD_HASH in .env with 'caddy hash-password' before starting"
-fi
+# Beszel login, created on its first start
+sed_inplace "s|^# BESZEL_ADMIN_EMAIL=.*|BESZEL_ADMIN_EMAIL=$ACME_EMAIL|" "$PROJECT_DIR/.env"
+sed_inplace "s|^# BESZEL_ADMIN_PASSWORD=.*|BESZEL_ADMIN_PASSWORD=$MONITORING_PASSWORD|" "$PROJECT_DIR/.env"
 
 echo ""
 log_success "Production setup complete!"
@@ -168,7 +161,7 @@ echo ""
 echo -e "${BOLD}Generated credentials (save these!):${NC}"
 echo -e "  Database password: ${CYAN}$DB_PASSWORD${NC}"
 echo -e "  Redis password:    ${CYAN}$REDIS_PASSWORD${NC}"
-echo -e "  Monitoring login:  ${CYAN}admin / $MONITORING_PASSWORD${NC}"
+echo -e "  Monitoring login:  ${CYAN}$ACME_EMAIL / $MONITORING_PASSWORD${NC}"
 echo ""
 echo -e "${BOLD}Configured domains:${NC}"
 echo -e "  Main:       https://$DOMAIN"

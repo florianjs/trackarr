@@ -19,8 +19,6 @@ services:
       TRACKER_DOMAIN: ${TRACKER_DOMAIN:-tracker.localhost}
       MONITORING_DOMAIN: ${MONITORING_DOMAIN:-monitoring.localhost}
       ACME_EMAIL: ${ACME_EMAIL:-admin@example.com}
-      MONITORING_USER: ${MONITORING_USER:-admin}
-      MONITORING_PASSWORD_HASH: ${MONITORING_PASSWORD_HASH:-}
     volumes:
       - ./docker/caddy/Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
@@ -352,6 +350,9 @@ services:
     restart: always
     environment:
       APP_URL: https://${MONITORING_DOMAIN:-monitoring.localhost}
+      # Account created on the first start only (empty data); ignored after
+      USER_EMAIL: ${BESZEL_ADMIN_EMAIL:-}
+      USER_PASSWORD: ${BESZEL_ADMIN_PASSWORD:-}
     volumes:
       - beszel_data:/beszel_data
       - beszel_socket:/beszel_socket

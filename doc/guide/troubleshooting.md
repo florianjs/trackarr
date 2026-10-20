@@ -339,16 +339,31 @@ e21V5@postgres:5432/trackarr = host=postgres port=5432 auth_user=tracker
 
 ---
 
-### Forgot Monitoring Basic Auth Password
+### Monitoring Keeps Asking for a Login
+
+**Cause:** an install from before this fix still has Caddy basic auth in front of Beszel. The Beszel UI sends its own token in the `Authorization` header, basic auth rejects it, and the browser asks again.
+
+**Solution:** update (`git pull`, or re-run `install.sh`), then restart Caddy:
+
+```bash
+docker compose -f docker-compose.prod.yml up -d caddy
+```
+
+Then log in with your Beszel account only. `MONITORING_USER` and `MONITORING_PASSWORD_HASH` can be removed from `.env`.
+
+---
+
+### Forgot the Monitoring Password
 
 **Solutions:**
 
-Generate a new hash and put it in `.env` as `MONITORING_PASSWORD_HASH`, doubling every `$` (`$$`) for Docker Compose:
+`BESZEL_ADMIN_PASSWORD` is only read on Beszel's first start: changing it does nothing afterwards. Create a Beszel superuser instead:
 
 ```bash
-printf '%s\n' '<new-password>' | docker run --rm -i caddy:2-alpine caddy hash-password
-docker compose -f docker-compose.prod.yml up -d caddy
+docker exec trackarr-beszel /beszel superuser upsert you@example.com 'a-long-password'
 ```
+
+Open `https://monitoring.your-domain.com/_/`, log in with it, open the **users** collection and set a new password on your account.
 
 ---
 
