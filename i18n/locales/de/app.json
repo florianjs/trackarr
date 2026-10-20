@@ -130,21 +130,7 @@
     "peerCount": "{count} Peers | {count} Peer | {count} Peers",
     "lowLatency": "Extrem niedrige Latenz",
     "recentlyIndexed": "Kürzlich indexiert",
-    "browseAll": "Alle anzeigen",
-    "features": {
-      "performance": {
-        "title": "Hohe Leistung",
-        "description": "Basiert auf Node.js und Redis für Antwortzeiten unter einer Millisekunde und hohe Parallelität."
-      },
-      "protocols": {
-        "title": "Multi-Protokoll",
-        "description": "Unterstützt HTTP, UDP und WebSocket für maximale Kompatibilität mit allen BitTorrent-Clients."
-      },
-      "openSource": {
-        "title": "Open Source",
-        "description": "Vollständig transparent und von der Community getragen. Entwickelt für Privatsphäre und Effizienz im P2P-Ökosystem."
-      }
-    }
+    "browseAll": "Alle anzeigen"
   },
   "searchBar": {
     "placeholder": "Suchen...",

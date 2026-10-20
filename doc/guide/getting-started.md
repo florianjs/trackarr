@@ -6,8 +6,9 @@ This guide will help you get Trackarr up and running in minutes.
 
 Before you begin, ensure you have:
 
-- **Node.js** 20 or higher
+- **Node.js** 24 or higher
 - **Docker** and Docker Compose
+- **OpenSSL** (used by `scripts/setup.sh` to generate secrets)
 - **npm** package manager
 
 ## DNS Configuration
@@ -91,13 +92,10 @@ For full manual control over the installation:
 # Clone repository
 git clone https://github.com/florianjs/trackarr.git && cd trackarr
 
-# Copy and configure environment
-cp .env.example .env
+# Create .env with generated secrets (asks for your domains)
+./scripts/setup.sh
 
-# Generate secrets (or set them manually in .env)
-./scripts/generate-secrets.sh
-
-# Edit .env with your domain and settings
+# Review .env
 nano .env
 
 # Start production stack

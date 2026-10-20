@@ -130,21 +130,7 @@
     "peerCount": "{count} 个同伴 | {count} 个同伴 | {count} 个同伴",
     "lowLatency": "超低延迟",
     "recentlyIndexed": "最新收录",
-    "browseAll": "浏览全部",
-    "features": {
-      "performance": {
-        "title": "高性能",
-        "description": "基于 Node.js 和 Redis 构建，响应时间低于毫秒级，支持高并发。"
-      },
-      "protocols": {
-        "title": "多协议",
-        "description": "支持 HTTP、UDP 和 WebSocket 协议，最大限度兼容所有 BitTorrent 客户端。"
-      },
-      "openSource": {
-        "title": "开源",
-        "description": "完全透明，由社区驱动。为 P2P 生态中的隐私与效率而设计。"
-      }
-    }
+    "browseAll": "浏览全部"
   },
   "searchBar": {
     "placeholder": "搜索…",
