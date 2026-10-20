@@ -64,7 +64,7 @@ sudo DOMAIN=example.com ACME_EMAIL=admin@example.com ./install.sh --yes
 
 `./install.sh --help` lists every option.
 
-After installation, open `https://monitoring.your-domain.com` right away: it is protected by basic auth (user `admin`, password shown at the end of the install), and the first visitor creates the Beszel admin account. Then [pair the agent](/guide/monitoring#pairing-the-agent).
+After installation, open `https://monitoring.your-domain.com` and log in with the monitoring login shown at the end of the install (also in `.env`: `BESZEL_ADMIN_EMAIL` / `BESZEL_ADMIN_PASSWORD`). Then [pair the agent](/guide/monitoring#pairing-the-agent).
 
 ### Option 2: Docker Setup (Interactive)
 
@@ -161,7 +161,15 @@ Swarms refill as clients re-announce (up to 10 minutes). Upload/download transfe
 :::
 
 ::: warning Upgrading: monitoring moved to Beszel
-Prometheus, Grafana and the exporters are replaced by [Beszel](/guide/monitoring). After pulling, remove the old monitoring containers:
+Prometheus, Grafana and the exporters are replaced by [Beszel](/guide/monitoring). After pulling, first add the Beszel login to `.env`: Beszel creates its account from it on its first start, and nobody can create one from the browser.
+
+```bash
+echo "BESZEL_ADMIN_EMAIL=you@example.com" >> .env
+echo "BESZEL_ADMIN_PASSWORD=$(openssl rand -base64 16 | tr -d '/+=')" >> .env
+grep BESZEL_ADMIN .env   # your monitoring login
+```
+
+Then start Beszel and remove the old monitoring containers:
 
 ```bash
 docker compose -f docker-compose.prod.yml up -d --remove-orphans
@@ -174,7 +182,7 @@ docker volume ls
 docker volume rm <project>_prometheus_data <project>_grafana_data
 ```
 
-Then [pair the Beszel agent](/guide/monitoring#pairing-the-agent). `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` can be removed from `.env`.
+Log in to `https://monitoring.your-domain.com` and [pair the Beszel agent](/guide/monitoring#pairing-the-agent). `GRAFANA_ADMIN_USER` and `GRAFANA_ADMIN_PASSWORD` can be removed from `.env`.
 :::
 
 ## Next Steps

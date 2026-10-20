@@ -130,9 +130,7 @@ announce.{$DOMAIN} {
 }
 
 {$MONITORING_DOMAIN} {
-    basicauth {
-        {$MONITORING_USER:admin} {$MONITORING_PASSWORD_HASH}
-    }
+    respond /api/beszel/create-user 403
     reverse_proxy trackarr-beszel:8090
 }
 ```

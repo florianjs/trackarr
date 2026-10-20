@@ -91,13 +91,14 @@
 	}
 }
 
-# Monitoring (internal access only - restrict in production)
+# Monitoring: Beszel (host and container monitoring, alerts)
 {$MONITORING_DOMAIN:monitoring.localhost} {
-	# Basic auth for monitoring endpoints
-	basicauth {
-		{$MONITORING_USER:admin} {$MONITORING_PASSWORD_HASH}
-	}
+	# No basic auth: the Beszel UI sends its own token in the Authorization
+	# header, which basic auth rejects, so the browser asks again and again.
+	# Beszel's login protects it; its account is created from .env on the
+	# first start (BESZEL_ADMIN_EMAIL / BESZEL_ADMIN_PASSWORD).
+	# Never let a visitor create the first account
+	respond /api/beszel/create-user 403
 
-	# Beszel (host and container monitoring, alerts)
 	reverse_proxy trackarr-beszel:8090
 }
