@@ -8,6 +8,7 @@ import {
   buildOverrideTree,
   buildThemeCss,
   hexToChannels,
+  keepTextOverrides,
   overrideMessage,
   parseAppearance,
   resolvePalettes,
@@ -147,5 +148,18 @@ describe('buildOverrideTree', () => {
     expect(Object.keys(tree)).toEqual(['a']);
     expect(({} as Record<string, unknown>).x).toBeUndefined();
     expect(Object.keys(buildOverrideTree({ 'constructor.prototype.y': 'z' }))).toEqual([]);
+  });
+});
+
+describe('keepTextOverrides', () => {
+  const source = { 'auth.title': 'Sign in', 'nav.home': 'Home' };
+
+  it('keeps changed texts of shipped keys', () => {
+    expect(keepTextOverrides({ 'auth.title': 'Enter' }, source)).toEqual({ 'auth.title': 'Enter' });
+  });
+
+  it('drops unknown keys, inherited names, blanks and copies of the shipped text', () => {
+    const overrides = { toString: 'x', valueOf: 'y', 'nav.missing': 'z', 'nav.home': 'Home', 'auth.title': '  ' };
+    expect(keepTextOverrides(overrides, source)).toEqual({});
   });
 });

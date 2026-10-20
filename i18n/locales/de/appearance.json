@@ -13,7 +13,7 @@
     },
     "unsaved": "Ungespeicherte Änderungen",
     "discard": "Verwerfen",
-    "previewHint": "Änderungen werden bis zum Speichern nur für dich auf der ganzen Seite angezeigt.",
+    "previewHint": "Änderungen werden bis zum Speichern nur für dich auf der ganzen Seite angezeigt. Ausnahme sind Bilder: Sie sind sofort nach dem Hochladen öffentlich.",
     "saved": "Erscheinungsbild gespeichert",
     "saveFailed": "Erscheinungsbild konnte nicht gespeichert werden",
     "presets": {

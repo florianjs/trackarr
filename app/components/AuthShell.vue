@@ -82,7 +82,11 @@ const { data: branding } = await useFetch<AuthBranding>('/api/branding');
 const layout = computed(() => props.layout ?? appearance.value.login.layout);
 const image = computed(() => (props.image !== undefined ? props.image : appearance.value.login.image));
 const frame = computed(() => (props.contained ? 'h-full' : 'min-h-screen'));
-// Sanitized on the server (rich text), rendered with v-html as before
+// Rendered with v-html: branding fields are sanitized rich text from the
+// server; the translated fallback is plain text an admin can override, so
+// it is escaped
+const escapeHtml = (text: string) =>
+  text.replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!);
 const title = computed(() => branding.value?.authTitle || branding.value?.siteName || 'TRACKARR');
-const subtitle = computed(() => branding.value?.authSubtitle || t('auth.defaultSubtitle'));
+const subtitle = computed(() => branding.value?.authSubtitle || escapeHtml(t('auth.defaultSubtitle')));
 </script>

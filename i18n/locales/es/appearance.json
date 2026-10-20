@@ -13,7 +13,7 @@
     },
     "unsaved": "Cambios sin guardar",
     "discard": "Descartar",
-    "previewHint": "Los cambios se previsualizan en todo el sitio, solo para ti, hasta que los guardes.",
+    "previewHint": "Los cambios se previsualizan en todo el sitio, solo para ti, hasta que los guardes. Salvo las imágenes: son públicas en cuanto se suben.",
     "saved": "Apariencia guardada",
     "saveFailed": "No se pudo guardar la apariencia",
     "presets": {

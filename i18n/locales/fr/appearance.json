@@ -13,7 +13,7 @@
     },
     "unsaved": "Modifications non enregistrées",
     "discard": "Annuler",
-    "previewHint": "Les modifications sont prévisualisées sur tout le site, pour vous seul, jusqu'à l'enregistrement.",
+    "previewHint": "Les modifications sont prévisualisées sur tout le site, pour vous seul, jusqu'à l'enregistrement. Sauf les images : elles sont publiques dès leur envoi.",
     "saved": "Apparence enregistrée",
     "saveFailed": "Impossible d'enregistrer l'apparence",
     "presets": {

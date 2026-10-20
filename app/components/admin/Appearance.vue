@@ -27,7 +27,8 @@
           </button>
         </div>
       </div>
-      <div class="card-body" role="tabpanel">
+      <!-- Locked while saving: the response replaces the draft -->
+      <div class="card-body transition-opacity" :class="{ 'opacity-60': saving }" role="tabpanel" :inert="saving">
         <p class="text-xs text-text-muted mb-4">{{ t('appearance.previewHint') }}</p>
         <AdminAppearanceTheme v-if="current === 'theme'" v-model="draft" />
         <AdminAppearanceTypography v-else-if="current === 'typography'" v-model="draft" />

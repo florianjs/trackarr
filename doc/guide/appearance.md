@@ -1,6 +1,6 @@
 # Appearance
 
-**Admin Panel → Appearance** changes the look of the whole site without touching code. Every change is previewed live, for you only, until you click **Save**.
+**Admin Panel → Appearance** changes the look of the whole site without touching code. Every change is previewed live, for you only, until you click **Save**, except images: they are public as soon as they are uploaded.
 
 ## Theme
 

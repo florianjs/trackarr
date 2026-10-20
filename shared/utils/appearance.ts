@@ -392,3 +392,19 @@ export function flattenMessages(tree: MessageTree, prefix = '', out: Record<stri
   }
   return out;
 }
+
+/**
+ * Overrides worth storing: keys the shipped translations define (own keys
+ * only, not toString & co.), and no copy of the shipped text, which would
+ * hide later translation fixes.
+ */
+export function keepTextOverrides(
+  overrides: Record<string, string>,
+  source: Record<string, string>
+): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(overrides).filter(
+      ([key, text]) => Object.hasOwn(source, key) && text.trim() !== '' && text !== source[key]
+    )
+  );
+}

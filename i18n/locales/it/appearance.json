@@ -13,7 +13,7 @@
     },
     "unsaved": "Modifiche non salvate",
     "discard": "Annulla",
-    "previewHint": "Le modifiche sono visibili in anteprima su tutto il sito, solo per te, finché non le salvi.",
+    "previewHint": "Le modifiche sono visibili in anteprima su tutto il sito, solo per te, finché non le salvi. Tranne le immagini: sono pubbliche appena caricate.",
     "saved": "Aspetto salvato",
     "saveFailed": "Impossibile salvare l'aspetto",
     "presets": {

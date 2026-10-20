@@ -13,7 +13,7 @@
     },
     "unsaved": "有未保存的更改",
     "discard": "放弃",
-    "previewHint": "保存之前，更改仅对你在整个站点上预览。",
+    "previewHint": "保存之前，更改仅对你在整个站点上预览。图片除外：上传后立即公开。",
     "saved": "外观已保存",
     "saveFailed": "无法保存外观",
     "presets": {

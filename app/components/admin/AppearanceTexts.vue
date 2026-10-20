@@ -106,6 +106,8 @@ const filtered = computed(() => {
 const pages = computed(() => Math.max(1, Math.ceil(filtered.value.length / PAGE_SIZE)));
 const page = computed(() => filtered.value.slice(pageIndex.value * PAGE_SIZE, (pageIndex.value + 1) * PAGE_SIZE));
 watch([query, onlyModified, locale], () => (pageIndex.value = 0));
+// Resetting the last text of the last page shrinks the list
+watch(pages, (count) => (pageIndex.value = Math.min(pageIndex.value, count - 1)));
 
 // An empty field restores the shipped text
 function setText(key: string, value: string) {

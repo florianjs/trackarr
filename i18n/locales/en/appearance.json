@@ -13,7 +13,7 @@
     },
     "unsaved": "Unsaved changes",
     "discard": "Discard",
-    "previewHint": "Changes are previewed on the whole site for you only, until you save them.",
+    "previewHint": "Changes are previewed on the whole site for you only, until you save them. Images are the exception: they are public as soon as they are uploaded.",
     "saved": "Appearance saved",
     "saveFailed": "Could not save the appearance",
     "presets": {
