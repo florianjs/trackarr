@@ -1024,6 +1024,7 @@
       "signOut": "ログアウト",
       "signOutOthers": "他のデバイスからログアウト",
       "signedOutOthers": "他のデバイスからログアウトしました",
+      "signOutOthersFailed": "他のデバイスからログアウトできませんでした。もう一度お試しください",
       "theme": "テーマ",
       "language": "言語"
     },

@@ -92,7 +92,7 @@
           :disabled="signingOutOthers"
           @click="signOutOthers"
         >
-          <Icon :name="signedOutOthers ? 'ph:check' : 'ph:devices'" class="text-text-muted" />{{ signedOutOthers ? t('shell.user.signedOutOthers') : t('shell.user.signOutOthers') }}
+          <Icon :name="signOutOthersIcon" class="text-text-muted" />{{ signOutOthersLabel }}
         </button>
 
         <button
@@ -121,6 +121,17 @@ const avatarUrl = ref<string | null>(null);
 const copied = ref(false);
 const signingOutOthers = ref(false);
 const signedOutOthers = ref(false);
+const signOutOthersFailed = ref(false);
+const signOutOthersIcon = computed(() =>
+  signedOutOthers.value ? 'ph:check' : signOutOthersFailed.value ? 'ph:warning' : 'ph:devices'
+);
+const signOutOthersLabel = computed(() =>
+  signedOutOthers.value
+    ? t('shell.user.signedOutOthers')
+    : signOutOthersFailed.value
+      ? t('shell.user.signOutOthersFailed')
+      : t('shell.user.signOutOthers')
+);
 
 // Passkey and balance are not in the client session: load them on demand.
 // The balance changes while seeding, so it is refreshed on every opening.
@@ -157,12 +168,15 @@ async function copyPasskey() {
 
 async function signOutOthers() {
   signingOutOthers.value = true;
+  signOutOthersFailed.value = false;
   try {
     await $fetch('/api/auth/logout-others', { method: 'POST' });
     signedOutOthers.value = true;
     setTimeout(() => (signedOutOthers.value = false), 2000);
   } catch {
-    // Rate limited or session already revoked: the next request will tell
+    // Other sessions are still active: say so, so the user can retry
+    signOutOthersFailed.value = true;
+    setTimeout(() => (signOutOthersFailed.value = false), 4000);
   } finally {
     signingOutOthers.value = false;
   }

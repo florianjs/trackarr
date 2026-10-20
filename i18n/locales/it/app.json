@@ -1024,6 +1024,7 @@
       "signOut": "Esci",
       "signOutOthers": "Disconnetti gli altri dispositivi",
       "signedOutOthers": "Altri dispositivi disconnessi",
+      "signOutOthersFailed": "Impossibile disconnettere gli altri dispositivi, riprova",
       "theme": "Tema",
       "language": "Lingua"
     },

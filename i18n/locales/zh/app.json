@@ -1024,6 +1024,7 @@
       "signOut": "退出登录",
       "signOutOthers": "退出其他设备",
       "signedOutOthers": "已退出其他设备",
+      "signOutOthersFailed": "无法退出其他设备，请重试",
       "theme": "主题",
       "language": "语言"
     },

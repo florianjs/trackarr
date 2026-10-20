@@ -1024,6 +1024,7 @@
       "signOut": "Se déconnecter",
       "signOutOthers": "Déconnecter les autres appareils",
       "signedOutOthers": "Autres appareils déconnectés",
+      "signOutOthersFailed": "Échec de la déconnexion des autres appareils, réessayez",
       "theme": "Thème",
       "language": "Langue"
     },

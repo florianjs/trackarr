@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { users } from '../../db/schema';
 import { bumpedSessionVersion } from '../../utils/adminAuth';
@@ -13,13 +13,25 @@ export default defineEventHandler(async (event) => {
   await protectEndpoint(event, 'mutation');
   const session = await requireAuthSession(event);
 
+  // Bump only from the version this cookie was validated against: a concurrent
+  // bump (another device, a ban) must not hand this request a fresh cookie
   const [updated] = await db
     .update(users)
     .set({ sessionVersion: bumpedSessionVersion() })
-    .where(eq(users.id, session.user.id))
+    .where(
+      and(
+        eq(users.id, session.user.id),
+        eq(users.sessionVersion, session.sessionVersion ?? 0),
+        eq(users.isBanned, false)
+      )
+    )
     .returning({ sessionVersion: users.sessionVersion });
 
-  await setUserSession(event, { ...session, sessionVersion: updated!.sessionVersion });
+  if (!updated) {
+    throw createError({ statusCode: 401, message: 'Session expired, please sign in again' });
+  }
+
+  await setUserSession(event, { ...session, sessionVersion: updated.sessionVersion });
 
   return { success: true };
 });

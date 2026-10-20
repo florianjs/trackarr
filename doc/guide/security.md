@@ -28,6 +28,7 @@ Trackarr implements distributed rate limiting to prevent abuse:
 Sessions are sealed (encrypted) cookies valid 7 days. Each one carries the account's
 `session_version` from sign-in, checked against the database on every authenticated request:
 when the version changes, every older cookie is rejected at once (`401`) on every node.
+A banned account is refused with `403` for as long as the ban lasts.
 
 The version is bumped when:
 
