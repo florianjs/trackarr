@@ -79,6 +79,15 @@ export function getClientIP(event: any): string {
   );
 }
 
+/**
+ * False for in-process calls (Nitro's local fetch, used by $fetch during
+ * SSR): their mock socket has no remote address. A real TCP connection
+ * always has one, so a client cannot pass itself off as internal.
+ */
+export function isNetworkRequest(event: any): boolean {
+  return Boolean(event.node?.req?.socket?.remoteAddress);
+}
+
 // ============================================================================
 // Blacklist Management
 // ============================================================================

@@ -4,7 +4,13 @@
  * Implements request validation, suspicious activity detection, and security headers
  */
 
-import { blacklistIP, detectDDoS, isBlacklisted, getClientIP } from '../utils/rateLimit';
+import {
+  blacklistIP,
+  detectDDoS,
+  isBlacklisted,
+  getClientIP,
+  isNetworkRequest,
+} from '../utils/rateLimit';
 import { isHoneypotPath } from '../utils/honeypot';
 import { SecurityAlertType, sendSecurityAlert } from '../utils/alerts';
 import { eq } from 'drizzle-orm';
@@ -143,8 +149,14 @@ export default defineEventHandler(async (event) => {
   const ip = getClientIP(event);
   const userAgent = getHeader(event, 'user-agent') || '';
 
+  // In-process calls ($fetch during SSR) have no socket peer, so every one of
+  // them resolves to 'unknown': counted together they trip the DDoS detector
+  // and the blacklisted 'unknown' takes every page down. The page request that
+  // issued them already went through these checks with the real IP.
+  const internal = !isNetworkRequest(event);
+
   // 1. Check IP Ban (permanent bans, kept in memory)
-  if (ip) {
+  if (ip && !internal) {
     const banReason = await getIpBan(ip);
     if (banReason !== undefined) {
       // The reason names the banned user: never show it to whoever shares the IP
@@ -156,7 +168,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check IP blacklist (Temporary rate-limit bans)
-  if (await isBlacklisted(ip)) {
+  if (!internal && (await isBlacklisted(ip))) {
     console.warn(`[Security] Blocked blacklisted IP: ${ip.slice(0, 8)}...`);
     throw createError({
       statusCode: 403,
@@ -215,11 +227,11 @@ export default defineEventHandler(async (event) => {
     }
 
     // DDoS detection for API routes
-    await detectDDoS(event);
+    if (!internal) await detectDDoS(event);
   }
 
   // Rate limit check for tracker endpoints (high volume)
-  if (path.includes('/announce') || path.includes('/scrape')) {
+  if (!internal && (path.includes('/announce') || path.includes('/scrape'))) {
     await detectDDoS(event);
   }
 
