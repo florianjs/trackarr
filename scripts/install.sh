@@ -734,7 +734,9 @@ print_summary() {
         echo -e "    2. Monitoring is paired and running."
     else
         echo -e "    2. Open ${CYAN}https://${MONITORING_DOMAIN}${NC} now: the first visitor creates the"
-        echo -e "       Beszel admin. Then pair this server: ${CYAN}${DOCS_URL}/guide/monitoring${NC}"
+        echo -e "       Beszel admin. Click Add system, host ${CYAN}/beszel_socket/beszel.sock${NC}, then run"
+        echo -e "       ${CYAN}sudo ${INSTALL_DIR}/scripts/pair-monitoring.sh${NC} and paste the key and token."
+        echo -e "       Step by step: ${CYAN}${DOCS_URL}/guide/monitoring#pairing-the-agent${NC}"
     fi
     echo ""
     echo -e "  ${BOLD}Useful commands${NC} (in ${INSTALL_DIR})"

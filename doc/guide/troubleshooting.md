@@ -323,7 +323,7 @@ e21V5@postgres:5432/trackarr = host=postgres port=5432 auth_user=tracker
 
 **Solutions:**
 
-1. Pair the agent as described in [Monitoring](/guide/monitoring#pairing-the-agent) (host `/beszel_socket/beszel.sock`), and check `.env`:
+1. Pair the agent as described in [Monitoring](/guide/monitoring#pairing-the-agent): add the system in Beszel (host `/beszel_socket/beszel.sock`), then run `sudo ./scripts/pair-monitoring.sh` in the Trackarr directory. It writes these lines to `.env`:
 
    ```
    BESZEL_AGENT_KEY=...
