@@ -1,6 +1,6 @@
 /**
  * POST /api/admin/torznab/users/:id/reset
- * Reset a user's passkey (regenerate) (admin only)
+ * Reset a user's passkey and revoke their Torznab API key (admin only)
  */
 
 import { requireAdminSession } from '../../../../../utils/adminAuth';
@@ -41,10 +41,10 @@ export default defineEventHandler(async (event) => {
   // Generate new passkey
   const newPasskey = generatePasskey();
 
-  // Update user
+  // Revoke the API key too: indexers stop working until the user takes a new one
   await db
     .update(schema.users)
-    .set({ passkey: newPasskey })
+    .set({ passkey: newPasskey, apiKey: null })
     .where(eq(schema.users.id, userId));
 
   // Clear old stats

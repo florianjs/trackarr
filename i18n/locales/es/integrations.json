@@ -1,0 +1,50 @@
+{
+  "integrations": {
+    "nav": "Integraciones",
+    "title": "Integraciones",
+    "subtitle": "Conecta Prowlarr, Sonarr, Radarr y otras apps Torznab",
+    "credentials": "Ajustes de Torznab",
+    "credentialsHint": "Pega estos valores en tu app. La clave API solo da acceso a búsquedas y descargas: puedes regenerarla cuando quieras sin tocar tu passkey.",
+    "url": "URL",
+    "apiPath": "Ruta de la API",
+    "apiKey": "Clave API",
+    "fullUrl": "Endpoint completo",
+    "copy": "Copiar",
+    "copied": "Copiado",
+    "copyFailed": "No se pudo copiar al portapapeles",
+    "show": "Mostrar clave",
+    "hide": "Ocultar clave",
+    "test": "Probar conexión",
+    "testing": "Probando…",
+    "testOk": "La conexión funciona",
+    "testFailed": "Fallo de conexión: {reason}",
+    "unreachable": "tracker inaccesible",
+    "rotate": "Regenerar clave",
+    "rotateConfirm": "¿Regenerar la clave API? Las apps que usan la clave actual dejarán de funcionar hasta que pegues la nueva.",
+    "rotated": "Nueva clave API generada",
+    "rotateFailed": "No se pudo regenerar la clave",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "En Prowlarr, abre Indexers y haz clic en Add Indexer.",
+        "step2": "Busca Generic Torznab y selecciónalo.",
+        "step3": "Rellena URL, API Path y API Key con los valores de arriba.",
+        "step4": "Haz clic en Test y luego en Save. Prowlarr sincroniza el indexer con tus Sonarr, Radarr y Lidarr conectados."
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "Abre Settings → Indexers y haz clic en +.",
+        "step2": "Elige Torznab.",
+        "step3": "Rellena URL, API Path y API Key con los valores de arriba.",
+        "step4": "Haz clic en Test y luego en Save. ¿Varias apps? Mejor usa Prowlarr: el indexer se configura una sola vez."
+      },
+      "other": {
+        "name": "Otras apps",
+        "step1": "Cualquier cliente Torznab funciona: usa el endpoint completo de arriba.",
+        "step2": "Las capacidades se listan en el endpoint con t=caps, sin clave.",
+        "step3": "Los resultados de búsqueda enlazan los archivos .torrent mediante tu clave API.",
+        "step4": "Los archivos .torrent descargados ya llevan tu passkey: nada que configurar en tu cliente torrent."
+      }
+    }
+  }
+}

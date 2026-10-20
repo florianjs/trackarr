@@ -1,6 +1,6 @@
 /**
  * Torznab API - Download Endpoint
- * GET /api/torznab/download?id={infoHash}&apikey={passkey}
+ * GET /api/torznab/download?id={infoHash}&apikey={apiKey}
  *
  * Downloads a torrent file with personalized announce URL
  */
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Authenticate via passkey
+  // Authenticate via API key (or legacy passkey)
   let user: Awaited<ReturnType<typeof authenticateTorznab>>;
   try {
     user = await authenticateTorznab(event);

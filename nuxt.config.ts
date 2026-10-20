@@ -1,7 +1,7 @@
 import pkg from './package.json';
 
 // One translation file per area, in i18n/locales/<code>/ (issue #43)
-const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json'];
+const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json', 'integrations.json'];
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({

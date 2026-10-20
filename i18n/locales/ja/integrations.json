@@ -1,0 +1,50 @@
+{
+  "integrations": {
+    "nav": "連携",
+    "title": "連携",
+    "subtitle": "Prowlarr、Sonarr、Radarr などの Torznab アプリを接続します",
+    "credentials": "Torznab 設定",
+    "credentialsHint": "これらの値をアプリに貼り付けてください。API キーで可能なのは検索とダウンロードのみです。パスキーに触れずにいつでも再生成できます。",
+    "url": "URL",
+    "apiPath": "API パス",
+    "apiKey": "API キー",
+    "fullUrl": "完全なエンドポイント",
+    "copy": "コピー",
+    "copied": "コピーしました",
+    "copyFailed": "クリップボードにコピーできませんでした",
+    "show": "キーを表示",
+    "hide": "キーを隠す",
+    "test": "接続をテスト",
+    "testing": "テスト中…",
+    "testOk": "接続できました",
+    "testFailed": "接続に失敗しました: {reason}",
+    "unreachable": "トラッカーに接続できません",
+    "rotate": "キーを再生成",
+    "rotateConfirm": "API キーを再生成しますか？新しいキーを貼り付けるまで、現在のキーを使うアプリは動作しなくなります。",
+    "rotated": "新しい API キーを生成しました",
+    "rotateFailed": "キーを再生成できませんでした",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "Prowlarr で Indexers を開き、Add Indexer をクリックします。",
+        "step2": "Generic Torznab を検索して選択します。",
+        "step3": "URL、API Path、API Key に上の値を入力します。",
+        "step4": "Test をクリックしてから Save をクリックします。Prowlarr が接続済みの Sonarr、Radarr、Lidarr にインデクサーを同期します。"
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "Settings → Indexers を開き、+ をクリックします。",
+        "step2": "Torznab を選びます。",
+        "step3": "URL、API Path、API Key に上の値を入力します。",
+        "step4": "Test をクリックしてから Save をクリックします。複数のアプリを使うなら Prowlarr を使えば設定は一度で済みます。"
+      },
+      "other": {
+        "name": "その他のアプリ",
+        "step1": "どの Torznab クライアントでも使えます。上の完全なエンドポイントを使ってください。",
+        "step2": "機能一覧はキー不要で、エンドポイントに t=caps を付けると取得できます。",
+        "step3": "検索結果は API キー経由で .torrent ファイルにリンクします。",
+        "step4": "ダウンロードした .torrent ファイルにはすでにパスキーが含まれています。トレントクライアント側の設定は不要です。"
+      }
+    }
+  }
+}

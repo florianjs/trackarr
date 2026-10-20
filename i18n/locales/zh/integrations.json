@@ -1,0 +1,50 @@
+{
+  "integrations": {
+    "nav": "集成",
+    "title": "集成",
+    "subtitle": "连接 Prowlarr、Sonarr、Radarr 及其他 Torznab 应用",
+    "credentials": "Torznab 设置",
+    "credentialsHint": "将这些值粘贴到你的应用中。API 密钥仅可用于搜索和下载：你可以随时重新生成，而不影响你的 passkey。",
+    "url": "URL",
+    "apiPath": "API 路径",
+    "apiKey": "API 密钥",
+    "fullUrl": "完整端点",
+    "copy": "复制",
+    "copied": "已复制",
+    "copyFailed": "无法复制到剪贴板",
+    "show": "显示密钥",
+    "hide": "隐藏密钥",
+    "test": "测试连接",
+    "testing": "测试中…",
+    "testOk": "连接正常",
+    "testFailed": "连接失败：{reason}",
+    "unreachable": "无法访问 tracker",
+    "rotate": "重新生成密钥",
+    "rotateConfirm": "重新生成 API 密钥？在你粘贴新密钥之前，使用当前密钥的应用将无法工作。",
+    "rotated": "已生成新的 API 密钥",
+    "rotateFailed": "无法重新生成密钥",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "在 Prowlarr 中打开 Indexers，点击 Add Indexer。",
+        "step2": "搜索 Generic Torznab 并选择它。",
+        "step3": "用上面的值填写 URL、API Path 和 API Key。",
+        "step4": "点击 Test，然后点击 Save。Prowlarr 会将索引器同步到已连接的 Sonarr、Radarr 和 Lidarr。"
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "打开 Settings → Indexers，点击 +。",
+        "step2": "选择 Torznab。",
+        "step3": "用上面的值填写 URL、API Path 和 API Key。",
+        "step4": "点击 Test，然后点击 Save。使用多个应用？建议改用 Prowlarr：索引器只需配置一次。"
+      },
+      "other": {
+        "name": "其他应用",
+        "step1": "任何 Torznab 客户端都可使用：请使用上面的完整端点。",
+        "step2": "在端点加上 t=caps 即可查看功能列表，无需密钥。",
+        "step3": "搜索结果通过你的 API 密钥链接到 .torrent 文件。",
+        "step4": "下载的 .torrent 文件已包含你的 passkey：无需在 torrent 客户端中配置。"
+      }
+    }
+  }
+}

@@ -1,6 +1,6 @@
 /**
  * Torznab API - Main Router
- * GET /api/torznab?t={function}&apikey={passkey}&...
+ * GET /api/torznab?t={function}&apikey={apiKey}&...
  *
  * Handles all Torznab functions:
  * - caps: Capabilities
@@ -17,7 +17,7 @@ import { desc, eq, ilike, and, inArray, sql } from 'drizzle-orm';
 import { escapeLike } from '../../../utils/validation';
 import { getFreeleechState } from '../../../utils/settings';
 import { parseImdbId, parseTmdbId, parseTvdbId } from '../../../../shared/utils/mediaIds';
-import { authenticateTorznab, sendTorznabError } from '../utils/auth';
+import { authenticateTorznab, sendTorznabError, type TorznabUser } from '../utils/auth';
 import {
   buildCapsXml,
   buildSearchXml,
@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
 
   // All other functions require authentication
   // Wrap in try/catch to handle Torznab XML errors properly
-  let user: { passkey: string };
+  let user: TorznabUser;
   try {
     user = await authenticateTorznab(event);
   } catch (error: any) {
@@ -194,7 +194,7 @@ async function handleCaps(event: H3Event) {
 async function handleSearch(
   event: H3Event,
   query: z.infer<typeof torznabQuerySchema>,
-  user: { passkey: string }
+  user: TorznabUser
 ) {
   return performSearch(event, query, user);
 }
@@ -206,7 +206,7 @@ async function handleSearch(
 async function handleTvSearch(
   event: H3Event,
   query: z.infer<typeof torznabQuerySchema>,
-  user: { passkey: string }
+  user: TorznabUser
 ) {
   // Build search query with season/episode. With a database ID the title
   // text is redundant (and often formatted differently): match the ID instead.
@@ -246,7 +246,7 @@ async function handleTvSearch(
 async function handleMovieSearch(
   event: H3Event,
   query: z.infer<typeof torznabQuerySchema>,
-  user: { passkey: string }
+  user: TorznabUser
 ) {
   // With a database ID, match the ID column instead of the title text
   const searchQuery = query.imdbid || query.tmdbid ? '' : query.q || '';
@@ -265,7 +265,7 @@ async function handleMovieSearch(
 async function performSearch(
   event: H3Event,
   query: z.infer<typeof torznabQuerySchema>,
-  user: { passkey: string }
+  user: TorznabUser
 ) {
   const baseUrl = getRequestURL(event).origin;
   const conditions = [];
@@ -352,7 +352,7 @@ async function performSearch(
         seeders: stats.seeders,
         leechers: stats.leechers,
         grabs: stats.completed,
-        downloadUrl: `${baseUrl}/api/torznab/download?id=${torrent.infoHash}&apikey=${user.passkey}`,
+        downloadUrl: `${baseUrl}/api/torznab/download?id=${torrent.infoHash}&apikey=${user.apikey}`,
         downloadVolumeFactor: freeleech ? 0 : 1,
         uploadVolumeFactor: 1,
         imdbId: torrent.imdbId ?? undefined,

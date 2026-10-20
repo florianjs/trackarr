@@ -71,6 +71,14 @@
           >
             <Icon name="ph:user" class="text-text-muted" />{{ t('shell.nav.profile') }}
           </NuxtLink>
+          <NuxtLink
+            to="/integrations"
+            class="flex items-center gap-2 px-4 py-2 text-sm text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+            role="menuitem"
+            @click="open = false"
+          >
+            <Icon name="ph:plugs-connected" class="text-text-muted" />{{ t('integrations.nav') }}
+          </NuxtLink>
         </div>
 
         <div class="px-4 py-3 border-b border-border space-y-2.5">

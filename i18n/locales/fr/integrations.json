@@ -1,0 +1,50 @@
+{
+  "integrations": {
+    "nav": "Intégrations",
+    "title": "Intégrations",
+    "subtitle": "Connectez Prowlarr, Sonarr, Radarr et les autres apps Torznab",
+    "credentials": "Paramètres Torznab",
+    "credentialsHint": "Collez ces valeurs dans votre app. La clé API ne donne accès qu'à la recherche et aux téléchargements : vous pouvez la régénérer à tout moment sans toucher à votre passkey.",
+    "url": "URL",
+    "apiPath": "Chemin de l'API",
+    "apiKey": "Clé API",
+    "fullUrl": "Endpoint complet",
+    "copy": "Copier",
+    "copied": "Copié",
+    "copyFailed": "Impossible de copier dans le presse-papiers",
+    "show": "Afficher la clé",
+    "hide": "Masquer la clé",
+    "test": "Tester la connexion",
+    "testing": "Test en cours…",
+    "testOk": "La connexion fonctionne",
+    "testFailed": "Échec de la connexion : {reason}",
+    "unreachable": "tracker injoignable",
+    "rotate": "Régénérer la clé",
+    "rotateConfirm": "Régénérer la clé API ? Les apps qui utilisent la clé actuelle cessent de fonctionner jusqu'à ce que vous colliez la nouvelle.",
+    "rotated": "Nouvelle clé API générée",
+    "rotateFailed": "Impossible de régénérer la clé",
+    "apps": {
+      "prowlarr": {
+        "name": "Prowlarr",
+        "step1": "Dans Prowlarr, ouvrez Indexers puis cliquez sur Add Indexer.",
+        "step2": "Cherchez Generic Torznab et sélectionnez-le.",
+        "step3": "Remplissez URL, API Path et API Key avec les valeurs ci-dessus.",
+        "step4": "Cliquez sur Test, puis Save. Prowlarr synchronise l'indexer avec vos Sonarr, Radarr et Lidarr connectés."
+      },
+      "arr": {
+        "name": "Sonarr / Radarr / Lidarr",
+        "step1": "Ouvrez Settings → Indexers et cliquez sur +.",
+        "step2": "Choisissez Torznab.",
+        "step3": "Remplissez URL, API Path et API Key avec les valeurs ci-dessus.",
+        "step4": "Cliquez sur Test, puis Save. Plusieurs apps ? Passez plutôt par Prowlarr : l'indexer se configure une seule fois."
+      },
+      "other": {
+        "name": "Autres apps",
+        "step1": "Tout client Torznab fonctionne : utilisez l'endpoint complet ci-dessus.",
+        "step2": "Les capacités sont listées sur l'endpoint avec t=caps, sans clé.",
+        "step3": "Les résultats de recherche pointent vers les fichiers .torrent via votre clé API.",
+        "step4": "Les fichiers .torrent téléchargés contiennent déjà votre passkey : rien à configurer dans votre client torrent."
+      }
+    }
+  }
+}
