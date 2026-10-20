@@ -62,7 +62,7 @@ I offer:
 
 <div class="custom-cta">
 
-**Let's talk:** [u68w37uj@exile.4wrd.cc](mailto:u68w37uj@exile.4wrd.cc) · [Discord](https://discord.gg/GRFu35djvz) · [argaudflorian.com](https://argaudflorian.com/)
+**Let's talk:** [contact@florianargaud.com](mailto:contact@florianargaud.com) · [Discord](https://discord.gg/GRFu35djvz) · [argaudflorian.com](https://argaudflorian.com/)
 
 </div>
 

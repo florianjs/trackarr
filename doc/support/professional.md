@@ -60,7 +60,7 @@ Ready to discuss your project?
 
 <div class="contact-cta">
 
-**Email:** [u68w37uj@exile.4wrd.cc](mailto:u68w37uj@exile.4wrd.cc)
+**Email:** [contact@florianargaud.com](mailto:contact@florianargaud.com)
 
 **Discord:** [Join Community](https://discord.gg/GRFu35djvz)
 
