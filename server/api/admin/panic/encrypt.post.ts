@@ -13,6 +13,7 @@ import {
   shoutMessages,
   reports,
   bonusTransactions,
+  statAdjustments,
   bounties,
 } from '../../../db/schema';
 import { requireAdminSession } from '../../../utils/adminAuth';
@@ -255,6 +256,14 @@ export default defineEventHandler(async (event) => {
         .update(bonusTransactions)
         .set({ description: encryptField(transaction.description, key) })
         .where(eq(bonusTransactions.id, transaction.id));
+    }
+
+    const allAdjustments = await tx.select().from(statAdjustments);
+    for (const adjustment of allAdjustments) {
+      await tx
+        .update(statAdjustments)
+        .set({ reason: encryptField(adjustment.reason, key)! })
+        .where(eq(statAdjustments.id, adjustment.id));
     }
 
     // =====================================================================

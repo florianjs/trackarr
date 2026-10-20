@@ -38,97 +38,110 @@
         <div
           v-for="u in foundUsers"
           :key="u.id"
-          class="flex items-center justify-between p-3 bg-bg-tertiary/50 rounded border border-border"
+          class="bg-bg-tertiary/50 rounded border border-border"
         >
-          <div>
-            <p
-              class="text-sm font-medium text-text-primary"
-            >
-              {{ u.username }}
-            </p>
-            <p class="text-xs font-mono text-text-muted">
-              ID: {{ u.id.substring(0, 8) }}...
-            </p>
-            <p
-              v-if="u.lastIp"
-              class="text-2xs font-mono text-text-muted/50 mt-0.5"
-            >
-              IP: {{ u.lastIp }}
-            </p>
+          <div class="flex items-center justify-between p-3">
+            <div>
+              <p
+                class="text-sm font-medium text-text-primary"
+              >
+                {{ u.username }}
+              </p>
+              <p class="text-xs font-mono text-text-muted">
+                ID: {{ u.id.substring(0, 8) }}...
+              </p>
+              <p
+                v-if="u.lastIp"
+                class="text-2xs font-mono text-text-muted/50 mt-0.5"
+              >
+                IP: {{ u.lastIp }}
+              </p>
+            </div>
+            <div class="flex items-center gap-4">
+              <div class="flex items-center gap-2">
+                <label
+                  class="text-xs font-bold text-text-muted"
+                  >{{ t('admin.users.ban') }}</label
+                >
+                <button
+                  @click="toggleBan(u)"
+                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+                  :class="u.isBanned ? 'bg-error' : 'bg-bg-primary border border-border'
+                  "
+                >
+                  <span
+                    class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
+                    :class="u.isBanned ? 'translate-x-5' : 'translate-x-1'"
+                  />
+                </button>
+              </div>
+              <div v-if="user?.isAdmin && roles.length > 0" class="flex items-center gap-2">
+                <label
+                  class="text-xs font-bold text-text-muted"
+                  >{{ t('common.role') }}</label
+                >
+                <select
+                  :value="u.roleId || ''"
+                  @change="assignRole(u, ($event.target as HTMLSelectElement).value)"
+                  class="bg-bg-primary border border-border rounded px-2 py-1 text-sm font-medium text-text-primary focus:outline-none focus:border-accent-primary"
+                >
+                  <option value="">{{ t('admin.users.noRole') }}</option>
+                  <option v-for="role in roles" :key="role.id" :value="role.id">
+                    {{ role.name }}
+                  </option>
+                </select>
+              </div>
+              <div v-if="user?.isAdmin" class="flex items-center gap-2">
+                <label
+                  class="text-xs font-bold text-text-muted"
+                  >{{ t('admin.users.mod') }}</label
+                >
+                <button
+                  @click="toggleUserRole(u, 'isModerator')"
+                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+                  :class="u.isModerator
+                      ? 'bg-success'
+                      : 'bg-bg-primary border border-border'
+                  "
+                >
+                  <span
+                    class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
+                    :class="u.isModerator ? 'translate-x-5' : 'translate-x-1'"
+                  />
+                </button>
+              </div>
+              <div v-if="user?.isAdmin" class="flex items-center gap-2">
+                <label
+                  class="text-xs font-bold text-text-muted"
+                  >{{ t('common.admin') }}</label
+                >
+                <button
+                  @click="toggleUserRole(u, 'isAdmin')"
+                  class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
+                  :class="u.isAdmin
+                      ? 'bg-success'
+                      : 'bg-bg-primary border border-border'
+                  "
+                >
+                  <span
+                    class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
+                    :class="u.isAdmin ? 'translate-x-5' : 'translate-x-1'"
+                  />
+                </button>
+              </div>
+              <button
+                v-if="user?.isAdmin"
+                type="button"
+                class="btn btn-ghost !px-2 text-xs"
+                :aria-expanded="statsOpen === u.id"
+                @click="statsOpen = statsOpen === u.id ? null : u.id"
+              >
+                <Icon name="ph:scales" />{{ t('admin.users.stats.open') }}
+                <Icon :name="statsOpen === u.id ? 'ph:caret-up' : 'ph:caret-down'" class="text-text-muted" />
+              </button>
+            </div>
           </div>
-          <div class="flex items-center gap-4">
-            <div class="flex items-center gap-2">
-              <label
-                class="text-xs font-bold text-text-muted"
-                >{{ t('admin.users.ban') }}</label
-              >
-              <button
-                @click="toggleBan(u)"
-                class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="u.isBanned ? 'bg-error' : 'bg-bg-primary border border-border'
-                "
-              >
-                <span
-                  class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
-                  :class="u.isBanned ? 'translate-x-5' : 'translate-x-1'"
-                />
-              </button>
-            </div>
-            <div v-if="user?.isAdmin && roles.length > 0" class="flex items-center gap-2">
-              <label
-                class="text-xs font-bold text-text-muted"
-                >{{ t('common.role') }}</label
-              >
-              <select
-                :value="u.roleId || ''"
-                @change="assignRole(u, ($event.target as HTMLSelectElement).value)"
-                class="bg-bg-primary border border-border rounded px-2 py-1 text-sm font-medium text-text-primary focus:outline-none focus:border-accent-primary"
-              >
-                <option value="">{{ t('admin.users.noRole') }}</option>
-                <option v-for="role in roles" :key="role.id" :value="role.id">
-                  {{ role.name }}
-                </option>
-              </select>
-            </div>
-            <div v-if="user?.isAdmin" class="flex items-center gap-2">
-              <label
-                class="text-xs font-bold text-text-muted"
-                >{{ t('admin.users.mod') }}</label
-              >
-              <button
-                @click="toggleUserRole(u, 'isModerator')"
-                class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="u.isModerator
-                    ? 'bg-success'
-                    : 'bg-bg-primary border border-border'
-                "
-              >
-                <span
-                  class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
-                  :class="u.isModerator ? 'translate-x-5' : 'translate-x-1'"
-                />
-              </button>
-            </div>
-            <div v-if="user?.isAdmin" class="flex items-center gap-2">
-              <label
-                class="text-xs font-bold text-text-muted"
-                >{{ t('common.admin') }}</label
-              >
-              <button
-                @click="toggleUserRole(u, 'isAdmin')"
-                class="relative inline-flex h-5 w-9 items-center rounded-full transition-colors focus:outline-none"
-                :class="u.isAdmin
-                    ? 'bg-success'
-                    : 'bg-bg-primary border border-border'
-                "
-              >
-                <span
-                  class="inline-block h-3 w-3 transform rounded-full bg-white transition-transform"
-                  :class="u.isAdmin ? 'translate-x-5' : 'translate-x-1'"
-                />
-              </button>
-            </div>
-          </div>
+          <AdminUserStats v-if="statsOpen === u.id" :user-id="u.id" :username="u.username" />
         </div>
       </div>
       <div
@@ -160,6 +173,8 @@ const isSearching = ref(false);
 const hasSearched = ref(false);
 const foundUsers = ref<any[]>([]);
 const roles = ref<Role[]>([]);
+// User whose upload/download panel is open
+const statsOpen = ref<string | null>(null);
 
 // Load roles on mount
 onMounted(async () => {

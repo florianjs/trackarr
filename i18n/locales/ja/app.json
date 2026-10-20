@@ -905,7 +905,23 @@
       "confirmUnban": "{name} の BAN を解除してもよろしいですか？",
       "banFailed": "ユーザーの BAN に失敗しました",
       "unbanFailed": "ユーザーの BAN 解除に失敗しました",
-      "assignRoleFailed": "ロールの割り当てに失敗しました"
+      "assignRoleFailed": "ロールの割り当てに失敗しました",
+      "stats": {
+        "open": "レシオ",
+        "uploaded": "アップロード量",
+        "downloaded": "ダウンロード量",
+        "operation": "追加または削減",
+        "add": "追加",
+        "remove": "削減",
+        "unit": "単位",
+        "reason": "理由",
+        "reasonPlaceholder": "履歴に表示されます（例：トラッカー障害の補填）",
+        "apply": "適用",
+        "history": "過去の修正",
+        "deletedAdmin": "削除された管理者",
+        "applied": "{name} の合計を更新しました",
+        "failed": "合計を更新できませんでした"
+      }
     },
     "footer": {
       "title": "フッターのリンク",

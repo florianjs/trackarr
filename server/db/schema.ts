@@ -572,6 +572,26 @@ export const bonusTransactions = pgTable(
   (table) => [index('bonus_tx_user_idx').on(table.userId, table.createdAt)]
 );
 
+/**
+ * Admin corrections of a member's uploaded/downloaded totals, with who and why.
+ * Deltas are the amounts actually applied (totals never go below 0).
+ */
+export const statAdjustments = pgTable(
+  'stat_adjustments',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    adminId: text('admin_id').references(() => users.id, { onDelete: 'set null' }),
+    uploadedDelta: bigint('uploaded_delta', { mode: 'number' }).notNull(),
+    downloadedDelta: bigint('downloaded_delta', { mode: 'number' }).notNull(),
+    reason: text('reason').notNull(),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('stat_adjustments_user_idx').on(table.userId, table.createdAt)]
+);
+
 export const shopItems = pgTable('shop_items', {
   id: text('id').primaryKey(),
   name: text('name').notNull(),

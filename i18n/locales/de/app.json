@@ -905,7 +905,23 @@
       "confirmUnban": "Möchtest du die Sperre von {name} wirklich aufheben?",
       "banFailed": "Benutzer konnte nicht gesperrt werden",
       "unbanFailed": "Sperre konnte nicht aufgehoben werden",
-      "assignRoleFailed": "Rolle konnte nicht zugewiesen werden"
+      "assignRoleFailed": "Rolle konnte nicht zugewiesen werden",
+      "stats": {
+        "open": "Ratio",
+        "uploaded": "Hochgeladen",
+        "downloaded": "Heruntergeladen",
+        "operation": "Hinzufügen oder abziehen",
+        "add": "Hinzufügen",
+        "remove": "Abziehen",
+        "unit": "Einheit",
+        "reason": "Grund",
+        "reasonPlaceholder": "Im Verlauf sichtbar, z. B. Ausgleich für den Tracker-Ausfall",
+        "apply": "Anwenden",
+        "history": "Frühere Korrekturen",
+        "deletedAdmin": "Gelöschter Admin",
+        "applied": "Summen von {name} aktualisiert",
+        "failed": "Summen konnten nicht aktualisiert werden"
+      }
     },
     "footer": {
       "title": "Footer-Links",

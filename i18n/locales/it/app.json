@@ -905,7 +905,23 @@
       "confirmUnban": "Vuoi davvero rimuovere il ban a {name}?",
       "banFailed": "Ban dell'utente non riuscito",
       "unbanFailed": "Rimozione del ban non riuscita",
-      "assignRoleFailed": "Assegnazione del ruolo non riuscita"
+      "assignRoleFailed": "Assegnazione del ruolo non riuscita",
+      "stats": {
+        "open": "Ratio",
+        "uploaded": "Caricato",
+        "downloaded": "Scaricato",
+        "operation": "Aggiungi o togli",
+        "add": "Aggiungi",
+        "remove": "Togli",
+        "unit": "Unità",
+        "reason": "Motivo",
+        "reasonPlaceholder": "Visibile nello storico, es. compensazione per il guasto del tracker",
+        "apply": "Applica",
+        "history": "Correzioni precedenti",
+        "deletedAdmin": "Admin eliminato",
+        "applied": "Totali di {name} aggiornati",
+        "failed": "Impossibile aggiornare i totali"
+      }
     },
     "footer": {
       "title": "Link del footer",

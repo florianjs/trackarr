@@ -905,7 +905,23 @@
       "confirmUnban": "确定要解封 {name} 吗？",
       "banFailed": "封禁用户失败",
       "unbanFailed": "解封用户失败",
-      "assignRoleFailed": "分配角色失败"
+      "assignRoleFailed": "分配角色失败",
+      "stats": {
+        "open": "分享率",
+        "uploaded": "上传量",
+        "downloaded": "下载量",
+        "operation": "增加或减少",
+        "add": "增加",
+        "remove": "减少",
+        "unit": "单位",
+        "reason": "原因",
+        "reasonPlaceholder": "显示在历史记录中，例如 tracker 故障补偿",
+        "apply": "应用",
+        "history": "以往修正",
+        "deletedAdmin": "已删除的管理员",
+        "applied": "已更新 {name} 的总量",
+        "failed": "无法更新总量"
+      }
     },
     "footer": {
       "title": "页脚链接",

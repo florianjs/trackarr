@@ -905,7 +905,23 @@
       "confirmUnban": "Voulez-vous vraiment débannir {name} ?",
       "banFailed": "Impossible de bannir l'utilisateur",
       "unbanFailed": "Impossible de débannir l'utilisateur",
-      "assignRoleFailed": "Impossible d'attribuer le rôle"
+      "assignRoleFailed": "Impossible d'attribuer le rôle",
+      "stats": {
+        "open": "Ratio",
+        "uploaded": "Upload",
+        "downloaded": "Download",
+        "operation": "Ajouter ou retirer",
+        "add": "Ajouter",
+        "remove": "Retirer",
+        "unit": "Unité",
+        "reason": "Raison",
+        "reasonPlaceholder": "Visible dans l'historique, ex. compensation de la panne du tracker",
+        "apply": "Appliquer",
+        "history": "Corrections précédentes",
+        "deletedAdmin": "Admin supprimé",
+        "applied": "Totaux de {name} mis à jour",
+        "failed": "Impossible de mettre à jour les totaux"
+      }
     },
     "footer": {
       "title": "Liens du footer",
