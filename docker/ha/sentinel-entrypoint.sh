@@ -8,7 +8,7 @@ set -e
 CONF=/data/sentinel.conf
 
 if [ ! -f "$CONF" ]; then
-  cat > "$CONF" <<EOF
+  cat > "$CONF" <<CONF
 bind ${NODE_IP} 127.0.0.1
 port 26379
 protected-mode no
@@ -19,7 +19,16 @@ sentinel auth-pass mymaster ${REDIS_PASSWORD}
 sentinel down-after-milliseconds mymaster ${SENTINEL_DOWN_AFTER_MS:-10000}
 sentinel failover-timeout mymaster 60000
 sentinel parallel-syncs mymaster 1
-EOF
+CONF
 fi
 
-exec redis-sentinel "$CONF"
+# Clients and the other Sentinels must authenticate: without it, anyone on
+# the private network could reconfigure failover (also added to configs
+# written by earlier versions)
+if ! grep -q '^requirepass ' "$CONF"; then
+  echo "requirepass ${REDIS_SENTINEL_PASSWORD}" >> "$CONF"
+  echo "sentinel sentinel-pass ${REDIS_SENTINEL_PASSWORD}" >> "$CONF"
+fi
+
+# The image's entrypoint hands /data to the redis user and drops root
+exec docker-entrypoint.sh redis-server "$CONF" --sentinel

@@ -20,6 +20,12 @@ export default defineEventHandler(async (event) => {
   // Rate limit uploads
   await rateLimit(event, RATE_LIMITS.mutation);
 
+  // Panic mode: restore could not unpack a torrent stored in clear
+  const [panic] = await db.select().from(schema.panicState).limit(1);
+  if (panic?.isEncrypted) {
+    throw createError({ statusCode: 503, message: 'Uploads are disabled while the site is locked' });
+  }
+
   const contentLength = Number(getHeader(event, 'content-length') || 0);
   if (!contentLength) {
     throw createError({ statusCode: 411, message: 'Content-Length required' });

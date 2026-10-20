@@ -84,7 +84,6 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./docker/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
-      - ./docker/postgres/pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
     command: >
       postgres
       -c ssl=off
@@ -109,11 +108,16 @@ services:
     image: redis:7-alpine
     container_name: trackarr-redis
     restart: unless-stopped
+    # Password written to a config file, never on a command line (readable
+    # by any host user with ps). redis-cli reads REDISCLI_AUTH too.
+    environment:
+      REDISCLI_AUTH: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
     command: >
-      redis-server
+      sh -c 'printf "requirepass %s\n" "$$REDISCLI_AUTH" > /tmp/auth.conf &&
+      chown redis /tmp/auth.conf &&
+      exec docker-entrypoint.sh redis-server /tmp/auth.conf
       --appendonly no
       --save ""
-      --requirepass ${REDIS_PASSWORD}
       --maxmemory 256mb
       --maxmemory-policy allkeys-lru
       --tcp-keepalive 300
@@ -128,12 +132,12 @@ services:
       --rename-command CONFIG ""
       --rename-command KEYS ""
       --rename-command SHUTDOWN ""
-      --loglevel warning
+      --loglevel warning'
     # Internal only, accessed via Docker network
     expose:
       - "6379"
     healthcheck:
-      test: ["CMD", "redis-cli", "-a", "${REDIS_PASSWORD:-}", "ping"]
+      test: ["CMD", "redis-cli", "ping"]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -222,6 +222,7 @@ export default defineEventHandler(async (event) => {
       downloaded: 0,
     },
     loggedInAt: Date.now(),
+    sessionVersion: 0,
   });
 
   return {

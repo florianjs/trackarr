@@ -455,22 +455,6 @@ EOF
 }
 
 # =============================================================================
-# UPDATE PGBOUNCER CONFIGURATION
-# =============================================================================
-update_pgbouncer_config() {
-    log_step "Updating PgBouncer configuration..."
-    
-    # Update userlist.txt with actual password
-    USERLIST_FILE="$INSTALL_DIR/docker/pgbouncer/userlist.txt"
-    
-    # Not tracked in git (contains a credential): always generate it
-    MD5_HASH=$(echo -n "${DB_PASSWORD}${DB_USER}" | md5sum | awk '{print $1}')
-    echo "\"${DB_USER}\" \"md5${MD5_HASH}\"" > "$USERLIST_FILE"
-    chmod 600 "$USERLIST_FILE"
-    log_success "PgBouncer userlist updated"
-}
-
-# =============================================================================
 # CLONE OR UPDATE REPOSITORY
 # =============================================================================
 setup_repository() {
@@ -792,7 +776,6 @@ main() {
     prompt_configuration
     generate_secrets
     create_env_file
-    update_pgbouncer_config
     build_application
     start_services
     run_migrations

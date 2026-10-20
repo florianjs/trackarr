@@ -32,8 +32,28 @@ services:
       # Tuned for WAN latency between datacenters
       ETCD_HEARTBEAT_INTERVAL: 250
       ETCD_ELECTION_TIMEOUT: 2500
+      # For `docker compose exec etcd etcdctl ...` once auth is on
+      ETCDCTL_USER: root:${ETCD_ROOT_PASSWORD:?ETCD_ROOT_PASSWORD is required}
     volumes:
       - etcd_data:/etcd-data
+
+  # Enables etcd authentication once the cluster is up (idempotent)
+  etcd-auth:
+    build:
+      dockerfile_inline: |
+        FROM quay.io/coreos/etcd:v3.5.17 AS etcd
+        FROM alpine:3.20
+        COPY --from=etcd /usr/local/bin/etcdctl /usr/local/bin/etcdctl
+    image: trackarr-etcdctl:3.5.17
+    restart: on-failure
+    network_mode: host
+    entrypoint: ["/bin/sh", "/ha/etcd-auth.sh"]
+    environment:
+      NODE_IP: ${NODE_IP}
+      ETCD_ROOT_PASSWORD: ${ETCD_ROOT_PASSWORD:?ETCD_ROOT_PASSWORD is required}
+      ETCD_PATRONI_PASSWORD: ${ETCD_PATRONI_PASSWORD:?ETCD_PATRONI_PASSWORD is required}
+    volumes:
+      - ./etcd-auth.sh:/ha/etcd-auth.sh:ro
 
   # ===========================================================================
   # Redis Sentinel - elects the Redis master (one per site, witness included)
@@ -46,6 +66,9 @@ services:
     environment:
       NODE_IP: ${NODE_IP}
       REDIS_PASSWORD: ${REDIS_PASSWORD:?REDIS_PASSWORD is required}
+      REDIS_SENTINEL_PASSWORD: ${REDIS_SENTINEL_PASSWORD:?REDIS_SENTINEL_PASSWORD is required}
+      # For `docker compose exec sentinel redis-cli -p 26379 ...`
+      REDISCLI_AUTH: ${REDIS_SENTINEL_PASSWORD}
       REDIS_INITIAL_MASTER_IP: ${REDIS_INITIAL_MASTER_IP:?REDIS_INITIAL_MASTER_IP is required}
       SENTINEL_DOWN_AFTER_MS: ${SENTINEL_DOWN_AFTER_MS:-10000}
     volumes:
@@ -61,14 +84,27 @@ services:
     restart: always
     network_mode: host
     shm_size: 256m
+    depends_on:
+      etcd-auth:
+        condition: service_completed_successfully
     environment:
       SCOPE: trackarr
       PGVERSION: "16"
       ETCD3_HOSTS: ${ETCD3_HOSTS:?ETCD3_HOSTS is required}
+      # Spilo writes these into Patroni's config (Patroni itself only sees a
+      # filtered environment)
+      ETCD3_USERNAME: patroni
+      ETCD3_PASSWORD: ${ETCD_PATRONI_PASSWORD:?ETCD_PATRONI_PASSWORD is required}
       # Address announced to the other sites
       POD_IP: ${NODE_IP}
-      PATRONI_POSTGRESQL_LISTEN: ${NODE_IP},127.0.0.1:5432
-      PATRONI_RESTAPI_LISTEN: ${NODE_IP}:8008
+      # Merged into Patroni's config by Spilo (PATRONI_* variables never reach
+      # Patroni). Listen on the private network only, not on every interface
+      # of the host; switchover, restart, reinitialize... need the REST API
+      # credentials (health checks don't).
+      SPILO_CONFIGURATION: >-
+        {postgresql: {listen: "${NODE_IP},127.0.0.1:5432"},
+        restapi: {listen: "${NODE_IP}:8008",
+        authentication: {username: patroni, password: "${PATRONI_API_PASSWORD:?PATRONI_API_PASSWORD is required}"}}}
       PGPASSWORD_SUPERUSER: ${PG_SUPERUSER_PASSWORD:?PG_SUPERUSER_PASSWORD is required}
       PGPASSWORD_STANDBY: ${PG_REPLICATION_PASSWORD:?PG_REPLICATION_PASSWORD is required}
       PGPASSWORD_ADMIN: ${PG_ADMIN_PASSWORD:?PG_ADMIN_PASSWORD is required}
@@ -105,6 +141,7 @@ services:
     environment:
       NODE_IP: ${NODE_IP}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDISCLI_AUTH: ${REDIS_PASSWORD}
       REDIS_INITIAL_MASTER_IP: ${REDIS_INITIAL_MASTER_IP}
     volumes:
       - ./redis-entrypoint.sh:/ha/redis-entrypoint.sh:ro
@@ -152,6 +189,7 @@ services:
       # Every Sentinel: the client follows the current Redis master
       REDIS_SENTINELS: ${REDIS_SENTINELS:?REDIS_SENTINELS is required}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_SENTINEL_PASSWORD: ${REDIS_SENTINEL_PASSWORD}
       REDIS_COMMAND_TIMEOUT_MS: "5000"
       TRACKER_HTTP_URL: ${TRACKER_HTTP_URL}
       NUXT_PUBLIC_TRACKER_HTTP_URL: ${TRACKER_HTTP_URL}
@@ -205,6 +243,7 @@ services:
       DB_KEEP_ALIVE: "10"
       REDIS_SENTINELS: ${REDIS_SENTINELS:?REDIS_SENTINELS is required}
       REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_SENTINEL_PASSWORD: ${REDIS_SENTINEL_PASSWORD}
       REDIS_COMMAND_TIMEOUT_MS: "5000"
       IP_HASH_SECRET: ${IP_HASH_SECRET:?IP_HASH_SECRET is required}
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}

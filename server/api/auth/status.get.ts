@@ -2,6 +2,7 @@ import { eq } from 'drizzle-orm';
 import { db } from '../../db';
 import { users } from '../../db/schema';
 import { getSetting, SETTINGS_KEYS, isInviteEnabled } from '../../utils/settings';
+import { checkSession } from '../../utils/sessionRules';
 import type { PublicUser } from '~~/types/auth';
 
 /**
@@ -31,14 +32,15 @@ export default defineEventHandler(async (event) => {
         isBanned: users.isBanned,
         isAdmin: users.isAdmin,
         isModerator: users.isModerator,
+        sessionVersion: users.sessionVersion,
       })
       .from(users)
       .where(eq(users.id, session.user.id))
       .limit(1);
 
     if (dbUser) {
-      // Check if user is banned
-      if (dbUser.isBanned) {
+      // Banned, or session revoked (sign out everywhere)
+      if (checkSession(session.sessionVersion, dbUser) !== 'valid') {
         await clearUserSession(event);
         publicUser = null;
       } else {

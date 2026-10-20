@@ -59,6 +59,17 @@ wait_for "Postgres primary elected on dc1" 180 is_leader pg1 172.30.8.1
 $DC up -d pg2
 wait_for "dc2 replica streaming" 180 sh -c "$DC exec -T pg1 patronictl list | grep -E 'Replica|Sync' | grep -q streaming"
 
+log "Control plane refuses unauthenticated changes"
+$DC exec -T -e ETCDCTL_USER= etcd1 etcdctl put /service/trackarr/leader intruder >/dev/null 2>&1 \
+  && fail "etcd accepted a write without credentials"
+echo "  ok: etcd write without credentials refused"
+$DC exec -T -e REDISCLI_AUTH= sentinel2 redis-cli -p 26379 sentinel masters 2>&1 | grep -q NOAUTH \
+  || fail "Sentinel answered without a password"
+echo "  ok: Sentinel without password refused"
+[ "$($DC exec -T pg1 curl -s -o /dev/null -w '%{http_code}' -X POST http://172.30.8.1:8008/restart)" = 401 ] \
+  || fail "Patroni REST API accepted a restart without credentials"
+echo "  ok: Patroni restart without credentials refused"
+
 log "Starting the app and the tracker on both app sites"
 $DC up -d app1 app2 tracker1 tracker2
 wait_for "app1 healthy" 240 healthy 3001

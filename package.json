@@ -9,8 +9,6 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "dev:seed": "tsx scripts/dev-seed.ts",
-    "dev:download": "tsx scripts/dev-download.ts",
     "db:push": "./scripts/db-push.sh",
     "db:generate": "npx drizzle-kit generate",
     "db:studio": "npx drizzle-kit studio",
