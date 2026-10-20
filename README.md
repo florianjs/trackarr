@@ -214,7 +214,7 @@ The installer will:
 - Configure PostgreSQL, Redis, Caddy, and monitoring
 - Set up Beszel monitoring (host and container stats, alerts)
 
-> **Monitoring**: After installation, open `https://monitoring.your-domain.com` right away. It is protected by basic auth (user `admin`, password shown at the end of the install and saved in `CREDENTIALS.txt`); behind it, the first visitor creates the Beszel admin account.
+> **Monitoring**: After installation, open `https://monitoring.your-domain.com` right away. It is protected by basic auth (user `admin`, password shown at the end of the install); behind it, the first visitor creates the Beszel admin account.
 >
 > Then pair the agent once: in Beszel, click **Add system**, use host `/beszel_socket/beszel.sock`, copy the public key and token into `.env` as `BESZEL_AGENT_KEY` and `BESZEL_AGENT_TOKEN`, add `COMPOSE_PROFILES=monitoring`, and run `docker compose -f docker-compose.prod.yml up -d`. See the [Monitoring guide](https://florianjs.github.io/trackarr/guide/monitoring).
 >

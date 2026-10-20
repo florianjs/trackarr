@@ -42,6 +42,8 @@ chmod +x install.sh
 sudo ./install.sh
 ```
 
+It asks every question first (domains, Let's Encrypt email, monitoring password), checks that the domains point to the server, shows a summary to confirm, then runs unattended. The detailed output goes to `/var/log/trackarr-install.log`, shown on screen only if a step fails.
+
 The installer will automatically:
 
 - Install Docker and dependencies
@@ -52,7 +54,17 @@ The installer will automatically:
 - Configure PostgreSQL, Redis, Caddy, and monitoring
 - Set up Beszel monitoring
 
-After installation, open `https://monitoring.your-domain.com` right away: it is protected by basic auth (user `admin`, password shown at the end of the install and saved in `CREDENTIALS.txt`), and the first visitor creates the Beszel admin account. Then [pair the agent](/guide/monitoring#pairing-the-agent).
+Running it again updates the install and keeps its secrets, data, monitoring password and pairing; the previous answers are the defaults.
+
+For an unattended install, pass the values as environment variables:
+
+```bash
+sudo DOMAIN=example.com ACME_EMAIL=admin@example.com ./install.sh --yes
+```
+
+`./install.sh --help` lists every option.
+
+After installation, open `https://monitoring.your-domain.com` right away: it is protected by basic auth (user `admin`, password shown at the end of the install), and the first visitor creates the Beszel admin account. Then [pair the agent](/guide/monitoring#pairing-the-agent).
 
 ### Option 2: Docker Setup (Interactive)
 
