@@ -53,122 +53,118 @@ Built with Nuxt 4 • Rust • PostgreSQL • Redis
 
 ## 🔐 Security Architecture
 
-### Zero-Knowledge Authentication (ZKE)
+Trackarr is built so that a stolen database is worth as little as possible: passwords never reach the server, and one admin action can turn every sensitive field into ciphertext.
 
-Trackarr uses a **Zero-Knowledge** authentication system: the server **never sees or stores your password**. All cryptographic operations happen client-side.
+<table>
+<tr>
+<td width="33%" valign="top">
 
-```
-┌─────────────────────────────────────────────────────────────────────┐
-│                        REGISTRATION FLOW                            │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌─────────────┐                              ┌─────────────────┐  │
-│  │   CLIENT    │                              │     SERVER      │  │
-│  └──────┬──────┘                              └────────┬────────┘  │
-│         │                                              │           │
-│         │ 1. Solve PoW Challenge (anti-spam)           │           │
-│         │ ◄────────────────────────────────────────────┤           │
-│         │                                              │           │
-│         │ 2. Generate random salt (32 bytes)           │           │
-│         │ 3. Derive key = PBKDF2(password, salt)       │           │
-│         │ 4. Compute verifier = SHA256(key)            │           │
-│         │                                              │           │
-│         │ 5. Send {username, salt, verifier} ─────────►│           │
-│         │    Password NEVER leaves client           │           │
-│         │                                              │           │
-│         │                              6. Store salt + │           │
-│         │                                 scrypt(verifier)         │
-│         │                              7. Create session           │
-│         │ ◄──────────────────────────────── 8. OK ─────┤           │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+**🔑 Zero-Knowledge login**
 
-┌─────────────────────────────────────────────────────────────────────┐
-│                          LOGIN FLOW                                 │
-├─────────────────────────────────────────────────────────────────────┤
-│                                                                     │
-│  ┌─────────────┐                              ┌─────────────────┐  │
-│  │   CLIENT    │                              │     SERVER      │  │
-│  └──────┬──────┘                              └────────┬────────┘  │
-│         │                                              │           │
-│         │ 1. Request challenge ───────────────────────►│           │
-│         │                                              │           │
-│         │ ◄──────── 2. Return {salt, challenge} ───────┤           │
-│         │                                              │           │
-│         │ 3. Derive key = PBKDF2(password, salt)       │           │
-│         │ 4. Compute verifier = SHA256(key)            │           │
-│         │                                              │           │
-│         │ 5. Send {username, verifier, challenge} ────►│           │
-│         │    over TLS; password NEVER leaves client    │           │
-│         │                                              │           │
-│         │                       6. Consume challenge   │           │
-│         │                       7. scrypt(verifier) ==  │           │
-│         │                          stored hash ?       │           │
-│         │ ◄──────────────────────────────── 8. Session ┤           │
-│                                                                     │
-└─────────────────────────────────────────────────────────────────────┘
+The browser derives a verifier from the password. The server only stores a scrypt hash of that verifier.
+
+</td>
+<td width="33%" valign="top">
+
+**🚨 Panic Mode**
+
+One button encrypts torrents, credentials and posts with AES-256-GCM, under a key only the panic password can rebuild.
+
+</td>
+<td width="33%" valign="top">
+
+**🛡️ Defense in depth**
+
+Proof of Work, distributed rate limits, auto IP bans, hashed IPs in logs. [See below](#-security).
+
+</td>
+</tr>
+</table>
+
+### 🔑 Zero-Knowledge Authentication
+
+The server **never sees, receives or stores your password**. Key derivation happens in the browser; the server only checks a value it cannot turn back into the password.
+
+#### Registration
+
+```mermaid
+sequenceDiagram
+    autonumber
+    participant B as 🌐 Browser
+    participant S as 🖥️ Server
+    B->>S: Request Proof of Work challenge
+    S-->>B: PoW challenge
+    Note over B: Solve PoW (anti-bot)
+    Note over B: salt = 32 random bytes<br/>key = PBKDF2-SHA256(password, salt, 100k)<br/>verifier = SHA-256(key)
+    B->>S: username, salt, verifier, PoW solution
+    Note over S: Store salt + scrypt(verifier)<br/>Password never received
+    S-->>B: Session cookie
 ```
 
-**Key Properties:**
+#### Login
 
-- **Password never transmitted** — Only a verifier derived from it, over TLS
-- **PBKDF2 with 100k iterations** — Brute-force resistant
-- **Only a scrypt hash of the verifier is stored** — A database copy cannot be replayed to log in; each password must be guessed through PBKDF2 and scrypt
-- **Unique, single-use challenge per login** — Decoys for unknown usernames, constant-time failures
-- **Proof of Work** — Stops automated registration attacks
-
----
-
-### 🚨 Panic Mode (Emergency Encryption)
-
-The **Panic Button** allows administrators to **instantly encrypt all sensitive data** in an emergency. Once activated, all torrent files become unusable and user data is unreadable.
-
-```
-┌───────────────────────────────────────────────────────────────────┐
-│                       NORMAL STATE                                │
-│  • Torrents downloadable                                          │
-│  • User data readable                                             │
-│  • Posts & comments visible                                       │
-└───────────────────────────────────────────────────────────────────┘
-                              │
-                    PANIC ACTIVATED
-                              │
-                              ▼
-┌───────────────────────────────────────────────────────────────────┐
-│                      ENCRYPTED STATE                              │
-│  • .torrent files → AES-256-GCM encrypted (unusable)              │
-│  • Torrent names  → [ENCRYPTED]                                   │
-│  • Torrent sizes  → 0                                             │
-│  • User credentials → Encrypted                                   │
-│  • Forum posts    → Encrypted                                     │
-└───────────────────────────────────────────────────────────────────┘
-                              │
-                    RESTORE (with password)
-                              │
-                              ▼
-┌───────────────────────────────────────────────────────────────────┐
-│                       RESTORED STATE                              │
-│  All data restored to original state                              │
-└───────────────────────────────────────────────────────────────────┘
+```mermaid
+sequenceDiagram
+    autonumber
+    participant B as 🌐 Browser
+    participant S as 🖥️ Server
+    B->>S: Request challenge for username
+    S-->>B: salt + single-use challenge<br/>(decoy salt if the user does not exist)
+    Note over B: key = PBKDF2-SHA256(password, salt, 100k)<br/>verifier = SHA-256(key)
+    B->>S: username, verifier, challenge (over TLS)
+    Note over S: Consume challenge<br/>scrypt(verifier) == stored hash?<br/>constant-time compare
+    S-->>B: Sealed session cookie
 ```
 
-**How it works:**
+| Property                    | What it protects against                                                                                    |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Password never sent**     | A compromised server or TLS-terminating proxy never learns the password, so it cannot be reused elsewhere.  |
+| **PBKDF2, 100k iterations** | Makes every password guess expensive, in the browser and for an attacker alike.                             |
+| **scrypt-hashed verifier**  | A database dump cannot be replayed to log in: each password has to be guessed through PBKDF2 *and* scrypt. |
+| **Single-use challenges**   | Replayed login requests fail. Unknown usernames get a decoy, so failures do not reveal who has an account. |
+| **Proof of Work**           | Automated mass registration costs CPU time for every account.                                               |
 
-1. **First admin** sets a **Panic Password** during registration (min. 12 chars)
-2. Only a hash of the panic password is stored, never the password itself
-3. **Activation**: Admin → Settings → Panic → confirm and enter the Panic Password
-4. **Restoration**: enter the Panic Password (works without being logged in, rate limited)
+### 🚨 Panic Mode
 
-The encryption key is derived from the panic password itself, so the database alone is not enough to decrypt the data. Encryption and restoration each run in a single transaction: a failure leaves the database unchanged.
+The **Panic Button** lets an administrator **encrypt every sensitive field in one transaction**. Afterwards, `.torrent` files are unusable, nobody can log in, and the database reveals neither content nor members, until someone enters the panic password.
 
-**Encryption details:**
-| Component | Algorithm |
-|-----------|-----------|
-| Key Derivation | scrypt (32 bytes) from the panic password, random salt |
-| Encryption | AES-256-GCM |
-| IV | 12 bytes random, unique per encrypted value |
+```mermaid
+stateDiagram-v2
+    direction LR
+    Normal: ✅ Normal
+    Encrypted: 🔒 Encrypted
+    Normal --> Encrypted: Panic activated<br/>(admin + panic password)
+    Encrypted --> Normal: Restore<br/>(panic password, no login needed)
+    Encrypted --> Lost: Panic password lost
+    Lost: 💀 Permanently unreadable
+```
 
-> **WARNING**: Without the Panic Password, encrypted data is **permanently lost**. There is no recovery mechanism.
+| Data                                                         | While encrypted                                     |
+| ------------------------------------------------------------ | --------------------------------------------------- |
+| `.torrent` files                                             | AES-256-GCM ciphertext, cannot be downloaded or used |
+| Torrent names, descriptions                                  | Encrypted, shown as `[ENCRYPTED]`                   |
+| Size, category, IMDb / TMDb / TheTVDB IDs                    | Cleared, kept encrypted for restoration             |
+| Login salts & verifiers, passkeys, last IPs                  | Encrypted: no login, no announce                    |
+| Forum, comments, messages, shoutbox, reports, bounties       | Encrypted                                           |
+| Request logs, security alerts, abuse events (Redis)          | **Deleted**, not restored                           |
+
+**How it works**
+
+1. The **first admin** sets a panic password at registration (12 characters minimum). Only its hash is stored.
+2. **Activate**: Admin → Settings → Panic → confirm with the panic password.
+3. **Restore**: enter the panic password. Works signed out, rate limited against brute force.
+
+The encryption key is derived from the panic password itself, so the database alone is never enough to decrypt. Encryption and restoration each run in a single transaction: a failure leaves the database unchanged.
+
+| Component      | Algorithm                                         |
+| -------------- | ------------------------------------------------- |
+| Key derivation | scrypt (32 bytes) from the panic password, random salt |
+| Encryption     | AES-256-GCM (authenticated)                       |
+| IV             | 12 random bytes, unique per encrypted value       |
+
+> [!WARNING]
+> Without the panic password, encrypted data is **permanently lost**. There is no recovery mechanism, by design.
+
 
 ---
 
