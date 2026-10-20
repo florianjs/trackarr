@@ -123,6 +123,7 @@ export default defineEventHandler(async (event) => {
             authSalt: decryptOrKeep(user.authSalt, key, legacyIv),
             authVerifier: decryptOrKeep(user.authVerifier, key, legacyIv),
             passkey: decryptOrKeep(user.passkey, key, legacyIv)!,
+            apiKey: decryptOrKeep(user.apiKey, key, legacyIv),
             lastIp: decryptOrKeep(user.lastIp, key, legacyIv) ?? undefined,
           })
           .where(eq(users.id, user.id));

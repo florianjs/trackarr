@@ -100,6 +100,7 @@ export default defineEventHandler(async (event) => {
           authSalt: encryptField(user.authSalt, key),
           authVerifier: encryptField(user.authVerifier, key),
           passkey: encryptField(user.passkey, key)!,
+          apiKey: encryptField(user.apiKey, key),
           lastIp: encryptField(user.lastIp, key) ?? undefined,
         })
         .where(eq(users.id, user.id));
