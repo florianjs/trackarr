@@ -4,7 +4,7 @@
     "title": "Integrationen",
     "subtitle": "Prowlarr, Sonarr, Radarr und andere Torznab-Apps verbinden",
     "credentials": "Torznab-Einstellungen",
-    "credentialsHint": "Füge diese Werte in deine App ein. Der API-Schlüssel erlaubt nur Suche und Downloads: Du kannst ihn jederzeit neu erzeugen, ohne deinen Passkey zu ändern.",
+    "credentialsHint": "Füge diese Werte in deine App ein. Der API-Schlüssel hält deinen Passkey aus den Einstellungen deiner Apps heraus, und ein neuer Schlüssel sperrt Apps mit dem alten. Damit heruntergeladene Torrents enthalten trotzdem deinen Passkey: Wenn der Schlüssel durchsickert, erzeuge ihn neu und bitte das Team, auch deinen Passkey zurückzusetzen.",
     "url": "URL",
     "apiPath": "API-Pfad",
     "apiKey": "API-Schlüssel",

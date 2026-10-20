@@ -4,7 +4,7 @@
     "title": "Integrations",
     "subtitle": "Connect Prowlarr, Sonarr, Radarr and other Torznab apps",
     "credentials": "Torznab settings",
-    "credentialsHint": "Paste these values into your app. The API key only gives access to search and downloads: you can regenerate it at any time without touching your passkey.",
+    "credentialsHint": "Paste these values into your app. The API key keeps your passkey out of your apps' settings, and regenerating it cuts off apps using the old one. Torrents downloaded with it still carry your passkey: if the key leaks, regenerate it and ask staff to reset your passkey too.",
     "url": "URL",
     "apiPath": "API Path",
     "apiKey": "API Key",

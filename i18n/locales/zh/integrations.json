@@ -4,7 +4,7 @@
     "title": "集成",
     "subtitle": "连接 Prowlarr、Sonarr、Radarr 及其他 Torznab 应用",
     "credentials": "Torznab 设置",
-    "credentialsHint": "将这些值粘贴到你的应用中。API 密钥仅可用于搜索和下载：你可以随时重新生成，而不影响你的 passkey。",
+    "credentialsHint": "将这些值粘贴到你的应用中。API 密钥让你的 passkey 不必出现在应用设置里，重新生成后使用旧密钥的应用将失效。但用它下载的种子仍包含你的 passkey：如果密钥泄露，请重新生成，并请管理员同时重置你的 passkey。",
     "url": "URL",
     "apiPath": "API 路径",
     "apiKey": "API 密钥",
