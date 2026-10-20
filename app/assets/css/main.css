@@ -4,6 +4,22 @@
 @import '@fontsource/ibm-plex-sans/600.css';
 @import '@fontsource/ibm-plex-mono/400.css';
 @import '@fontsource/ibm-plex-mono/500.css';
+/* Fonts an admin can pick (shared/utils/appearance.ts): declared here, only
+   downloaded by browsers when the theme uses them */
+@import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
+@import '@fontsource/inter/600.css';
+@import '@fontsource/space-grotesk/400.css';
+@import '@fontsource/space-grotesk/500.css';
+@import '@fontsource/space-grotesk/600.css';
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/500.css';
+@import '@fontsource/nunito/600.css';
+@import '@fontsource/source-serif-4/400.css';
+@import '@fontsource/source-serif-4/500.css';
+@import '@fontsource/source-serif-4/600.css';
+@import '@fontsource/jetbrains-mono/400.css';
+@import '@fontsource/jetbrains-mono/500.css';
 
 @tailwind base;
 @tailwind components;
@@ -17,6 +33,11 @@
 @layer base {
   :root {
     color-scheme: light;
+    /* Overridden by the admin appearance (app/plugins/appearance.ts) */
+    --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+    --font-heading: var(--font-sans);
+    --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --radius: 0.3125rem;
     --bg: 243 244 246;
     --surface: 255 255 255;
     --raised: 247 248 250;
@@ -81,6 +102,12 @@
 
   body {
     @apply bg-bg-primary text-text-primary font-sans text-sm leading-6;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-heading;
   }
 
   ::selection {

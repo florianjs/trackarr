@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "Apparence",
+      "description": "Couleurs, polices, images, page de connexion et textes"
+    },
+    "tabs": {
+      "theme": "Thème",
+      "typography": "Typographie",
+      "images": "Images",
+      "login": "Page de connexion",
+      "texts": "Textes"
+    },
+    "unsaved": "Modifications non enregistrées",
+    "discard": "Annuler",
+    "previewHint": "Les modifications sont prévisualisées sur tout le site, pour vous seul, jusqu'à l'enregistrement. Sauf les images : elles sont publiques dès leur envoi.",
+    "saved": "Apparence enregistrée",
+    "saveFailed": "Impossible d'enregistrer l'apparence",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "Minuit",
+      "forest": "Forêt",
+      "sunset": "Crépuscule",
+      "mono": "Monochrome",
+      "contrast": "Contraste élevé"
+    },
+    "theme": {
+      "presets": "Préréglage",
+      "presetsHint": "Une base pour les thèmes clair et sombre. En choisir un efface les couleurs réglées à la main.",
+      "colors": "Couleurs",
+      "colorsHint": "Ajustez chaque couleur des thèmes clair et sombre. Les membres choisissent toujours clair, sombre ou système.",
+      "light": "Clair",
+      "dark": "Sombre",
+      "resetColors": "Revenir au préréglage",
+      "groups": {
+        "surfaces": "Surfaces",
+        "text": "Texte",
+        "meaning": "Couleurs porteuses de sens"
+      },
+      "tokens": {
+        "bg": "Fond de page",
+        "surface": "Cartes",
+        "raised": "Zones surélevées",
+        "hover": "Survol",
+        "line": "Bordures",
+        "line-strong": "Bordures marquées",
+        "ink": "Texte principal",
+        "ink-2": "Texte secondaire",
+        "ink-3": "Texte atténué",
+        "contrast": "Boutons principaux",
+        "contrast-inv": "Texte des boutons principaux",
+        "free": "Accent et freeleech",
+        "seed": "Upload et seeders",
+        "leech": "Download et leechers",
+        "danger": "Erreurs et danger"
+      },
+      "radius": "Coins",
+      "radiusHint": "Arrondi des boutons, champs et cartes.",
+      "radii": {
+        "none": "Carré",
+        "small": "Petit",
+        "default": "Par défaut",
+        "large": "Grand",
+        "round": "Rond"
+      }
+    },
+    "typography": {
+      "sans": "Texte courant",
+      "sansHint": "Police de toute l'interface.",
+      "heading": "Titres",
+      "headingHint": "Police des titres de pages et de sections.",
+      "mono": "Chiffres et code",
+      "monoHint": "Police des tailles, ratios, hashs et du code.",
+      "sample": "Portez ce vieux whisky au juge blond"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "Police système"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "Monospace système"
+      }
+    },
+    "images": {
+      "loginImage": "Image de la page de connexion",
+      "loginImageHint": "Affichée par les designs Divisé et Arrière-plan.",
+      "homeBanner": "Bannière d'accueil",
+      "homeBannerHint": "Grande image en haut du tableau de bord des membres.",
+      "none": "Pas d'image",
+      "upload": "Envoyer",
+      "replace": "Remplacer",
+      "remove": "Supprimer",
+      "formats": "PNG, JPEG ou WebP, 8 Mo max. Enregistrée immédiatement.",
+      "failed": "Impossible de mettre à jour l'image"
+    },
+    "login": {
+      "layout": "Design",
+      "layoutHint": "Utilisé par les pages de connexion et d'inscription.",
+      "layouts": {
+        "centered": "Centré",
+        "centeredHint": "Logo et formulaire au milieu de la page.",
+        "split": "Divisé",
+        "splitHint": "Image à gauche, formulaire à droite.",
+        "background": "Arrière-plan",
+        "backgroundHint": "Image en plein écran derrière une carte translucide.",
+        "minimal": "Minimal",
+        "minimalHint": "Sobre, aligné à gauche, sans tuile de logo."
+      },
+      "imageHint": "Sans image, ce design utilise la couleur d'accent. Ajoutez-en une dans l'onglet Images.",
+      "preview": "Aperçu"
+    },
+    "texts": {
+      "hint": "Remplacez n'importe quel texte de l'interface, langue par langue. Laissez un champ vide pour garder le texte d'origine.",
+      "locale": "Langue",
+      "search": "Rechercher une clé ou un texte…",
+      "onlyModified": "Modifiés uniquement",
+      "results": "Aucun texte | 1 texte | {n} textes",
+      "empty": "Aucun texte ne correspond.",
+      "placeholders": "Gardez les mots entre accolades du texte d'origine : ils sont remplacés par des valeurs comme des noms ou des nombres. Les formes plurielles sont séparées par une barre verticale entourée d'espaces."
+    }
+  }
+}

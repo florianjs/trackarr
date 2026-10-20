@@ -1,133 +1,100 @@
 <template>
-  <div class="relative min-h-screen bg-bg-primary flex items-center justify-center px-4">
-    <div class="absolute top-4 right-4">
-      <LanguageSwitcher />
+  <AuthShell>
+    <div
+      v-if="!status?.registrationOpen && !status?.needsSetup"
+      class="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded flex items-start gap-3"
+    >
+      <Icon name="ph:info" class="text-blue-400 text-lg mt-0.5 shrink-0" />
+      <p class="text-blue-400 text-xs leading-relaxed">
+        {{ t('auth.login.registrationsClosed') }}
+      </p>
     </div>
-    <div class="w-full max-w-md">
-      <!-- Logo -->
-      <div class="text-center mb-8">
-        <div
-          class="w-16 h-16 bg-white rounded-lg flex items-center justify-center mx-auto mb-4 overflow-hidden"
+
+    <form @submit.prevent="handleLogin" class="space-y-4">
+      <div>
+        <label
+          for="username"
+          class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
         >
-          <img
-            v-if="branding?.siteLogoImage"
-            :src="branding.siteLogoImage"
-            alt="Logo"
-            class="w-full h-full object-contain"
-          />
-          <Icon
-            v-else
-            :name="branding?.siteLogo || 'ph:broadcast-bold'"
-            class="text-black text-4xl"
-          />
-        </div>
-        <h1
-          class="text-2xl font-bold tracking-tighter"
-          v-html="branding?.authTitle || branding?.siteName || 'TRACKARR'"
-        ></h1>
-        <div
-          class="text-text-muted text-sm mt-1 [&>p]:m-0"
-          v-html="branding?.authSubtitle || t('auth.defaultSubtitle')"
-        ></div>
+          {{ t('common.username') }}
+        </label>
+        <input
+          id="username"
+          v-model="form.username"
+          type="text"
+          required
+          autocomplete="username"
+          class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+          :placeholder="t('auth.usernamePlaceholder')"
+        />
       </div>
 
+      <div>
+        <label
+          for="password"
+          class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
+        >
+          {{ t('common.password') }}
+        </label>
+        <input
+          id="password"
+          v-model="form.password"
+          type="password"
+          required
+          autocomplete="current-password"
+          class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
+          :placeholder="t('auth.passwordPlaceholder')"
+        />
+      </div>
+
+      <div v-if="error" class="text-red-400 text-sm">
+        {{ error }}
+      </div>
+
+      <!-- Status indicator for ZKE challenge processing -->
       <div
-        v-if="!status?.registrationOpen && !status?.needsSetup"
-        class="mb-6 p-3 bg-blue-500/10 border border-blue-500/20 rounded flex items-start gap-3"
+        v-if="authStatus"
+        class="text-text-muted text-xs flex items-center gap-2"
       >
-        <Icon name="ph:info" class="text-blue-400 text-lg mt-0.5 shrink-0" />
-        <p class="text-blue-400 text-xs leading-relaxed">
-          {{ t('auth.login.registrationsClosed') }}
-        </p>
+        <Icon name="ph:spinner" class="animate-spin" />
+        {{ authStatus }}
       </div>
 
-      <form @submit.prevent="handleLogin" class="space-y-4">
-        <div>
-          <label
-            for="username"
-            class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-          >
-            {{ t('common.username') }}
-          </label>
-          <input
-            id="username"
-            v-model="form.username"
-            type="text"
-            required
-            autocomplete="username"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-            :placeholder="t('auth.usernamePlaceholder')"
-          />
-        </div>
-
-        <div>
-          <label
-            for="password"
-            class="block text-xs font-medium text-text-muted uppercase tracking-wider mb-2"
-          >
-            {{ t('common.password') }}
-          </label>
-          <input
-            id="password"
-            v-model="form.password"
-            type="password"
-            required
-            autocomplete="current-password"
-            class="w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm focus:outline-none focus:border-white transition-colors"
-            :placeholder="t('auth.passwordPlaceholder')"
-          />
-        </div>
-
-        <div v-if="error" class="text-red-400 text-sm">
-          {{ error }}
-        </div>
-
-        <!-- Status indicator for ZKE challenge processing -->
-        <div
-          v-if="authStatus"
-          class="text-text-muted text-xs flex items-center gap-2"
-        >
-          <Icon name="ph:spinner" class="animate-spin" />
-          {{ authStatus }}
-        </div>
-
-        <button
-          type="submit"
-          :disabled="loading"
-          class="w-full bg-white text-black font-medium py-2.5 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span v-if="loading">{{ t('auth.login.signingIn') }}</span>
-          <span v-else>{{ t('auth.login.signIn') }}</span>
-        </button>
-        <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
-        <div class="sr-only" aria-hidden="true">
-          <input
-            v-model="form.hpot_field"
-            type="text"
-            name="hpot_field"
-            tabindex="-1"
-            autocomplete="off"
-          />
-        </div>
-      </form>
-
-      <div
-        v-if="status?.registrationOpen"
-        class="mt-6 pt-6 border-t border-border text-center"
+      <button
+        type="submit"
+        :disabled="loading"
+        class="w-full bg-white text-black font-medium py-2.5 rounded hover:bg-gray-200 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        <p class="text-text-muted text-sm">
-          {{ t('auth.login.noAccount') }}
-          <NuxtLink
-            to="/auth/register"
-            class="text-white hover:underline font-medium"
-          >
-            {{ t('auth.login.createOne') }}
-          </NuxtLink>
-        </p>
+        <span v-if="loading">{{ t('auth.login.signingIn') }}</span>
+        <span v-else>{{ t('auth.login.signIn') }}</span>
+      </button>
+      <!-- Honeypot: invisible to people, filled by bots (server/utils/honeypot.ts) -->
+      <div class="sr-only" aria-hidden="true">
+        <input
+          v-model="form.hpot_field"
+          type="text"
+          name="hpot_field"
+          tabindex="-1"
+          autocomplete="off"
+        />
       </div>
+    </form>
 
+    <div
+      v-if="status?.registrationOpen"
+      class="mt-6 pt-6 border-t border-border text-center"
+    >
+      <p class="text-text-muted text-sm">
+        {{ t('auth.login.noAccount') }}
+        <NuxtLink
+          to="/auth/register"
+          class="text-white hover:underline font-medium"
+        >
+          {{ t('auth.login.createOne') }}
+        </NuxtLink>
+      </p>
     </div>
-  </div>
+  </AuthShell>
 </template>
 
 <script setup lang="ts">

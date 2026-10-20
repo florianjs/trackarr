@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "外観",
+      "description": "色、フォント、画像、ログインページ、テキスト"
+    },
+    "tabs": {
+      "theme": "テーマ",
+      "typography": "タイポグラフィ",
+      "images": "画像",
+      "login": "ログインページ",
+      "texts": "テキスト"
+    },
+    "unsaved": "未保存の変更があります",
+    "discard": "破棄",
+    "previewHint": "保存するまで、変更はあなたにだけサイト全体でプレビュー表示されます。ただし画像は例外で、アップロードした時点で公開されます。",
+    "saved": "外観を保存しました",
+    "saveFailed": "外観を保存できませんでした",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "ミッドナイト",
+      "forest": "フォレスト",
+      "sunset": "サンセット",
+      "mono": "モノクロ",
+      "contrast": "ハイコントラスト"
+    },
+    "theme": {
+      "presets": "プリセット",
+      "presetsHint": "ライトとダークの両テーマの出発点です。選ぶと手動で設定した色は消去されます。",
+      "colors": "色",
+      "colorsHint": "ライトとダークの各色を調整します。メンバーは引き続きライト、ダーク、システムを選べます。",
+      "light": "ライト",
+      "dark": "ダーク",
+      "resetColors": "プリセットに戻す",
+      "groups": {
+        "surfaces": "面",
+        "text": "テキスト",
+        "meaning": "意味を持つ色"
+      },
+      "tokens": {
+        "bg": "ページ背景",
+        "surface": "カード",
+        "raised": "浮き上がった領域",
+        "hover": "ホバー",
+        "line": "枠線",
+        "line-strong": "強い枠線",
+        "ink": "本文",
+        "ink-2": "補足テキスト",
+        "ink-3": "控えめなテキスト",
+        "contrast": "主要ボタン",
+        "contrast-inv": "主要ボタンの文字",
+        "free": "アクセントとフリーリーチ",
+        "seed": "アップロードとシーダー",
+        "leech": "ダウンロードとリーチャー",
+        "danger": "エラーと危険"
+      },
+      "radius": "角",
+      "radiusHint": "ボタン、入力欄、カードの丸み。",
+      "radii": {
+        "none": "四角",
+        "small": "小",
+        "default": "標準",
+        "large": "大",
+        "round": "丸"
+      }
+    },
+    "typography": {
+      "sans": "本文",
+      "sansHint": "インターフェース全体のフォント。",
+      "heading": "見出し",
+      "headingHint": "ページやセクションのタイトルのフォント。",
+      "mono": "数字とコード",
+      "monoHint": "サイズ、レシオ、ハッシュ、コードのフォント。",
+      "sample": "いろはにほへと ちりぬるを"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "システムフォント"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "システム等幅フォント"
+      }
+    },
+    "images": {
+      "loginImage": "ログインページの画像",
+      "loginImageHint": "「分割」と「背景」のデザインで表示されます。",
+      "homeBanner": "ホームのバナー",
+      "homeBannerHint": "メンバーのダッシュボード上部に表示される横長の画像。",
+      "none": "画像なし",
+      "upload": "アップロード",
+      "replace": "置き換え",
+      "remove": "削除",
+      "formats": "PNG、JPEG、WebP、最大 8 MB。すぐに保存されます。",
+      "failed": "画像を更新できませんでした"
+    },
+    "login": {
+      "layout": "デザイン",
+      "layoutHint": "ログインページと登録ページで使われます。",
+      "layouts": {
+        "centered": "中央",
+        "centeredHint": "ロゴとフォームをページ中央に配置。",
+        "split": "分割",
+        "splitHint": "左に画像、右にフォーム。",
+        "background": "背景",
+        "backgroundHint": "全面画像の上に半透明のカード。",
+        "minimal": "ミニマル",
+        "minimalHint": "シンプルな左寄せ、ロゴタイルなし。"
+      },
+      "imageHint": "画像がない場合、このデザインはアクセントカラーを使います。「画像」タブで追加してください。",
+      "preview": "プレビュー"
+    },
+    "texts": {
+      "hint": "インターフェースのテキストを言語ごとに置き換えられます。空欄にすると元のテキストのままになります。",
+      "locale": "言語",
+      "search": "キーまたはテキストを検索…",
+      "onlyModified": "変更済みのみ",
+      "results": "テキストなし | 1 件のテキスト | {n} 件のテキスト",
+      "empty": "一致するテキストはありません。",
+      "placeholders": "元のテキストの波括弧で囲まれた語はそのまま残してください。名前や数値などに置き換えられます。複数形は前後に空白のある縦棒で区切ります。"
+    }
+  }
+}

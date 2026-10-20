@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "Erscheinungsbild",
+      "description": "Farben, Schriften, Bilder, Anmeldeseite und Texte"
+    },
+    "tabs": {
+      "theme": "Design",
+      "typography": "Typografie",
+      "images": "Bilder",
+      "login": "Anmeldeseite",
+      "texts": "Texte"
+    },
+    "unsaved": "Ungespeicherte Änderungen",
+    "discard": "Verwerfen",
+    "previewHint": "Änderungen werden bis zum Speichern nur für dich auf der ganzen Seite angezeigt. Ausnahme sind Bilder: Sie sind sofort nach dem Hochladen öffentlich.",
+    "saved": "Erscheinungsbild gespeichert",
+    "saveFailed": "Erscheinungsbild konnte nicht gespeichert werden",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "Mitternacht",
+      "forest": "Wald",
+      "sunset": "Abendrot",
+      "mono": "Monochrom",
+      "contrast": "Hoher Kontrast"
+    },
+    "theme": {
+      "presets": "Vorlage",
+      "presetsHint": "Ein Ausgangspunkt für helles und dunkles Design. Eine Vorlage zu wählen löscht die von Hand gesetzten Farben.",
+      "colors": "Farben",
+      "colorsHint": "Passe jede Farbe des hellen und dunklen Designs an. Mitglieder wählen weiterhin hell, dunkel oder System.",
+      "light": "Hell",
+      "dark": "Dunkel",
+      "resetColors": "Auf Vorlage zurücksetzen",
+      "groups": {
+        "surfaces": "Flächen",
+        "text": "Text",
+        "meaning": "Bedeutungsfarben"
+      },
+      "tokens": {
+        "bg": "Seitenhintergrund",
+        "surface": "Karten",
+        "raised": "Erhöhte Bereiche",
+        "hover": "Hover",
+        "line": "Rahmen",
+        "line-strong": "Starke Rahmen",
+        "ink": "Haupttext",
+        "ink-2": "Nebentext",
+        "ink-3": "Gedämpfter Text",
+        "contrast": "Primäre Schaltflächen",
+        "contrast-inv": "Text auf primären Schaltflächen",
+        "free": "Akzent und Freeleech",
+        "seed": "Upload und Seeder",
+        "leech": "Download und Leecher",
+        "danger": "Fehler und Gefahr"
+      },
+      "radius": "Ecken",
+      "radiusHint": "Rundung von Schaltflächen, Feldern und Karten.",
+      "radii": {
+        "none": "Eckig",
+        "small": "Klein",
+        "default": "Standard",
+        "large": "Groß",
+        "round": "Rund"
+      }
+    },
+    "typography": {
+      "sans": "Fließtext",
+      "sansHint": "Schrift der gesamten Oberfläche.",
+      "heading": "Überschriften",
+      "headingHint": "Schrift der Seiten- und Abschnittstitel.",
+      "mono": "Zahlen und Code",
+      "monoHint": "Schrift für Größen, Ratios, Hashes und Code.",
+      "sample": "Franz jagt im komplett verwahrlosten Taxi"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "Systemschrift"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "System-Monospace"
+      }
+    },
+    "images": {
+      "loginImage": "Bild der Anmeldeseite",
+      "loginImageHint": "Wird von den Designs Geteilt und Hintergrund angezeigt.",
+      "homeBanner": "Startseiten-Banner",
+      "homeBannerHint": "Breites Bild oben im Dashboard der Mitglieder.",
+      "none": "Kein Bild",
+      "upload": "Hochladen",
+      "replace": "Ersetzen",
+      "remove": "Entfernen",
+      "formats": "PNG, JPEG oder WebP, max. 8 MB. Wird sofort gespeichert.",
+      "failed": "Bild konnte nicht aktualisiert werden"
+    },
+    "login": {
+      "layout": "Design",
+      "layoutHint": "Für die Anmelde- und Registrierungsseite.",
+      "layouts": {
+        "centered": "Zentriert",
+        "centeredHint": "Logo und Formular in der Seitenmitte.",
+        "split": "Geteilt",
+        "splitHint": "Bild links, Formular rechts.",
+        "background": "Hintergrund",
+        "backgroundHint": "Ganzseitiges Bild hinter einer durchscheinenden Karte.",
+        "minimal": "Minimal",
+        "minimalHint": "Schlicht, linksbündig, ohne Logo-Kachel."
+      },
+      "imageHint": "Ohne Bild nutzt dieses Design die Akzentfarbe. Füge eines im Tab Bilder hinzu.",
+      "preview": "Vorschau"
+    },
+    "texts": {
+      "hint": "Ersetze jeden Text der Oberfläche, Sprache für Sprache. Lass ein Feld leer, um den mitgelieferten Text zu behalten.",
+      "locale": "Sprache",
+      "search": "Schlüssel oder Text suchen…",
+      "onlyModified": "Nur geänderte",
+      "results": "Kein Text | 1 Text | {n} Texte",
+      "empty": "Kein Text passt.",
+      "placeholders": "Behalte die Wörter in geschweiften Klammern aus dem Originaltext: Sie werden durch Werte wie Namen oder Zahlen ersetzt. Pluralformen werden durch einen senkrechten Strich mit Leerzeichen getrennt."
+    }
+  }
+}

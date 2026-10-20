@@ -1,0 +1,129 @@
+{
+  "appearance": {
+    "nav": {
+      "label": "Apariencia",
+      "description": "Colores, fuentes, imágenes, página de acceso y textos"
+    },
+    "tabs": {
+      "theme": "Tema",
+      "typography": "Tipografía",
+      "images": "Imágenes",
+      "login": "Página de acceso",
+      "texts": "Textos"
+    },
+    "unsaved": "Cambios sin guardar",
+    "discard": "Descartar",
+    "previewHint": "Los cambios se previsualizan en todo el sitio, solo para ti, hasta que los guardes. Salvo las imágenes: son públicas en cuanto se suben.",
+    "saved": "Apariencia guardada",
+    "saveFailed": "No se pudo guardar la apariencia",
+    "presets": {
+      "default": "Trackarr",
+      "midnight": "Medianoche",
+      "forest": "Bosque",
+      "sunset": "Atardecer",
+      "mono": "Monocromo",
+      "contrast": "Alto contraste"
+    },
+    "theme": {
+      "presets": "Preajuste",
+      "presetsHint": "Un punto de partida para los temas claro y oscuro. Elegir uno borra los colores ajustados a mano.",
+      "colors": "Colores",
+      "colorsHint": "Ajusta cada color de los temas claro y oscuro. Los miembros siguen eligiendo claro, oscuro o sistema.",
+      "light": "Claro",
+      "dark": "Oscuro",
+      "resetColors": "Volver al preajuste",
+      "groups": {
+        "surfaces": "Superficies",
+        "text": "Texto",
+        "meaning": "Colores con significado"
+      },
+      "tokens": {
+        "bg": "Fondo de página",
+        "surface": "Tarjetas",
+        "raised": "Zonas elevadas",
+        "hover": "Al pasar el ratón",
+        "line": "Bordes",
+        "line-strong": "Bordes marcados",
+        "ink": "Texto principal",
+        "ink-2": "Texto secundario",
+        "ink-3": "Texto atenuado",
+        "contrast": "Botones principales",
+        "contrast-inv": "Texto de los botones principales",
+        "free": "Acento y freeleech",
+        "seed": "Subida y seeders",
+        "leech": "Descarga y leechers",
+        "danger": "Errores y peligro"
+      },
+      "radius": "Esquinas",
+      "radiusHint": "Redondez de botones, campos y tarjetas.",
+      "radii": {
+        "none": "Cuadradas",
+        "small": "Pequeñas",
+        "default": "Por defecto",
+        "large": "Grandes",
+        "round": "Redondas"
+      }
+    },
+    "typography": {
+      "sans": "Texto",
+      "sansHint": "Fuente de toda la interfaz.",
+      "heading": "Títulos",
+      "headingHint": "Fuente de los títulos de páginas y secciones.",
+      "mono": "Números y código",
+      "monoHint": "Fuente de tamaños, ratios, hashes y código.",
+      "sample": "El veloz murciélago hindú comía feliz"
+    },
+    "fonts": {
+      "sans": {
+        "plex": "IBM Plex Sans",
+        "inter": "Inter",
+        "grotesk": "Space Grotesk",
+        "nunito": "Nunito",
+        "serif": "Source Serif 4",
+        "system": "Fuente del sistema"
+      },
+      "mono": {
+        "plex": "IBM Plex Mono",
+        "jetbrains": "JetBrains Mono",
+        "system": "Monoespaciada del sistema"
+      }
+    },
+    "images": {
+      "loginImage": "Imagen de la página de acceso",
+      "loginImageHint": "La muestran los diseños Dividido y Fondo.",
+      "homeBanner": "Banner de inicio",
+      "homeBannerHint": "Imagen ancha en la parte superior del panel de los miembros.",
+      "none": "Sin imagen",
+      "upload": "Subir",
+      "replace": "Reemplazar",
+      "remove": "Quitar",
+      "formats": "PNG, JPEG o WebP, 8 MB máx. Se guarda al instante.",
+      "failed": "No se pudo actualizar la imagen"
+    },
+    "login": {
+      "layout": "Diseño",
+      "layoutHint": "Lo usan las páginas de acceso y de registro.",
+      "layouts": {
+        "centered": "Centrado",
+        "centeredHint": "Logo y formulario en el centro de la página.",
+        "split": "Dividido",
+        "splitHint": "Imagen a la izquierda, formulario a la derecha.",
+        "background": "Fondo",
+        "backgroundHint": "Imagen a pantalla completa tras una tarjeta translúcida.",
+        "minimal": "Mínimo",
+        "minimalHint": "Sobrio, alineado a la izquierda, sin logo."
+      },
+      "imageHint": "Sin imagen, este diseño usa el color de acento. Añade una en la pestaña Imágenes.",
+      "preview": "Vista previa"
+    },
+    "texts": {
+      "hint": "Reemplaza cualquier texto de la interfaz, idioma por idioma. Deja un campo vacío para conservar el texto original.",
+      "locale": "Idioma",
+      "search": "Buscar una clave o un texto…",
+      "onlyModified": "Solo modificados",
+      "results": "Ningún texto | 1 texto | {n} textos",
+      "empty": "Ningún texto coincide.",
+      "placeholders": "Conserva las palabras entre llaves del texto original: se sustituyen por valores como nombres o números. Las formas plurales se separan con una barra vertical rodeada de espacios."
+    }
+  }
+}

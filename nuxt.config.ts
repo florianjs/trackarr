@@ -1,7 +1,7 @@
 import pkg from './package.json';
 
 // One translation file per area, in i18n/locales/<code>/ (issue #43)
-const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json', 'integrations.json'];
+const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json', 'integrations.json', 'appearance.json'];
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -79,5 +79,10 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ['chart.js', 'vue-chartjs'],
+  },
+
+  nitro: {
+    // Source strings for the admin text editor (server/utils/localeSource.ts)
+    serverAssets: [{ baseName: 'locales', dir: '../i18n/locales' }],
   },
 });
