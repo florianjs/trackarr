@@ -43,15 +43,20 @@ if [ -t 0 ] && [ -t 1 ]; then
 else
   # drizzle-kit exits 0 when it needs a prompt it cannot show: catch the
   # error in its output, or the app would start against a stale schema
+  # The exit status goes through a file: sh has no pipefail, and tee succeeds
   PUSH_LOG=$(mktemp)
-  DATABASE_URL="$DATABASE_URL" npx drizzle-kit push "$@" 2>&1 | tee "$PUSH_LOG"
-  if grep -q -E '^(Error|error):' "$PUSH_LOG"; then
-    rm -f "$PUSH_LOG"
+  PUSH_STATUS=$(mktemp)
+  {
+    DATABASE_URL="$DATABASE_URL" npx drizzle-kit push "$@" 2>&1
+    echo $? > "$PUSH_STATUS"
+  } | tee "$PUSH_LOG"
+  if [ "$(cat "$PUSH_STATUS")" != 0 ] || grep -q -E '^(Error|error):' "$PUSH_LOG"; then
+    rm -f "$PUSH_LOG" "$PUSH_STATUS"
     echo ""
     echo "❌ Schema push failed: see the error above"
     exit 1
   fi
-  rm -f "$PUSH_LOG"
+  rm -f "$PUSH_LOG" "$PUSH_STATUS"
 fi
 
 echo ""

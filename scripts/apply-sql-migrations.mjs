@@ -27,6 +27,14 @@ async function main() {
   const files = guardedMigrations(await readdir(MIGRATIONS_DIR));
   const sql = postgres(process.env.DATABASE_URL, { max: 1, onnotice: () => {} });
   try {
+    // Fresh database: these files alter tables push has not created yet.
+    // Push builds the whole schema from scratch, and on empty tables it has
+    // nothing to ask
+    const [{ ready }] = await sql`SELECT to_regclass('public.users') IS NOT NULL AS ready`;
+    if (!ready) {
+      console.log('   (fresh database: push creates the schema)');
+      return;
+    }
     for (const file of files) {
       // No parameters: simple query protocol, several statements per file
       await sql.unsafe(await readFile(join(MIGRATIONS_DIR, file), 'utf8'));
