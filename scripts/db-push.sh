@@ -33,7 +33,26 @@ else
 fi
 echo ""
 
-DATABASE_URL="$DATABASE_URL" npx drizzle-kit push "$@"
+echo "📜 Applying guarded SQL migrations..."
+DATABASE_URL="$DATABASE_URL" node ./scripts/apply-sql-migrations.mjs
+echo ""
+
+if [ -t 0 ] && [ -t 1 ]; then
+  # Interactive: drizzle-kit can ask its questions
+  DATABASE_URL="$DATABASE_URL" npx drizzle-kit push "$@"
+else
+  # drizzle-kit exits 0 when it needs a prompt it cannot show: catch the
+  # error in its output, or the app would start against a stale schema
+  PUSH_LOG=$(mktemp)
+  DATABASE_URL="$DATABASE_URL" npx drizzle-kit push "$@" 2>&1 | tee "$PUSH_LOG"
+  if grep -q -E '^(Error|error):' "$PUSH_LOG"; then
+    rm -f "$PUSH_LOG"
+    echo ""
+    echo "❌ Schema push failed: see the error above"
+    exit 1
+  fi
+  rm -f "$PUSH_LOG"
+fi
 
 echo ""
 echo "✅ Schema pushed successfully"
