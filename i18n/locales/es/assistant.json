@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "Asistente de subida",
+    "title": "Asistente de subida",
+    "subtitle": "Suelta un vídeo o una carpeta: el torrent, el MediaInfo, las capturas y la descripción se hacen solos.",
+    "drop": "Suelta aquí un archivo o una carpeta",
+    "pickFile": "Elegir un archivo",
+    "pickFolder": "Elegir una carpeta",
+    "adult": "Contenido adulto (capturas marcadas NSFW en el alojamiento)",
+    "private": "Los archivos se leen en tu navegador: solo las capturas y el .torrent salen de tu ordenador.",
+    "change": "Cambiar",
+    "fileCount": "{count} archivo, {size} | {count} archivos, {size}",
+    "steps": {
+      "mediainfo": "Leyendo el MediaInfo",
+      "screenshots": "Tomando capturas",
+      "hash": "Creando el .torrent"
+    },
+    "screenshots": "Capturas",
+    "screenshotsHint": "Desmarca las que no quieras en la descripción.",
+    "useShot": "Usar la captura {n}",
+    "details": "Detalles",
+    "name": "Nombre del torrent",
+    "category": "Categoría",
+    "noCategory": "Sin categoría",
+    "language": "Idioma de la descripción",
+    "releaseTitle": "Título",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "Etiquetas",
+    "notes": "Notas (opcional)",
+    "description": "Descripción (BBCode)",
+    "regenerate": "Regenerar",
+    "copyBbcode": "Copiar el BBCode",
+    "published": "Torrent publicado",
+    "alreadyExists": "Este torrent ya está en el tracker",
+    "seedHint": "Descarga el .torrent y añádelo a tu cliente apuntando a la carpeta que contiene los archivos: empieza a sembrar enseguida.",
+    "download": "Descargar el .torrent",
+    "open": "Abrir la ficha del torrent",
+    "publishFailed": "La publicación falló",
+    "publish": "Publicar",
+    "downloadOnly": "Descargar solo el .torrent",
+    "waitHash": "Creando el .torrent...",
+    "engine": {
+      "browser": "{done}/{total} con el navegador",
+      "ffmpeg": "{done}/{total} con ffmpeg (más lento)"
+    },
+    "cli": {
+      "title": "Herramienta de línea de comandos",
+      "intro": "Para releases grandes o lotes: el mismo resultado desde una terminal, más rápido con archivos grandes.",
+      "requirements": "Necesita Node.js 20+, ffmpeg y mediainfo. Tu clave API está en la",
+      "apiKey": "página Integraciones",
+      "download": "Descargar trackarr-upload.mjs"
+    },
+    "unknownError": "Error desconocido"
+  }
+}

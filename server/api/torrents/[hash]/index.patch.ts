@@ -18,7 +18,7 @@ const patchSchema = z.object({
   imdbId: mediaIdSchema,
   tmdbId: mediaIdSchema,
   tvdbId: mediaIdSchema,
-  description: z.string().max(10000).nullable().optional(),
+  description: z.string().max(50000).nullable().optional(),
   categoryId: z.union([z.uuid(), z.literal('')]).nullable().optional(),
 });
 

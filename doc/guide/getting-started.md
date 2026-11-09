@@ -135,6 +135,7 @@ Open `https://your-domain.com` to access your tracker.
 3. **Configure site settings** — Set your tracker name, description, and rules
 4. **Invite users** — Use the invitation system to add trusted members
 5. **Charge for sign-up (optional)**: Bitcoin, Monero or Solana, verified on-chain: see [Paid Registration](/guide/paid-registration)
+6. **Upload releases**: the [Upload Assistant](/guide/upload-assistant) builds the `.torrent`, MediaInfo, screenshots and BBCode description for you (web or CLI)
 
 ## Updating
 

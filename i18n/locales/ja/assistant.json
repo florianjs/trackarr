@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "アップロードアシスタント",
+    "title": "アップロードアシスタント",
+    "subtitle": "動画またはフォルダをドロップすると、トレント、MediaInfo、スクリーンショット、説明文が自動で作られます。",
+    "drop": "ここにファイルまたはフォルダをドロップ",
+    "pickFile": "ファイルを選択",
+    "pickFolder": "フォルダを選択",
+    "adult": "成人向けコンテンツ（画像ホストで NSFW として登録）",
+    "private": "ファイルはブラウザ内で読み込まれます。外部に出るのはスクリーンショットと .torrent だけです。",
+    "change": "変更",
+    "fileCount": "{count} 個のファイル、{size} | {count} 個のファイル、{size}",
+    "steps": {
+      "mediainfo": "MediaInfo を読み込み中",
+      "screenshots": "スクリーンショットを作成中",
+      "hash": ".torrent を作成中"
+    },
+    "screenshots": "スクリーンショット",
+    "screenshotsHint": "説明文に入れないものはチェックを外してください。",
+    "useShot": "スクリーンショット {n} を使う",
+    "details": "詳細",
+    "name": "トレント名",
+    "category": "カテゴリ",
+    "noCategory": "カテゴリなし",
+    "language": "説明文の言語",
+    "releaseTitle": "タイトル",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "タグ",
+    "notes": "備考（任意）",
+    "description": "説明文（BBCode）",
+    "regenerate": "再生成",
+    "copyBbcode": "BBCode をコピー",
+    "published": "トレントを公開しました",
+    "alreadyExists": "このトレントは既にトラッカーにあります",
+    "seedHint": ".torrent をダウンロードし、ファイルがあるフォルダを指定してクライアントに追加すると、すぐにシードが始まります。",
+    "download": ".torrent をダウンロード",
+    "open": "トレントのページを開く",
+    "publishFailed": "公開に失敗しました",
+    "publish": "公開",
+    "downloadOnly": ".torrent のみダウンロード",
+    "waitHash": ".torrent を作成中...",
+    "engine": {
+      "browser": "{done}/{total}（ブラウザ）",
+      "ffmpeg": "{done}/{total}（ffmpeg、低速）"
+    },
+    "cli": {
+      "title": "コマンドラインツール",
+      "intro": "大きなリリースや一括処理向け。ターミナルから同じ結果を、大きなファイルでも高速に。",
+      "requirements": "Node.js 20+、ffmpeg、mediainfo が必要です。API キーは",
+      "apiKey": "連携ページ",
+      "download": "trackarr-upload.mjs をダウンロード"
+    },
+    "unknownError": "不明なエラー"
+  }
+}

@@ -267,7 +267,7 @@ const error = ref<string | null>(null);
 const { data: categories } = await useFetch<Category[]>('/api/categories');
 
 const renderedDescription = computed(() => {
-  return renderMarkdown(description.value);
+  return renderDescription(description.value);
 });
 
 // Initialize form data when torrent prop changes

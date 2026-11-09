@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "Assistant d'upload",
+    "title": "Assistant d'upload",
+    "subtitle": "Déposez une vidéo ou un dossier : le torrent, le MediaInfo, les captures et la description sont faits pour vous.",
+    "drop": "Déposez un fichier ou un dossier ici",
+    "pickFile": "Choisir un fichier",
+    "pickFolder": "Choisir un dossier",
+    "adult": "Contenu adulte (captures classées NSFW chez l'hébergeur)",
+    "private": "Les fichiers sont lus dans votre navigateur : seules les captures et le .torrent quittent votre ordinateur.",
+    "change": "Changer",
+    "fileCount": "{count} fichier, {size} | {count} fichiers, {size}",
+    "steps": {
+      "mediainfo": "Lecture du MediaInfo",
+      "screenshots": "Captures d'écran",
+      "hash": "Création du .torrent"
+    },
+    "screenshots": "Captures",
+    "screenshotsHint": "Décochez celles que vous ne voulez pas dans la description.",
+    "useShot": "Utiliser la capture {n}",
+    "details": "Détails",
+    "name": "Nom du torrent",
+    "category": "Catégorie",
+    "noCategory": "Sans catégorie",
+    "language": "Langue de la description",
+    "releaseTitle": "Titre",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "Tags",
+    "notes": "Notes (facultatif)",
+    "description": "Description (BBCode)",
+    "regenerate": "Régénérer",
+    "copyBbcode": "Copier le BBCode",
+    "published": "Torrent publié",
+    "alreadyExists": "Ce torrent est déjà sur le tracker",
+    "seedHint": "Téléchargez le .torrent et ajoutez-le à votre client en pointant vers le dossier qui contient les fichiers : il passe en seed tout de suite.",
+    "download": "Télécharger le .torrent",
+    "open": "Ouvrir la fiche du torrent",
+    "publishFailed": "La publication a échoué",
+    "publish": "Publier",
+    "downloadOnly": "Télécharger seulement le .torrent",
+    "waitHash": "Création du .torrent en cours...",
+    "engine": {
+      "browser": "{done}/{total} avec le navigateur",
+      "ffmpeg": "{done}/{total} avec ffmpeg (plus lent)"
+    },
+    "cli": {
+      "title": "Outil en ligne de commande",
+      "intro": "Pour les grosses releases ou les lots : le même résultat depuis un terminal, plus rapide sur les gros fichiers.",
+      "requirements": "Nécessite Node.js 20+, ffmpeg et mediainfo. Votre clé API est sur la",
+      "apiKey": "page Intégrations",
+      "download": "Télécharger trackarr-upload.mjs"
+    },
+    "unknownError": "Erreur inconnue"
+  }
+}

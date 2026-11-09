@@ -20,6 +20,9 @@
         <NuxtLink to="/torrents" class="btn btn-secondary">
           <Icon name="ph:files" aria-hidden="true" />{{ t('dashboard.browse') }}
         </NuxtLink>
+        <NuxtLink to="/upload/assistant" class="btn btn-secondary">
+          <Icon name="ph:magic-wand" aria-hidden="true" />{{ t('assistant.entry') }}
+        </NuxtLink>
         <button type="button" class="btn btn-primary" @click="showUpload = true">
           <Icon name="ph:upload-simple" aria-hidden="true" />{{ t('dashboard.upload') }}
         </button>

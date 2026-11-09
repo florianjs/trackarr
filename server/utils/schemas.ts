@@ -83,7 +83,7 @@ export const registerSchema = z.object({
 
 export const torrentUploadSchema = z.object({
   categoryId: z.uuid('Invalid category ID').optional(),
-  description: z.string().max(10000, 'Description too long').optional(),
+  description: z.string().max(50000, 'Description too long').optional(),
 });
 
 export const torrentQuerySchema = z.object({

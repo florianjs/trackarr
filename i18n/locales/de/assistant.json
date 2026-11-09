@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "Upload-Assistent",
+    "title": "Upload-Assistent",
+    "subtitle": "Lege ein Video oder einen Ordner ab: Torrent, MediaInfo, Screenshots und Beschreibung entstehen automatisch.",
+    "drop": "Datei oder Ordner hier ablegen",
+    "pickFile": "Datei wählen",
+    "pickFolder": "Ordner wählen",
+    "adult": "Inhalte für Erwachsene (Screenshots beim Bildhoster als NSFW markiert)",
+    "private": "Die Dateien werden in deinem Browser gelesen: nur die Screenshots und die .torrent verlassen deinen Computer.",
+    "change": "Ändern",
+    "fileCount": "{count} Datei, {size} | {count} Dateien, {size}",
+    "steps": {
+      "mediainfo": "MediaInfo wird gelesen",
+      "screenshots": "Screenshots werden erstellt",
+      "hash": ".torrent wird erstellt"
+    },
+    "screenshots": "Screenshots",
+    "screenshotsHint": "Entferne den Haken bei denen, die nicht in die Beschreibung sollen.",
+    "useShot": "Screenshot {n} verwenden",
+    "details": "Details",
+    "name": "Torrent-Name",
+    "category": "Kategorie",
+    "noCategory": "Keine Kategorie",
+    "language": "Sprache der Beschreibung",
+    "releaseTitle": "Titel",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "Tags",
+    "notes": "Hinweise (optional)",
+    "description": "Beschreibung (BBCode)",
+    "regenerate": "Neu erzeugen",
+    "copyBbcode": "BBCode kopieren",
+    "published": "Torrent veröffentlicht",
+    "alreadyExists": "Dieser Torrent ist bereits auf dem Tracker",
+    "seedHint": "Lade die .torrent herunter und füge sie deinem Client hinzu, mit dem Ordner, der die Dateien enthält: Das Seeden beginnt sofort.",
+    "download": ".torrent herunterladen",
+    "open": "Torrent-Seite öffnen",
+    "publishFailed": "Veröffentlichung fehlgeschlagen",
+    "publish": "Veröffentlichen",
+    "downloadOnly": "Nur die .torrent herunterladen",
+    "waitHash": ".torrent wird erstellt...",
+    "engine": {
+      "browser": "{done}/{total} mit dem Browser",
+      "ffmpeg": "{done}/{total} mit ffmpeg (langsamer)"
+    },
+    "cli": {
+      "title": "Kommandozeilen-Tool",
+      "intro": "Für große Releases oder Stapel: dasselbe Ergebnis im Terminal, schneller bei großen Dateien.",
+      "requirements": "Benötigt Node.js 20+, ffmpeg und mediainfo. Deinen API-Schlüssel findest du auf der",
+      "apiKey": "Seite Integrationen",
+      "download": "trackarr-upload.mjs herunterladen"
+    },
+    "unknownError": "Unbekannter Fehler"
+  }
+}
