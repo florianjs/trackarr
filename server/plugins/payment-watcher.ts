@@ -1,6 +1,7 @@
 import { redis } from '../redis/client';
 import { claim } from '../redis/claim';
 import { getPaidRegistration } from '../utils/settings';
+import { parseCheckInterval } from '../../shared/utils/paidRegistration';
 import {
   listOpenInvoices,
   purgeUnpaidAccounts,
@@ -13,7 +14,7 @@ import {
  * With several app nodes, only the first to claim an interval runs it.
  */
 export default defineNitroPlugin(() => {
-  const INTERVAL = parseInt(process.env.PAYMENT_CHECK_INTERVAL || '60000', 10);
+  const INTERVAL = parseCheckInterval(process.env.PAYMENT_CHECK_INTERVAL);
   let running = false;
 
   const run = async () => {
@@ -25,10 +26,12 @@ export default defineNitroPlugin(() => {
       const invoices = await listOpenInvoices();
 
       // One at a time: public APIs (mempool.space, Solana RPC) rate-limit
+      const failedUsers = new Set<string>();
       for (const invoice of invoices) {
         try {
           await refreshInvoice(invoice, config);
         } catch (err) {
+          failedUsers.add(invoice.userId);
           console.error(
             `[Payments] Check failed for ${invoice.currency} invoice ${invoice.id}:`,
             (err as Error).message
@@ -36,7 +39,7 @@ export default defineNitroPlugin(() => {
         }
       }
 
-      const purged = await purgeUnpaidAccounts(config.pendingDays);
+      const purged = await purgeUnpaidAccounts(config.pendingDays, [...failedUsers]);
       if (purged > 0) console.log(`[Payments] Deleted ${purged} unpaid account(s)`);
     } catch (err) {
       console.error('[Payments] Watcher failed:', err);

@@ -36,8 +36,13 @@ export async function jsonRpc<T>(url: string, method: string, params: unknown): 
     signal: AbortSignal.timeout(TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`${method}: HTTP ${res.status}`);
-  const body = (await res.json()) as { result?: T; error?: { message?: string } };
+  const body = (await res.json()) as { result?: T; error?: { message?: string } } | null;
+  if (typeof body !== 'object' || body === null) {
+    throw new Error(`${method}: malformed RPC response`);
+  }
   if (body.error) throw new Error(`${method}: ${body.error.message ?? 'RPC error'}`);
+  // Key presence, not truthiness: getTransaction legitimately answers null
+  if (!('result' in body)) throw new Error(`${method}: RPC response has no result`);
   return body.result as T;
 }
 

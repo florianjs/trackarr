@@ -5,7 +5,7 @@
  * the account is unlocked (users.payment_pending = false).
  */
 
-import { and, eq, inArray, lt, sql } from 'drizzle-orm';
+import { and, eq, inArray, lt, notInArray, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { invitations, registrationPayments, users } from '../../db/schema';
 import {
@@ -211,8 +211,14 @@ export async function listOpenInvoices(): Promise<RegistrationPayment[]> {
  * Delete locked accounts older than `pendingDays` on which nothing was ever
  * seen. Accounts with money on the way are kept for an admin to settle. The
  * invite they used, if any, becomes usable again.
+ *
+ * `skipUserIds`: accounts whose chain check failed this cycle. Their stored
+ * amounts may be stale (API outage): never delete on stale data.
  */
-export async function purgeUnpaidAccounts(pendingDays: number): Promise<number> {
+export async function purgeUnpaidAccounts(
+  pendingDays: number,
+  skipUserIds: string[] = []
+): Promise<number> {
   const cutoff = new Date(Date.now() - pendingDays * 86_400_000);
   const stale = await db
     .select({ id: users.id })
@@ -221,6 +227,7 @@ export async function purgeUnpaidAccounts(pendingDays: number): Promise<number> 
       and(
         eq(users.paymentPending, true),
         lt(users.createdAt, cutoff),
+        skipUserIds.length > 0 ? notInArray(users.id, skipUserIds) : undefined,
         sql`not exists (
           select 1 from ${registrationPayments}
           where ${registrationPayments.userId} = ${users.id}
@@ -235,15 +242,23 @@ export async function purgeUnpaidAccounts(pendingDays: number): Promise<number> 
   let purged = 0;
   for (const { id } of stale) {
     try {
-      await db.transaction(async (tx) => {
+      const deleted = await db.transaction(async (tx) => {
+        // Row lock: an unlock running now waits, so the check below holds
+        // until the delete (paid in the meantime means kept, invite included)
+        const [locked] = await tx
+          .select({ id: users.id })
+          .from(users)
+          .where(and(eq(users.id, id), eq(users.paymentPending, true)))
+          .for('update');
+        if (!locked) return false;
         await tx
           .update(invitations)
           .set({ usedBy: null, usedAt: null })
           .where(eq(invitations.usedBy, id));
-        // Re-checked under the delete: paid in the meantime means kept
-        await tx.delete(users).where(and(eq(users.id, id), eq(users.paymentPending, true)));
+        await tx.delete(users).where(eq(users.id, id));
+        return true;
       });
-      purged++;
+      if (deleted) purged++;
     } catch (err) {
       console.error(`[Payments] Could not purge unpaid account ${id}:`, (err as Error).message);
     }

@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { afterEach, describe, it, expect, vi } from 'vitest';
 import {
   availableCurrencies,
   fromAtomic,
@@ -181,5 +181,54 @@ describe('payments made before the invoice', () => {
       4_000
     );
     expect(receipt).toEqual({ confirmed: 4n, unconfirmed: 0n, txids: ['new'] });
+  });
+});
+
+describe('watcher interval', () => {
+  it('accepts whole milliseconds of at least 5 s, else the default', async () => {
+    const { parseCheckInterval } = await import('../shared/utils/paidRegistration');
+    expect(parseCheckInterval(undefined)).toBe(60_000);
+    expect(parseCheckInterval('30000')).toBe(30_000);
+    expect(parseCheckInterval('60s')).toBe(60_000);
+    expect(parseCheckInterval('0')).toBe(60_000);
+    expect(parseCheckInterval('4999')).toBe(60_000);
+    expect(parseCheckInterval('-1')).toBe(60_000);
+  });
+});
+
+describe('json-rpc responses', () => {
+  const reply = (body: unknown) =>
+    vi.spyOn(globalThis, 'fetch').mockResolvedValue(new Response(JSON.stringify(body)));
+
+  afterEach(() => vi.restoreAllMocks());
+
+  it('returns the result, null included', async () => {
+    const { jsonRpc } = await import('../server/utils/payments/http');
+    reply({ result: { ok: 1 } });
+    await expect(jsonRpc('http://rpc', 'm', {})).resolves.toEqual({ ok: 1 });
+    reply({ result: null });
+    await expect(jsonRpc('http://rpc', 'm', {})).resolves.toBeNull();
+  });
+
+  it('rejects errors and malformed bodies with the method name', async () => {
+    const { jsonRpc } = await import('../server/utils/payments/http');
+    reply({ error: { message: 'No wallet file' } });
+    await expect(jsonRpc('http://rpc', 'get_transfers', {})).rejects.toThrow('get_transfers: No wallet file');
+    reply({});
+    await expect(jsonRpc('http://rpc', 'get_transfers', {})).rejects.toThrow('get_transfers: RPC response has no result');
+    reply(null);
+    await expect(jsonRpc('http://rpc', 'get_transfers', {})).rejects.toThrow('get_transfers: malformed RPC response');
+  });
+});
+
+describe('monero keys', () => {
+  it('accepts primary addresses and view keys only', async () => {
+    const { isMoneroPrimaryAddress, isMoneroViewKey } = await import('../server/utils/payments/xmr');
+    const primary = '4' + 'A'.repeat(94);
+    expect(isMoneroPrimaryAddress(primary)).toBe(true);
+    expect(isMoneroPrimaryAddress('8' + 'A'.repeat(94))).toBe(false); // subaddress
+    expect(isMoneroPrimaryAddress('4' + '0'.repeat(94))).toBe(false); // not base58
+    expect(isMoneroViewKey('ab'.repeat(32))).toBe(true);
+    expect(isMoneroViewKey('xy'.repeat(32))).toBe(false);
   });
 });
