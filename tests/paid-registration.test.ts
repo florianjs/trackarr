@@ -193,6 +193,9 @@ describe('watcher interval', () => {
     expect(parseCheckInterval('0')).toBe(60_000);
     expect(parseCheckInterval('4999')).toBe(60_000);
     expect(parseCheckInterval('-1')).toBe(60_000);
+    expect(parseCheckInterval('2147483647')).toBe(2_147_483_647);
+    expect(parseCheckInterval('2147483648')).toBe(60_000);
+    expect(parseCheckInterval('9'.repeat(400))).toBe(60_000); // Infinity
   });
 });
 

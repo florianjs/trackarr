@@ -344,8 +344,11 @@ prompt_configuration() {
     if [[ -n $MONERO_WALLET_RPC_URL && ! $MONERO_WALLET_RPC_URL =~ ^https?://[^[:space:]]+$ ]]; then
         die "MONERO_WALLET_RPC_URL must be an http(s) URL: $MONERO_WALLET_RPC_URL"
     fi
-    if [[ -n $PAYMENT_CHECK_INTERVAL && ! $PAYMENT_CHECK_INTERVAL =~ ^[0-9]+$ ]]; then
-        die "PAYMENT_CHECK_INTERVAL must be a number of milliseconds"
+    # 5 s to the Node.js timer limit (larger delays become 1 ms); at most 10
+    # digits, so the arithmetic below cannot overflow
+    if [[ -n $PAYMENT_CHECK_INTERVAL ]] && { [[ ! $PAYMENT_CHECK_INTERVAL =~ ^[0-9]{1,10}$ ]] \
+        || (( 10#$PAYMENT_CHECK_INTERVAL < 5000 || 10#$PAYMENT_CHECK_INTERVAL > 2147483647 )); }; then
+        die "PAYMENT_CHECK_INTERVAL must be milliseconds between 5000 and 2147483647"
     fi
 
     check_dns

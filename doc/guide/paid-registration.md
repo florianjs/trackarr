@@ -2,7 +2,7 @@
 
 Trackarr can charge a sign-up fee in **Bitcoin**, **Monero** or **Solana**. The account is created at once but stays **locked**: its owner only sees the payment page, and the API, RSS feeds and Torznab refuse it. Once the payment is confirmed on the blockchain, the account is unlocked automatically.
 
-Verification is self-hosted: no payment processor, and **no private key on the server**.
+Verification is self-hosted: no payment processor, and **no spend key on the server**: nothing on it can move your funds. Bitcoin and Solana only need public keys. Monero needs your **private view key**, sent once to the server to create a view-only wallet: it reveals incoming payments, not the ability to spend.
 
 | Coin    | Receiving side                                    | How the payment is found                                  |
 | ------- | ------------------------------------------------- | --------------------------------------------------------- |
@@ -53,7 +53,7 @@ The wallet only reads the chain through the node: a public remote node works (it
 :::
 
 ::: details Using your own monero-wallet-rpc
-Point `MONERO_WALLET_RPC_URL` at it (and leave Monero off in the installer). The app talks to it without a login, so keep it on a private network. If it already has a wallet open, nothing else is needed; otherwise create one from the admin page as above.
+Point `MONERO_WALLET_RPC_URL` at it (and leave Monero off in the installer). The app talks to it without a login, so keep it on a private network. Create the wallet from the admin page as above: it is named `trackarr-view` and protected by `MONERO_WALLET_PASSWORD`, so the app reopens it whenever the RPC restarts. A wallet you opened yourself under another name works until the next restart of the RPC; after that, invoice checks fail until something opens it again (or start the RPC with `--wallet-file` so it always does).
 :::
 
 ### Solana

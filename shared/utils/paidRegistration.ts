@@ -204,13 +204,18 @@ export function paymentUri(
 
 export const DEFAULT_CHECK_INTERVAL_MS = 60_000;
 export const MIN_CHECK_INTERVAL_MS = 5_000;
+// setInterval turns larger delays into 1 ms
+export const MAX_CHECK_INTERVAL_MS = 2_147_483_647;
 
 /**
- * PAYMENT_CHECK_INTERVAL in ms: digits only and at least 5 s, otherwise the
- * default ("60s" or "0" must not turn the watcher into a tight loop)
+ * PAYMENT_CHECK_INTERVAL in ms: digits only, from 5 s to the setInterval
+ * limit, otherwise the default ("60s", "0" or a huge value must not turn the
+ * watcher into a tight loop)
  */
 export function parseCheckInterval(raw: string | undefined): number {
   if (!raw || !/^\d+$/.test(raw.trim())) return DEFAULT_CHECK_INTERVAL_MS;
   const value = Number(raw.trim());
-  return value >= MIN_CHECK_INTERVAL_MS ? value : DEFAULT_CHECK_INTERVAL_MS;
+  return value >= MIN_CHECK_INTERVAL_MS && value <= MAX_CHECK_INTERVAL_MS
+    ? value
+    : DEFAULT_CHECK_INTERVAL_MS;
 }
