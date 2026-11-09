@@ -20,6 +20,13 @@
               {{ t('upload.title') }}
             </h3>
           </div>
+          <NuxtLink
+            to="/upload/assistant"
+            class="ml-auto mr-3 text-xs text-text-muted hover:text-text-primary underline underline-offset-2"
+            @click="close"
+          >
+            {{ t('assistant.entry') }}
+          </NuxtLink>
           <button
             class="text-text-muted hover:text-white transition-colors"
             :aria-label="t('common.close')"
@@ -422,7 +429,7 @@ async function copyAnnounce() {
 const { data: categories } = await useFetch('/api/categories');
 
 const renderedDescription = computed(() => {
-  return renderMarkdown(description.value);
+  return renderDescription(description.value);
 });
 
 function getFlattenedCategories(

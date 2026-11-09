@@ -12,9 +12,11 @@ export function createCspNonce(): string {
 }
 
 export function buildCsp(nonce?: string, dev = import.meta.dev): string {
+  // 'wasm-unsafe-eval': WebAssembly for the upload assistant (MediaInfo,
+  // ffmpeg). It allows compiling wasm, not eval() of JavaScript
   const scriptSrc = dev
-    ? "script-src 'self' 'unsafe-inline'" // Vite HMR and devtools in development
-    : `script-src 'self'${nonce ? ` 'nonce-${nonce}'` : ''}`;
+    ? "script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'" // Vite HMR and devtools in development
+    : `script-src 'self' 'wasm-unsafe-eval'${nonce ? ` 'nonce-${nonce}'` : ''}`;
 
   return [
     "default-src 'self'",
@@ -22,7 +24,9 @@ export function buildCsp(nonce?: string, dev = import.meta.dev): string {
     // Style attributes from Vue :style bindings rendered on the server,
     // and styles injected at runtime (icons, editor), need it
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: https:",
+    // blob: the upload assistant previews the local video and its screenshots
+    "img-src 'self' data: blob: https:",
+    "media-src 'self' blob:",
     "font-src 'self' data:",
     "connect-src 'self'",
     "frame-ancestors 'none'",

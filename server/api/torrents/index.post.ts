@@ -6,16 +6,18 @@ import { rateLimit, RATE_LIMITS } from '../../utils/rateLimit';
 import { normalizeTorrent, type NormalizedTorrent } from '../../utils/torrentFile';
 import { parseMediaIds } from '../../../shared/utils/mediaIds';
 import { awardUploadBonus } from '../../utils/bonus';
+import { requireUploader } from '../../utils/uploaderAuth';
 
 // readMultipartFormData buffers the whole body: reject oversized requests first
 const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;
-const MAX_DESCRIPTION_LENGTH = 10000;
+// Room for a full MediaInfo report (upload assistant)
+const MAX_DESCRIPTION_LENGTH = 50000;
 const MAX_NAME_LENGTH = 255;
 const tagIdsSchema = z.array(z.uuid()).max(20);
 
 export default defineEventHandler(async (event) => {
-  // Require authentication
-  const { user } = await requireAuthSession(event);
+  // Signed-in user, or API key for the upload CLI
+  const user = await requireUploader(event);
 
   // Rate limit uploads
   await rateLimit(event, RATE_LIMITS.mutation);

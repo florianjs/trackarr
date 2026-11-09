@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "上传助手",
+    "title": "上传助手",
+    "subtitle": "拖入视频或文件夹：自动生成种子、MediaInfo、截图和描述。",
+    "drop": "将文件或文件夹拖到这里",
+    "pickFile": "选择文件",
+    "pickFolder": "选择文件夹",
+    "adult": "成人内容（截图在图床标记为 NSFW）",
+    "private": "文件在浏览器中读取：只有截图和 .torrent 会离开你的电脑。",
+    "change": "更换",
+    "fileCount": "{count} 个文件，{size} | {count} 个文件，{size}",
+    "steps": {
+      "mediainfo": "读取 MediaInfo",
+      "screenshots": "生成截图",
+      "hash": "创建 .torrent"
+    },
+    "screenshots": "截图",
+    "screenshotsHint": "取消勾选不想放进描述的截图。",
+    "useShot": "使用截图 {n}",
+    "details": "详情",
+    "name": "种子名称",
+    "category": "分类",
+    "noCategory": "无分类",
+    "language": "描述语言",
+    "releaseTitle": "标题",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "标签",
+    "notes": "备注（可选）",
+    "description": "描述（BBCode）",
+    "regenerate": "重新生成",
+    "copyBbcode": "复制 BBCode",
+    "published": "种子已发布",
+    "alreadyExists": "该种子已在 tracker 上",
+    "seedHint": "下载 .torrent 并添加到客户端，保存位置指向包含这些文件的文件夹：即可立即做种。",
+    "download": "下载 .torrent",
+    "open": "打开种子页面",
+    "publishFailed": "发布失败",
+    "publish": "发布",
+    "downloadOnly": "仅下载 .torrent",
+    "waitHash": "正在创建 .torrent...",
+    "engine": {
+      "browser": "{done}/{total}（浏览器）",
+      "ffmpeg": "{done}/{total}（ffmpeg，较慢）"
+    },
+    "cli": {
+      "title": "命令行工具",
+      "intro": "适合大文件或批量发布：在终端中得到相同结果，大文件更快。",
+      "requirements": "需要 Node.js 20+、ffmpeg 和 mediainfo。API 密钥在",
+      "apiKey": "集成页面",
+      "download": "下载 trackarr-upload.mjs"
+    },
+    "unknownError": "未知错误"
+  }
+}

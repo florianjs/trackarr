@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "Помощник загрузки",
+    "title": "Помощник загрузки",
+    "subtitle": "Перетащите видео или папку: торрент, MediaInfo, скриншоты и описание создаются автоматически.",
+    "drop": "Перетащите сюда файл или папку",
+    "pickFile": "Выбрать файл",
+    "pickFolder": "Выбрать папку",
+    "adult": "Контент для взрослых (скриншоты помечаются как NSFW на хостинге)",
+    "private": "Файлы читаются в браузере: ваш компьютер покидают только скриншоты и .torrent.",
+    "change": "Изменить",
+    "fileCount": "{count} файл, {size} | {count} файла, {size} | {count} файлов, {size}",
+    "steps": {
+      "mediainfo": "Чтение MediaInfo",
+      "screenshots": "Создание скриншотов",
+      "hash": "Создание .torrent"
+    },
+    "screenshots": "Скриншоты",
+    "screenshotsHint": "Снимите отметку с тех, что не нужны в описании.",
+    "useShot": "Использовать скриншот {n}",
+    "details": "Подробности",
+    "name": "Название торрента",
+    "category": "Категория",
+    "noCategory": "Без категории",
+    "language": "Язык описания",
+    "releaseTitle": "Название",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "Теги",
+    "notes": "Примечания (необязательно)",
+    "description": "Описание (BBCode)",
+    "regenerate": "Создать заново",
+    "copyBbcode": "Копировать BBCode",
+    "published": "Торрент опубликован",
+    "alreadyExists": "Этот торрент уже есть на трекере",
+    "seedHint": "Скачайте .torrent и добавьте его в клиент, указав папку с файлами: раздача начнётся сразу.",
+    "download": "Скачать .torrent",
+    "open": "Открыть страницу торрента",
+    "publishFailed": "Не удалось опубликовать",
+    "publish": "Опубликовать",
+    "downloadOnly": "Только скачать .torrent",
+    "waitHash": "Создание .torrent...",
+    "engine": {
+      "browser": "{done}/{total} браузером",
+      "ffmpeg": "{done}/{total} через ffmpeg (медленнее)"
+    },
+    "cli": {
+      "title": "Инструмент командной строки",
+      "intro": "Для больших релизов или пакетов: тот же результат в терминале, быстрее на больших файлах.",
+      "requirements": "Нужны Node.js 20+, ffmpeg и mediainfo. Ваш API-ключ на",
+      "apiKey": "странице «Интеграции»",
+      "download": "Скачать trackarr-upload.mjs"
+    },
+    "unknownError": "Неизвестная ошибка"
+  }
+}

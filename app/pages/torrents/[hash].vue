@@ -307,7 +307,7 @@ const externalLinks = computed(() => {
   return links;
 });
 
-const renderedDescription = computed(() => renderMarkdown(torrent.value?.description));
+const renderedDescription = computed(() => renderDescription(torrent.value?.description));
 
 async function copyHash() {
   await navigator.clipboard.writeText(torrent.value!.infoHash).catch(() => {});
@@ -405,5 +405,36 @@ async function deleteTorrent() {
 .description-content :deep(blockquote) {
   border-left: 2px solid rgb(var(--line-strong));
   padding-left: 0.75rem;
+}
+/* BBCode: screenshots side by side, spoilers, MediaInfo report */
+.description-content :deep(a > img) {
+  display: inline-block;
+  margin: 0.25rem;
+  vertical-align: middle;
+}
+.description-content :deep(details) {
+  margin-bottom: 0.75rem;
+  border: 1px solid rgb(var(--line));
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+}
+.description-content :deep(summary) {
+  cursor: pointer;
+  font-weight: 600;
+  color: rgb(var(--ink));
+}
+.description-content :deep(details[open] > summary) {
+  margin-bottom: 0.5rem;
+}
+.description-content :deep(pre) {
+  overflow-x: auto;
+  white-space: pre;
+  font-size: 0.8em;
+  line-height: 1.4;
+}
+.description-content :deep(cite) {
+  display: block;
+  font-style: normal;
+  font-weight: 600;
 }
 </style>

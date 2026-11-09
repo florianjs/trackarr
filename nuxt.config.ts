@@ -1,7 +1,7 @@
 import pkg from './package.json';
 
 // One translation file per area, in i18n/locales/<code>/ (issue #43)
-const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json', 'integrations.json', 'appearance.json', 'payments.json'];
+const LOCALE_FILES = ['app.json', 'shop.json', 'messages.json', 'shoutbox.json', 'integrations.json', 'appearance.json', 'payments.json', 'assistant.json'];
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -79,6 +79,12 @@ export default defineNuxtConfig({
 
   build: {
     transpile: ['chart.js', 'vue-chartjs'],
+  },
+
+  vite: {
+    // ffmpeg.wasm starts its worker from new URL('./worker.js', import.meta.url):
+    // pre-bundling would break that path
+    optimizeDeps: { exclude: ['@ffmpeg/ffmpeg', '@ffmpeg/util'] },
   },
 
   nitro: {

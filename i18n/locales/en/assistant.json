@@ -1,0 +1,59 @@
+{
+  "assistant": {
+    "entry": "Upload assistant",
+    "title": "Upload assistant",
+    "subtitle": "Drop a video or a folder: the torrent, MediaInfo, screenshots and description are made for you.",
+    "drop": "Drop a file or a folder here",
+    "pickFile": "Choose a file",
+    "pickFolder": "Choose a folder",
+    "adult": "Adult content (screenshots filed as NSFW on the image host)",
+    "private": "Files are read in your browser: only the screenshots and the .torrent leave your computer.",
+    "change": "Change",
+    "fileCount": "{count} file, {size} | {count} files, {size}",
+    "steps": {
+      "mediainfo": "Reading MediaInfo",
+      "screenshots": "Taking screenshots",
+      "hash": "Building the .torrent"
+    },
+    "screenshots": "Screenshots",
+    "screenshotsHint": "Untick the ones you do not want in the description.",
+    "useShot": "Use screenshot {n}",
+    "details": "Details",
+    "name": "Torrent name",
+    "category": "Category",
+    "noCategory": "No category",
+    "language": "Description language",
+    "releaseTitle": "Title",
+    "ids": {
+      "imdbId": "IMDb",
+      "tmdbId": "TMDb",
+      "tvdbId": "TVDB"
+    },
+    "tags": "Tags",
+    "notes": "Notes (optional)",
+    "description": "Description (BBCode)",
+    "regenerate": "Regenerate",
+    "copyBbcode": "Copy BBCode",
+    "published": "Torrent published",
+    "alreadyExists": "This torrent is already on the tracker",
+    "seedHint": "Download the .torrent and add it to your client, pointing to the folder that holds the files: it starts seeding at once.",
+    "download": "Download the .torrent",
+    "open": "Open the torrent page",
+    "publishFailed": "Publishing failed",
+    "publish": "Publish",
+    "downloadOnly": "Download the .torrent only",
+    "waitHash": "Waiting for the .torrent to be built...",
+    "engine": {
+      "browser": "{done}/{total} with the browser",
+      "ffmpeg": "{done}/{total} with ffmpeg (slower)"
+    },
+    "cli": {
+      "title": "Command-line tool",
+      "intro": "For large releases or batches: the same result from a terminal, faster on big files.",
+      "requirements": "Needs Node.js 20+, ffmpeg and mediainfo. Your API key is on the",
+      "apiKey": "Integrations page",
+      "download": "Download trackarr-upload.mjs"
+    },
+    "unknownError": "Unknown error"
+  }
+}

@@ -5,8 +5,9 @@ const scriptSrc = (csp: string) => csp.split('; ').find((d) => d.startsWith('scr
 
 describe('buildCsp', () => {
   it('allows inline scripts only through the nonce in production', () => {
-    expect(scriptSrc(buildCsp(undefined, false))).toBe("script-src 'self'");
-    expect(scriptSrc(buildCsp('abc', false))).toBe("script-src 'self' 'nonce-abc'");
+    expect(scriptSrc(buildCsp(undefined, false))).toBe("script-src 'self' 'wasm-unsafe-eval'");
+    expect(scriptSrc(buildCsp('abc', false))).toBe("script-src 'self' 'wasm-unsafe-eval' 'nonce-abc'");
+    expect(buildCsp('abc', false)).not.toContain("'unsafe-eval'");
   });
 
   it('keeps unsafe-inline in development for Vite', () => {

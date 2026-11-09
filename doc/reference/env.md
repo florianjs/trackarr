@@ -109,6 +109,14 @@ See [Paid Registration](/guide/paid-registration).
 
 The installer sets the Monero variables and adds `monero` to `COMPOSE_PROFILES` when you accept Monero.
 
+## Upload Assistant
+
+See [Upload Assistant](/guide/upload-assistant).
+
+| Variable          | Description                                 | Default                         |
+| ----------------- | ------------------------------------------- | ------------------------------- |
+| `PIXHOST_API_URL` | Image upload endpoint, for a proxy or tests | `https://api.pixhost.to/images` |
+
 ## Monitoring
 
 Production only. See [Monitoring](/guide/monitoring).
