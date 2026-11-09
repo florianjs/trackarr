@@ -87,6 +87,7 @@ services:
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
       # Paid registration: view-only monero-wallet-rpc (empty: Monero not offered)
       MONERO_WALLET_RPC_URL: ${MONERO_WALLET_RPC_URL:-}
+      MONERO_WALLET_PASSWORD: ${MONERO_WALLET_PASSWORD:-}
       PAYMENT_CHECK_INTERVAL: ${PAYMENT_CHECK_INTERVAL:-60000}
     expose:
       - "3000"
@@ -394,6 +395,31 @@ services:
         limits:
           memory: 64M
 
+  # Paid registration in Monero: view-only wallet (sees incoming payments,
+  # cannot spend), created from Admin > Payments. COMPOSE_PROFILES=monero
+  monero-wallet-rpc:
+    image: ghcr.io/sethforprivacy/simple-monero-wallet-rpc:v0.18.5.4
+    container_name: trackarr-monero-wallet-rpc
+    profiles: [monero]
+    restart: unless-stopped
+    command:
+      - --wallet-dir=/home/monero/wallet
+      - --rpc-bind-port=18083
+      - --disable-rpc-login
+      - --daemon-address=${MONERO_DAEMON_ADDRESS:-}
+    environment:
+      # No login: reachable only by the app, inside Docker (no published port)
+      RPC_EXPOSE_UNAUTHENTICATED: "1"
+    volumes:
+      - monero_wallet:/home/monero/wallet
+    networks:
+      - trackarr-internal # reached by the app
+      - trackarr-public # reaches the Monero node (trackarr-internal has no internet)
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+
   # Filtered Docker API for the agent: container stats only, read-only
   docker-proxy:
     image: lscr.io/linuxserver/socket-proxy:3.4.7-r0-ls103
@@ -457,6 +483,8 @@ volumes:
   tracker_data:
     driver: local
   redis_data:
+    driver: local
+  monero_wallet:
     driver: local
   caddy_data:
     driver: local

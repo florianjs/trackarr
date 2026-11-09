@@ -41,6 +41,7 @@ Built with Nuxt 4 • Rust • PostgreSQL • Redis
 | Global freeleech (timed or open-ended)        | Torrent moderation queue                            |
 | Forum, comments, reports, invitations, H&R    | UI in 8 languages (EN, FR, ES, DE, IT, ZH, JA, RU)  |
 | Private messages between members, with blocks | Light & dark themes, ⌘K command palette             |
+| Paid sign-up in Bitcoin, Monero or Solana     | On-chain payment checks, no processor, no spend key |
 
 | **Security**                     | **Emergency**                                |
 | -------------------------------- | -------------------------------------------- |

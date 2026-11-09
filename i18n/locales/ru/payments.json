@@ -46,8 +46,8 @@
       "xpub": "Расширенный публичный ключ (zpub / xpub)",
       "xpubHint": "Ключ аккаунта Native SegWit (BIP84). Никогда не вставляйте приватный ключ. Увеличьте gap limit кошелька, чтобы он видел все адреса.",
       "esploraUrl": "API Esplora",
-      "moneroReady": "Wallet RPC настроен (MONERO_WALLET_RPC_URL)",
-      "moneroMissing": "Укажите в MONERO_WALLET_RPC_URL monero-wallet-rpc только для просмотра, чтобы принимать Monero",
+      "moneroReady": "Кошелёк готов, синхронизирован до блока {height}",
+      "moneroMissing": "Для Monero нужен встроенный сервис кошелька: перезапустите установщик и включите Monero или задайте MONERO_WALLET_RPC_URL",
       "solAddress": "Адрес получения",
       "solRpcUrl": "RPC Solana",
       "saveFailed": "Не удалось сохранить настройки",
@@ -56,7 +56,13 @@
       "approve": "Разблокировать",
       "paidTitle": "Последние платежи",
       "noPaid": "Платежей пока нет",
-      "manual": "вручную"
+      "manual": "вручную",
+      "moneroCreateIntro": "Сервис кошелька запущен, но кошелька ещё нет. Создайте кошелёк только для просмотра: он видит входящие платежи и не может тратить. Ключ просмотра записывается только в файл кошелька.",
+      "moneroAddress": "Основной адрес (начинается с 4)",
+      "moneroViewKey": "Приватный ключ просмотра",
+      "moneroRestoreHeight": "Высота восстановления",
+      "moneroRestoreHeightHint": "Блок, с которого начать сканирование: текущая высота для нового кошелька (с 0 это займёт часы)",
+      "moneroCreate": "Создать кошелёк для просмотра"
     }
   }
 }

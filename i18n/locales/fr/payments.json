@@ -46,8 +46,8 @@
       "xpub": "Clé publique étendue (zpub / xpub)",
       "xpubHint": "Clé de compte SegWit natif (BIP84). Ne collez jamais une clé privée. Augmentez le gap limit de votre portefeuille pour qu'il voie toutes les adresses.",
       "esploraUrl": "API Esplora",
-      "moneroReady": "Wallet RPC configuré (MONERO_WALLET_RPC_URL)",
-      "moneroMissing": "Définissez MONERO_WALLET_RPC_URL vers un monero-wallet-rpc en lecture seule pour accepter Monero",
+      "moneroReady": "Wallet prêt, synchronisé jusqu'au bloc {height}",
+      "moneroMissing": "Monero nécessite le service wallet fourni : relancez l'installateur en acceptant Monero, ou définissez MONERO_WALLET_RPC_URL",
       "solAddress": "Adresse de réception",
       "solRpcUrl": "RPC Solana",
       "saveFailed": "Impossible d'enregistrer les réglages",
@@ -56,7 +56,13 @@
       "approve": "Débloquer",
       "paidTitle": "Paiements récents",
       "noPaid": "Aucun paiement pour l'instant",
-      "manual": "manuel"
+      "manual": "manuel",
+      "moneroCreateIntro": "Le service wallet tourne mais n'a pas encore de wallet. Créez un wallet en lecture seule : il voit les paiements entrants et ne peut rien dépenser. La clé de vue est écrite uniquement dans le fichier du wallet.",
+      "moneroAddress": "Adresse principale (commence par 4)",
+      "moneroViewKey": "Clé de vue privée",
+      "moneroRestoreHeight": "Hauteur de restauration",
+      "moneroRestoreHeightHint": "Bloc à partir duquel scanner : la hauteur actuelle pour un nouveau wallet (scanner depuis 0 prend des heures)",
+      "moneroCreate": "Créer le wallet en lecture seule"
     }
   }
 }

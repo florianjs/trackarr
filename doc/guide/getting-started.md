@@ -62,6 +62,8 @@ For an unattended install, pass the values as environment variables:
 sudo DOMAIN=example.com ACME_EMAIL=admin@example.com ./install.sh --yes
 ```
 
+To accept Monero for [paid registration](/guide/paid-registration), add `MONERO_ENABLED=true MONERO_DAEMON_ADDRESS=node.example.com:18089` (the interactive installer asks). Bitcoin and Solana need nothing at install time.
+
 `./install.sh --help` lists every option.
 
 After installation, open `https://monitoring.your-domain.com` and log in with the monitoring login shown at the end of the install (also in `.env`: `BESZEL_ADMIN_EMAIL` / `BESZEL_ADMIN_PASSWORD`). Then [pair the agent](/guide/monitoring#pairing-the-agent).
@@ -132,6 +134,7 @@ Open `https://your-domain.com` to access your tracker.
 2. **Set a Panic Password** — This is required and protects your data in emergencies
 3. **Configure site settings** — Set your tracker name, description, and rules
 4. **Invite users** — Use the invitation system to add trusted members
+5. **Charge for sign-up (optional)**: Bitcoin, Monero or Solana, verified on-chain: see [Paid Registration](/guide/paid-registration)
 
 ## Updating
 
@@ -188,5 +191,6 @@ Log in to `https://monitoring.your-domain.com` and [pair the Beszel agent](/guid
 ## Next Steps
 
 - [Configuration](/guide/configuration) — Learn about environment variables and settings
+- [Paid Registration](/guide/paid-registration): Charge for sign-up in BTC, XMR or SOL
 - [Security](/guide/security) — Understand the security architecture
 - [Zero-Knowledge Auth](/guide/zero-knowledge-auth) — How authentication works

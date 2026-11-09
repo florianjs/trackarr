@@ -102,8 +102,12 @@ See [Paid Registration](/guide/paid-registration).
 
 | Variable                 | Description                                                  | Default |
 | ------------------------ | ------------------------------------------------------------ | ------- |
-| `MONERO_WALLET_RPC_URL`  | View-only `monero-wallet-rpc` (empty: Monero is not offered) | -       |
-| `PAYMENT_CHECK_INTERVAL` | Payment watcher interval in ms                               | `60000` |
+| `MONERO_WALLET_RPC_URL`  | Wallet RPC the app uses (empty: Monero is not offered)       | -       |
+| `MONERO_WALLET_PASSWORD` | Password of the view-only wallet file                        | -       |
+| `MONERO_DAEMON_ADDRESS`  | Monero node of the bundled wallet service (`host:port`)      | -       |
+| `PAYMENT_CHECK_INTERVAL` | Payment watcher interval in ms (minimum 5000)                | `60000` |
+
+The installer sets the Monero variables and adds `monero` to `COMPOSE_PROFILES` when you accept Monero.
 
 ## Monitoring
 

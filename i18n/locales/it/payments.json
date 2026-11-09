@@ -46,8 +46,8 @@
       "xpub": "Chiave pubblica estesa (zpub / xpub)",
       "xpubHint": "Chiave di account SegWit nativo (BIP84). Non incollare mai una chiave privata. Aumenta il gap limit del wallet perché veda tutti gli indirizzi.",
       "esploraUrl": "API Esplora",
-      "moneroReady": "Wallet RPC configurato (MONERO_WALLET_RPC_URL)",
-      "moneroMissing": "Imposta MONERO_WALLET_RPC_URL su un monero-wallet-rpc in sola lettura per accettare Monero",
+      "moneroReady": "Wallet pronto, sincronizzato fino al blocco {height}",
+      "moneroMissing": "Monero richiede il servizio wallet incluso: riesegui l'installer accettando Monero, oppure imposta MONERO_WALLET_RPC_URL",
       "solAddress": "Indirizzo di ricezione",
       "solRpcUrl": "RPC Solana",
       "saveFailed": "Impossibile salvare le impostazioni",
@@ -56,7 +56,13 @@
       "approve": "Sblocca",
       "paidTitle": "Pagamenti recenti",
       "noPaid": "Ancora nessun pagamento",
-      "manual": "manuale"
+      "manual": "manuale",
+      "moneroCreateIntro": "Il servizio wallet è attivo ma non ha ancora un wallet. Crea un wallet in sola lettura: vede i pagamenti in arrivo e non può spendere. La chiave di visualizzazione viene scritta solo nel file del wallet.",
+      "moneroAddress": "Indirizzo principale (inizia con 4)",
+      "moneroViewKey": "Chiave di visualizzazione privata",
+      "moneroRestoreHeight": "Altezza di ripristino",
+      "moneroRestoreHeightHint": "Blocco da cui iniziare la scansione: l'altezza attuale per un nuovo wallet (da 0 servono ore)",
+      "moneroCreate": "Crea il wallet in sola lettura"
     }
   }
 }

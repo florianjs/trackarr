@@ -68,6 +68,10 @@ the default 22 (~4 million hashes) takes 1-2 s there, longer on phones. A value
 outside 16-32 is ignored with a warning and the default is used (older docs
 described a 1-10 scale, which the server never applied).
 
+### Paid Registration
+
+Optional sign-up fee in Bitcoin, Monero or Solana, set in *Admin → Payments*. Only Monero needs environment variables (set by the installer): see [Paid Registration](/guide/paid-registration#environment).
+
 ## Docker Compose Configuration
 
 ### Production (`docker-compose.prod.yml`)

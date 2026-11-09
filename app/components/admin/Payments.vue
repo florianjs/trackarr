@@ -64,10 +64,44 @@
               <input v-model.number="config.xmr.confirmations" type="number" min="0" max="100" :class="inputClass" />
             </label>
           </div>
-          <p class="text-xs mt-3" :class="moneroRpcConfigured ? 'text-success' : 'text-amber-400'">
-            <Icon :name="moneroRpcConfigured ? 'ph:check-circle' : 'ph:warning'" class="inline-block align-[-2px] mr-1" />
-            {{ moneroRpcConfigured ? t('payments.admin.moneroReady') : t('payments.admin.moneroMissing') }}
+          <p v-if="!monero?.configured" class="text-xs mt-3 text-amber-400">
+            <Icon name="ph:warning" class="inline-block align-[-2px] mr-1" />
+            {{ t('payments.admin.moneroMissing') }}
           </p>
+          <div v-else-if="monero.ready" class="text-xs mt-3 text-success space-y-1">
+            <p>
+              <Icon name="ph:check-circle" class="inline-block align-[-2px] mr-1" />
+              {{ t('payments.admin.moneroReady', { height: monero.height ?? 0 }) }}
+            </p>
+            <p class="font-mono text-text-muted break-all">{{ monero.address }}</p>
+          </div>
+          <!-- Wallet RPC running, no wallet yet: create the view-only wallet -->
+          <div v-else class="mt-4 p-4 rounded border border-border bg-bg-tertiary/40 space-y-3">
+            <p class="text-xs text-text-muted">{{ t('payments.admin.moneroCreateIntro') }}</p>
+            <label class="block">
+              <span :class="labelClass">{{ t('payments.admin.moneroAddress') }}</span>
+              <input v-model="walletForm.address" type="text" placeholder="4..." :class="inputClass" />
+            </label>
+            <label class="block">
+              <span :class="labelClass">{{ t('payments.admin.moneroViewKey') }}</span>
+              <input v-model="walletForm.viewKey" type="password" autocomplete="off" :class="inputClass" />
+            </label>
+            <label class="block">
+              <span :class="labelClass">{{ t('payments.admin.moneroRestoreHeight') }}</span>
+              <input v-model.number="walletForm.restoreHeight" type="number" min="0" :class="inputClass" />
+              <span class="block text-xs text-text-muted mt-1">{{ t('payments.admin.moneroRestoreHeightHint') }}</span>
+            </label>
+            <div v-if="walletError" class="text-red-400 text-xs">{{ walletError }}</div>
+            <button
+              type="button"
+              :disabled="creatingWallet"
+              class="text-xs border border-border rounded px-3 py-1.5 hover:bg-bg-tertiary disabled:opacity-50 flex items-center gap-2"
+              @click="createWallet"
+            >
+              <Icon v-if="creatingWallet" name="ph:circle-notch" class="animate-spin" />
+              {{ t('payments.admin.moneroCreate') }}
+            </button>
+          </div>
         </div>
 
         <!-- Solana -->
@@ -195,8 +229,19 @@ const inputClass =
   'w-full bg-bg-tertiary border border-border rounded px-3 py-2 text-sm text-text-primary focus:outline-none focus:border-white/20 font-mono';
 const labelClass = 'block text-xs font-medium text-text-muted mb-1';
 
+interface MoneroStatus {
+  configured: boolean;
+  ready: boolean;
+  address: string | null;
+  height: number | null;
+  error: string | null;
+}
+
 const config = ref<PaidRegistrationConfig | null>(null);
-const moneroRpcConfigured = ref(false);
+const monero = ref<MoneroStatus | null>(null);
+const walletForm = reactive({ address: '', viewKey: '', restoreHeight: 0 });
+const walletError = ref('');
+const creatingWallet = ref(false);
 const list = ref<PaymentList | null>(null);
 const saving = ref(false);
 const saved = ref(false);
@@ -212,13 +257,31 @@ async function loadList() {
 }
 
 onMounted(async () => {
-  const settings = await $fetch<{ config: PaidRegistrationConfig; moneroRpcConfigured: boolean }>(
-    '/api/admin/payments/settings'
-  );
+  const settings = await $fetch<{ config: PaidRegistrationConfig }>('/api/admin/payments/settings');
   config.value = settings.config;
-  moneroRpcConfigured.value = settings.moneroRpcConfigured;
-  await loadList();
+  await Promise.all([loadList(), loadMonero()]);
 });
+
+async function loadMonero() {
+  monero.value = await $fetch<MoneroStatus>('/api/admin/payments/monero');
+}
+
+async function createWallet() {
+  creatingWallet.value = true;
+  walletError.value = '';
+  try {
+    monero.value = await $fetch<MoneroStatus>('/api/admin/payments/monero', {
+      method: 'POST',
+      body: walletForm,
+    });
+    // The view key is only needed once: do not keep it in the page
+    walletForm.viewKey = '';
+  } catch (err: any) {
+    walletError.value = err.data?.message || t('payments.admin.saveFailed');
+  } finally {
+    creatingWallet.value = false;
+  }
+}
 
 async function save() {
   if (!config.value) return;

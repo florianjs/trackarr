@@ -46,8 +46,8 @@
       "xpub": "拡張公開鍵 (zpub / xpub)",
       "xpubHint": "ネイティブ SegWit のアカウント鍵 (BIP84)。秘密鍵は絶対に貼り付けないでください。すべてのアドレスが見えるようウォレットのギャップリミットを上げてください。",
       "esploraUrl": "Esplora API",
-      "moneroReady": "ウォレット RPC 設定済み (MONERO_WALLET_RPC_URL)",
-      "moneroMissing": "Monero を受け付けるには MONERO_WALLET_RPC_URL に閲覧専用の monero-wallet-rpc を設定してください",
+      "moneroReady": "ウォレット準備完了、ブロック {height} まで同期済み",
+      "moneroMissing": "Monero には付属のウォレットサービスが必要です。インストーラーを再実行して Monero を有効にするか、MONERO_WALLET_RPC_URL を設定してください",
       "solAddress": "受取アドレス",
       "solRpcUrl": "Solana RPC",
       "saveFailed": "設定を保存できませんでした",
@@ -56,7 +56,13 @@
       "approve": "ロック解除",
       "paidTitle": "最近の支払い",
       "noPaid": "まだ支払いはありません",
-      "manual": "手動"
+      "manual": "手動",
+      "moneroCreateIntro": "ウォレットサービスは起動していますが、まだウォレットがありません。閲覧専用ウォレットを作成してください。入金は確認できますが送金はできません。閲覧鍵はウォレットファイルにのみ書き込まれます。",
+      "moneroAddress": "プライマリアドレス (4 で始まる)",
+      "moneroViewKey": "秘密閲覧鍵",
+      "moneroRestoreHeight": "復元ブロック高",
+      "moneroRestoreHeightHint": "スキャン開始ブロック。新しいウォレットなら現在のブロック高 (0 からだと数時間かかります)",
+      "moneroCreate": "閲覧専用ウォレットを作成"
     }
   }
 }

@@ -46,8 +46,8 @@
       "xpub": "Clave pública extendida (zpub / xpub)",
       "xpubHint": "Clave de cuenta SegWit nativa (BIP84). Nunca pegues una clave privada. Aumenta el gap limit de tu monedero para que vea todas las direcciones.",
       "esploraUrl": "API Esplora",
-      "moneroReady": "Wallet RPC configurado (MONERO_WALLET_RPC_URL)",
-      "moneroMissing": "Define MONERO_WALLET_RPC_URL hacia un monero-wallet-rpc de solo lectura para aceptar Monero",
+      "moneroReady": "Monedero listo, sincronizado hasta el bloque {height}",
+      "moneroMissing": "Monero necesita el servicio de monedero incluido: vuelve a ejecutar el instalador aceptando Monero, o define MONERO_WALLET_RPC_URL",
       "solAddress": "Dirección de recepción",
       "solRpcUrl": "RPC de Solana",
       "saveFailed": "No se pudieron guardar los ajustes",
@@ -56,7 +56,13 @@
       "approve": "Desbloquear",
       "paidTitle": "Pagos recientes",
       "noPaid": "Aún no hay pagos",
-      "manual": "manual"
+      "manual": "manual",
+      "moneroCreateIntro": "El servicio de monedero está activo pero aún no tiene monedero. Crea un monedero de solo lectura: ve los pagos entrantes y no puede gastar. La clave de vista solo se escribe en el archivo del monedero.",
+      "moneroAddress": "Dirección principal (empieza por 4)",
+      "moneroViewKey": "Clave de vista privada",
+      "moneroRestoreHeight": "Altura de restauración",
+      "moneroRestoreHeightHint": "Bloque desde el que escanear: la altura actual para un monedero nuevo (escanear desde 0 tarda horas)",
+      "moneroCreate": "Crear el monedero de solo lectura"
     }
   }
 }

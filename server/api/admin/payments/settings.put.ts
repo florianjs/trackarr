@@ -4,6 +4,7 @@ import { validateBody } from '../../../utils/schemas';
 import { getPaidRegistration, setPaidRegistration } from '../../../utils/settings';
 import { deriveBtcAddress } from '../../../utils/payments/btc';
 import { isSolanaAddress } from '../../../utils/payments/sol';
+import { moneroWalletStatus } from '../../../utils/payments/xmr';
 import {
   isValidPrice,
   parsePaidRegistration,
@@ -64,6 +65,12 @@ export default defineEventHandler(async (event) => {
   }
   if ((body.sol.enabled || body.sol.address) && !isSolanaAddress(body.sol.address)) {
     invalid('Invalid Solana address');
+  }
+
+  if (body.xmr.enabled) {
+    const wallet = await moneroWalletStatus();
+    if (!wallet.configured) invalid('Monero: MONERO_WALLET_RPC_URL is not set');
+    if (!wallet.ready) invalid('Monero: create the view-only wallet first');
   }
 
   await setPaidRegistration(parsePaidRegistration(body));

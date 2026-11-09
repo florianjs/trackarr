@@ -46,8 +46,8 @@
       "xpub": "Extended public key (zpub / xpub)",
       "xpubHint": "Native SegWit account key (BIP84). Never paste a private key. Raise the gap limit of your wallet so it sees every address.",
       "esploraUrl": "Esplora API",
-      "moneroReady": "Wallet RPC configured (MONERO_WALLET_RPC_URL)",
-      "moneroMissing": "Set MONERO_WALLET_RPC_URL to a view-only monero-wallet-rpc to accept Monero",
+      "moneroReady": "Wallet ready, scanned up to block {height}",
+      "moneroMissing": "Monero needs the bundled wallet service: re-run the installer and accept Monero, or set MONERO_WALLET_RPC_URL",
       "solAddress": "Receiving address",
       "solRpcUrl": "Solana RPC",
       "saveFailed": "Could not save the settings",
@@ -56,7 +56,13 @@
       "approve": "Unlock",
       "paidTitle": "Recent payments",
       "noPaid": "No payment yet",
-      "manual": "manual"
+      "manual": "manual",
+      "moneroCreateIntro": "The wallet service is running but has no wallet yet. Create a view-only wallet: it sees incoming payments and cannot spend. The view key is written to the wallet file only.",
+      "moneroAddress": "Primary address (starts with 4)",
+      "moneroViewKey": "Private view key",
+      "moneroRestoreHeight": "Restore height",
+      "moneroRestoreHeightHint": "Block to start scanning from: the current height for a new wallet (scanning from 0 takes hours)",
+      "moneroCreate": "Create the view-only wallet"
     }
   }
 }

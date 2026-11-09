@@ -46,8 +46,8 @@
       "xpub": "扩展公钥（zpub / xpub）",
       "xpubHint": "原生 SegWit 账户密钥（BIP84）。切勿粘贴私钥。请提高钱包的 gap limit 以便看到所有地址。",
       "esploraUrl": "Esplora API",
-      "moneroReady": "钱包 RPC 已配置（MONERO_WALLET_RPC_URL）",
-      "moneroMissing": "请将 MONERO_WALLET_RPC_URL 设置为只读的 monero-wallet-rpc 以接受 Monero",
+      "moneroReady": "钱包已就绪，已同步至区块 {height}",
+      "moneroMissing": "Monero 需要内置的钱包服务：重新运行安装程序并启用 Monero，或设置 MONERO_WALLET_RPC_URL",
       "solAddress": "收款地址",
       "solRpcUrl": "Solana RPC",
       "saveFailed": "无法保存设置",
@@ -56,7 +56,13 @@
       "approve": "解锁",
       "paidTitle": "最近付款",
       "noPaid": "暂无付款",
-      "manual": "手动"
+      "manual": "手动",
+      "moneroCreateIntro": "钱包服务已运行，但还没有钱包。请创建只读钱包：它可以看到入账，但无法花费。查看密钥只写入钱包文件。",
+      "moneroAddress": "主地址（以 4 开头）",
+      "moneroViewKey": "私有查看密钥",
+      "moneroRestoreHeight": "恢复高度",
+      "moneroRestoreHeightHint": "开始扫描的区块：新钱包请填当前高度（从 0 开始需要数小时）",
+      "moneroCreate": "创建只读钱包"
     }
   }
 }
