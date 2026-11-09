@@ -380,7 +380,11 @@ async function copyDescription() {
   }
 }
 
+// A dropped folder is read asynchronously: any later choice makes it stale
+let pickToken = 0;
+
 async function onPick(event: Event) {
+  pickToken++;
   const input = event.target as HTMLInputElement;
   if (input.files?.length) start(releaseFromFileList(input.files));
   input.value = '';
@@ -388,7 +392,12 @@ async function onPick(event: Event) {
 
 async function onDrop(event: DragEvent) {
   dragging.value = false;
-  if (event.dataTransfer) start(await releaseFromDrop(event.dataTransfer));
+  if (!event.dataTransfer) return;
+  const token = ++pickToken;
+  const release = await releaseFromDrop(event.dataTransfer);
+  // Another file was picked meanwhile, or a release is already in progress
+  if (token !== pickToken || picked.value) return;
+  start(release);
 }
 
 function reset() {
