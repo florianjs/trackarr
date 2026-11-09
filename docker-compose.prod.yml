@@ -85,6 +85,9 @@ services:
       # Tracker service private API (swarm peers, status)
       TRACKER_INTERNAL_URL: http://tracker:8090
       TRACKER_INTERNAL_TOKEN: ${TRACKER_INTERNAL_TOKEN:?TRACKER_INTERNAL_TOKEN is required}
+      # Paid registration: view-only monero-wallet-rpc (empty: Monero not offered)
+      MONERO_WALLET_RPC_URL: ${MONERO_WALLET_RPC_URL:-}
+      PAYMENT_CHECK_INTERVAL: ${PAYMENT_CHECK_INTERVAL:-60000}
     expose:
       - "3000"
     volumes:

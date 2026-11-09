@@ -96,6 +96,15 @@ The web app reaches the tracker's private API with:
 | `TRACKER_INTERNAL_URL`   | Tracker private API URL                      | `http://localhost:8090` (`http://tracker:8090` in Docker Compose) |
 | `TRACKER_INTERNAL_TOKEN` | Same value as the tracker                    | —                                                    |
 
+## Paid Registration
+
+See [Paid Registration](/guide/paid-registration).
+
+| Variable                 | Description                                                  | Default |
+| ------------------------ | ------------------------------------------------------------ | ------- |
+| `MONERO_WALLET_RPC_URL`  | View-only `monero-wallet-rpc` (empty: Monero is not offered) | -       |
+| `PAYMENT_CHECK_INTERVAL` | Payment watcher interval in ms                               | `60000` |
+
 ## Monitoring
 
 Production only. See [Monitoring](/guide/monitoring).

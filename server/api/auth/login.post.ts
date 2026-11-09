@@ -135,6 +135,7 @@ export default defineEventHandler(async (event) => {
       isModerator: user.isModerator,
       uploaded: user.uploaded,
       downloaded: user.downloaded,
+      paymentPending: user.paymentPending,
     },
     loggedInAt: Date.now(),
     sessionVersion: user.sessionVersion,
@@ -149,6 +150,7 @@ export default defineEventHandler(async (event) => {
       isModerator: user.isModerator,
       uploaded: user.uploaded,
       downloaded: user.downloaded,
+      paymentPending: user.paymentPending,
     },
   };
 });

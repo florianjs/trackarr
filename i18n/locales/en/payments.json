@@ -1,0 +1,62 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "Payments",
+      "description": "Paid registration in Bitcoin, Monero and Solana"
+    },
+    "register": {
+      "notice": "Registration is paid: {prices}.",
+      "unlock": "Your account is created now and unlocked once the payment is confirmed on the blockchain. Unpaid accounts are deleted after {days} days.",
+      "inviteFree": "Registration with an invite code is free."
+    },
+    "page": {
+      "title": "Activate your account",
+      "intro": "Pay the registration fee in one of the accepted coins. Your account is unlocked automatically once the payment is confirmed.",
+      "loading": "Loading...",
+      "unavailable": "No payment method is available right now. Please contact the staff.",
+      "chooseCurrency": "Pay with",
+      "amountDue": "Amount to send",
+      "seen": "Received: {confirmed} confirmed, {unconfirmed} pending, out of {total}",
+      "address": "Address",
+      "solanaReference": "Use the wallet button below: the link carries a payment reference that identifies your account. A plain transfer to this address cannot be matched.",
+      "openWallet": "Open in wallet",
+      "confirmationsHint": "Unlocked after {count} confirmations.",
+      "finalizedHint": "Unlocked once the transaction is finalized (under a minute).",
+      "checkNow": "I have paid: check now",
+      "deadline": "Without a payment, this account is deleted on {date}.",
+      "logout": "Sign out",
+      "failed": "Something went wrong, please try again"
+    },
+    "status": {
+      "pending": "Waiting for payment",
+      "confirming": "Payment seen, waiting for confirmations",
+      "paid": "Paid",
+      "cancelled": "Cancelled"
+    },
+    "admin": {
+      "title": "Paid registration",
+      "enabledLabel": "Paid registration",
+      "enabledDescription": "New accounts stay locked until their payment is confirmed on-chain",
+      "invitesPayLabel": "Invited users pay too",
+      "invitesPayDescription": "Off: an invite code skips the payment",
+      "pendingDaysLabel": "Payment delay (days)",
+      "pendingDaysDescription": "Locked accounts that received nothing are deleted after this delay",
+      "price": "Price",
+      "confirmations": "Confirmations required",
+      "xpub": "Extended public key (zpub / xpub)",
+      "xpubHint": "Native SegWit account key (BIP84). Never paste a private key. Raise the gap limit of your wallet so it sees every address.",
+      "esploraUrl": "Esplora API",
+      "moneroReady": "Wallet RPC configured (MONERO_WALLET_RPC_URL)",
+      "moneroMissing": "Set MONERO_WALLET_RPC_URL to a view-only monero-wallet-rpc to accept Monero",
+      "solAddress": "Receiving address",
+      "solRpcUrl": "Solana RPC",
+      "saveFailed": "Could not save the settings",
+      "pendingTitle": "Locked accounts",
+      "noPending": "No account is waiting for payment",
+      "approve": "Unlock",
+      "paidTitle": "Recent payments",
+      "noPaid": "No payment yet",
+      "manual": "manual"
+    }
+  }
+}

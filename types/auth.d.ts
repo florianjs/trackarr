@@ -6,6 +6,8 @@ declare module '#auth-utils' {
     isModerator: boolean;
     uploaded: number;
     downloaded: number;
+    // Paid registration: locked until the sign-up payment is confirmed
+    paymentPending?: boolean;
   }
 
   interface UserSession {
@@ -24,6 +26,7 @@ export interface PublicUser {
   isModerator: boolean;
   uploaded: number;
   downloaded: number;
+  paymentPending?: boolean;
 }
 
 export {};

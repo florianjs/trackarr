@@ -48,6 +48,7 @@ export default defineConfig({
             { text: 'Getting Started', link: '/guide/getting-started' },
             { text: 'Configuration', link: '/guide/configuration' },
             { text: 'Appearance', link: '/guide/appearance' },
+            { text: 'Paid Registration', link: '/guide/paid-registration' },
             { text: 'Monitoring', link: '/guide/monitoring' },
             { text: 'Backup & Restore', link: '/guide/backup-restore' },
             { text: 'High Availability', link: '/guide/high-availability' },

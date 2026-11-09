@@ -1,0 +1,62 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "支払い",
+      "description": "Bitcoin・Monero・Solana による有料登録"
+    },
+    "register": {
+      "notice": "登録は有料です: {prices}。",
+      "unlock": "アカウントはすぐに作成され、ブロックチェーン上で支払いが確認されると有効になります。未払いのアカウントは {days} 日後に削除されます。",
+      "inviteFree": "招待コードを使った登録は無料です。"
+    },
+    "page": {
+      "title": "アカウントを有効化",
+      "intro": "対応する暗号資産のいずれかで登録料を支払ってください。支払いが確認されると自動的にアカウントが有効になります。",
+      "loading": "読み込み中...",
+      "unavailable": "現在利用できる支払い方法がありません。スタッフに連絡してください。",
+      "chooseCurrency": "支払い方法",
+      "amountDue": "送金額",
+      "seen": "受領: 確認済み {confirmed}、未確認 {unconfirmed}、合計 {total}",
+      "address": "アドレス",
+      "solanaReference": "下のウォレットボタンを使ってください。リンクにはアカウントを識別する支払い参照が含まれます。このアドレスへの通常の送金は照合できません。",
+      "openWallet": "ウォレットで開く",
+      "confirmationsHint": "{count} 承認後に有効になります。",
+      "finalizedHint": "トランザクションが確定すると有効になります (1 分未満)。",
+      "checkNow": "支払い済み: 今すぐ確認",
+      "deadline": "支払いがない場合、このアカウントは {date} に削除されます。",
+      "logout": "ログアウト",
+      "failed": "問題が発生しました。もう一度お試しください"
+    },
+    "status": {
+      "pending": "支払い待ち",
+      "confirming": "支払いを検出、承認待ち",
+      "paid": "支払い済み",
+      "cancelled": "キャンセル"
+    },
+    "admin": {
+      "title": "有料登録",
+      "enabledLabel": "有料登録",
+      "enabledDescription": "新しいアカウントはオンチェーンで支払いが確認されるまでロックされます",
+      "invitesPayLabel": "招待ユーザーも支払う",
+      "invitesPayDescription": "オフ: 招待コードで支払いが免除されます",
+      "pendingDaysLabel": "支払い期限 (日)",
+      "pendingDaysDescription": "何も受け取っていないロック中のアカウントはこの期限後に削除されます",
+      "price": "価格",
+      "confirmations": "必要な承認数",
+      "xpub": "拡張公開鍵 (zpub / xpub)",
+      "xpubHint": "ネイティブ SegWit のアカウント鍵 (BIP84)。秘密鍵は絶対に貼り付けないでください。すべてのアドレスが見えるようウォレットのギャップリミットを上げてください。",
+      "esploraUrl": "Esplora API",
+      "moneroReady": "ウォレット RPC 設定済み (MONERO_WALLET_RPC_URL)",
+      "moneroMissing": "Monero を受け付けるには MONERO_WALLET_RPC_URL に閲覧専用の monero-wallet-rpc を設定してください",
+      "solAddress": "受取アドレス",
+      "solRpcUrl": "Solana RPC",
+      "saveFailed": "設定を保存できませんでした",
+      "pendingTitle": "ロック中のアカウント",
+      "noPending": "支払い待ちのアカウントはありません",
+      "approve": "ロック解除",
+      "paidTitle": "最近の支払い",
+      "noPaid": "まだ支払いはありません",
+      "manual": "手動"
+    }
+  }
+}

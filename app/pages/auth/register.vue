@@ -56,6 +56,23 @@
         </p>
       </div>
 
+      <!-- Paid registration -->
+      <div
+        v-if="paidInfo?.enabled && !status?.needsSetup"
+        class="mb-6 p-3 bg-accent/10 border border-accent/20 rounded text-sm"
+      >
+        <p class="text-text-primary">
+          <Icon name="ph:currency-circle-dollar" class="inline-block align-[-2px] mr-1" />
+          {{ t('payments.register.notice', { prices: priceList }) }}
+        </p>
+        <p class="text-text-muted mt-1">
+          {{ t('payments.register.unlock', { days: paidInfo.pendingDays }) }}
+        </p>
+        <p v-if="status?.inviteEnabled && !paidInfo.invitesPay" class="text-text-muted mt-1">
+          {{ t('payments.register.inviteFree') }}
+        </p>
+      </div>
+
       <form @submit.prevent="handleRegister" class="space-y-4">
         <!-- Invite Code (Required if registration closed) -->
         <div v-if="status?.inviteEnabled">
@@ -260,6 +277,12 @@ const { fetch: fetchSession } = useUserSession();
 const router = useRouter();
 
 const { data: status } = await useFetch('/api/auth/status');
+const { data: paidInfo } = await useFetch('/api/payment/info');
+const priceList = computed(() =>
+  (paidInfo.value?.options ?? [])
+    .map((o) => `${o.price} ${o.currency.toUpperCase()}`)
+    .join(' / ')
+);
 const { data: branding } = await useFetch<{
   siteName: string;
   siteLogo: string;
@@ -358,7 +381,7 @@ async function handleRegister() {
 
     // Step 4: Register (password never sent to server)
     authStatus.value = t('auth.register.creatingAccount');
-    await $fetch('/api/auth/register', {
+    const result = await $fetch('/api/auth/register', {
       method: 'POST',
       body: {
         username: form.username,
@@ -375,7 +398,8 @@ async function handleRegister() {
 
     // Refresh session and redirect
     await fetchSession();
-    router.push('/');
+    // Paid registration: locked until the payment is confirmed
+    router.push(result.user.paymentPending ? '/auth/payment' : '/');
   } catch (err: any) {
     error.value = err.data?.message || t('auth.register.failed');
   } finally {

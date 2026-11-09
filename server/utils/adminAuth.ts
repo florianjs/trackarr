@@ -6,6 +6,7 @@ import { checkSession, type SessionCheck } from './sessionRules';
 
 export const authUserColumns = {
   isBanned: users.isBanned,
+  paymentPending: users.paymentPending,
   isAdmin: users.isAdmin,
   isModerator: users.isModerator,
   passkey: users.passkey,
@@ -15,6 +16,7 @@ export const authUserColumns = {
 
 export interface AuthUserState {
   isBanned: boolean;
+  paymentPending: boolean;
   isAdmin: boolean;
   isModerator: boolean;
   passkey: string;
@@ -40,9 +42,14 @@ export function sessionRejection(check: SessionCheck) {
 }
 
 /**
- * Require user authentication and check for bans
+ * Require user authentication and check for bans. Accounts waiting for their
+ * sign-up payment are refused (402) unless `allowPaymentPending`: only the
+ * payment endpoints let them through.
  */
-export async function requireAuthSession(event: H3Event) {
+export async function requireAuthSession(
+  event: H3Event,
+  options: { allowPaymentPending?: boolean } = {}
+) {
   const session = await requireUserSession(event);
 
   // Roles come from the DB, never from the cookie: a demoted admin keeps an
@@ -62,6 +69,10 @@ export async function requireAuthSession(event: H3Event) {
   if (!dbUser || check !== 'valid') {
     await clearUserSession(event);
     throw sessionRejection(check);
+  }
+
+  if (dbUser.paymentPending && !options.allowPaymentPending) {
+    throw createError({ statusCode: 402, message: 'Payment required to activate your account' });
   }
 
   event.context.authUser = dbUser;

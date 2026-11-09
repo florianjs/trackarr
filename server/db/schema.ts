@@ -36,6 +36,8 @@ export const users = pgTable(
     isAdmin: boolean('is_admin').default(false).notNull(),
     isModerator: boolean('is_moderator').default(false).notNull(),
     isBanned: boolean('is_banned').default(false).notNull(),
+    // Paid registration: locked until the sign-up payment is confirmed on-chain
+    paymentPending: boolean('payment_pending').default(false).notNull(),
     // Bumped to revoke every sealed session cookie issued before (ban, sign out everywhere)
     sessionVersion: integer('session_version').default(0).notNull(),
     roleId: text('role_id'),
@@ -408,6 +410,43 @@ export const invitations = pgTable(
   (table) => [
     index('invitations_created_by_idx').on(table.createdBy),
     index('invitations_code_idx').on(table.code),
+  ]
+);
+
+// ============================================================================
+// Registration payments (paid sign-up, shared/utils/paidRegistration.ts)
+// ============================================================================
+export const registrationPayments = pgTable(
+  'registration_payments',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    currency: text('currency').notNull(), // btc | xmr | sol
+    // Where to pay: unique per invoice for BTC/XMR, the shop address for SOL
+    address: text('address').notNull(),
+    btcIndex: integer('btc_index'), // BIP84 receive index
+    xmrIndex: integer('xmr_index'), // Subaddress index (account 0)
+    solReference: text('sol_reference'), // Solana Pay reference key
+    // Amounts in the smallest unit (satoshi, piconero, lamport) as decimal text
+    amount: text('amount').notNull(),
+    received: text('received').default('0').notNull(),
+    unconfirmed: text('unconfirmed').default('0').notNull(),
+    status: text('status').default('pending').notNull(), // pending | confirming | paid | cancelled
+    txids: text('txids').array().default(sql`ARRAY[]::text[]`).notNull(),
+    approvedBy: text('approved_by'), // Admin who unlocked the account by hand
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+    checkedAt: timestamp('checked_at'),
+    paidAt: timestamp('paid_at'),
+  },
+  (table) => [
+    index('registration_payments_user_idx').on(table.userId),
+    index('registration_payments_status_idx').on(table.status),
+    uniqueIndex('registration_payments_btc_idx').on(table.btcIndex),
+    // Not unique: a wallet restored from scratch numbers subaddresses again
+    index('registration_payments_xmr_idx').on(table.xmrIndex),
+    uniqueIndex('registration_payments_sol_idx').on(table.solReference),
   ]
 );
 

@@ -25,6 +25,8 @@ services:
       # Tracker service private API (swarm peers, status)
       - TRACKER_INTERNAL_URL=http://tracker:8090
       - TRACKER_INTERNAL_TOKEN=${TRACKER_INTERNAL_TOKEN:-dev-internal-token}
+      # Paid registration: view-only monero-wallet-rpc (empty: Monero not offered)
+      - MONERO_WALLET_RPC_URL=${MONERO_WALLET_RPC_URL:-}
     volumes:
       - .:/app
       - /app/node_modules

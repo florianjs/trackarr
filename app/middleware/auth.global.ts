@@ -4,7 +4,7 @@
  * Redirects to setup if no users exist
  */
 export default defineNuxtRouteMiddleware(async (to) => {
-  const { loggedIn, fetch: fetchSession } = useUserSession();
+  const { loggedIn, user, fetch: fetchSession } = useUserSession();
 
   // Public routes that don't require auth
   const publicRoutes = ['/auth/login', '/auth/register'];
@@ -49,6 +49,15 @@ export default defineNuxtRouteMiddleware(async (to) => {
 
   // If authenticated and trying to access auth pages
   if (loggedIn.value && isPublicRoute) {
+    return navigateTo('/');
+  }
+
+  // Paid registration: a locked account only sees the payment page
+  const onPaymentPage = to.path === '/auth/payment';
+  if (loggedIn.value && user.value?.paymentPending && !onPaymentPage) {
+    return navigateTo('/auth/payment');
+  }
+  if (loggedIn.value && !user.value?.paymentPending && onPaymentPage) {
     return navigateTo('/');
   }
 });
