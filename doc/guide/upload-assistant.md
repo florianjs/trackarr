@@ -37,8 +37,8 @@ The key is the API key of the **Integrations** page. `--save` remembers the addr
 
 With ffmpeg built with zimg (most builds), HDR screenshots are tone-mapped so they do not look washed out.
 
-::: tip API key and uploads
-The CLI publishes with the same API key as Prowlarr or Sonarr (`Authorization: Bearer`). Anyone holding that key can upload in your name: if it leaks, regenerate it on the Integrations page.
+::: warning API key, uploads and passkey
+The CLI publishes with the same API key as Prowlarr or Sonarr (`Authorization: Bearer`). Anyone holding that key can upload in your name, and can read your passkey: it is in the announce URL of every `.torrent` the key downloads (Torznab) and in the assistant settings. If the key leaks, **regenerate it and reset your passkey**, both on the Integrations page, then download your seeding torrents again.
 :::
 
 ## Descriptions in BBCode

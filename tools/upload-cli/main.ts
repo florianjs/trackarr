@@ -277,7 +277,6 @@ async function main() {
   }
 
   step('Building the .torrent');
-  const handles = await Promise.all(release.files.map((f) => open(f.absolute, 'r')));
   let built;
   try {
     built = await buildTorrent({
@@ -287,24 +286,30 @@ async function main() {
       source: config.source,
       sha1: async (data) => new Uint8Array(createHash('sha1').update(data).digest()),
       onProgress: progressBar,
-      files: release.files.map((f, i) => ({
+      // Opened per read: a pack of thousands of files stays under the
+      // descriptor limit (4 reads at once at most)
+      files: release.files.map((f) => ({
         path: f.path,
         length: f.size,
         read: async (offset, length) => {
-          const buffer = new Uint8Array(length);
-          let read = 0;
-          while (read < length) {
-            const { bytesRead } = await handles[i]!.read(buffer, read, length - read, offset + read);
-            if (bytesRead === 0) break;
-            read += bytesRead;
+          const handle = await open(f.absolute, 'r');
+          try {
+            const buffer = new Uint8Array(length);
+            let read = 0;
+            while (read < length) {
+              const { bytesRead } = await handle.read(buffer, read, length - read, offset + read);
+              if (bytesRead === 0) break;
+              read += bytesRead;
+            }
+            return buffer.subarray(0, read);
+          } finally {
+            await handle.close();
           }
-          return buffer.subarray(0, read);
         },
       })),
     });
   } finally {
     process.stderr.write('\n');
-    await Promise.all(handles.map((h) => h.close()));
   }
 
   const name = values.name ?? (release.folder ? release.name : stripVideoExtension(release.name));

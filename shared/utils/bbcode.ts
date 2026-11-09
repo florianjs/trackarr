@@ -29,9 +29,26 @@ const BLOCK = new Set(['center', 'left', 'right', 'quote', 'code', 'spoiler', 'l
 
 const SIZES = ['0.75em', '0.875em', '1em', '1.125em', '1.375em', '1.75em', '2.25em'];
 
-/** True when the text uses BBCode (a known tag opened and closed) */
+const OPEN_TAG = /\[(b|i|u|s|center|size|color|url|img|quote|code|spoiler|list)(?:=[^\]\n]{0,500})?\]/gi;
+
+/**
+ * True when the text uses BBCode (a known tag opened, then closed). Linear:
+ * one lastIndexOf per tag name, never a scan per opening tag (a description
+ * full of unclosed tags must not freeze the page)
+ */
 export function looksLikeBbcode(text: string): boolean {
-  return /\[(b|i|u|s|center|size|color|url|img|quote|code|spoiler|list)(=[^\]]*)?\][\s\S]*?\[\/\1\]/i.test(text);
+  const lower = text.toLowerCase();
+  const lastClose = new Map<string, number>();
+  for (const match of text.matchAll(OPEN_TAG)) {
+    const tag = match[1]!.toLowerCase();
+    let close = lastClose.get(tag);
+    if (close === undefined) {
+      close = lower.lastIndexOf(`[/${tag}]`);
+      lastClose.set(tag, close);
+    }
+    if (close >= match.index! + match[0].length) return true;
+  }
+  return false;
 }
 
 function safeUrl(raw: string): string | null {
@@ -56,6 +73,9 @@ interface Node {
   /** Source text of the opening tag, to restore it when never closed */
   raw: string;
 }
+
+/** Deeper tags stay text: rendering recurses once per level */
+const MAX_DEPTH = 32;
 
 const TOKEN = /\[(\/?)([a-z]+|\*)(?:=([^\]\n]{0,500}))?\]/gi;
 
@@ -85,7 +105,7 @@ function parse(source: string): Node {
       }
       // A list item runs until the next [*] or the end of the list
       if (current.tag === '*') stack.pop();
-      if (top().tag !== 'list') {
+      if (top().tag !== 'list' || stack.length > MAX_DEPTH) {
         text(raw);
         continue;
       }
@@ -103,6 +123,10 @@ function parse(source: string): Node {
       continue;
     }
     if (!closing) {
+      if (stack.length > MAX_DEPTH) {
+        text(raw);
+        continue;
+      }
       const node: Node = { tag: name, arg: arg ?? null, children: [], raw };
       current.children.push(node);
       stack.push(node);

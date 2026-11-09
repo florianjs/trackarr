@@ -11,7 +11,13 @@ const sha1 = async (data: Uint8Array) =>
 
 export function hashRelease(
   picked: PickedRelease,
-  options: { announce: string; source: string; onProgress?: (done: number, total: number) => void }
+  options: {
+    announce: string;
+    source: string;
+    /** Aborting stops reading the files (the release was replaced) */
+    signal?: AbortSignal;
+    onProgress?: (done: number, total: number) => void;
+  }
 ): Promise<BuiltTorrent> {
   return buildTorrent({
     name: picked.name,
@@ -23,7 +29,10 @@ export function hashRelease(
     files: picked.files.map(({ file, path }) => ({
       path,
       length: file.size,
-      read: async (offset, length) => new Uint8Array(await file.slice(offset, offset + length).arrayBuffer()),
+      read: async (offset, length) => {
+        options.signal?.throwIfAborted();
+        return new Uint8Array(await file.slice(offset, offset + length).arrayBuffer());
+      },
     })),
   });
 }

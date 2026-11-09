@@ -7,7 +7,7 @@
     "pickFile": "Choisir un fichier",
     "pickFolder": "Choisir un dossier",
     "adult": "Contenu adulte (captures classées NSFW chez l'hébergeur)",
-    "private": "Les fichiers sont lus dans votre navigateur : seuls les captures et le .torrent quittent votre ordinateur.",
+    "private": "Les fichiers sont lus dans votre navigateur : seules les captures et le .torrent quittent votre ordinateur.",
     "change": "Changer",
     "fileCount": "{count} fichier, {size} | {count} fichiers, {size}",
     "steps": {

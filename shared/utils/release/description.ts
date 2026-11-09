@@ -182,8 +182,9 @@ export function buildDescription(input: DescriptionInput): string {
   }
 
   if (input.mediaInfoText?.trim()) {
-    // Inside [code] nothing is parsed: only a literal closing tag must go
-    out.push(`[spoiler=MediaInfo][code]${input.mediaInfoText.trim().replace(/\[\/code\]/gi, '[/c0de]')}[/code][/spoiler]`);
+    // Inside [code] nothing is parsed but its closing tag, in any form the
+    // parser accepts ([/code], [/CODE], [/code=x])
+    out.push(`[spoiler=MediaInfo][code]${input.mediaInfoText.trim().replace(/\[\/code(?![a-z])/gi, '[/c0de')}[/code][/spoiler]`);
   }
 
   return out.join('\n\n');

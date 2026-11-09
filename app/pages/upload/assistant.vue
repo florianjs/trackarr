@@ -392,6 +392,9 @@ async function onDrop(event: DragEvent) {
 }
 
 function reset() {
+  // Stop reading the files of the release being replaced
+  hashAbort?.abort();
+  hashAbort = null;
   for (const s of shots.value) URL.revokeObjectURL(s.url);
   picked.value = null;
   mediaInfo.value = null;
@@ -417,6 +420,10 @@ function start(release: PickedRelease | null) {
   void runMedia(release).finally(() => runHash(release));
 }
 
+// Work for a release the user replaced ("Change") must not touch the page:
+// every write after an await checks the release is still the one shown
+const isCurrent = (release: PickedRelease) => picked.value === release;
+
 async function runMedia(release: PickedRelease) {
   const video = mainVideo(release);
   if (!video) {
@@ -426,9 +433,12 @@ async function runMedia(release: PickedRelease) {
   }
   steps.mediainfo = 'running';
   try {
-    mediaInfo.value = await analyzeMedia(video);
+    const result = await analyzeMedia(video);
+    if (!isCurrent(release)) return;
+    mediaInfo.value = result;
     steps.mediainfo = 'done';
   } catch (err) {
+    if (!isCurrent(release)) return;
     steps.mediainfo = 'error';
     mediaError.value = errorText(err);
     console.error('[Upload assistant] MediaInfo failed:', err);
@@ -442,8 +452,9 @@ async function runMedia(release: PickedRelease) {
   steps.screenshots = 'running';
   try {
     const result = await captureScreenshots(video, duration, SCREENSHOT_COUNT, (done, engine) => {
-      shotsDetail.value = t(`assistant.engine.${engine}`, { done, total: SCREENSHOT_COUNT });
+      if (isCurrent(release)) shotsDetail.value = t(`assistant.engine.${engine}`, { done, total: SCREENSHOT_COUNT });
     });
+    if (!isCurrent(release)) return;
     shots.value = result.shots.map((blob) => ({
       blob,
       url: URL.createObjectURL(blob),
@@ -452,9 +463,11 @@ async function runMedia(release: PickedRelease) {
       hosted: null,
     }));
     shotsDetail.value = t(`assistant.engine.${result.engine}`, { done: result.shots.length, total: SCREENSHOT_COUNT });
-    await hostShots();
+    await hostShots(release);
+    if (!isCurrent(release)) return;
     steps.screenshots = shots.value.some((s) => s.state === 'error') ? 'error' : 'done';
   } catch (err) {
+    if (!isCurrent(release)) return;
     steps.screenshots = 'error';
     shotsDetail.value = errorText(err);
     console.error('[Upload assistant] Screenshots failed:', err);
@@ -462,8 +475,9 @@ async function runMedia(release: PickedRelease) {
 }
 
 /** Send the screenshots to the image host, through this site */
-async function hostShots() {
+async function hostShots(release: PickedRelease) {
   for (const shot of shots.value) {
+    if (!isCurrent(release)) return;
     if (shot.hosted || !shot.selected) continue;
     shot.state = 'uploading';
     try {
@@ -479,17 +493,27 @@ async function hostShots() {
   }
 }
 
+let hashAbort: AbortController | null = null;
+
 async function runHash(release: PickedRelease) {
-  if (!config.value) return;
+  if (!config.value || !isCurrent(release)) return;
+  hashAbort = new AbortController();
+  const { signal } = hashAbort;
   steps.hash = 'running';
   try {
-    built.value = await hashRelease(release, {
+    const result = await hashRelease(release, {
       announce: config.value.announceUrl,
       source: config.value.source,
-      onProgress: (done, total) => (hashProgress.value = Math.floor((done / total) * 100)),
+      signal,
+      onProgress: (done, total) => {
+        if (isCurrent(release)) hashProgress.value = Math.floor((done / total) * 100);
+      },
     });
+    if (!isCurrent(release)) return;
+    built.value = result;
     steps.hash = 'done';
   } catch (err) {
+    if (!isCurrent(release) || signal.aborted) return;
     steps.hash = 'error';
     hashError.value = errorText(err);
     console.error('[Upload assistant] Hashing failed:', err);
@@ -522,7 +546,7 @@ async function publish() {
   publishError.value = '';
   try {
     // Screenshots selected after a failed upload get another try
-    if (shots.value.some((s) => s.selected && !s.hosted)) await hostShots();
+    if (picked.value && shots.value.some((s) => s.selected && !s.hosted)) await hostShots(picked.value);
     const body = new FormData();
     body.append('torrent', new Blob([built.value.torrent as Uint8Array<ArrayBuffer>]), torrentFileName());
     body.append('name', form.name.trim());

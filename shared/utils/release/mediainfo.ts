@@ -59,10 +59,10 @@ const num = (v: unknown): number | null => {
 
 const yes = (v: unknown) => str(v)?.toLowerCase() === 'yes';
 
-/** 6 channels -> 5.1, 8 -> 7.1, 2 -> 2.0 */
+/** 6 channels -> 5.1, 8 -> 7.1; fewer than 6 have no LFE: 2 -> 2.0, 5 -> 5.0 */
 export function channelLayout(count: number | null): string | null {
   if (!count) return null;
-  if (count >= 3 && count !== 4) return `${count - 1}.1`;
+  if (count >= 6) return `${count - 1}.1`;
   return `${count}.0`;
 }
 

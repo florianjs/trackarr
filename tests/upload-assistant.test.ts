@@ -268,3 +268,38 @@ describe('pixhost answers', () => {
     expect(isPixhostUrl(42)).toBe(false);
   });
 });
+
+describe('review fixes', () => {
+  it('detects BBCode in linear time on hostile input', () => {
+    const hostile = '[b]'.repeat(16_000);
+    const start = performance.now();
+    expect(looksLikeBbcode(hostile)).toBe(false);
+    expect(looksLikeBbcode(`${hostile}[/b]`)).toBe(true);
+    expect(performance.now() - start).toBeLessThan(200);
+    expect(looksLikeBbcode('[/b] then [b]')).toBe(false);
+  });
+
+  it('renders deep nesting without overflowing the stack', () => {
+    const html = bbcodeToHtml(`${'[b]'.repeat(16_000)}x${'[/b]'.repeat(16_000)}`);
+    expect(html.match(/<strong>/g)?.length).toBeLessThanOrEqual(33);
+    expect(html).toContain('[b]');
+  });
+
+  it('keeps MediaInfo inside its code block, whatever the closing form', () => {
+    const text = buildDescription({
+      lang: 'en',
+      title: 'x',
+      mediaInfoText: 'a [/code=x] [img]https://evil.example/p.png[/img] [/CODE] end',
+    });
+    const html = bbcodeToHtml(text);
+    expect(html).not.toContain('<img');
+    expect(html).toMatch(/<pre><code>[^<]*end<\/code><\/pre><\/details>$/);
+  });
+
+  it('gives an LFE channel only from 6 channels', () => {
+    expect(channelLayout(1)).toBe('1.0');
+    expect(channelLayout(3)).toBe('3.0');
+    expect(channelLayout(5)).toBe('5.0');
+    expect(channelLayout(6)).toBe('5.1');
+  });
+});
