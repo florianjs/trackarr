@@ -1,0 +1,68 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "Pagos",
+      "description": "Registro de pago en Bitcoin, Monero y Solana"
+    },
+    "register": {
+      "notice": "El registro es de pago: {prices}.",
+      "unlock": "Tu cuenta se crea ahora y se desbloquea cuando el pago se confirma en la blockchain. Las cuentas impagadas se eliminan tras {days} días.",
+      "inviteFree": "El registro con código de invitación es gratuito."
+    },
+    "page": {
+      "title": "Activa tu cuenta",
+      "intro": "Paga la cuota de registro en una de las criptomonedas aceptadas. Tu cuenta se desbloquea automáticamente cuando se confirma el pago.",
+      "loading": "Cargando...",
+      "unavailable": "No hay ningún método de pago disponible ahora. Contacta con el equipo.",
+      "chooseCurrency": "Pagar con",
+      "amountDue": "Importe a enviar",
+      "seen": "Recibido: {confirmed} confirmado, {unconfirmed} pendiente, de {total}",
+      "address": "Dirección",
+      "solanaReference": "Usa el botón de monedero de abajo: el enlace lleva una referencia de pago que identifica tu cuenta. Una transferencia simple a esta dirección no se puede asociar.",
+      "openWallet": "Abrir en el monedero",
+      "confirmationsHint": "Desbloqueada tras {count} confirmaciones.",
+      "finalizedHint": "Desbloqueada cuando la transacción se finaliza (menos de un minuto).",
+      "checkNow": "He pagado: comprobar ahora",
+      "deadline": "Sin pago, esta cuenta se eliminará el {date}.",
+      "logout": "Cerrar sesión",
+      "failed": "Algo salió mal, inténtalo de nuevo"
+    },
+    "status": {
+      "pending": "Esperando el pago",
+      "confirming": "Pago detectado, esperando confirmaciones",
+      "paid": "Pagado",
+      "cancelled": "Cancelado"
+    },
+    "admin": {
+      "title": "Registro de pago",
+      "enabledLabel": "Registro de pago",
+      "enabledDescription": "Las cuentas nuevas quedan bloqueadas hasta que su pago se confirma en la cadena",
+      "invitesPayLabel": "Los invitados también pagan",
+      "invitesPayDescription": "Desactivado: un código de invitación evita el pago",
+      "pendingDaysLabel": "Plazo de pago (días)",
+      "pendingDaysDescription": "Las cuentas bloqueadas que no recibieron nada se eliminan tras este plazo",
+      "price": "Precio",
+      "confirmations": "Confirmaciones requeridas",
+      "xpub": "Clave pública extendida (zpub / xpub)",
+      "xpubHint": "Clave de cuenta SegWit nativa (BIP84). Nunca pegues una clave privada. Aumenta el gap limit de tu monedero para que vea todas las direcciones.",
+      "esploraUrl": "API Esplora",
+      "moneroReady": "Monedero listo, sincronizado hasta el bloque {height}",
+      "moneroMissing": "Monero necesita el servicio de monedero incluido: vuelve a ejecutar el instalador aceptando Monero, o define MONERO_WALLET_RPC_URL",
+      "solAddress": "Dirección de recepción",
+      "solRpcUrl": "RPC de Solana",
+      "saveFailed": "No se pudieron guardar los ajustes",
+      "pendingTitle": "Cuentas bloqueadas",
+      "noPending": "Ninguna cuenta espera un pago",
+      "approve": "Desbloquear",
+      "paidTitle": "Pagos recientes",
+      "noPaid": "Aún no hay pagos",
+      "manual": "manual",
+      "moneroCreateIntro": "El servicio de monedero está activo pero aún no tiene monedero. Crea un monedero de solo lectura: ve los pagos entrantes y no puede gastar. La clave de vista solo se escribe en el archivo del monedero.",
+      "moneroAddress": "Dirección principal (empieza por 4)",
+      "moneroViewKey": "Clave de vista privada",
+      "moneroRestoreHeight": "Altura de restauración",
+      "moneroRestoreHeightHint": "Bloque desde el que escanear: la altura actual para un monedero nuevo (escanear desde 0 tarda horas)",
+      "moneroCreate": "Crear el monedero de solo lectura"
+    }
+  }
+}

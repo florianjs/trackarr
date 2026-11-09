@@ -96,6 +96,19 @@ The web app reaches the tracker's private API with:
 | `TRACKER_INTERNAL_URL`   | Tracker private API URL                      | `http://localhost:8090` (`http://tracker:8090` in Docker Compose) |
 | `TRACKER_INTERNAL_TOKEN` | Same value as the tracker                    | —                                                    |
 
+## Paid Registration
+
+See [Paid Registration](/guide/paid-registration).
+
+| Variable                 | Description                                                  | Default |
+| ------------------------ | ------------------------------------------------------------ | ------- |
+| `MONERO_WALLET_RPC_URL`  | Wallet RPC the app uses (empty: Monero is not offered)       | -       |
+| `MONERO_WALLET_PASSWORD` | Password of the view-only wallet file                        | -       |
+| `MONERO_DAEMON_ADDRESS`  | Monero node of the bundled wallet service (`host:port`)      | -       |
+| `PAYMENT_CHECK_INTERVAL` | Payment watcher interval in ms (minimum 5000)                | `60000` |
+
+The installer sets the Monero variables and adds `monero` to `COMPOSE_PROFILES` when you accept Monero.
+
 ## Monitoring
 
 Production only. See [Monitoring](/guide/monitoring).

@@ -1,0 +1,68 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "付款",
+      "description": "使用 Bitcoin、Monero 和 Solana 付费注册"
+    },
+    "register": {
+      "notice": "注册需要付费：{prices}。",
+      "unlock": "账户会立即创建，并在区块链确认付款后解锁。未付款的账户将在 {days} 天后删除。",
+      "inviteFree": "使用邀请码注册免费。"
+    },
+    "page": {
+      "title": "激活你的账户",
+      "intro": "使用任一受支持的加密货币支付注册费。付款确认后账户将自动解锁。",
+      "loading": "加载中...",
+      "unavailable": "目前没有可用的付款方式，请联系管理员。",
+      "chooseCurrency": "付款方式",
+      "amountDue": "需发送金额",
+      "seen": "已收到：已确认 {confirmed}，待确认 {unconfirmed}，共需 {total}",
+      "address": "地址",
+      "solanaReference": "请使用下方的钱包按钮：链接中包含识别你账户的付款参考。直接向该地址转账无法匹配。",
+      "openWallet": "在钱包中打开",
+      "confirmationsHint": "{count} 次确认后解锁。",
+      "finalizedHint": "交易最终确认后解锁（不到一分钟）。",
+      "checkNow": "我已付款：立即检查",
+      "deadline": "如未付款，该账户将于 {date} 删除。",
+      "logout": "退出登录",
+      "failed": "出错了，请重试"
+    },
+    "status": {
+      "pending": "等待付款",
+      "confirming": "已检测到付款，等待确认",
+      "paid": "已付款",
+      "cancelled": "已取消"
+    },
+    "admin": {
+      "title": "付费注册",
+      "enabledLabel": "付费注册",
+      "enabledDescription": "新账户在链上确认付款前保持锁定",
+      "invitesPayLabel": "受邀用户也需付款",
+      "invitesPayDescription": "关闭：使用邀请码可免付款",
+      "pendingDaysLabel": "付款期限（天）",
+      "pendingDaysDescription": "未收到任何款项的锁定账户将在此期限后删除",
+      "price": "价格",
+      "confirmations": "所需确认数",
+      "xpub": "扩展公钥（zpub / xpub）",
+      "xpubHint": "原生 SegWit 账户密钥（BIP84）。切勿粘贴私钥。请提高钱包的 gap limit 以便看到所有地址。",
+      "esploraUrl": "Esplora API",
+      "moneroReady": "钱包已就绪，已同步至区块 {height}",
+      "moneroMissing": "Monero 需要内置的钱包服务：重新运行安装程序并启用 Monero，或设置 MONERO_WALLET_RPC_URL",
+      "solAddress": "收款地址",
+      "solRpcUrl": "Solana RPC",
+      "saveFailed": "无法保存设置",
+      "pendingTitle": "锁定的账户",
+      "noPending": "没有等待付款的账户",
+      "approve": "解锁",
+      "paidTitle": "最近付款",
+      "noPaid": "暂无付款",
+      "manual": "手动",
+      "moneroCreateIntro": "钱包服务已运行，但还没有钱包。请创建只读钱包：它可以看到入账，但无法花费。查看密钥只写入钱包文件。",
+      "moneroAddress": "主地址（以 4 开头）",
+      "moneroViewKey": "私有查看密钥",
+      "moneroRestoreHeight": "恢复高度",
+      "moneroRestoreHeightHint": "开始扫描的区块：新钱包请填当前高度（从 0 开始需要数小时）",
+      "moneroCreate": "创建只读钱包"
+    }
+  }
+}

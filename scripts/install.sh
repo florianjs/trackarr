@@ -26,6 +26,13 @@ TRACKER_DOMAIN="${TRACKER_DOMAIN:-}"
 MONITORING_DOMAIN="${MONITORING_DOMAIN:-}"
 ACME_EMAIL="${ACME_EMAIL:-}"
 MONITORING_PASSWORD="${MONITORING_PASSWORD:-}"
+# Paid registration (optional, see the Paid Registration guide)
+MONERO_ENABLED="${MONERO_ENABLED:-}"
+MONERO_DAEMON_ADDRESS="${MONERO_DAEMON_ADDRESS:-}"
+MONERO_WALLET_RPC_URL="${MONERO_WALLET_RPC_URL:-}"
+PAYMENT_CHECK_INTERVAL="${PAYMENT_CHECK_INTERVAL:-}"
+# Bundled view-only wallet service (docker-compose.prod.yml, profile monero)
+BUNDLED_MONERO_RPC="http://monero-wallet-rpc:18083"
 
 # Database defaults
 DB_NAME="${DB_NAME:-trackarr}"
@@ -113,6 +120,10 @@ confirm() {
 # =============================================================================
 is_domain() {
     [[ $1 =~ ^([A-Za-z0-9]([A-Za-z0-9-]{0,61}[A-Za-z0-9])?\.)+[A-Za-z]{2,}$ ]]
+}
+
+is_host_port() {
+    [[ $1 =~ ^[A-Za-z0-9.-]+:[0-9]{1,5}$ ]]
 }
 
 is_email() {
@@ -250,6 +261,13 @@ prompt_configuration() {
         TRACKER_DOMAIN=${TRACKER_DOMAIN:-$(existing_value TRACKER_DOMAIN)}
         MONITORING_DOMAIN=${MONITORING_DOMAIN:-$(existing_value MONITORING_DOMAIN)}
         ACME_EMAIL=${ACME_EMAIL:-$(existing_value ACME_EMAIL)}
+        # Paid registration (optional): survives a re-run
+        MONERO_WALLET_RPC_URL=${MONERO_WALLET_RPC_URL:-$(existing_value MONERO_WALLET_RPC_URL)}
+        MONERO_DAEMON_ADDRESS=${MONERO_DAEMON_ADDRESS:-$(existing_value MONERO_DAEMON_ADDRESS)}
+        PAYMENT_CHECK_INTERVAL=${PAYMENT_CHECK_INTERVAL:-$(existing_value PAYMENT_CHECK_INTERVAL)}
+        if [[ -z $MONERO_ENABLED && ,$(existing_value COMPOSE_PROFILES), == *,monero,* ]]; then
+            MONERO_ENABLED=true
+        fi
         # Beszel only reads its login on the first start: keep it as is
         KEEP_MONITORING_PASSWORD=$(existing_value BESZEL_ADMIN_PASSWORD)
         BESZEL_ADMIN_EMAIL=$(existing_value BESZEL_ADMIN_EMAIL)
@@ -270,6 +288,10 @@ prompt_configuration() {
             is_domain "$name" || die "Not a valid domain: $name"
         done
         is_email "$ACME_EMAIL" || die "Not a valid email: $ACME_EMAIL"
+        if [[ $MONERO_ENABLED == true ]]; then
+            is_host_port "$MONERO_DAEMON_ADDRESS" \
+                || die "MONERO_DAEMON_ADDRESS (host:port of a Monero node) is required with MONERO_ENABLED=true"
+        fi
     else
         echo ""
         echo -e "  ${DIM}These names must point to this server (DNS A/AAAA records): Caddy${NC}"
@@ -279,6 +301,17 @@ prompt_configuration() {
         ask TRACKER_DOMAIN "Tracker (announce) domain" "${TRACKER_DOMAIN:-announce.$DOMAIN}" is_domain "Not a valid domain name"
         ask MONITORING_DOMAIN "Monitoring domain" "${MONITORING_DOMAIN:-monitoring.$DOMAIN}" is_domain "Not a valid domain name"
         ask ACME_EMAIL "Email for Let's Encrypt (expiry notices)" "$ACME_EMAIL" is_email "Not a valid email address"
+        echo ""
+        echo -e "  ${DIM}Paid registration: Bitcoin and Solana need nothing here (set them in Admin >${NC}"
+        echo -e "  ${DIM}Payments). Monero runs a view-only wallet that needs a Monero node.${NC}"
+        local monero_default=n
+        [[ $MONERO_ENABLED == true ]] && monero_default=y
+        if confirm "Accept Monero for paid registration?" "$monero_default"; then
+            MONERO_ENABLED=true
+            ask MONERO_DAEMON_ADDRESS "Monero node (host:port, e.g. node.example.com:18089)" "$MONERO_DAEMON_ADDRESS" is_host_port "Expected host:port"
+        else
+            MONERO_ENABLED=false
+        fi
         if [[ -z $MONITORING_PASSWORD && -z $KEEP_MONITORING_PASSWORD && $LEGACY_MONITORING != true ]]; then
             while true; do
                 read -rsp "  Monitoring login password, 8+ characters (Enter to generate one): " MONITORING_PASSWORD
@@ -300,6 +333,22 @@ prompt_configuration() {
         GENERATED_MONITORING_PASSWORD=true
     elif [[ ${#MONITORING_PASSWORD} -lt 8 ]]; then
         die "MONITORING_PASSWORD needs at least 8 characters"
+    fi
+
+    # Bundled wallet service: the app talks to it; switched off, forget it
+    if [[ $MONERO_ENABLED == true ]]; then
+        MONERO_WALLET_RPC_URL=${MONERO_WALLET_RPC_URL:-$BUNDLED_MONERO_RPC}
+    elif [[ $MONERO_WALLET_RPC_URL == "$BUNDLED_MONERO_RPC" ]]; then
+        MONERO_WALLET_RPC_URL=""
+    fi
+    if [[ -n $MONERO_WALLET_RPC_URL && ! $MONERO_WALLET_RPC_URL =~ ^https?://[^[:space:]]+$ ]]; then
+        die "MONERO_WALLET_RPC_URL must be an http(s) URL: $MONERO_WALLET_RPC_URL"
+    fi
+    # 5 s to the Node.js timer limit (larger delays become 1 ms); at most 10
+    # digits, so the arithmetic below cannot overflow
+    if [[ -n $PAYMENT_CHECK_INTERVAL ]] && { [[ ! $PAYMENT_CHECK_INTERVAL =~ ^[0-9]{1,10}$ ]] \
+        || (( 10#$PAYMENT_CHECK_INTERVAL < 5000 || 10#$PAYMENT_CHECK_INTERVAL > 2147483647 )); }; then
+        die "PAYMENT_CHECK_INTERVAL must be milliseconds between 5000 and 2147483647"
     fi
 
     check_dns
@@ -351,6 +400,9 @@ confirm_plan() {
     echo -e "    Directory            ${INSTALL_DIR}"
     echo -e "    Secrets              ${secrets}"
     echo -e "    Firewall             allow SSH (port ${SSH_PORT}), HTTP and HTTPS only"
+    if [[ $MONERO_ENABLED == true ]]; then
+        echo -e "    Monero payments      view-only wallet, node ${MONERO_DAEMON_ADDRESS}"
+    fi
     echo ""
     log_info "Next: install Docker if needed, build Trackarr (5-10 minutes) and start it."
     confirm "Proceed?" y || { log_info "Nothing was changed"; exit 0; }
@@ -527,6 +579,11 @@ generate_secrets() {
     [[ -z "$NUXT_SESSION_SECRET" ]] && NUXT_SESSION_SECRET=$(openssl rand -base64 64 | tr -d '/+=' | head -c 64)
     echo -n "$NUXT_SESSION_SECRET" > "$SECRETS_DIR/nuxt_session_secret.txt"
 
+    # Monero view-only wallet password: kept once generated, or the wallet
+    # file created with it could not be opened again
+    MONERO_WALLET_PASSWORD=$(existing_value MONERO_WALLET_PASSWORD)
+    [[ -z "$MONERO_WALLET_PASSWORD" ]] && MONERO_WALLET_PASSWORD=$(openssl rand -hex 32)
+
     chmod 600 "$SECRETS_DIR"/*
     if [[ $REUSED_SECRETS == true ]]; then
         log_success "Secrets kept from the existing .env"
@@ -547,9 +604,34 @@ create_env_file() {
     MONITORING_PAIRED=false
     if [[ -n "$key" ]]; then
         MONITORING_PAIRED=true
-        BESZEL_ENV=$(printf 'BESZEL_AGENT_KEY=%s\nBESZEL_AGENT_TOKEN=%s\nCOMPOSE_PROFILES=monitoring' "$key" "$token")
+        BESZEL_ENV=$(printf 'BESZEL_AGENT_KEY=%s\nBESZEL_AGENT_TOKEN=%s' "$key" "$token")
     else
-        BESZEL_ENV=$(printf '# BESZEL_AGENT_KEY=\n# BESZEL_AGENT_TOKEN=\n# COMPOSE_PROFILES=monitoring')
+        BESZEL_ENV=$(printf '# BESZEL_AGENT_KEY=\n# BESZEL_AGENT_TOKEN=')
+    fi
+
+    # Optional services: monitoring once paired, Monero wallet if accepted
+    local profiles=""
+    [[ $MONITORING_PAIRED == true ]] && profiles="monitoring"
+    [[ $MONERO_ENABLED == true ]] && profiles="${profiles:+$profiles,}monero"
+    if [[ -n $profiles ]]; then
+        PROFILES_ENV="COMPOSE_PROFILES=$profiles"
+    else
+        PROFILES_ENV="# COMPOSE_PROFILES=monitoring"
+    fi
+
+    # Paid registration: Monero needs a view-only monero-wallet-rpc (see the
+    # Paid Registration guide); unset, Monero is not offered
+    if [[ -n $MONERO_WALLET_RPC_URL ]]; then
+        PAYMENT_ENV="MONERO_WALLET_RPC_URL=$MONERO_WALLET_RPC_URL"
+    else
+        PAYMENT_ENV="# MONERO_WALLET_RPC_URL=$BUNDLED_MONERO_RPC"
+    fi
+    PAYMENT_ENV+=$'\n'"MONERO_WALLET_PASSWORD=$MONERO_WALLET_PASSWORD"
+    if [[ -n $MONERO_DAEMON_ADDRESS ]]; then
+        PAYMENT_ENV+=$'\n'"MONERO_DAEMON_ADDRESS=$MONERO_DAEMON_ADDRESS"
+    fi
+    if [[ -n $PAYMENT_CHECK_INTERVAL ]]; then
+        PAYMENT_ENV+=$'\n'"PAYMENT_CHECK_INTERVAL=$PAYMENT_CHECK_INTERVAL"
     fi
 
     # Beszel login, created on its first start only
@@ -596,6 +678,14 @@ ACME_EMAIL=${ACME_EMAIL}
 
 # Tracker Announce URLs (displayed in admin dashboard)
 TRACKER_HTTP_URL=https://${TRACKER_DOMAIN}/announce
+
+# Paid registration (Admin > Payments): prices and BTC/SOL keys are set in
+# the admin panel; Monero also needs the view-only wallet service (profile
+# monero), its wallet is created from the admin panel
+${PAYMENT_ENV}
+
+# Optional services (docker compose profiles)
+${PROFILES_ENV}
 
 # Monitoring (Beszel): login read on its first start only, change the
 # password in Beszel afterwards
@@ -757,6 +847,10 @@ print_summary() {
         echo -e "       ${CYAN}sudo ${INSTALL_DIR}/scripts/pair-monitoring.sh${NC} and paste the key and token."
         echo -e "       Step by step: ${CYAN}${DOCS_URL}/guide/monitoring#pairing-the-agent${NC}"
     fi
+    if [[ $MONERO_ENABLED == true ]]; then
+        echo -e "    3. Monero: in ${CYAN}Admin > Payments${NC}, create the view-only wallet (primary"
+        echo -e "       address, private view key, restore height), then switch Monero on."
+    fi
     echo ""
     echo -e "  ${BOLD}Useful commands${NC} (in ${INSTALL_DIR})"
     echo -e "    Logs          ${CYAN}docker compose -f docker-compose.prod.yml logs -f${NC}"
@@ -867,14 +961,21 @@ Environment variables:
   ACME_EMAIL          Email for Let's Encrypt
   MONITORING_PASSWORD Monitoring (Beszel) password for a new install,
                       8+ characters (default: generated)
+  MONERO_ENABLED      true: run the view-only Monero wallet for paid
+                      registration (kept on re-runs)
+  MONERO_DAEMON_ADDRESS  Monero node for that wallet (host:port)
+  MONERO_WALLET_RPC_URL  External monero-wallet-rpc instead of the bundled
+                      one (optional, kept on re-runs)
+  PAYMENT_CHECK_INTERVAL Paid registration check interval in ms
+                      (default: 60000)
   INSTALL_DIR         Installation directory (default: /opt/trackarr)
   REPO_URL            Git repository URL
   BRANCH              Git branch to check out (default: main)
   LOG_FILE            Detailed log (default: /var/log/trackarr-install.log)
   NO_COLOR            Disable colors
 
-Running it again updates the install and keeps its secrets, data and
-monitoring pairing. Docs: ${DOCS_URL}
+Running it again updates the install and keeps its secrets, data,
+monitoring pairing and paid registration settings. Docs: ${DOCS_URL}
 EOF
 }
 

@@ -56,6 +56,7 @@ export async function authenticateTorznab(
       username: schema.users.username,
       passkey: schema.users.passkey,
       isBanned: schema.users.isBanned,
+      paymentPending: schema.users.paymentPending,
       isAdmin: schema.users.isAdmin,
       isModerator: schema.users.isModerator,
     })
@@ -70,6 +71,11 @@ export async function authenticateTorznab(
   }
 
   if (user.isBanned) {
+    throw createTorznabError(event, TORZNAB_ERRORS.ACCOUNT_SUSPENDED);
+  }
+
+  // Locked until the sign-up payment is confirmed
+  if (user.paymentPending) {
     throw createTorznabError(event, TORZNAB_ERRORS.ACCOUNT_SUSPENDED);
   }
 

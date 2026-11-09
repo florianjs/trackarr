@@ -1,0 +1,68 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "Zahlungen",
+      "description": "Kostenpflichtige Registrierung mit Bitcoin, Monero und Solana"
+    },
+    "register": {
+      "notice": "Die Registrierung ist kostenpflichtig: {prices}.",
+      "unlock": "Dein Konto wird sofort erstellt und freigeschaltet, sobald die Zahlung auf der Blockchain bestätigt ist. Unbezahlte Konten werden nach {days} Tagen gelöscht.",
+      "inviteFree": "Mit einem Einladungscode ist die Registrierung kostenlos."
+    },
+    "page": {
+      "title": "Konto aktivieren",
+      "intro": "Bezahle die Registrierungsgebühr in einer der akzeptierten Kryptowährungen. Dein Konto wird automatisch freigeschaltet, sobald die Zahlung bestätigt ist.",
+      "loading": "Wird geladen...",
+      "unavailable": "Derzeit ist keine Zahlungsmethode verfügbar. Bitte kontaktiere das Team.",
+      "chooseCurrency": "Bezahlen mit",
+      "amountDue": "Zu sendender Betrag",
+      "seen": "Erhalten: {confirmed} bestätigt, {unconfirmed} ausstehend, von {total}",
+      "address": "Adresse",
+      "solanaReference": "Nutze die Wallet-Schaltfläche unten: Der Link enthält eine Zahlungsreferenz, die dein Konto identifiziert. Eine einfache Überweisung an diese Adresse kann nicht zugeordnet werden.",
+      "openWallet": "In Wallet öffnen",
+      "confirmationsHint": "Freigeschaltet nach {count} Bestätigungen.",
+      "finalizedHint": "Freigeschaltet, sobald die Transaktion finalisiert ist (unter einer Minute).",
+      "checkNow": "Ich habe bezahlt: jetzt prüfen",
+      "deadline": "Ohne Zahlung wird dieses Konto am {date} gelöscht.",
+      "logout": "Abmelden",
+      "failed": "Etwas ist schiefgelaufen, bitte erneut versuchen"
+    },
+    "status": {
+      "pending": "Warte auf Zahlung",
+      "confirming": "Zahlung erkannt, warte auf Bestätigungen",
+      "paid": "Bezahlt",
+      "cancelled": "Storniert"
+    },
+    "admin": {
+      "title": "Kostenpflichtige Registrierung",
+      "enabledLabel": "Kostenpflichtige Registrierung",
+      "enabledDescription": "Neue Konten bleiben gesperrt, bis ihre Zahlung on-chain bestätigt ist",
+      "invitesPayLabel": "Eingeladene zahlen auch",
+      "invitesPayDescription": "Aus: Ein Einladungscode erspart die Zahlung",
+      "pendingDaysLabel": "Zahlungsfrist (Tage)",
+      "pendingDaysDescription": "Gesperrte Konten ohne Zahlungseingang werden nach dieser Frist gelöscht",
+      "price": "Preis",
+      "confirmations": "Erforderliche Bestätigungen",
+      "xpub": "Erweiterter öffentlicher Schlüssel (zpub / xpub)",
+      "xpubHint": "Native-SegWit-Kontoschlüssel (BIP84). Niemals einen privaten Schlüssel einfügen. Erhöhe das Gap-Limit deiner Wallet, damit sie alle Adressen sieht.",
+      "esploraUrl": "Esplora-API",
+      "moneroReady": "Wallet bereit, synchronisiert bis Block {height}",
+      "moneroMissing": "Monero braucht den mitgelieferten Wallet-Dienst: Installer erneut ausführen und Monero annehmen, oder MONERO_WALLET_RPC_URL setzen",
+      "solAddress": "Empfangsadresse",
+      "solRpcUrl": "Solana-RPC",
+      "saveFailed": "Einstellungen konnten nicht gespeichert werden",
+      "pendingTitle": "Gesperrte Konten",
+      "noPending": "Kein Konto wartet auf Zahlung",
+      "approve": "Freischalten",
+      "paidTitle": "Letzte Zahlungen",
+      "noPaid": "Noch keine Zahlung",
+      "manual": "manuell",
+      "moneroCreateIntro": "Der Wallet-Dienst läuft, hat aber noch keine Wallet. Erstelle eine View-only-Wallet: Sie sieht eingehende Zahlungen und kann nichts ausgeben. Der View-Key wird nur in die Wallet-Datei geschrieben.",
+      "moneroAddress": "Hauptadresse (beginnt mit 4)",
+      "moneroViewKey": "Privater View-Key",
+      "moneroRestoreHeight": "Wiederherstellungshöhe",
+      "moneroRestoreHeightHint": "Block, ab dem gescannt wird: die aktuelle Höhe für eine neue Wallet (ab 0 dauert es Stunden)",
+      "moneroCreate": "View-only-Wallet erstellen"
+    }
+  }
+}

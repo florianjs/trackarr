@@ -11,7 +11,10 @@ import {
   getStarterUpload,
   isInviteEnabled,
   getDefaultInvites,
+  getPaidRegistration,
 } from '../../utils/settings';
+import { registrationRequiresPayment } from '../../../shared/utils/paidRegistration';
+import { offeredCurrencies } from '../../utils/payments/invoices';
 import { validateBody, registerSchema } from '../../utils/schemas';
 import { verifyPoWSolution } from '../../utils/pow';
 import { getClientIP, protectEndpoint } from '../../utils/rateLimit';
@@ -146,6 +149,14 @@ export default defineEventHandler(async (event) => {
   const starterUpload = await getStarterUpload();
   const defaultInvites = await getDefaultInvites();
 
+  // Paid registration: the account stays locked until the payment is confirmed
+  const paidConfig = await getPaidRegistration();
+  const paymentPending = registrationRequiresPayment(paidConfig, {
+    isFirstUser,
+    usedInvite: Boolean(validInvite),
+    currencies: offeredCurrencies(paidConfig),
+  });
+
   // For first user, require and hash panic password
   let panicPasswordHash: string | null = null;
   if (isFirstUser) {
@@ -182,6 +193,7 @@ export default defineEventHandler(async (event) => {
       uploaded: starterUpload,
       invitesRemaining: isFirstUser ? 10 : defaultInvites,
       panicPasswordHash,
+      paymentPending,
     });
 
     // Consume the invite only if still unused: one code, one account
@@ -220,6 +232,7 @@ export default defineEventHandler(async (event) => {
       isModerator: false,
       uploaded: starterUpload,
       downloaded: 0,
+      paymentPending,
     },
     loggedInAt: Date.now(),
     sessionVersion: 0,
@@ -235,6 +248,7 @@ export default defineEventHandler(async (event) => {
       isModerator: false,
       uploaded: starterUpload,
       downloaded: 0,
+      paymentPending,
     },
   };
 });

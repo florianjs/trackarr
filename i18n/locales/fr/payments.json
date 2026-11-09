@@ -1,0 +1,68 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "Paiements",
+      "description": "Inscription payante en Bitcoin, Monero et Solana"
+    },
+    "register": {
+      "notice": "L'inscription est payante : {prices}.",
+      "unlock": "Votre compte est créé tout de suite et débloqué dès que le paiement est confirmé sur la blockchain. Les comptes non payés sont supprimés après {days} jours.",
+      "inviteFree": "L'inscription avec un code d'invitation est gratuite."
+    },
+    "page": {
+      "title": "Activez votre compte",
+      "intro": "Réglez les frais d'inscription dans l'une des cryptomonnaies acceptées. Votre compte est débloqué automatiquement dès que le paiement est confirmé.",
+      "loading": "Chargement...",
+      "unavailable": "Aucun moyen de paiement n'est disponible pour le moment. Contactez l'équipe.",
+      "chooseCurrency": "Payer en",
+      "amountDue": "Montant à envoyer",
+      "seen": "Reçu : {confirmed} confirmé, {unconfirmed} en attente, sur {total}",
+      "address": "Adresse",
+      "solanaReference": "Utilisez le bouton portefeuille ci-dessous : le lien contient une référence de paiement qui identifie votre compte. Un simple virement vers cette adresse ne peut pas être rattaché.",
+      "openWallet": "Ouvrir dans le portefeuille",
+      "confirmationsHint": "Débloqué après {count} confirmations.",
+      "finalizedHint": "Débloqué dès que la transaction est finalisée (moins d'une minute).",
+      "checkNow": "J'ai payé : vérifier maintenant",
+      "deadline": "Sans paiement, ce compte sera supprimé le {date}.",
+      "logout": "Se déconnecter",
+      "failed": "Une erreur est survenue, réessayez"
+    },
+    "status": {
+      "pending": "En attente du paiement",
+      "confirming": "Paiement détecté, en attente de confirmations",
+      "paid": "Payé",
+      "cancelled": "Annulé"
+    },
+    "admin": {
+      "title": "Inscription payante",
+      "enabledLabel": "Inscription payante",
+      "enabledDescription": "Les nouveaux comptes restent verrouillés jusqu'à la confirmation de leur paiement on-chain",
+      "invitesPayLabel": "Les invités paient aussi",
+      "invitesPayDescription": "Désactivé : un code d'invitation dispense du paiement",
+      "pendingDaysLabel": "Délai de paiement (jours)",
+      "pendingDaysDescription": "Les comptes verrouillés qui n'ont rien reçu sont supprimés après ce délai",
+      "price": "Prix",
+      "confirmations": "Confirmations requises",
+      "xpub": "Clé publique étendue (zpub / xpub)",
+      "xpubHint": "Clé de compte SegWit natif (BIP84). Ne collez jamais une clé privée. Augmentez le gap limit de votre portefeuille pour qu'il voie toutes les adresses.",
+      "esploraUrl": "API Esplora",
+      "moneroReady": "Wallet prêt, synchronisé jusqu'au bloc {height}",
+      "moneroMissing": "Monero nécessite le service wallet fourni : relancez l'installateur en acceptant Monero, ou définissez MONERO_WALLET_RPC_URL",
+      "solAddress": "Adresse de réception",
+      "solRpcUrl": "RPC Solana",
+      "saveFailed": "Impossible d'enregistrer les réglages",
+      "pendingTitle": "Comptes verrouillés",
+      "noPending": "Aucun compte en attente de paiement",
+      "approve": "Débloquer",
+      "paidTitle": "Paiements récents",
+      "noPaid": "Aucun paiement pour l'instant",
+      "manual": "manuel",
+      "moneroCreateIntro": "Le service wallet tourne mais n'a pas encore de wallet. Créez un wallet en lecture seule : il voit les paiements entrants et ne peut rien dépenser. La clé de vue est écrite uniquement dans le fichier du wallet.",
+      "moneroAddress": "Adresse principale (commence par 4)",
+      "moneroViewKey": "Clé de vue privée",
+      "moneroRestoreHeight": "Hauteur de restauration",
+      "moneroRestoreHeightHint": "Bloc à partir duquel scanner : la hauteur actuelle pour un nouveau wallet (scanner depuis 0 prend des heures)",
+      "moneroCreate": "Créer le wallet en lecture seule"
+    }
+  }
+}

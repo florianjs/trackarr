@@ -22,7 +22,14 @@ export async function requireFeedAccess(event: H3Event): Promise<void> {
   const [user] = await db
     .select({ id: users.id })
     .from(users)
-    .where(and(eq(users.passkey, passkey.toLowerCase()), eq(users.isBanned, false)))
+    .where(
+      and(
+        eq(users.passkey, passkey.toLowerCase()),
+        eq(users.isBanned, false),
+        // Locked until the sign-up payment is confirmed
+        eq(users.paymentPending, false)
+      )
+    )
     .limit(1);
 
   if (!user) {

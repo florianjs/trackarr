@@ -1,0 +1,68 @@
+{
+  "payments": {
+    "adminNav": {
+      "label": "Pagamenti",
+      "description": "Registrazione a pagamento in Bitcoin, Monero e Solana"
+    },
+    "register": {
+      "notice": "La registrazione è a pagamento: {prices}.",
+      "unlock": "Il tuo account viene creato subito e sbloccato quando il pagamento è confermato sulla blockchain. Gli account non pagati vengono eliminati dopo {days} giorni.",
+      "inviteFree": "La registrazione con un codice di invito è gratuita."
+    },
+    "page": {
+      "title": "Attiva il tuo account",
+      "intro": "Paga la quota di registrazione in una delle criptovalute accettate. Il tuo account viene sbloccato automaticamente quando il pagamento è confermato.",
+      "loading": "Caricamento...",
+      "unavailable": "Nessun metodo di pagamento è disponibile al momento. Contatta lo staff.",
+      "chooseCurrency": "Paga con",
+      "amountDue": "Importo da inviare",
+      "seen": "Ricevuto: {confirmed} confermato, {unconfirmed} in attesa, su {total}",
+      "address": "Indirizzo",
+      "solanaReference": "Usa il pulsante del wallet qui sotto: il link contiene un riferimento di pagamento che identifica il tuo account. Un semplice trasferimento a questo indirizzo non può essere associato.",
+      "openWallet": "Apri nel wallet",
+      "confirmationsHint": "Sbloccato dopo {count} conferme.",
+      "finalizedHint": "Sbloccato quando la transazione è finalizzata (meno di un minuto).",
+      "checkNow": "Ho pagato: verifica ora",
+      "deadline": "Senza pagamento, questo account verrà eliminato il {date}.",
+      "logout": "Esci",
+      "failed": "Qualcosa è andato storto, riprova"
+    },
+    "status": {
+      "pending": "In attesa del pagamento",
+      "confirming": "Pagamento rilevato, in attesa di conferme",
+      "paid": "Pagato",
+      "cancelled": "Annullato"
+    },
+    "admin": {
+      "title": "Registrazione a pagamento",
+      "enabledLabel": "Registrazione a pagamento",
+      "enabledDescription": "I nuovi account restano bloccati finché il pagamento non è confermato on-chain",
+      "invitesPayLabel": "Anche gli invitati pagano",
+      "invitesPayDescription": "Disattivato: un codice di invito evita il pagamento",
+      "pendingDaysLabel": "Termine di pagamento (giorni)",
+      "pendingDaysDescription": "Gli account bloccati che non hanno ricevuto nulla vengono eliminati dopo questo termine",
+      "price": "Prezzo",
+      "confirmations": "Conferme richieste",
+      "xpub": "Chiave pubblica estesa (zpub / xpub)",
+      "xpubHint": "Chiave di account SegWit nativo (BIP84). Non incollare mai una chiave privata. Aumenta il gap limit del wallet perché veda tutti gli indirizzi.",
+      "esploraUrl": "API Esplora",
+      "moneroReady": "Wallet pronto, sincronizzato fino al blocco {height}",
+      "moneroMissing": "Monero richiede il servizio wallet incluso: riesegui l'installer accettando Monero, oppure imposta MONERO_WALLET_RPC_URL",
+      "solAddress": "Indirizzo di ricezione",
+      "solRpcUrl": "RPC Solana",
+      "saveFailed": "Impossibile salvare le impostazioni",
+      "pendingTitle": "Account bloccati",
+      "noPending": "Nessun account in attesa di pagamento",
+      "approve": "Sblocca",
+      "paidTitle": "Pagamenti recenti",
+      "noPaid": "Ancora nessun pagamento",
+      "manual": "manuale",
+      "moneroCreateIntro": "Il servizio wallet è attivo ma non ha ancora un wallet. Crea un wallet in sola lettura: vede i pagamenti in arrivo e non può spendere. La chiave di visualizzazione viene scritta solo nel file del wallet.",
+      "moneroAddress": "Indirizzo principale (inizia con 4)",
+      "moneroViewKey": "Chiave di visualizzazione privata",
+      "moneroRestoreHeight": "Altezza di ripristino",
+      "moneroRestoreHeightHint": "Blocco da cui iniziare la scansione: l'altezza attuale per un nuovo wallet (da 0 servono ore)",
+      "moneroCreate": "Crea il wallet in sola lettura"
+    }
+  }
+}

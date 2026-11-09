@@ -13,6 +13,10 @@ import {
   parseFooterLinks,
   type FooterLink,
 } from '../../shared/utils/footerLinks';
+import {
+  parsePaidRegistration,
+  type PaidRegistrationConfig,
+} from '../../shared/utils/paidRegistration';
 
 /**
  * Check if HTML content is effectively empty (just empty tags like <p></p> or whitespace)
@@ -78,6 +82,8 @@ export const SETTINGS_KEYS = {
   SHOUTBOX_SEEDED: 'shoutbox_seeded',
   // Theme, fonts, login design, images, text overrides (shared/utils/appearance.ts)
   APPEARANCE: 'appearance',
+  // Paid sign-up: JSON (shared/utils/paidRegistration.ts)
+  PAID_REGISTRATION: 'paid_registration',
 } as const;
 
 const settingsCache = new Map<
@@ -540,4 +546,15 @@ export async function getAppearance(): Promise<Appearance> {
 
 export async function setAppearance(appearance: Appearance): Promise<void> {
   await setSetting(SETTINGS_KEYS.APPEARANCE, JSON.stringify(appearance));
+}
+
+/**
+ * Paid registration (prices, receiving keys); falls back to the defaults
+ */
+export async function getPaidRegistration(): Promise<PaidRegistrationConfig> {
+  return parsePaidRegistration(await getSetting(SETTINGS_KEYS.PAID_REGISTRATION));
+}
+
+export async function setPaidRegistration(config: PaidRegistrationConfig): Promise<void> {
+  await setSetting(SETTINGS_KEYS.PAID_REGISTRATION, JSON.stringify(config));
 }

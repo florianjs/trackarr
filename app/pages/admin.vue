@@ -152,6 +152,12 @@ const menuItems = computed(() => [
     description: t('bonus.adminNav.description'),
   },
   {
+    label: t('payments.adminNav.label'),
+    path: '/admin/payments',
+    icon: 'ph:currency-btc',
+    description: t('payments.adminNav.description'),
+  },
+  {
     label: t('shoutbox.adminNav.label'),
     path: '/admin/shoutbox',
     icon: 'ph:chat-teardrop-dots',
