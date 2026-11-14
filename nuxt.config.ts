@@ -53,6 +53,8 @@ export default defineNuxtConfig({
     // Sealed session cookies are stateless: bound their lifetime so a stolen
     // or stale cookie does not stay valid forever.
     session: {
+      // Set at runtime through NUXT_SESSION_PASSWORD (same default as nuxt-auth-utils)
+      password: '',
       maxAge: 60 * 60 * 24 * 7,
       cookie: {
         sameSite: 'lax',
