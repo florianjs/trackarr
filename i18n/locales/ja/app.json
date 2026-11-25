@@ -220,7 +220,10 @@
       "deleteTorrent": "トレントを削除",
       "confirmDelete": "「{name}」を削除しますか？",
       "deleteFailed": "トレントの削除に失敗しました",
-      "pending": "承認待ち"
+      "pending": "承認待ち",
+      "selectAll": "すべて選択",
+      "select": "{name} を選択",
+      "approveFailed": "トーレントを承認できませんでした"
     },
     "list": {
       "title": "トレント",
@@ -238,7 +241,20 @@
       "sortName": "名前",
       "noMatch": "この条件に一致するトレントはありません。",
       "previous": "前のページ",
-      "next": "次のページ"
+      "next": "次のページ",
+      "pendingOnly": "承認待ちのみ",
+      "selected": "選択中: {count}",
+      "moveTo": "カテゴリへ移動",
+      "applyCategory": "移動",
+      "clearSelection": "選択を解除",
+      "bulkDone": {
+        "approve": "承認したトーレント: {count}",
+        "delete": "削除したトーレント: {count}",
+        "category": "移動したトーレント: {count}"
+      },
+      "bulkFailed": "一括操作に失敗しました",
+      "confirmBulkDelete": "選択した {count} 件のトーレントを削除しますか？元に戻せません。",
+      "bulkPartial": "未承認のまま保留中（再試行してください）: {count}"
     },
     "detail": {
       "backToIndex": "すべてのトレント",
@@ -268,7 +284,12 @@
       "commentFailed": "コメントを投稿できませんでした。",
       "confirmDeleteComment": "このコメントを削除しますか？",
       "details": "詳細",
-      "commentDeleteFailed": "コメントを削除できませんでした。"
+      "commentDeleteFailed": "コメントを削除できませんでした。",
+      "pendingReview": "このトーレントはスタッフの承認待ちで、まだ一覧に表示されていません。",
+      "rejectReason": "理由（任意）",
+      "confirmReject": "このトーレントを却下して削除しますか？",
+      "reviewFailed": "審査に失敗しました",
+      "edited": "編集済み"
     }
   },
   "search": {
@@ -361,7 +382,13 @@
       "replyPlaceholder": "返信をここに入力...",
       "posting": "投稿中...",
       "postReply": "返信する",
-      "locked": "このトピックはロックされています。返信できません。"
+      "locked": "このトピックはロックされています。返信できません。",
+      "editTopic": "トピックを編集",
+      "topicTitle": "トピックのタイトル",
+      "moveTo": "カテゴリへ移動",
+      "editPost": "投稿を編集",
+      "edited": "編集済み",
+      "editFailed": "変更を保存できませんでした"
     }
   },
   "users": {
@@ -378,6 +405,104 @@
       "uncategorized": "未分類",
       "pageTitle": "{username} - プロフィール",
       "pageTitleFallback": "ユーザープロフィール"
+    },
+    "moderation": {
+      "title": "モデレーション",
+      "staffOnly": "スタッフに対して操作できるのは管理者のみです。",
+      "reason": "理由",
+      "reasonPlaceholder": "理由（ログに記録されます）",
+      "reasonOptional": "理由（任意）",
+      "failed": "操作に失敗しました",
+      "status": {
+        "active": "有効",
+        "banned": "BAN 済み",
+        "deleted": "削除済みアカウント",
+        "muted": "{until} までミュート",
+        "hold": "保留中（IP 共有）",
+        "payment": "支払い待ち"
+      },
+      "ban": {
+        "action": "BAN",
+        "hint": "ログインとトラッカーを停止し、セッションを終了して最後の IP を BAN します。",
+        "confirm": "{name} を BAN",
+        "done": "{name} を BAN しました"
+      },
+      "unban": {
+        "action": "BAN 解除",
+        "hint": "{name} は再びログインでき、最後の IP の BAN も解除されます。",
+        "confirm": "BAN 解除",
+        "done": "{name} の BAN を解除しました"
+      },
+      "mute": {
+        "action": "シャウトボックスでミュート",
+        "duration": "期間",
+        "hour": "1 時間",
+        "day": "1 日",
+        "week": "7 日",
+        "month": "30 日",
+        "confirm": "ミュート",
+        "done": "{name} をミュートしました"
+      },
+      "unmute": {
+        "action": "ミュート解除",
+        "hint": "{name} は再びシャウトボックスに投稿できます。",
+        "confirm": "ミュート解除",
+        "done": "{name} のミュートを解除しました"
+      },
+      "hold": {
+        "action": "IP 保留を解除",
+        "hint": "このアカウントは他のアカウントと IP を共有しています。解除すると今後チェック対象外になります。",
+        "noAppeal": "まだ申し立てはありません。",
+        "confirm": "承認して解除",
+        "done": "{name} の保留を解除しました"
+      },
+      "avatar": {
+        "action": "アバターを削除",
+        "hint": "{name} のアバターを削除します。新しいものはアップロードできます。",
+        "confirm": "削除",
+        "done": "{name} のアバターを削除しました"
+      },
+      "sessions": {
+        "action": "すべてのセッションを終了",
+        "hint": "{name} はすべての端末からログアウトされ、再ログインが必要になります。",
+        "confirm": "ログアウトさせる",
+        "done": "{name} をすべての端末からログアウトさせました"
+      },
+      "edit": {
+        "action": "編集",
+        "username": "ユーザー名",
+        "invites": "残り招待数",
+        "invitesLeft": "招待: {count}",
+        "done": "{name} のアカウントを更新しました"
+      },
+      "roles": {
+        "action": "ロール",
+        "moderator": "モデレーター",
+        "done": "{name} のロールを更新しました"
+      },
+      "ratio": {
+        "action": "比率"
+      },
+      "bonus": {
+        "action": "ボーナスポイント",
+        "amount": "ポイント (+/-)",
+        "points": "{points} pt",
+        "confirm": "適用",
+        "done": "{name} のボーナスを更新しました"
+      },
+      "passkey": {
+        "action": "パスキーを再発行",
+        "hint": "{name} のトーレントは再ダウンロードするまでアナウンスできなくなります。アナウンス URL 漏洩時に使用します。",
+        "confirm": "再発行",
+        "done": "{name} のパスキーを再発行しました"
+      },
+      "delete": {
+        "action": "アカウントを削除",
+        "hint": "このアカウントはログインもトラッカーも使えなくなり、ユーザー名は解放されます。トーレント、投稿、コメントは匿名名で残ります。元に戻せません。",
+        "typeName": "確認のため {name} と入力",
+        "confirm": "完全に削除",
+        "done": "{name} のアカウントを削除しました"
+      }
     }
   },
   "invites": {

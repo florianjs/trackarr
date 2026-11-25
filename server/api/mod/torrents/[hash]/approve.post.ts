@@ -1,6 +1,6 @@
 import { db, schema } from '~~/server/db';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
-import { awardUploadBonus } from '~~/server/utils/bonus';
+import { creditUploadBonus } from '~~/server/utils/bonus';
 import { eq } from 'drizzle-orm';
 import { invalidateTrackerTorrents } from '~~/server/tracker/client';
 
@@ -16,18 +16,23 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Approve the torrent
-  const [approvedTorrent] = await db
-    .update(schema.torrents)
-    .set({ isApproved: true })
-    .where(eq(schema.torrents.infoHash, hash.toLowerCase()))
-    .returning({
-      id: schema.torrents.id,
-      infoHash: schema.torrents.infoHash,
-      name: schema.torrents.name,
-      isApproved: schema.torrents.isApproved,
-      uploaderId: schema.torrents.uploaderId,
-    });
+  // Approve and pay the upload bonus together: if the credit fails, the
+  // torrent stays pending and the approval can be retried
+  const approvedTorrent = await db.transaction(async (tx) => {
+    const [row] = await tx
+      .update(schema.torrents)
+      .set({ isApproved: true })
+      .where(eq(schema.torrents.infoHash, hash.toLowerCase()))
+      .returning({
+        id: schema.torrents.id,
+        infoHash: schema.torrents.infoHash,
+        name: schema.torrents.name,
+        isApproved: schema.torrents.isApproved,
+        uploaderId: schema.torrents.uploaderId,
+      });
+    if (row) await creditUploadBonus(tx, row);
+    return row;
+  });
 
   if (!approvedTorrent) {
     throw createError({
@@ -35,10 +40,6 @@ export default defineEventHandler(async (event) => {
       message: 'Torrent not found',
     });
   }
-
-  await awardUploadBonus(db, approvedTorrent).catch((err) =>
-    console.error('[Bonus] Upload bonus failed:', err)
-  );
 
   // Tracker caches the row for a few seconds
   invalidateTrackerTorrents();

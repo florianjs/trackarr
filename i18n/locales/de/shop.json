@@ -87,7 +87,27 @@
         "cancelBounty": "Bounty abbrechen",
         "confirmCancel": "Diese Bounty abbrechen? Alle Beiträge werden erstattet.",
         "confirmAccept": "Diesen Torrent annehmen? Die Belohnung wird an seinen Uploader ausgezahlt.",
-        "filledBy": "Erfüllt von {user}"
+        "filledBy": "Erfüllt von {user}",
+        "delete": "Löschen",
+        "confirmDelete": "Dieses Kopfgeld löschen? Noch gebundene Punkte gehen an die Unterstützer zurück."
+      },
+      "bulk": {
+        "selectAll": "Alle auswählen",
+        "select": "{title} auswählen",
+        "selected": "Ausgewählt: {count}",
+        "cancel": "Abbrechen und erstatten",
+        "delete": "Löschen",
+        "clear": "Auswahl aufheben",
+        "confirm": {
+          "cancel": "Die {count} ausgewählten Kopfgelder abbrechen? Beiträge werden erstattet.",
+          "delete": "Die {count} ausgewählten Kopfgelder löschen? Gebundene Punkte werden erstattet. Nicht umkehrbar."
+        },
+        "done": {
+          "cancel": "Abgebrochene Kopfgelder: {count}",
+          "delete": "Gelöschte Kopfgelder: {count}"
+        },
+        "skipped": "Übersprungen (bereits geschlossen oder geändert): {count}",
+        "failed": "Sammelaktion fehlgeschlagen"
       }
     },
     "admin": {

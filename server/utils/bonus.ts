@@ -74,47 +74,18 @@ export function resolvePurchase(
 // Bounties
 // ============================================================================
 
-export type BountyStatus = 'open' | 'claimed' | 'filled' | 'cancelled';
-export type BountyAction = 'contribute' | 'fill' | 'accept' | 'reject' | 'cancel';
-
-export interface BountyActor {
-  userId: string;
-  isStaff: boolean;
-}
-
-/**
- * Who may do what on a bounty, given its state.
- * - open: anyone contributes or submits a fill; requester/staff cancel
- * - claimed (fill pending review): requester/staff accept or reject
- * - filled / cancelled: final
- */
-export function canBountyAction(
-  bounty: { status: string; requesterId: string },
-  action: BountyAction,
-  actor: BountyActor
-): boolean {
-  const isOwnerOrStaff = actor.userId === bounty.requesterId || actor.isStaff;
-
-  switch (action) {
-    case 'contribute':
-      return bounty.status === 'open';
-    case 'fill':
-      return bounty.status === 'open';
-    case 'accept':
-    case 'reject':
-      return bounty.status === 'claimed' && isOwnerOrStaff;
-    case 'cancel':
-      return bounty.status === 'open' && isOwnerOrStaff;
-    default:
-      return false;
-  }
-}
+export {
+  canBountyAction,
+  type BountyAction,
+  type BountyActor,
+  type BountyStatus,
+} from '../../shared/utils/bounties';
 
 // ============================================================================
 // Balance changes
 // ============================================================================
 
-type Tx = Parameters<Parameters<typeof Db.transaction>[0]>[0];
+export type Tx = Parameters<Parameters<typeof Db.transaction>[0]>[0];
 
 export class InsufficientPointsError extends Error {
   constructor() {
@@ -192,6 +163,19 @@ export async function awardUploadBonus(
   torrent: { id: string; infoHash: string; uploaderId: string | null; name: string }
 ): Promise<void> {
   if (!torrent.uploaderId) return;
+  await database.transaction((tx) => creditUploadBonus(tx, torrent));
+}
+
+/**
+ * Same, inside the caller's transaction: approving a torrent and paying its
+ * upload bonus commit together, so a failed credit leaves it pending and the
+ * approval can simply be retried.
+ */
+export async function creditUploadBonus(
+  tx: Tx,
+  torrent: { id: string; infoHash: string; uploaderId: string | null; name: string }
+): Promise<void> {
+  if (!torrent.uploaderId) return;
 
   const { getBonusSettings } = await import('./settings');
   const settings = await getBonusSettings();
@@ -199,25 +183,23 @@ export async function awardUploadBonus(
 
   // Keyed by info hash: deleting and re-uploading the same torrent creates a
   // new row id and must not pay again. Older entries were keyed by row id.
-  await database.transaction(async (tx) => {
-    const [already] = await tx
-      .select({ id: bonusTransactions.id })
-      .from(bonusTransactions)
-      .where(
-        and(
-          eq(bonusTransactions.type, 'upload'),
-          inArray(bonusTransactions.refId, [torrent.infoHash, torrent.id])
-        )
+  const [already] = await tx
+    .select({ id: bonusTransactions.id })
+    .from(bonusTransactions)
+    .where(
+      and(
+        eq(bonusTransactions.type, 'upload'),
+        inArray(bonusTransactions.refId, [torrent.infoHash, torrent.id])
       )
-      .limit(1);
-    if (already) return;
+    )
+    .limit(1);
+  if (already) return;
 
-    await changeBonusPoints(tx, {
-      userId: torrent.uploaderId!,
-      amount: settings.pointsPerUpload,
-      type: 'upload',
-      description: torrent.name,
-      refId: torrent.infoHash,
-    });
+  await changeBonusPoints(tx, {
+    userId: torrent.uploaderId,
+    amount: settings.pointsPerUpload,
+    type: 'upload',
+    description: torrent.name,
+    refId: torrent.infoHash,
   });
 }

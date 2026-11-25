@@ -1,7 +1,7 @@
 import type { H3Event } from 'h3';
 import { eq } from 'drizzle-orm';
 import { db, schema } from '../db';
-import { canBountyAction, type BountyAction } from './bonus';
+import { canBountyAction, changeBonusPoints, type BountyAction, type Tx } from './bonus';
 import { validateParam, uuidSchema } from './schemas';
 
 /**
@@ -39,4 +39,25 @@ export function stateChanged(): never {
     statusCode: 409,
     message: 'Bounty changed in the meantime, please reload',
   });
+}
+
+/**
+ * Give every contribution back (cancel, or staff deleting a bounty that was
+ * never paid out). Run inside the transaction that closes the bounty.
+ */
+export async function refundContributions(tx: Tx, bounty: { id: string; title: string }) {
+  const contributions = await tx
+    .select({ userId: schema.bountyContributions.userId, amount: schema.bountyContributions.amount })
+    .from(schema.bountyContributions)
+    .where(eq(schema.bountyContributions.bountyId, bounty.id));
+
+  for (const c of contributions) {
+    await changeBonusPoints(tx, {
+      userId: c.userId,
+      amount: c.amount,
+      type: 'bounty_refund',
+      description: bounty.title,
+      refId: bounty.id,
+    });
+  }
 }

@@ -220,7 +220,10 @@
       "deleteTorrent": "Torrent löschen",
       "confirmDelete": "„{name}“ löschen?",
       "deleteFailed": "Torrent konnte nicht gelöscht werden",
-      "pending": "Ausstehend"
+      "pending": "Ausstehend",
+      "selectAll": "Alle auswählen",
+      "select": "{name} auswählen",
+      "approveFailed": "Torrent konnte nicht freigegeben werden"
     },
     "list": {
       "title": "Torrents",
@@ -238,7 +241,20 @@
       "sortName": "Name",
       "noMatch": "Kein Torrent entspricht diesen Filtern.",
       "previous": "Vorherige Seite",
-      "next": "Nächste Seite"
+      "next": "Nächste Seite",
+      "pendingOnly": "Nur ausstehende",
+      "selected": "Ausgewählt: {count}",
+      "moveTo": "Verschieben nach…",
+      "applyCategory": "Verschieben",
+      "clearSelection": "Auswahl aufheben",
+      "bulkDone": {
+        "approve": "Freigegebene Torrents: {count}",
+        "delete": "Gelöschte Torrents: {count}",
+        "category": "Verschobene Torrents: {count}"
+      },
+      "bulkFailed": "Sammelaktion fehlgeschlagen",
+      "confirmBulkDelete": "Die {count} ausgewählten Torrents löschen? Nicht umkehrbar.",
+      "bulkPartial": "Nicht freigegeben, weiter ausstehend (erneut versuchen): {count}"
     },
     "detail": {
       "backToIndex": "Alle Torrents",
@@ -268,7 +284,12 @@
       "commentFailed": "Der Kommentar konnte nicht gesendet werden.",
       "confirmDeleteComment": "Diesen Kommentar löschen?",
       "details": "Details",
-      "commentDeleteFailed": "Der Kommentar konnte nicht gelöscht werden."
+      "commentDeleteFailed": "Der Kommentar konnte nicht gelöscht werden.",
+      "pendingReview": "Dieser Torrent wartet auf Freigabe durch das Team und ist noch nicht gelistet.",
+      "rejectReason": "Grund (optional)",
+      "confirmReject": "Diesen Torrent ablehnen und löschen?",
+      "reviewFailed": "Prüfung fehlgeschlagen",
+      "edited": "bearbeitet"
     }
   },
   "search": {
@@ -361,7 +382,13 @@
       "replyPlaceholder": "Schreib hier deine Antwort...",
       "posting": "Wird gesendet...",
       "postReply": "Antworten",
-      "locked": "Dieses Thema ist gesperrt. Du kannst nicht antworten."
+      "locked": "Dieses Thema ist gesperrt. Du kannst nicht antworten.",
+      "editTopic": "Thema bearbeiten",
+      "topicTitle": "Titel des Themas",
+      "moveTo": "In Kategorie verschieben",
+      "editPost": "Beitrag bearbeiten",
+      "edited": "bearbeitet",
+      "editFailed": "Änderung konnte nicht gespeichert werden"
     }
   },
   "users": {
@@ -378,6 +405,104 @@
       "uncategorized": "Ohne Kategorie",
       "pageTitle": "{username} - Profil",
       "pageTitleFallback": "Benutzerprofil"
+    },
+    "moderation": {
+      "title": "Moderation",
+      "staffOnly": "Nur ein Admin kann gegen Teammitglieder vorgehen.",
+      "reason": "Grund",
+      "reasonPlaceholder": "Grund (wird protokolliert)",
+      "reasonOptional": "Grund (optional)",
+      "failed": "Aktion fehlgeschlagen",
+      "status": {
+        "active": "Aktiv",
+        "banned": "Gesperrt",
+        "deleted": "Gelöschtes Konto",
+        "muted": "Stummgeschaltet bis {until}",
+        "hold": "Gesperrt (geteilte IP)",
+        "payment": "Zahlung ausstehend"
+      },
+      "ban": {
+        "action": "Sperren",
+        "hint": "Sperrt Anmeldung und Tracker, meldet das Mitglied ab und sperrt seine letzte IP.",
+        "confirm": "{name} sperren",
+        "done": "{name} ist gesperrt"
+      },
+      "unban": {
+        "action": "Entsperren",
+        "hint": "{name} kann sich wieder anmelden, die letzte IP wird entsperrt.",
+        "confirm": "Entsperren",
+        "done": "{name} ist entsperrt"
+      },
+      "mute": {
+        "action": "In der Shoutbox stummschalten",
+        "duration": "Dauer",
+        "hour": "1 Stunde",
+        "day": "1 Tag",
+        "week": "7 Tage",
+        "month": "30 Tage",
+        "confirm": "Stummschalten",
+        "done": "{name} ist stummgeschaltet"
+      },
+      "unmute": {
+        "action": "Stummschaltung aufheben",
+        "hint": "{name} kann wieder in der Shoutbox schreiben.",
+        "confirm": "Aufheben",
+        "done": "{name} kann wieder schreiben"
+      },
+      "hold": {
+        "action": "IP-Sperre aufheben",
+        "hint": "Dieses Konto teilt seine IP mit einem anderen. Das Aufheben nimmt es dauerhaft von der Prüfung aus.",
+        "noAppeal": "Noch kein Einspruch eingereicht.",
+        "confirm": "Genehmigen und aufheben",
+        "done": "Sperre für {name} aufgehoben"
+      },
+      "avatar": {
+        "action": "Avatar entfernen",
+        "hint": "Der Avatar von {name} wird gelöscht. Ein neuer kann hochgeladen werden.",
+        "confirm": "Entfernen",
+        "done": "Avatar von {name} entfernt"
+      },
+      "sessions": {
+        "action": "Überall abmelden",
+        "hint": "{name} wird auf allen Geräten abgemeldet und muss sich neu anmelden.",
+        "confirm": "Abmelden",
+        "done": "{name} ist überall abgemeldet"
+      },
+      "edit": {
+        "action": "Bearbeiten",
+        "username": "Benutzername",
+        "invites": "Verbleibende Einladungen",
+        "invitesLeft": "Einladungen: {count}",
+        "done": "Konto von {name} aktualisiert"
+      },
+      "roles": {
+        "action": "Rollen",
+        "moderator": "Moderator",
+        "done": "Rollen von {name} aktualisiert"
+      },
+      "ratio": {
+        "action": "Ratio"
+      },
+      "bonus": {
+        "action": "Bonuspunkte",
+        "amount": "Punkte (+/-)",
+        "points": "{points} Pkt.",
+        "confirm": "Anwenden",
+        "done": "Bonus von {name} aktualisiert"
+      },
+      "passkey": {
+        "action": "Passkey zurücksetzen",
+        "hint": "Torrents von {name} melden sich erst nach erneutem Download wieder. Nach einer geleakten Announce-URL nutzen.",
+        "confirm": "Zurücksetzen",
+        "done": "Passkey von {name} zurückgesetzt"
+      },
+      "delete": {
+        "action": "Konto löschen",
+        "hint": "Das Konto kann sich nicht mehr anmelden oder den Tracker nutzen, der Name wird frei. Torrents, Beiträge und Kommentare bleiben unter einem anonymen Namen. Nicht umkehrbar.",
+        "typeName": "Zur Bestätigung {name} eingeben",
+        "confirm": "Endgültig löschen",
+        "done": "Konto von {name} gelöscht"
+      }
     }
   },
   "invites": {

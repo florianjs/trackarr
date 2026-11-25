@@ -41,7 +41,37 @@
               class="text-text-muted text-xl"
             />
             {{ topic.title }}
+            <button
+              v-if="canEditTopic"
+              type="button"
+              class="p-1 rounded text-text-muted hover:text-text-primary"
+              :title="t('forum.topic.editTopic')"
+              :aria-label="t('forum.topic.editTopic')"
+              @click="startTopicEdit"
+            >
+              <Icon name="ph:pencil-simple" class="block text-lg" />
+            </button>
           </h1>
+          <form v-if="editingTopic" class="mt-3 flex flex-wrap items-center gap-2" @submit.prevent="saveTopicEdit">
+            <input
+              v-model="topicDraft.title"
+              type="text"
+              maxlength="200"
+              required
+              class="input text-sm flex-1 min-w-64"
+              :aria-label="t('forum.topic.topicTitle')"
+            />
+            <select
+              v-if="canMove"
+              v-model="topicDraft.categoryId"
+              class="input text-sm w-auto"
+              :aria-label="t('forum.topic.moveTo')"
+            >
+              <option v-for="c in categories" :key="c.id" :value="c.id">{{ c.name }}</option>
+            </select>
+            <button type="button" class="btn btn-ghost text-xs" @click="editingTopic = false">{{ t('common.cancel') }}</button>
+            <button type="submit" class="btn btn-primary text-xs" :disabled="!topicDraft.title.trim()">{{ t('common.save') }}</button>
+          </form>
         </div>
         <div v-if="user?.isAdmin || user?.isModerator" class="flex gap-2">
           <button
@@ -106,7 +136,19 @@
             <div
               class="text-xs text-text-muted mb-3 flex justify-between items-center"
             >
-              <span>{{ t('forum.topic.postedOn', { date: formatDate(post.createdAt) }) }}</span>
+              <span>
+                {{ t('forum.topic.postedOn', { date: formatDate(post.createdAt) }) }}
+                <span v-if="post.updatedAt !== post.createdAt">· {{ t('forum.topic.edited') }}</span>
+              </span>
+              <button
+                v-if="canEditPost(post)"
+                @click="startPostEdit(post)"
+                class="ml-auto opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity text-text-muted hover:text-text-primary p-1"
+                :title="t('forum.topic.editPost')"
+                :aria-label="t('forum.topic.editPost')"
+              >
+                <Icon name="ph:pencil-simple" class="text-lg" />
+              </button>
               <button
                 v-if="user?.isAdmin || user?.isModerator"
                 @click="handleDeletePost(post.id)"
@@ -116,7 +158,20 @@
                 <Icon name="ph:trash" class="text-lg" />
               </button>
             </div>
+            <form v-if="editingPost === post.id" class="space-y-2 flex-1" @submit.prevent="savePostEdit(post.id)">
+              <textarea
+                v-model="postDraft"
+                maxlength="50000"
+                class="input w-full h-48 resize-y text-sm"
+                :aria-label="t('forum.topic.editPost')"
+              />
+              <div class="flex justify-end gap-2">
+                <button type="button" class="btn btn-ghost text-xs" @click="editingPost = null">{{ t('common.cancel') }}</button>
+                <button type="submit" class="btn btn-primary text-xs" :disabled="!postDraft.trim()">{{ t('common.save') }}</button>
+              </div>
+            </form>
             <div
+              v-else
               class="text-sm text-text-secondary leading-relaxed whitespace-pre-wrap flex-1"
             >
               {{ post.content }}
@@ -161,7 +216,10 @@
 </template>
 
 <script setup lang="ts">
+import { canEditContent, canMoveTopic } from '~~/shared/utils/contentRights';
+
 const { t, locale } = useI18n();
+const notifications = useNotificationStore();
 const route = useRoute();
 const { user } = useUserSession();
 const {
@@ -191,6 +249,70 @@ async function handlePostReply() {
     console.error(e);
   } finally {
     posting.value = false;
+  }
+}
+
+// Editing (authors while unlocked, staff always; moving is staff only)
+const canEditTopic = computed(() => !!topic.value && canEditContent(user.value, topic.value, { locked: topic.value.isLocked }));
+const canMove = computed(() => canMoveTopic(user.value));
+const canEditPost = (post: { authorId: string }) =>
+  canEditContent(user.value, post, { locked: topic.value?.isLocked });
+
+const { data: categories } = await useFetch<{ id: string; name: string }[]>('/api/forum/categories', {
+  default: () => [],
+  immediate: canMove.value,
+});
+
+// Each opening of an editor is a session: a slow save only closes the
+// editor it was sent from, never one reopened meanwhile
+let editSession = 0;
+
+const editingTopic = ref(false);
+const topicDraft = reactive({ title: '', categoryId: '' });
+
+function startTopicEdit() {
+  if (!topic.value) return;
+  editSession++;
+  topicDraft.title = topic.value.title;
+  topicDraft.categoryId = topic.value.categoryId;
+  editingTopic.value = !editingTopic.value;
+}
+
+async function saveTopicEdit() {
+  if (!topic.value) return;
+  const session = editSession;
+  try {
+    await $fetch(`/api/forum/topics/${topic.value.id}`, {
+      method: 'PATCH',
+      body: {
+        title: topicDraft.title.trim(),
+        ...(canMove.value && topicDraft.categoryId !== topic.value.categoryId && { categoryId: topicDraft.categoryId }),
+      },
+    });
+    if (session === editSession) editingTopic.value = false;
+    await refresh();
+  } catch (e) {
+    notifications.error(t('forum.topic.editFailed'), (e as { data?: { message?: string } }).data?.message);
+  }
+}
+
+const editingPost = ref<string | null>(null);
+const postDraft = ref('');
+
+function startPostEdit(post: { id: string; content: string }) {
+  editSession++;
+  editingPost.value = post.id;
+  postDraft.value = post.content;
+}
+
+async function savePostEdit(id: string) {
+  const session = editSession;
+  try {
+    await $fetch(`/api/forum/posts/${id}`, { method: 'PATCH', body: { content: postDraft.value } });
+    if (session === editSession) editingPost.value = null;
+    await refresh();
+  } catch (e) {
+    notifications.error(t('forum.topic.editFailed'), (e as { data?: { message?: string } }).data?.message);
   }
 }
 

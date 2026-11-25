@@ -87,6 +87,14 @@
         </div>
       </div>
 
+      <UserModerationPanel
+        v-if="canModerate"
+        :key="user.id"
+        :user-id="user.id"
+        :username="user.username"
+        @changed="refreshProfile"
+      />
+
       <!-- Stats Grid -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <div class="card">
@@ -231,6 +239,7 @@
 
 <script setup lang="ts">
 import { formatSize, formatDate, formatAge } from '~/utils/format';
+import { moderationRights } from '~~/shared/utils/userModeration';
 
 interface UserProfile {
   id: string;
@@ -271,7 +280,13 @@ const {
   data: user,
   pending,
   error,
+  refresh: refreshProfile,
 } = await useFetch<UserProfile>(() => `/api/users/${userId.value}`);
+
+// Staff tools, never on your own profile (rules re-checked server-side)
+const canModerate = computed(
+  () => !!user.value && moderationRights(me.value, user.value).view
+);
 
 // Fetch user uploads with pagination
 const uploadsPage = ref(1);

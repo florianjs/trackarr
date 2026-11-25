@@ -220,7 +220,10 @@
       "deleteTorrent": "Eliminar torrent",
       "confirmDelete": "¿Eliminar \"{name}\"?",
       "deleteFailed": "No se pudo eliminar el torrent",
-      "pending": "Pendiente"
+      "pending": "Pendiente",
+      "selectAll": "Seleccionar todo",
+      "select": "Seleccionar {name}",
+      "approveFailed": "No se pudo aprobar el torrent"
     },
     "list": {
       "title": "Torrents",
@@ -238,7 +241,20 @@
       "sortName": "Nombre",
       "noMatch": "Ningún torrent coincide con estos filtros.",
       "previous": "Página anterior",
-      "next": "Página siguiente"
+      "next": "Página siguiente",
+      "pendingOnly": "Solo pendientes",
+      "selected": "Seleccionados: {count}",
+      "moveTo": "Mover a…",
+      "applyCategory": "Mover",
+      "clearSelection": "Quitar selección",
+      "bulkDone": {
+        "approve": "Torrents aprobados: {count}",
+        "delete": "Torrents eliminados: {count}",
+        "category": "Torrents movidos: {count}"
+      },
+      "bulkFailed": "La acción en lote falló",
+      "confirmBulkDelete": "¿Eliminar los {count} torrents seleccionados? No se puede deshacer.",
+      "bulkPartial": "No aprobados, siguen pendientes (reintenta): {count}"
     },
     "detail": {
       "backToIndex": "Todos los torrents",
@@ -268,7 +284,12 @@
       "commentFailed": "No se pudo publicar el comentario.",
       "confirmDeleteComment": "¿Eliminar este comentario?",
       "details": "Detalles",
-      "commentDeleteFailed": "No se pudo eliminar el comentario."
+      "commentDeleteFailed": "No se pudo eliminar el comentario.",
+      "pendingReview": "Este torrent espera la aprobación del equipo y aún no aparece en la lista.",
+      "rejectReason": "Motivo (opcional)",
+      "confirmReject": "¿Rechazar y eliminar este torrent?",
+      "reviewFailed": "La revisión falló",
+      "edited": "editado"
     }
   },
   "search": {
@@ -361,7 +382,13 @@
       "replyPlaceholder": "Escribe aquí tu respuesta...",
       "posting": "Publicando...",
       "postReply": "Publicar respuesta",
-      "locked": "Este tema está cerrado. No puedes responder."
+      "locked": "Este tema está cerrado. No puedes responder.",
+      "editTopic": "Editar tema",
+      "topicTitle": "Título del tema",
+      "moveTo": "Mover a la categoría",
+      "editPost": "Editar mensaje",
+      "edited": "editado",
+      "editFailed": "No se pudo guardar el cambio"
     }
   },
   "users": {
@@ -378,6 +405,104 @@
       "uncategorized": "Sin categoría",
       "pageTitle": "{username} - Perfil",
       "pageTitleFallback": "Perfil de usuario"
+    },
+    "moderation": {
+      "title": "Moderación",
+      "staffOnly": "Solo un admin puede actuar sobre un miembro del equipo.",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Motivo (se guarda en el registro)",
+      "reasonOptional": "Motivo (opcional)",
+      "failed": "La acción falló",
+      "status": {
+        "active": "Activo",
+        "banned": "Baneado",
+        "deleted": "Cuenta eliminada",
+        "muted": "Silenciado hasta {until}",
+        "hold": "En espera (IP compartida)",
+        "payment": "Pago pendiente"
+      },
+      "ban": {
+        "action": "Banear",
+        "hint": "Bloquea el acceso y el tracker, cierra sus sesiones y banea su última IP.",
+        "confirm": "Banear a {name}",
+        "done": "{name} ha sido baneado"
+      },
+      "unban": {
+        "action": "Desbanear",
+        "hint": "{name} podrá volver a entrar y su última IP se desbanea.",
+        "confirm": "Desbanear",
+        "done": "{name} ha sido desbaneado"
+      },
+      "mute": {
+        "action": "Silenciar en el chat",
+        "duration": "Duración",
+        "hour": "1 hora",
+        "day": "1 día",
+        "week": "7 días",
+        "month": "30 días",
+        "confirm": "Silenciar",
+        "done": "{name} ha sido silenciado"
+      },
+      "unmute": {
+        "action": "Quitar silencio",
+        "hint": "{name} podrá volver a escribir en el chat.",
+        "confirm": "Quitar silencio",
+        "done": "{name} puede volver a escribir"
+      },
+      "hold": {
+        "action": "Quitar bloqueo IP",
+        "hint": "Esta cuenta comparte IP con otra. Quitar el bloqueo la exime de la comprobación para siempre.",
+        "noAppeal": "Aún no ha enviado ninguna apelación.",
+        "confirm": "Aprobar y quitar",
+        "done": "Bloqueo quitado para {name}"
+      },
+      "avatar": {
+        "action": "Quitar avatar",
+        "hint": "Se borra el avatar de {name}. Podrá subir otro.",
+        "confirm": "Quitar",
+        "done": "Avatar de {name} quitado"
+      },
+      "sessions": {
+        "action": "Cerrar todas las sesiones",
+        "hint": "{name} sale de todos sus dispositivos y deberá volver a entrar.",
+        "confirm": "Cerrar sesiones",
+        "done": "{name} ha salido de todas las sesiones"
+      },
+      "edit": {
+        "action": "Editar",
+        "username": "Nombre de usuario",
+        "invites": "Invitaciones restantes",
+        "invitesLeft": "Invitaciones: {count}",
+        "done": "Cuenta de {name} actualizada"
+      },
+      "roles": {
+        "action": "Roles",
+        "moderator": "Moderador",
+        "done": "Roles de {name} actualizados"
+      },
+      "ratio": {
+        "action": "Ratio"
+      },
+      "bonus": {
+        "action": "Puntos bonus",
+        "amount": "Puntos (+/-)",
+        "points": "{points} pts",
+        "confirm": "Aplicar",
+        "done": "Bonus de {name} actualizado"
+      },
+      "passkey": {
+        "action": "Restablecer passkey",
+        "hint": "Los torrents de {name} dejan de anunciar hasta descargarlos de nuevo. Úsalo tras filtrarse la URL de anuncio.",
+        "confirm": "Restablecer",
+        "done": "Passkey de {name} restablecida"
+      },
+      "delete": {
+        "action": "Eliminar cuenta",
+        "hint": "La cuenta ya no podrá entrar ni usar el tracker y su nombre queda libre. Torrents, mensajes y comentarios se mantienen con un nombre anónimo. No se puede deshacer.",
+        "typeName": "Escribe {name} para confirmar",
+        "confirm": "Eliminar definitivamente",
+        "done": "Cuenta de {name} eliminada"
+      }
     }
   },
   "invites": {

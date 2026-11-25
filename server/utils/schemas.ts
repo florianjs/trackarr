@@ -4,6 +4,7 @@
  */
 
 import { z } from 'zod/v4';
+import { isReservedUsername } from '../../shared/utils/userModeration';
 
 // ============================================================================
 // Base Schemas
@@ -54,7 +55,9 @@ export const registerSchema = z.object({
     .regex(
       /^[a-zA-Z0-9_-]+$/,
       'Username can only contain letters, numbers, underscores, and hyphens'
-    ),
+    )
+    // Kept for deleted accounts
+    .refine((name) => !isReservedUsername(name), 'This username is reserved'),
   // ZKE fields - server never sees password
   authSalt: z.string().min(40, 'Invalid salt'),
   authVerifier: z.string().min(40, 'Invalid verifier'),
@@ -93,11 +96,14 @@ export const torrentQuerySchema = z.object({
   search: z.string().max(255).optional(),
   sortBy: z.enum(['uploaded', 'name', 'size']).default('uploaded'),
   order: z.enum(['asc', 'desc']).default('desc'),
+  // Staff: only torrents waiting for approval
+  pending: z.literal('1').optional(),
 });
 
 export const torrentCommentSchema = z.object({
   content: z
     .string()
+    .trim()
     .min(1, 'Comment cannot be empty')
     .max(5000, 'Comment too long'),
 });

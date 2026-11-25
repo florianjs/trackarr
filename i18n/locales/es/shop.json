@@ -87,7 +87,27 @@
         "cancelBounty": "Cancelar petición",
         "confirmCancel": "¿Cancelar esta petición? Se reembolsarán todas las aportaciones.",
         "confirmAccept": "¿Aceptar este torrent? La recompensa se pagará a quien lo subió.",
-        "filledBy": "Completada por {user}"
+        "filledBy": "Completada por {user}",
+        "delete": "Eliminar",
+        "confirmDelete": "¿Eliminar esta recompensa? Los puntos retenidos se devuelven a los contribuyentes."
+      },
+      "bulk": {
+        "selectAll": "Seleccionar todo",
+        "select": "Seleccionar {title}",
+        "selected": "Seleccionados: {count}",
+        "cancel": "Cancelar y reembolsar",
+        "delete": "Eliminar",
+        "clear": "Quitar selección",
+        "confirm": {
+          "cancel": "¿Cancelar las {count} recompensas seleccionadas? Las aportaciones se reembolsan.",
+          "delete": "¿Eliminar las {count} recompensas seleccionadas? Los puntos retenidos se reembolsan. No se puede deshacer."
+        },
+        "done": {
+          "cancel": "Recompensas canceladas: {count}",
+          "delete": "Recompensas eliminadas: {count}"
+        },
+        "skipped": "Omitidas (ya cerradas o modificadas): {count}",
+        "failed": "La acción en lote falló"
       }
     },
     "admin": {

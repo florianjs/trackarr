@@ -87,7 +87,27 @@
         "cancelBounty": "Annuler le bounty",
         "confirmCancel": "Annuler ce bounty ? Toutes les contributions seront remboursées.",
         "confirmAccept": "Valider ce torrent ? La récompense sera versée à son uploader.",
-        "filledBy": "Rempli par {user}"
+        "filledBy": "Rempli par {user}",
+        "delete": "Supprimer",
+        "confirmDelete": "Supprimer cette bounty ? Les points encore bloqués sont rendus aux contributeurs."
+      },
+      "bulk": {
+        "selectAll": "Tout sélectionner",
+        "select": "Sélectionner {title}",
+        "selected": "Sélection : {count}",
+        "cancel": "Annuler et rembourser",
+        "delete": "Supprimer",
+        "clear": "Vider la sélection",
+        "confirm": {
+          "cancel": "Annuler les {count} bounties sélectionnées ? Les contributions sont remboursées.",
+          "delete": "Supprimer les {count} bounties sélectionnées ? Les points bloqués sont remboursés. Action irréversible."
+        },
+        "done": {
+          "cancel": "Bounties annulées : {count}",
+          "delete": "Bounties supprimées : {count}"
+        },
+        "skipped": "Ignorées (déjà closes ou modifiées) : {count}",
+        "failed": "L'action groupée a échoué"
       }
     },
     "admin": {

@@ -220,7 +220,10 @@
       "deleteTorrent": "删除种子",
       "confirmDelete": "删除“{name}”？",
       "deleteFailed": "删除种子失败",
-      "pending": "待审核"
+      "pending": "待审核",
+      "selectAll": "全选",
+      "select": "选择 {name}",
+      "approveFailed": "无法批准种子"
     },
     "list": {
       "title": "种子",
@@ -238,7 +241,20 @@
       "sortName": "名称",
       "noMatch": "没有符合这些筛选条件的种子。",
       "previous": "上一页",
-      "next": "下一页"
+      "next": "下一页",
+      "pendingOnly": "仅待审核",
+      "selected": "已选：{count}",
+      "moveTo": "移动到…",
+      "applyCategory": "移动",
+      "clearSelection": "取消选择",
+      "bulkDone": {
+        "approve": "已批准种子：{count}",
+        "delete": "已删除种子：{count}",
+        "category": "已移动种子：{count}"
+      },
+      "bulkFailed": "批量操作失败",
+      "confirmBulkDelete": "删除所选的 {count} 个种子？此操作不可撤销。",
+      "bulkPartial": "未批准，仍待审核（请重试）：{count}"
     },
     "detail": {
       "backToIndex": "全部种子",
@@ -268,7 +284,12 @@
       "commentFailed": "评论发表失败。",
       "confirmDeleteComment": "删除这条评论？",
       "details": "详情",
-      "commentDeleteFailed": "评论删除失败。"
+      "commentDeleteFailed": "评论删除失败。",
+      "pendingReview": "此种子正在等待管理员审核，尚未公开。",
+      "rejectReason": "原因（可选）",
+      "confirmReject": "拒绝并删除此种子？",
+      "reviewFailed": "审核失败",
+      "edited": "已编辑"
     }
   },
   "search": {
@@ -361,7 +382,13 @@
       "replyPlaceholder": "在这里输入回复…",
       "posting": "发表中…",
       "postReply": "发表回复",
-      "locked": "该主题已锁定，无法回复。"
+      "locked": "该主题已锁定，无法回复。",
+      "editTopic": "编辑主题",
+      "topicTitle": "主题标题",
+      "moveTo": "移动到分类",
+      "editPost": "编辑帖子",
+      "edited": "已编辑",
+      "editFailed": "无法保存修改"
     }
   },
   "users": {
@@ -378,6 +405,104 @@
       "uncategorized": "未分类",
       "pageTitle": "{username} - 个人资料",
       "pageTitleFallback": "用户资料"
+    },
+    "moderation": {
+      "title": "管理",
+      "staffOnly": "只有管理员可以对工作人员进行操作。",
+      "reason": "原因",
+      "reasonPlaceholder": "原因（会记录在日志中）",
+      "reasonOptional": "原因（可选）",
+      "failed": "操作失败",
+      "status": {
+        "active": "正常",
+        "banned": "已封禁",
+        "deleted": "账户已删除",
+        "muted": "禁言至 {until}",
+        "hold": "待审核（共享 IP）",
+        "payment": "待付款"
+      },
+      "ban": {
+        "action": "封禁",
+        "hint": "阻止登录和 Tracker，注销该成员并封禁其最后的 IP。",
+        "confirm": "封禁 {name}",
+        "done": "已封禁 {name}"
+      },
+      "unban": {
+        "action": "解封",
+        "hint": "{name} 可以重新登录，其最后的 IP 也会解封。",
+        "confirm": "解封",
+        "done": "已解封 {name}"
+      },
+      "mute": {
+        "action": "在聊天框禁言",
+        "duration": "时长",
+        "hour": "1 小时",
+        "day": "1 天",
+        "week": "7 天",
+        "month": "30 天",
+        "confirm": "禁言",
+        "done": "已禁言 {name}"
+      },
+      "unmute": {
+        "action": "解除禁言",
+        "hint": "{name} 可以重新在聊天框发言。",
+        "confirm": "解除禁言",
+        "done": "已解除 {name} 的禁言"
+      },
+      "hold": {
+        "action": "解除 IP 冻结",
+        "hint": "该账户与其他账户共享 IP。解除后将永久免于此项检查。",
+        "noAppeal": "尚未提交申诉。",
+        "confirm": "批准并解除",
+        "done": "已解除 {name} 的冻结"
+      },
+      "avatar": {
+        "action": "移除头像",
+        "hint": "将删除 {name} 的头像，之后可重新上传。",
+        "confirm": "移除",
+        "done": "已移除 {name} 的头像"
+      },
+      "sessions": {
+        "action": "注销所有会话",
+        "hint": "{name} 将在所有设备上退出，需要重新登录。",
+        "confirm": "注销",
+        "done": "{name} 已在所有设备注销"
+      },
+      "edit": {
+        "action": "编辑",
+        "username": "用户名",
+        "invites": "剩余邀请",
+        "invitesLeft": "邀请：{count}",
+        "done": "已更新 {name} 的账户"
+      },
+      "roles": {
+        "action": "角色",
+        "moderator": "版主",
+        "done": "已更新 {name} 的角色"
+      },
+      "ratio": {
+        "action": "分享率"
+      },
+      "bonus": {
+        "action": "积分",
+        "amount": "积分 (+/-)",
+        "points": "{points} 积分",
+        "confirm": "应用",
+        "done": "已更新 {name} 的积分"
+      },
+      "passkey": {
+        "action": "重置 Passkey",
+        "hint": "{name} 的种子需重新下载后才能继续汇报。用于 Announce URL 泄露的情况。",
+        "confirm": "重置",
+        "done": "已重置 {name} 的 Passkey"
+      },
+      "delete": {
+        "action": "删除账户",
+        "hint": "该账户将无法登录或使用 Tracker，用户名将被释放。种子、帖子和评论会以匿名名称保留。此操作不可撤销。",
+        "typeName": "输入 {name} 以确认",
+        "confirm": "永久删除",
+        "done": "已删除 {name} 的账户"
+      }
     }
   },
   "invites": {

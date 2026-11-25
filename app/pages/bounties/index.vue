@@ -99,33 +99,63 @@
       />
     </div>
 
+    <!-- Staff: bulk actions on the selection -->
+    <div v-if="isStaff && data?.bounties.length" class="flex flex-wrap items-center gap-2 text-xs">
+      <label class="flex items-center gap-2 text-text-secondary">
+        <input
+          type="checkbox"
+          :checked="allSelected"
+          :indeterminate="selected.length > 0 && !allSelected"
+          @change="selected = toggleAll(selected, visibleIds)"
+        />{{ t('bonus.bounties.bulk.selectAll') }}
+      </label>
+      <template v-if="selected.length">
+        <span class="ml-auto text-text-muted num">{{ t('bonus.bounties.bulk.selected', { count: selected.length }) }}</span>
+        <button type="button" class="btn btn-secondary text-xs" :disabled="bulkBusy" @click="runBulk('cancel')">
+          <Icon name="ph:x-circle" aria-hidden="true" />{{ t('bonus.bounties.bulk.cancel') }}
+        </button>
+        <button type="button" class="btn btn-secondary text-xs hover:!text-danger" :disabled="bulkBusy" @click="runBulk('delete')">
+          <Icon name="ph:trash" aria-hidden="true" />{{ t('bonus.bounties.bulk.delete') }}
+        </button>
+        <button type="button" class="btn btn-ghost text-xs" @click="selected = []">{{ t('bonus.bounties.bulk.clear') }}</button>
+      </template>
+    </div>
+
     <!-- List -->
     <div class="card">
       <div class="card-body">
         <div v-if="data?.bounties.length" class="divide-y divide-border">
-          <NuxtLink
-            v-for="b in data.bounties"
-            :key="b.id"
-            :to="`/bounties/${b.id}`"
-            class="flex items-center justify-between gap-4 py-3 hover:bg-bg-tertiary/30 px-2 -mx-2 rounded transition-colors"
-          >
-            <div class="min-w-0">
-              <p class="text-sm font-medium text-text-primary truncate">{{ b.title }}</p>
-              <p class="text-sm text-text-muted mt-0.5">
-                {{ t('bonus.bounties.requestedBy', { user: b.requester?.username ?? '?' }) }}
-                <span v-if="b.category"> · {{ b.category.name }}</span>
-                · {{ new Date(b.createdAt).toLocaleDateString(locale) }}
-              </p>
-            </div>
-            <div class="text-right shrink-0">
-              <p class="text-sm font-medium num text-text-primary">
-                {{ t('bonus.points', { n: Math.floor(b.totalPoints).toLocaleString(locale) }) }}
-              </p>
-              <p class="text-xs text-text-muted">
-                {{ t(`bonus.bounties.status.${b.status}`) }}
-              </p>
-            </div>
-          </NuxtLink>
+          <div v-for="b in data.bounties" :key="b.id" class="flex items-center gap-3">
+            <input
+              v-if="isStaff"
+              type="checkbox"
+              class="shrink-0"
+              :checked="selected.includes(b.id)"
+              :aria-label="t('bonus.bounties.bulk.select', { title: b.title })"
+              @change="selected = toggleSelection(selected, b.id)"
+            />
+            <NuxtLink
+              :to="`/bounties/${b.id}`"
+              class="flex-1 min-w-0 flex items-center justify-between gap-4 py-3 hover:bg-bg-tertiary/30 px-2 -mx-2 rounded transition-colors"
+            >
+              <div class="min-w-0">
+                <p class="text-sm font-medium text-text-primary truncate">{{ b.title }}</p>
+                <p class="text-sm text-text-muted mt-0.5">
+                  {{ t('bonus.bounties.requestedBy', { user: b.requester?.username ?? '?' }) }}
+                  <span v-if="b.category"> · {{ b.category.name }}</span>
+                  · {{ new Date(b.createdAt).toLocaleDateString(locale) }}
+                </p>
+              </div>
+              <div class="text-right shrink-0">
+                <p class="text-sm font-medium num text-text-primary">
+                  {{ t('bonus.points', { n: Math.floor(b.totalPoints).toLocaleString(locale) }) }}
+                </p>
+                <p class="text-xs text-text-muted">
+                  {{ t(`bonus.bounties.status.${b.status}`) }}
+                </p>
+              </div>
+            </NuxtLink>
+          </div>
         </div>
         <p v-else class="text-xs text-text-muted">{{ t('bonus.bounties.empty') }}</p>
       </div>
@@ -134,6 +164,8 @@
 </template>
 
 <script setup lang="ts">
+import { toggleAll, toggleSelection } from '~~/shared/utils/bulk';
+
 import { refDebounced } from '@vueuse/core';
 
 interface BountyRow {
@@ -165,6 +197,38 @@ const { data, refresh } = await useFetch<{ bounties: BountyRow[] }>('/api/bounti
 });
 const { data: me } = await useFetch<{ rules: { bountyMinPoints: number } }>('/api/bonus/me');
 const { data: categories } = await useFetch<CategoryNode[]>('/api/categories', { default: () => [] });
+
+// Bulk actions (staff)
+const { user } = useUserSession();
+const notifications = useNotificationStore();
+const isStaff = computed(() => Boolean(user.value?.isAdmin || user.value?.isModerator));
+const selected = ref<string[]>([]);
+const bulkBusy = ref(false);
+const visibleIds = computed(() => data.value?.bounties.map((b) => b.id) ?? []);
+const allSelected = computed(() => visibleIds.value.length > 0 && visibleIds.value.every((id) => selected.value.includes(id)));
+watch([status, debouncedSearch], () => (selected.value = []));
+
+async function runBulk(action: 'cancel' | 'delete') {
+  if (!selected.value.length || bulkBusy.value) return;
+  if (!confirm(t(`bonus.bounties.bulk.confirm.${action}`, { count: selected.value.length }))) return;
+  bulkBusy.value = true;
+  try {
+    const res = await $fetch<{ count: number; skipped: number }>('/api/bounties/bulk', {
+      method: 'POST',
+      body: { action, ids: selected.value },
+    });
+    notifications.success(
+      t(`bonus.bounties.bulk.done.${action}`, { count: res.count }),
+      res.skipped ? t('bonus.bounties.bulk.skipped', { count: res.skipped }) : undefined
+    );
+    selected.value = [];
+    await refresh();
+  } catch (err) {
+    notifications.error(t('bonus.bounties.bulk.failed'), (err as { data?: { message?: string } }).data?.message);
+  } finally {
+    bulkBusy.value = false;
+  }
+}
 
 const minPoints = computed(() => me.value?.rules.bountyMinPoints ?? 100);
 

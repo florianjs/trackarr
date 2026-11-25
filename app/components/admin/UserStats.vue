@@ -86,6 +86,8 @@ interface StatsResponse {
 }
 
 const props = defineProps<{ userId: string; username: string }>();
+// The totals changed: a parent showing the ratio refreshes it
+const emit = defineEmits<{ changed: [] }>();
 const { t } = useI18n();
 const notifications = useNotificationStore();
 
@@ -141,6 +143,7 @@ async function submit() {
     });
     Object.assign(form, { uploaded: emptyField(), downloaded: emptyField(), reason: '' });
     notifications.success(t('admin.users.stats.applied', { name: props.username }));
+    emit('changed');
     await refresh();
   } catch (error) {
     const message = (error as { data?: { message?: string } }).data?.message;

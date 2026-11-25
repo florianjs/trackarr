@@ -71,6 +71,19 @@ describe('canBountyAction', () => {
     expect(canBountyAction(open, 'cancel', other)).toBe(false);
     expect(canBountyAction(open, 'cancel', requester)).toBe(true);
     expect(canBountyAction(claimed, 'cancel', requester)).toBe(false);
+    expect(canBountyAction(claimed, 'cancel', staff)).toBe(true);
+  });
+
+  it('lets the requester edit an open bounty and staff edit or delete any', () => {
+    expect(canBountyAction(open, 'edit', requester)).toBe(true);
+    expect(canBountyAction(open, 'edit', other)).toBe(false);
+    expect(canBountyAction(claimed, 'edit', requester)).toBe(false);
+    for (const status of ['open', 'claimed', 'filled', 'cancelled']) {
+      const bounty = { status, requesterId: 'req' };
+      expect(canBountyAction(bounty, 'edit', staff)).toBe(true);
+      expect(canBountyAction(bounty, 'delete', staff)).toBe(true);
+      expect(canBountyAction(bounty, 'delete', requester)).toBe(false);
+    }
   });
 
   it('freezes final states', () => {

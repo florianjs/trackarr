@@ -87,7 +87,27 @@
         "cancelBounty": "バウンティをキャンセル",
         "confirmCancel": "このバウンティをキャンセルしますか？すべての寄付は返金されます。",
         "confirmAccept": "このトレントを承認しますか？報酬はアップローダーに支払われます。",
-        "filledBy": "{user} が達成"
+        "filledBy": "{user} が達成",
+        "delete": "削除",
+        "confirmDelete": "この懸賞を削除しますか？保留中のポイントは出資者に返還されます。"
+      },
+      "bulk": {
+        "selectAll": "すべて選択",
+        "select": "{title} を選択",
+        "selected": "選択中: {count}",
+        "cancel": "取り消して返金",
+        "delete": "削除",
+        "clear": "選択を解除",
+        "confirm": {
+          "cancel": "選択した {count} 件の懸賞を取り消しますか？出資は返金されます。",
+          "delete": "選択した {count} 件の懸賞を削除しますか？保留中のポイントは返金されます。元に戻せません。"
+        },
+        "done": {
+          "cancel": "取り消した懸賞: {count}",
+          "delete": "削除した懸賞: {count}"
+        },
+        "skipped": "スキップ（終了済みまたは変更あり）: {count}",
+        "failed": "一括操作に失敗しました"
       }
     },
     "admin": {
