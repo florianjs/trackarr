@@ -2,6 +2,7 @@ import { db } from '~~/server/db';
 import { forumTopics, forumPosts } from '~~/server/db/schema';
 import { v4 as uuidv4 } from 'uuid';
 import { validateBody, forumTopicSchema } from '~~/server/utils/schemas';
+import { filterPublicText } from '~~/server/utils/slurFilter';
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -9,6 +10,8 @@ export default defineEventHandler(async (event) => {
   // Validate request body with Zod
   const body = await validateBody(event, forumTopicSchema);
 
+  const title = await filterPublicText(body.title);
+  const content = await filterPublicText(body.content);
   const topicId = uuidv4();
   const postId = uuidv4();
 
@@ -19,7 +22,7 @@ export default defineEventHandler(async (event) => {
         id: topicId,
         categoryId: body.categoryId,
         authorId: session.user.id,
-        title: body.title,
+        title,
       })
       .returning();
 
@@ -27,7 +30,7 @@ export default defineEventHandler(async (event) => {
       id: postId,
       topicId: topicId,
       authorId: session.user.id,
-      content: body.content,
+      content,
     });
 
     return topic[0];

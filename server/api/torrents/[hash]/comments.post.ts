@@ -3,6 +3,7 @@ import { db } from '../../../db';
 import { torrents, torrentComments } from '../../../db/schema';
 import { requireAuthSession } from '../../../utils/adminAuth';
 import { rateLimit, RATE_LIMITS } from '../../../utils/rateLimit';
+import { filterPublicText } from '../../../utils/slurFilter';
 import {
   validateParam,
   validateBody,
@@ -46,7 +47,7 @@ export default defineEventHandler(async (event) => {
       id: crypto.randomUUID(),
       torrentId: torrent.id,
       authorId: session.user.id,
-      content: body.content,
+      content: await filterPublicText(body.content),
     })
     .returning();
 

@@ -3,6 +3,7 @@ import { forumPosts, forumTopics } from '~~/server/db/schema';
 import { eq, sql } from 'drizzle-orm';
 import { v4 as uuidv4 } from 'uuid';
 import { validateBody, forumPostSchema } from '~~/server/utils/schemas';
+import { filterPublicText } from '~~/server/utils/slurFilter';
 
 export default defineEventHandler(async (event) => {
   const session = await requireAuthSession(event);
@@ -28,6 +29,8 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  const content = await filterPublicText(body.content);
+
   return await db.transaction(async (tx) => {
     const post = await tx
       .insert(forumPosts)
@@ -35,7 +38,7 @@ export default defineEventHandler(async (event) => {
         id: uuidv4(),
         topicId: body.topicId,
         authorId: session.user.id,
-        content: body.content,
+        content,
       })
       .returning();
 
