@@ -55,8 +55,11 @@ The system automatically detects and blocks:
 - Path traversal attempts
 - Brute force authentication attempts
 - Automated scraping and enumeration
+- Scanners probing trap paths (`/.env`, `/wp-admin`, `*.php`…) and bots filling hidden form fields: see [Honeypots](/guide/honeypots)
 
 ## Learn More
 
 - [Zero-Knowledge Authentication](/guide/zero-knowledge-auth) — How passwords are never transmitted
 - [Panic Mode](/guide/panic-mode) — Emergency data encryption
+- [Honeypots](/guide/honeypots): Traps for scanners and bots
+- [Community Safeguards](/guide/safeguards): Hateful words filter and multi-account guard
