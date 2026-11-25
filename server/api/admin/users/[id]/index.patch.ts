@@ -3,6 +3,7 @@ import { db, schema } from '~~/server/db';
 import { validateBody } from '~~/server/utils/schemas';
 import { requireModerationTarget } from '~~/server/utils/userModeration';
 import { userEditSchema } from '~~/shared/utils/userModeration';
+import { isUniqueViolation } from '~~/server/utils/dbErrors';
 
 /**
  * PATCH /api/admin/users/:id
@@ -40,7 +41,7 @@ export default defineEventHandler(async (event) => {
     return updated;
   } catch (err) {
     // Unique index race with a sign-up
-    if ((err as { code?: string }).code === '23505') {
+    if (isUniqueViolation(err)) {
       throw createError({ statusCode: 409, message: 'Username already taken' });
     }
     throw err;

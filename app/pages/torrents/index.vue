@@ -253,11 +253,12 @@ async function runBulk(payload: BulkAction) {
   if (!selected.value.length || bulkBusy.value) return;
   bulkBusy.value = true;
   try {
-    const res = await $fetch<{ count: number }>('/api/mod/torrents/bulk', {
+    const res = await $fetch<{ count: number; failed?: number }>('/api/mod/torrents/bulk', {
       method: 'POST',
       body: { ...payload, infoHashes: selected.value },
     });
     notifications.success(t(`torrents.list.bulkDone.${payload.action}`, { count: res.count }));
+    if (res.failed) notifications.warning(t('torrents.list.bulkPartial', { count: res.failed }));
     selected.value = [];
     bulkCategory.value = '';
     await refresh();

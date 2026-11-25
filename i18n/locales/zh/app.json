@@ -253,7 +253,8 @@
         "category": "已移动种子：{count}"
       },
       "bulkFailed": "批量操作失败",
-      "confirmBulkDelete": "删除所选的 {count} 个种子？此操作不可撤销。"
+      "confirmBulkDelete": "删除所选的 {count} 个种子？此操作不可撤销。",
+      "bulkPartial": "未批准，仍待审核（请重试）：{count}"
     },
     "detail": {
       "backToIndex": "全部种子",

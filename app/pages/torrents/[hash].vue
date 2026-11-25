@@ -395,17 +395,21 @@ async function deleteComment(id: string) {
 
 const editingComment = ref<string | null>(null);
 const commentDraft = ref('');
+// A slow save only closes the editor it was sent from
+let commentSession = 0;
 
 function startCommentEdit(comment: Comment) {
+  commentSession++;
   editingComment.value = comment.id;
   commentDraft.value = comment.content;
 }
 
 async function saveCommentEdit(id: string) {
+  const session = commentSession;
   commentError.value = null;
   try {
     await $fetch(`/api/torrents/comments/${id}`, { method: 'PATCH', body: { content: commentDraft.value.trim() } });
-    editingComment.value = null;
+    if (session === commentSession) editingComment.value = null;
     await refresh();
   } catch (err) {
     commentError.value = (err as { data?: { message?: string } }).data?.message ?? t('torrents.detail.commentFailed');

@@ -140,7 +140,7 @@
 
       <!-- Ratio -->
       <div v-if="open === 'ratio'" class="-mx-4 -mb-4">
-        <AdminUserStats :user-id="userId" :username="username" />
+        <AdminUserStats :user-id="userId" :username="username" @changed="emit('changed')" />
       </div>
 
       <!-- Bonus -->
@@ -411,12 +411,14 @@ function request(key: ActionKey): Promise<unknown> {
 }
 
 async function saveRoles() {
+  // Snapshot first: the form may be reset by another panel during the requests
   const s = state.value!;
-  if (form.isAdmin !== s.isAdmin || form.isModerator !== s.isModerator) {
-    await call(`/api/admin/users/${props.userId}/role`, 'PUT', { isAdmin: form.isAdmin, isModerator: form.isModerator });
+  const wanted = { isAdmin: form.isAdmin, isModerator: form.isModerator, roleId: form.roleId };
+  if (wanted.isAdmin !== s.isAdmin || wanted.isModerator !== s.isModerator) {
+    await call(`/api/admin/users/${props.userId}/role`, 'PUT', { isAdmin: wanted.isAdmin, isModerator: wanted.isModerator });
   }
-  if (form.roleId !== (s.roleId ?? '')) {
-    await call(`/api/admin/users/${props.userId}/assign-role`, 'PUT', { roleId: form.roleId || null });
+  if (wanted.roleId !== (s.roleId ?? '')) {
+    await call(`/api/admin/users/${props.userId}/assign-role`, 'PUT', { roleId: wanted.roleId || null });
   }
 }
 
@@ -435,6 +437,9 @@ async function run(key: ActionKey) {
   } catch (error) {
     const message = (error as { data?: { message?: string } }).data?.message;
     notifications.error(t('users.moderation.failed'), message);
+    // Multi-request actions (roles) may have half applied: show what is stored
+    await refresh().catch(() => {});
+    if (profileChanging.includes(key)) emit('changed');
   } finally {
     busy.value = false;
   }

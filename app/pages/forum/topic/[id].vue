@@ -263,11 +263,16 @@ const { data: categories } = await useFetch<{ id: string; name: string }[]>('/ap
   immediate: canMove.value,
 });
 
+// Each opening of an editor is a session: a slow save only closes the
+// editor it was sent from, never one reopened meanwhile
+let editSession = 0;
+
 const editingTopic = ref(false);
 const topicDraft = reactive({ title: '', categoryId: '' });
 
 function startTopicEdit() {
   if (!topic.value) return;
+  editSession++;
   topicDraft.title = topic.value.title;
   topicDraft.categoryId = topic.value.categoryId;
   editingTopic.value = !editingTopic.value;
@@ -275,6 +280,7 @@ function startTopicEdit() {
 
 async function saveTopicEdit() {
   if (!topic.value) return;
+  const session = editSession;
   try {
     await $fetch(`/api/forum/topics/${topic.value.id}`, {
       method: 'PATCH',
@@ -283,7 +289,7 @@ async function saveTopicEdit() {
         ...(canMove.value && topicDraft.categoryId !== topic.value.categoryId && { categoryId: topicDraft.categoryId }),
       },
     });
-    editingTopic.value = false;
+    if (session === editSession) editingTopic.value = false;
     await refresh();
   } catch (e) {
     notifications.error(t('forum.topic.editFailed'), (e as { data?: { message?: string } }).data?.message);
@@ -294,14 +300,16 @@ const editingPost = ref<string | null>(null);
 const postDraft = ref('');
 
 function startPostEdit(post: { id: string; content: string }) {
+  editSession++;
   editingPost.value = post.id;
   postDraft.value = post.content;
 }
 
 async function savePostEdit(id: string) {
+  const session = editSession;
   try {
     await $fetch(`/api/forum/posts/${id}`, { method: 'PATCH', body: { content: postDraft.value } });
-    editingPost.value = null;
+    if (session === editSession) editingPost.value = null;
     await refresh();
   } catch (e) {
     notifications.error(t('forum.topic.editFailed'), (e as { data?: { message?: string } }).data?.message);

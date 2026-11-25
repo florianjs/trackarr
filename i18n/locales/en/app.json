@@ -253,7 +253,8 @@
         "category": "Torrents moved: {count}"
       },
       "bulkFailed": "Bulk action failed",
-      "confirmBulkDelete": "Delete the {count} selected torrents? This cannot be undone."
+      "confirmBulkDelete": "Delete the {count} selected torrents? This cannot be undone.",
+      "bulkPartial": "Not approved, still pending (retry): {count}"
     },
     "detail": {
       "backToIndex": "All torrents",

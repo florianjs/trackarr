@@ -253,7 +253,8 @@
         "category": "Verschobene Torrents: {count}"
       },
       "bulkFailed": "Sammelaktion fehlgeschlagen",
-      "confirmBulkDelete": "Die {count} ausgewählten Torrents löschen? Nicht umkehrbar."
+      "confirmBulkDelete": "Die {count} ausgewählten Torrents löschen? Nicht umkehrbar.",
+      "bulkPartial": "Nicht freigegeben, weiter ausstehend (erneut versuchen): {count}"
     },
     "detail": {
       "backToIndex": "Alle Torrents",

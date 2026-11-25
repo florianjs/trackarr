@@ -253,7 +253,8 @@
         "category": "Torrents déplacés : {count}"
       },
       "bulkFailed": "L'action groupée a échoué",
-      "confirmBulkDelete": "Supprimer les {count} torrents sélectionnés ? Action irréversible."
+      "confirmBulkDelete": "Supprimer les {count} torrents sélectionnés ? Action irréversible.",
+      "bulkPartial": "Non validés, toujours en attente (réessayez) : {count}"
     },
     "detail": {
       "backToIndex": "Tous les torrents",

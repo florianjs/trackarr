@@ -2,7 +2,7 @@ import { and, eq, inArray } from 'drizzle-orm';
 import { db, schema } from '~~/server/db';
 import { redis } from '~~/server/redis/client';
 import { requireModeratorSession } from '~~/server/utils/adminAuth';
-import { awardUploadBonus } from '~~/server/utils/bonus';
+import { creditUploadBonus } from '~~/server/utils/bonus';
 import { rateLimit, RATE_LIMITS } from '~~/server/utils/rateLimit';
 import { validateBody } from '~~/server/utils/schemas';
 import { invalidateTrackerTorrent, invalidateTrackerTorrents } from '~~/server/tracker/client';
@@ -22,23 +22,34 @@ export default defineEventHandler(async (event) => {
 
   switch (body.action) {
     case 'approve': {
-      // Only pending ones: approving twice must not touch anything
-      const approved = await db
-        .update(schema.torrents)
-        .set({ isApproved: true })
-        .where(and(inSelection, eq(schema.torrents.isApproved, false)))
-        .returning({
-          id: schema.torrents.id,
-          infoHash: schema.torrents.infoHash,
-          name: schema.torrents.name,
-          uploaderId: schema.torrents.uploaderId,
-        });
-
-      for (const torrent of approved) {
-        await awardUploadBonus(db, torrent).catch((err) => console.error('[Bonus] Upload bonus failed:', err));
+      // One transaction per torrent, approval and upload bonus together: a
+      // failed credit leaves that torrent pending (retry later), the rest go on
+      let count = 0;
+      let failed = 0;
+      for (const infoHash of body.infoHashes) {
+        try {
+          const approved = await db.transaction(async (tx) => {
+            const [row] = await tx
+              .update(schema.torrents)
+              .set({ isApproved: true })
+              .where(and(eq(schema.torrents.infoHash, infoHash), eq(schema.torrents.isApproved, false)))
+              .returning({
+                id: schema.torrents.id,
+                infoHash: schema.torrents.infoHash,
+                name: schema.torrents.name,
+                uploaderId: schema.torrents.uploaderId,
+              });
+            if (row) await creditUploadBonus(tx, row);
+            return !!row;
+          });
+          if (approved) count++;
+        } catch (err) {
+          failed++;
+          console.error('[Bulk] Approval failed for', infoHash, err);
+        }
       }
       invalidateTrackerTorrents();
-      return { action: body.action, count: approved.length };
+      return { action: body.action, count, failed };
     }
 
     case 'delete': {

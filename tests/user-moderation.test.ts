@@ -3,6 +3,7 @@ import {
   deletedUsername,
   isDeletedUsername,
   moderationRights,
+  randomDeletedUsername,
   userEditSchema,
   usernameSchema,
 } from '../shared/utils/userModeration';
@@ -70,6 +71,12 @@ describe('usernameSchema', () => {
     expect(usernameSchema.safeParse('a'.repeat(21)).success).toBe(false);
     expect(usernameSchema.safeParse('bad name').success).toBe(false);
   });
+
+  it('reserves the prefix of deleted accounts', () => {
+    expect(usernameSchema.safeParse('deleted_0f8c2a4e1b2c').success).toBe(false);
+    expect(usernameSchema.safeParse('Deleted_bob').success).toBe(false);
+    expect(usernameSchema.safeParse('undeleted_bob').success).toBe(true);
+  });
 });
 
 describe('userEditSchema', () => {
@@ -86,8 +93,13 @@ describe('deletedUsername', () => {
     const name = deletedUsername('0f8c2a4e-1b2c-4d5e-8f90-123456789abc');
     expect(name).toBe('deleted_0f8c2a4e1b2c');
     expect(name.length).toBeLessThanOrEqual(20);
-    expect(usernameSchema.safeParse(name).success).toBe(true);
     expect(isDeletedUsername(name)).toBe(true);
     expect(isDeletedUsername('deletedfan')).toBe(false);
+  });
+
+  it('has a random fallback in the same format', () => {
+    const name = randomDeletedUsername(() => 0.5);
+    expect(name).toBe('deleted_888888888888');
+    expect(isDeletedUsername(randomDeletedUsername())).toBe(true);
   });
 });

@@ -253,7 +253,8 @@
         "category": "移動したトーレント: {count}"
       },
       "bulkFailed": "一括操作に失敗しました",
-      "confirmBulkDelete": "選択した {count} 件のトーレントを削除しますか？元に戻せません。"
+      "confirmBulkDelete": "選択した {count} 件のトーレントを削除しますか？元に戻せません。",
+      "bulkPartial": "未承認のまま保留中（再試行してください）: {count}"
     },
     "detail": {
       "backToIndex": "すべてのトレント",

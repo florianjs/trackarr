@@ -1,8 +1,8 @@
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { z } from 'zod';
 import { db, schema } from '../../../db';
 import { requireBonusEnabled } from '../../../utils/bonus';
-import { loadBountyFor } from '../../../utils/bounties';
+import { loadBountyFor, stateChanged } from '../../../utils/bounties';
 import { validateBody } from '../../../utils/schemas';
 import { filterPublicText } from '../../../utils/slurFilter';
 import { parseImdbId } from '../../../../shared/utils/mediaIds';
@@ -23,7 +23,8 @@ const editSchema = z
  */
 export default defineEventHandler(async (event) => {
   await requireBonusEnabled();
-  const { bounty } = await loadBountyFor(event, 'edit');
+  const { bounty, user } = await loadBountyFor(event, 'edit');
+  const isStaff = !!(user.isAdmin || user.isModerator);
   const body = await validateBody(event, editSchema);
 
   let imdbId: string | null | undefined;
@@ -44,8 +45,15 @@ export default defineEventHandler(async (event) => {
       ...(imdbId !== undefined && { imdbId }),
       ...(body.categoryId !== undefined && { categoryId: body.categoryId }),
     })
-    .where(eq(schema.bounties.id, bounty.id))
+    // The requester may only edit while open: re-checked at write time in
+    // case staff closed it meanwhile
+    .where(
+      isStaff
+        ? eq(schema.bounties.id, bounty.id)
+        : and(eq(schema.bounties.id, bounty.id), eq(schema.bounties.status, 'open'))
+    )
     .returning({ id: schema.bounties.id });
+  if (!updated) stateChanged();
 
   return updated;
 });

@@ -253,7 +253,8 @@
         "category": "Torrent spostati: {count}"
       },
       "bulkFailed": "Azione multipla non riuscita",
-      "confirmBulkDelete": "Eliminare i {count} torrent selezionati? Azione irreversibile."
+      "confirmBulkDelete": "Eliminare i {count} torrent selezionati? Azione irreversibile.",
+      "bulkPartial": "Non approvati, ancora in attesa (riprova): {count}"
     },
     "detail": {
       "backToIndex": "Tutti i torrent",

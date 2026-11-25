@@ -6,7 +6,8 @@ import { removeAvatarFile } from '~~/server/utils/uploads';
 import { requireModerationTarget } from '~~/server/utils/userModeration';
 import { clearTorznabUserStats, unblockTorznabUser } from '~~/server/utils/torznabStats';
 import { invalidateTrackerUsers } from '~~/server/tracker/client';
-import { deletedUsername } from '~~/shared/utils/userModeration';
+import { deletedUsername, randomDeletedUsername } from '~~/shared/utils/userModeration';
+import { isUniqueViolation } from '~~/server/utils/dbErrors';
 
 /**
  * DELETE /api/admin/users/:id
@@ -17,33 +18,46 @@ import { deletedUsername } from '~~/shared/utils/userModeration';
 export default defineEventHandler(async (event) => {
   const { target } = await requireModerationTarget(event, 'delete');
 
-  await db.transaction(async (tx) => {
-    await tx
-      .update(schema.users)
-      .set({
-        username: deletedUsername(target.id),
-        authSalt: null,
-        authVerifier: null,
-        panicPasswordHash: null,
-        passkey: generatePasskey(),
-        apiKey: null,
-        isAdmin: false,
-        isModerator: false,
-        isBanned: true,
-        roleId: null,
-        lastIp: null,
-        avatarUrl: null,
-        invitesRemaining: 0,
-        sessionVersion: bumpedSessionVersion(),
-      })
-      .where(eq(schema.users.id, target.id));
-    await tx.delete(schema.shoutMutes).where(eq(schema.shoutMutes.userId, target.id));
-  });
+  // Derived name first; if someone holds it already, random ones
+  const anonymise = (username: string) =>
+    db.transaction(async (tx) => {
+      await tx
+        .update(schema.users)
+        .set({
+          username,
+          authSalt: null,
+          authVerifier: null,
+          panicPasswordHash: null,
+          passkey: generatePasskey(),
+          apiKey: null,
+          isAdmin: false,
+          isModerator: false,
+          isBanned: true,
+          roleId: null,
+          lastIp: null,
+          avatarUrl: null,
+          invitesRemaining: 0,
+          sessionVersion: bumpedSessionVersion(),
+        })
+        .where(eq(schema.users.id, target.id));
+      await tx.delete(schema.shoutMutes).where(eq(schema.shoutMutes.userId, target.id));
+    });
+
+  let username = deletedUsername(target.id);
+  for (let attempt = 0; ; attempt++) {
+    try {
+      await anonymise(username);
+      break;
+    } catch (err) {
+      if (!isUniqueViolation(err) || attempt >= 4) throw err;
+      username = randomDeletedUsername();
+    }
+  }
 
   await removeAvatarFile(target.avatarUrl);
   await unblockTorznabUser(target.passkey);
   await clearTorznabUserStats(target.passkey);
   invalidateTrackerUsers();
 
-  return { success: true, username: deletedUsername(target.id) };
+  return { success: true, username };
 });

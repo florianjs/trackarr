@@ -253,7 +253,8 @@
         "category": "Torrents movidos: {count}"
       },
       "bulkFailed": "La acción en lote falló",
-      "confirmBulkDelete": "¿Eliminar los {count} torrents seleccionados? No se puede deshacer."
+      "confirmBulkDelete": "¿Eliminar los {count} torrents seleccionados? No se puede deshacer.",
+      "bulkPartial": "No aprobados, siguen pendientes (reintenta): {count}"
     },
     "detail": {
       "backToIndex": "Todos los torrents",
