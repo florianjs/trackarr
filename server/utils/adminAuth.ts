@@ -7,6 +7,7 @@ import { checkSession, type SessionCheck } from './sessionRules';
 export const authUserColumns = {
   isBanned: users.isBanned,
   paymentPending: users.paymentPending,
+  ipHold: users.ipHold,
   isAdmin: users.isAdmin,
   isModerator: users.isModerator,
   passkey: users.passkey,
@@ -17,6 +18,7 @@ export const authUserColumns = {
 export interface AuthUserState {
   isBanned: boolean;
   paymentPending: boolean;
+  ipHold: boolean;
   isAdmin: boolean;
   isModerator: boolean;
   passkey: string;
@@ -44,11 +46,14 @@ export function sessionRejection(check: SessionCheck) {
 /**
  * Require user authentication and check for bans. Accounts waiting for their
  * sign-up payment are refused (402) unless `allowPaymentPending`: only the
- * payment endpoints let them through.
+ * payment endpoints let them through. Accounts held by the multi-account
+ * guard are refused (423) unless `allowIpHold` (the appeal endpoints), or
+ * while their payment is pending on the payment endpoints: the sign-up is
+ * paid first, the appeal comes after.
  */
 export async function requireAuthSession(
   event: H3Event,
-  options: { allowPaymentPending?: boolean } = {}
+  options: { allowPaymentPending?: boolean; allowIpHold?: boolean } = {}
 ) {
   const session = await requireUserSession(event);
 
@@ -73,6 +78,11 @@ export async function requireAuthSession(
 
   if (dbUser.paymentPending && !options.allowPaymentPending) {
     throw createError({ statusCode: 402, message: 'Payment required to activate your account' });
+  }
+
+  const payingFirst = dbUser.paymentPending && options.allowPaymentPending;
+  if (dbUser.ipHold && !options.allowIpHold && !payingFirst) {
+    throw createError({ statusCode: 423, message: 'Account on hold: this IP address is shared with another account' });
   }
 
   event.context.authUser = dbUser;

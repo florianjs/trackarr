@@ -656,12 +656,11 @@
       "installedVersion": "已安装的 Trackarr 版本",
       "published": "发布于 {date}",
       "showInstructions": "显示更新说明",
-      "step": "第 {step} 步：{description}",
       "upToDate": "当前已是最新版本",
       "updateAvailable": "有可用更新：{version}",
-      "updateCommands": "更新命令",
       "versionTitle": "版本与更新",
-      "viewChangelog": "查看更新日志"
+      "viewChangelog": "查看更新日志",
+      "updateIntro": "Trackarr 默认安装在 {directory}。要将安装更新到最新版本，请运行："
     },
     "torznabUsers": {
       "blockAccess": "禁止 API 访问",

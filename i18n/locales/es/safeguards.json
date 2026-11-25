@@ -1,0 +1,52 @@
+{
+  "safeguards": {
+    "error": "Algo salió mal, inténtalo de nuevo.",
+    "admin": {
+      "title": "Salvaguardas",
+      "slurFilter": "Ocultar palabras de odio",
+      "slurFilterHint": "Los insultos racistas, homófobos y otros se enmascaran (*****) en el shoutbox, el foro y los comentarios, incluso en leetspeak.",
+      "slurWords": "Palabras extra (una por línea, termina con * para cubrir todas las que empiezan así)",
+      "slurWordsPlaceholder": "palabra\nprefijo*",
+      "saveWords": "Guardar palabras",
+      "multiAccount": "Bloquear varias cuentas en una misma IP",
+      "multiAccountHint": "Una cuenta que se registra o inicia sesión desde una IP ya usada por otra cuenta queda en espera. Puede apelar (familia, compañeros de piso) y el equipo decide.",
+      "openAppeals": "Revisar cuentas en espera",
+      "saved": "Guardado"
+    },
+    "modNav": {
+      "label": "Apelaciones IP",
+      "description": "Cuentas en espera por IP compartida"
+    },
+    "appeal": {
+      "title": "Cuenta en espera",
+      "intro": "Otra cuenta ya usa esta dirección IP, así que la tuya está en espera para evitar cuentas múltiples. Si compartes la conexión (familia, piso, oficina), explícalo abajo: el equipo revisará tu apelación.",
+      "loading": "Cargando…",
+      "message": "Tu apelación",
+      "placeholder": "¿Quién más usa esta conexión y qué relación tenéis?",
+      "length": "{count} / {max} caracteres",
+      "submit": "Enviar apelación",
+      "check": "Comprobar de nuevo",
+      "logout": "Cerrar sesión",
+      "staffNote": "Nota del equipo: {note}",
+      "status": {
+        "pending": "Apelación en revisión",
+        "approved": "Apelación aceptada",
+        "rejected": "Apelación rechazada, puedes enviar otra"
+      }
+    },
+    "mod": {
+      "empty": "Ninguna cuenta en espera.",
+      "joined": "Se unió el {date}",
+      "sharedWith": "Misma IP que:",
+      "nobodyNow": "ninguna otra cuenta por ahora",
+      "noAppeal": "Aún sin apelación.",
+      "notePlaceholder": "Nota para el miembro (opcional)",
+      "approve": "Aceptar y eximir",
+      "reject": "Rechazar",
+      "approved": "Cuenta liberada",
+      "rejected": "Apelación rechazada",
+      "more": "Ver más"
+    },
+    "retry": "Reintentar"
+  }
+}

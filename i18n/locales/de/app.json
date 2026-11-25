@@ -656,12 +656,11 @@
       "installedVersion": "Installierte Version von Trackarr",
       "published": "Veröffentlicht am {date}",
       "showInstructions": "Update-Anleitung anzeigen",
-      "step": "Schritt {step}: {description}",
       "upToDate": "Du verwendest die neueste Version",
       "updateAvailable": "Update verfügbar: {version}",
-      "updateCommands": "Update-Befehle",
       "versionTitle": "Version & Updates",
-      "viewChangelog": "Changelog ansehen"
+      "viewChangelog": "Changelog ansehen",
+      "updateIntro": "Standardmäßig ist Trackarr in {directory} installiert. Um Ihre Installation auf die neueste Version zu aktualisieren, führen Sie aus:"
     },
     "torznabUsers": {
       "blockAccess": "API-Zugriff sperren",

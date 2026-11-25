@@ -18,6 +18,7 @@ import { offeredCurrencies } from '../../utils/payments/invoices';
 import { validateBody, registerSchema } from '../../utils/schemas';
 import { verifyPoWSolution } from '../../utils/pow';
 import { getClientIP, protectEndpoint } from '../../utils/rateLimit';
+import { detectSharedIp, lockSharedIp } from '../../utils/multiAccount';
 
 // Serializes registrations so the first-user (admin) check and invite
 // consumption cannot race.
@@ -157,6 +158,9 @@ export default defineEventHandler(async (event) => {
     currencies: offeredCurrencies(paidConfig),
   });
 
+  // Multi-account guard: set under the transaction locks below
+  let ipHold = false;
+
   // For first user, require and hash panic password
   let panicPasswordHash: string | null = null;
   if (isFirstUser) {
@@ -171,6 +175,17 @@ export default defineEventHandler(async (event) => {
 
   await db.transaction(async (tx) => {
     await tx.execute(sql`select pg_advisory_xact_lock(${REGISTER_LOCK_ID})`);
+
+    // Another account already uses this IP (serialized with sign-ins from it)
+    if (!isFirstUser) {
+      await lockSharedIp(tx, clientIp);
+      ipHold = await detectSharedIp(
+        clientIp,
+        null,
+        { isAdmin: false, isModerator: false, ipExempt: false, ipHold: false },
+        tx
+      );
+    }
 
     // Re-check under the lock: another request may have completed setup
     const [current] = await tx.select({ count: count() }).from(users);
@@ -194,6 +209,7 @@ export default defineEventHandler(async (event) => {
       invitesRemaining: isFirstUser ? 10 : defaultInvites,
       panicPasswordHash,
       paymentPending,
+      ipHold,
     });
 
     // Consume the invite only if still unused: one code, one account
@@ -233,6 +249,7 @@ export default defineEventHandler(async (event) => {
       uploaded: starterUpload,
       downloaded: 0,
       paymentPending,
+      ipHold,
     },
     loggedInAt: Date.now(),
     sessionVersion: 0,
@@ -249,6 +266,7 @@ export default defineEventHandler(async (event) => {
       uploaded: starterUpload,
       downloaded: 0,
       paymentPending,
+      ipHold,
     },
   };
 });

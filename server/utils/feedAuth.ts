@@ -27,7 +27,9 @@ export async function requireFeedAccess(event: H3Event): Promise<void> {
         eq(users.passkey, passkey.toLowerCase()),
         eq(users.isBanned, false),
         // Locked until the sign-up payment is confirmed
-        eq(users.paymentPending, false)
+        eq(users.paymentPending, false),
+        // Held by the multi-account guard
+        eq(users.ipHold, false)
       )
     )
     .limit(1);

@@ -1,4 +1,4 @@
-import { and, eq } from 'drizzle-orm';
+import { and, eq, sql } from 'drizzle-orm';
 import { db } from '../../db';
 import { users, bannedIps } from '../../db/schema';
 import { validateBody, loginSchema } from '../../utils/schemas';
@@ -6,6 +6,7 @@ import { redis } from '../../redis/client';
 import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
 import { isHoneypotFilled } from '../../utils/honeypot';
 import { SecurityAlertType, sendSecurityAlert } from '../../utils/alerts';
+import { detectSharedIp, lockSharedIp } from '../../utils/multiAccount';
 import {
   burnVerifierCheck,
   checkVerifier,
@@ -120,11 +121,24 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  // Update last seen and IP
-  await db
-    .update(users)
-    .set({ lastSeen: new Date(), lastIp: clientIp })
-    .where(eq(users.id, user.id));
+  // Update last seen and IP. Multi-account guard: hold the account when
+  // another one in good standing already uses this IP. Serialized per IP, and
+  // the hold is only ever set here (never cleared: that is a staff decision),
+  // unless staff exempted the account meanwhile
+  const ipHold = await db.transaction(async (tx) => {
+    await lockSharedIp(tx, clientIp);
+    const detected = !user.ipHold && (await detectSharedIp(clientIp, user.id, user, tx));
+    const [row] = await tx
+      .update(users)
+      .set({
+        lastSeen: new Date(),
+        lastIp: clientIp,
+        ...(detected ? { ipHold: sql`not ${users.ipExempt}` } : {}),
+      })
+      .where(eq(users.id, user.id))
+      .returning({ ipHold: users.ipHold });
+    return row?.ipHold ?? false;
+  });
 
   // Set user session using nuxt-auth-utils
   await setUserSession(event, {
@@ -136,6 +150,7 @@ export default defineEventHandler(async (event) => {
       uploaded: user.uploaded,
       downloaded: user.downloaded,
       paymentPending: user.paymentPending,
+      ipHold,
     },
     loggedInAt: Date.now(),
     sessionVersion: user.sessionVersion,
@@ -151,6 +166,7 @@ export default defineEventHandler(async (event) => {
       uploaded: user.uploaded,
       downloaded: user.downloaded,
       paymentPending: user.paymentPending,
+      ipHold,
     },
   };
 });

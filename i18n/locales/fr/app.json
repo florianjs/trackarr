@@ -656,12 +656,11 @@
       "installedVersion": "Version de Trackarr installée",
       "published": "Publiée le {date}",
       "showInstructions": "Afficher les instructions de mise à jour",
-      "step": "Étape {step} : {description}",
       "upToDate": "Vous utilisez la dernière version",
       "updateAvailable": "Mise à jour disponible : {version}",
-      "updateCommands": "Commandes de mise à jour",
       "versionTitle": "Version et mises à jour",
-      "viewChangelog": "Voir le changelog"
+      "viewChangelog": "Voir le changelog",
+      "updateIntro": "Par défaut, Trackarr est installé dans {directory}. Pour mettre à jour votre installation vers la dernière version, lancez :"
     },
     "torznabUsers": {
       "blockAccess": "Bloquer l'accès à l'API",

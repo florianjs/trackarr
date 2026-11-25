@@ -93,6 +93,12 @@ const menuItems = computed(() => [
     icon: 'ph:speaker-simple-slash',
     description: t('shoutbox.modNav.description'),
   },
+  {
+    label: t('safeguards.modNav.label'),
+    path: '/mod/appeals',
+    icon: 'ph:users-three',
+    description: t('safeguards.modNav.description'),
+  },
 ]);
 
 const currentItem = computed(

@@ -62,7 +62,7 @@ Brute force (per account and from the tracker), honeypot hits, blocked IPs and i
 | `SLACK_WEBHOOK_URL`    | Slack webhook for security alerts                                                  | —       |
 | `SECURITY_WEBHOOK_URL` | Any endpoint: receives the alert as JSON (`type`, `severity`, `title`, `ip`, …)    | —       |
 | `ENABLE_DEV_ALERTS`    | Send webhooks outside production too                                               | `false` |
-| `HONEYPOT_BAN`         | `false`: honeypot paths (`/wp-admin`, `/.env`, `*.php`…) only alert, without blocking the IP (blocks start at 5 min and double up to 24 h) | `true` |
+| `HONEYPOT_BAN`         | `false`: honeypot paths (`/wp-admin`, `/.env`, `*.php`…) only alert, without blocking the IP (otherwise each probe blocks it for 5 min) | `true` |
 
 ## Tracker
 

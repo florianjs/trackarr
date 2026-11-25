@@ -38,6 +38,10 @@ export const users = pgTable(
     isBanned: boolean('is_banned').default(false).notNull(),
     // Paid registration: locked until the sign-up payment is confirmed on-chain
     paymentPending: boolean('payment_pending').default(false).notNull(),
+    // Multi-account guard: held while sharing an IP with another account,
+    // until staff approve an appeal (then exempt from the check)
+    ipHold: boolean('ip_hold').default(false).notNull(),
+    ipExempt: boolean('ip_exempt').default(false).notNull(),
     // Bumped to revoke every sealed session cookie issued before (ban, sign out everywhere)
     sessionVersion: integer('session_version').default(0).notNull(),
     roleId: text('role_id'),
@@ -53,7 +57,11 @@ export const users = pgTable(
     createdAt: timestamp('created_at').defaultNow().notNull(),
     lastSeen: timestamp('last_seen').defaultNow().notNull(),
   },
-  (table) => [uniqueIndex('users_passkey_idx').on(table.passkey)]
+  (table) => [
+    uniqueIndex('users_passkey_idx').on(table.passkey),
+    // Multi-account guard: accounts seen on the same IP
+    index('users_last_ip_idx').on(table.lastIp),
+  ]
 );
 
 // ============================================================================
@@ -64,6 +72,26 @@ export const bannedIps = pgTable('banned_ips', {
   reason: text('reason'),
   createdAt: timestamp('created_at').defaultNow().notNull(),
 });
+
+// ============================================================================
+// IP appeals (multi-account guard: a held account explains a shared IP)
+// ============================================================================
+export const ipAppeals = pgTable(
+  'ip_appeals',
+  {
+    id: text('id').primaryKey(),
+    userId: text('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
+    message: text('message').notNull(),
+    status: text('status').default('pending').notNull(), // pending | approved | rejected
+    staffNote: text('staff_note'),
+    reviewedBy: text('reviewed_by').references(() => users.id, { onDelete: 'set null' }),
+    reviewedAt: timestamp('reviewed_at'),
+    createdAt: timestamp('created_at').defaultNow().notNull(),
+  },
+  (table) => [index('ip_appeals_user_idx').on(table.userId, table.createdAt)]
+);
 
 // ============================================================================
 // Roles (Flexible permission management)

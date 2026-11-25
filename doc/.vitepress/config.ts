@@ -63,6 +63,8 @@ export default defineConfig({
             { text: 'Overview', link: '/guide/security' },
             { text: 'Zero-Knowledge Auth', link: '/guide/zero-knowledge-auth' },
             { text: 'Panic Mode', link: '/guide/panic-mode' },
+            { text: 'Honeypots', link: '/guide/honeypots' },
+            { text: 'Community Safeguards', link: '/guide/safeguards' },
           ],
         },
         {

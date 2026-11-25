@@ -1,0 +1,52 @@
+{
+  "safeguards": {
+    "error": "Qualcosa è andato storto, riprova.",
+    "admin": {
+      "title": "Salvaguardie",
+      "slurFilter": "Nascondi parole d'odio",
+      "slurFilterHint": "Insulti razzisti, omofobi e simili vengono mascherati (*****) in shoutbox, forum e commenti, anche in leetspeak.",
+      "slurWords": "Parole aggiuntive (una per riga, termina con * per coprire tutte quelle che iniziano così)",
+      "slurWordsPlaceholder": "parola\nprefisso*",
+      "saveWords": "Salva parole",
+      "multiAccount": "Blocca più account sullo stesso IP",
+      "multiAccountHint": "Un account che si registra o accede da un IP già usato da un altro account viene sospeso. Può fare ricorso (famiglia, coinquilini) e lo staff decide.",
+      "openAppeals": "Esamina gli account sospesi",
+      "saved": "Salvato"
+    },
+    "modNav": {
+      "label": "Ricorsi IP",
+      "description": "Account sospesi per IP condiviso"
+    },
+    "appeal": {
+      "title": "Account sospeso",
+      "intro": "Un altro account usa già questo indirizzo IP, quindi il tuo è sospeso per evitare account multipli. Se condividi la connessione (famiglia, coinquilini, ufficio), spiegalo qui sotto: lo staff esaminerà il ricorso.",
+      "loading": "Caricamento…",
+      "message": "Il tuo ricorso",
+      "placeholder": "Chi altro usa questa connessione e che rapporto avete?",
+      "length": "{count} / {max} caratteri",
+      "submit": "Invia ricorso",
+      "check": "Controlla di nuovo",
+      "logout": "Esci",
+      "staffNote": "Nota dello staff: {note}",
+      "status": {
+        "pending": "Ricorso in esame",
+        "approved": "Ricorso accolto",
+        "rejected": "Ricorso respinto, puoi inviarne un altro"
+      }
+    },
+    "mod": {
+      "empty": "Nessun account sospeso.",
+      "joined": "Iscritto il {date}",
+      "sharedWith": "Stesso IP di:",
+      "nobodyNow": "nessun altro account al momento",
+      "noAppeal": "Nessun ricorso.",
+      "notePlaceholder": "Nota per il membro (facoltativa)",
+      "approve": "Accogli ed esenta",
+      "reject": "Respingi",
+      "approved": "Account sbloccato",
+      "rejected": "Ricorso respinto",
+      "more": "Mostra altro"
+    },
+    "retry": "Riprova"
+  }
+}

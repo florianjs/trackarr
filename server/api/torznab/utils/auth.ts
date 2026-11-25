@@ -57,6 +57,7 @@ export async function authenticateTorznab(
       passkey: schema.users.passkey,
       isBanned: schema.users.isBanned,
       paymentPending: schema.users.paymentPending,
+      ipHold: schema.users.ipHold,
       isAdmin: schema.users.isAdmin,
       isModerator: schema.users.isModerator,
     })
@@ -75,6 +76,17 @@ export async function authenticateTorznab(
   }
 
   // Locked until the sign-up payment is confirmed
+  // Held by the multi-account guard (shared IP): 423 like the website
+  if (user.ipHold && !user.paymentPending) {
+    throw createTorznabError(
+      event,
+      TORZNAB_ERRORS.ACCOUNT_SUSPENDED,
+      'Account on hold: this IP address is shared with another account',
+      423
+    );
+  }
+
+  // Locked until the sign-up payment is confirmed
   if (user.paymentPending) {
     throw createTorznabError(event, TORZNAB_ERRORS.ACCOUNT_SUSPENDED);
   }
@@ -89,9 +101,11 @@ export async function authenticateTorznab(
 export function createTorznabError(
   event: H3Event,
   error: { code: number; description: string },
-  customMessage?: string
+  customMessage?: string,
+  /** HTTP status instead of the one derived from the Torznab code */
+  statusOverride?: number
 ): never {
-  const httpStatus = error.code === 100 || error.code === 101 ? 401 : 400;
+  const httpStatus = statusOverride ?? (error.code === 100 || error.code === 101 ? 401 : 400);
   const xml = buildErrorXml({
     code: error.code,
     description: customMessage ?? error.description,

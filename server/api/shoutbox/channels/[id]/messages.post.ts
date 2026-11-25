@@ -10,6 +10,7 @@ import {
   requireShoutViewer,
 } from '../../../../utils/shoutbox';
 import { canWriteChannel, normalizeShout, MAX_SHOUT_LENGTH } from '../../../../utils/shoutboxRules';
+import { filterPublicText } from '../../../../utils/slurFilter';
 
 const bodySchema = z.object({ body: z.string().max(MAX_SHOUT_LENGTH * 2) });
 
@@ -30,7 +31,7 @@ export default defineEventHandler(async (event) => {
   }
 
   const { body: raw } = await validateBody(event, bodySchema);
-  const body = normalizeShout(raw);
+  const body = normalizeShout(await filterPublicText(raw));
   if (!body) {
     throw createError({ statusCode: 400, message: `Message must be between 1 and ${MAX_SHOUT_LENGTH} characters` });
   }

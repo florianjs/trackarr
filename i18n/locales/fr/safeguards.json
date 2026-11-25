@@ -1,0 +1,52 @@
+{
+  "safeguards": {
+    "error": "Une erreur est survenue, réessayez.",
+    "admin": {
+      "title": "Garde-fous",
+      "slurFilter": "Masquer les propos haineux",
+      "slurFilterHint": "Les insultes racistes, homophobes et autres sont masquées (*****) dans la shoutbox, le forum et les commentaires, y compris en leetspeak.",
+      "slurWords": "Mots en plus (un par ligne, finir par * pour viser tous les mots qui commencent ainsi)",
+      "slurWordsPlaceholder": "mot\nprefixe*",
+      "saveWords": "Enregistrer les mots",
+      "multiAccount": "Bloquer les comptes multiples sur une même IP",
+      "multiAccountHint": "Un compte qui s'inscrit ou se connecte depuis une IP déjà utilisée par un autre compte est mis en attente. Il peut faire appel (famille, colocation) et l'équipe accepte ou refuse.",
+      "openAppeals": "Voir les comptes en attente",
+      "saved": "Enregistré"
+    },
+    "modNav": {
+      "label": "Appels IP",
+      "description": "Comptes en attente pour IP partagée"
+    },
+    "appeal": {
+      "title": "Compte en attente",
+      "intro": "Un autre compte utilise déjà cette adresse IP : le vôtre est en attente pour éviter les comptes multiples. Si vous partagez la connexion (famille, colocation, bureau), expliquez-le ci-dessous : l'équipe examinera votre appel.",
+      "loading": "Chargement…",
+      "message": "Votre appel",
+      "placeholder": "Qui d'autre utilise cette connexion, et quel est votre lien ?",
+      "length": "{count} / {max} caractères",
+      "submit": "Envoyer l'appel",
+      "check": "Vérifier à nouveau",
+      "logout": "Se déconnecter",
+      "staffNote": "Note de l'équipe : {note}",
+      "status": {
+        "pending": "Appel en cours d'examen",
+        "approved": "Appel accepté",
+        "rejected": "Appel refusé, vous pouvez en envoyer un nouveau"
+      }
+    },
+    "mod": {
+      "empty": "Aucun compte en attente.",
+      "joined": "Inscrit le {date}",
+      "sharedWith": "Même IP que :",
+      "nobodyNow": "aucun autre compte pour l'instant",
+      "noAppeal": "Pas encore d'appel.",
+      "notePlaceholder": "Note pour le membre (facultatif)",
+      "approve": "Accepter et exempter",
+      "reject": "Refuser",
+      "approved": "Compte débloqué",
+      "rejected": "Appel refusé",
+      "more": "Voir plus"
+    },
+    "retry": "Réessayer"
+  }
+}

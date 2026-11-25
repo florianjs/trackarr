@@ -1,0 +1,52 @@
+{
+  "safeguards": {
+    "error": "Etwas ist schiefgelaufen, bitte erneut versuchen.",
+    "admin": {
+      "title": "Schutzmaßnahmen",
+      "slurFilter": "Hasswörter ausblenden",
+      "slurFilterHint": "Rassistische, homophobe und andere Beleidigungen werden in Shoutbox, Forum und Kommentaren maskiert (*****), auch in Leetspeak.",
+      "slurWords": "Zusätzliche Wörter (eins pro Zeile, mit * enden, um alle so beginnenden Wörter zu treffen)",
+      "slurWordsPlaceholder": "wort\npräfix*",
+      "saveWords": "Wörter speichern",
+      "multiAccount": "Mehrere Konten auf einer IP blockieren",
+      "multiAccountHint": "Ein Konto, das sich von einer bereits von einem anderen Konto genutzten IP registriert oder anmeldet, wird gesperrt. Es kann Einspruch einlegen (Familie, WG) und das Team entscheidet.",
+      "openAppeals": "Gesperrte Konten prüfen",
+      "saved": "Gespeichert"
+    },
+    "modNav": {
+      "label": "IP-Einsprüche",
+      "description": "Wegen geteilter IP gesperrte Konten"
+    },
+    "appeal": {
+      "title": "Konto gesperrt",
+      "intro": "Ein anderes Konto nutzt bereits diese IP-Adresse, daher ist deins gesperrt, um Mehrfachkonten zu verhindern. Wenn ihr die Verbindung teilt (Familie, WG, Büro), erkläre es unten: das Team prüft deinen Einspruch.",
+      "loading": "Wird geladen…",
+      "message": "Dein Einspruch",
+      "placeholder": "Wer nutzt diese Verbindung noch, und woher kennt ihr euch?",
+      "length": "{count} / {max} Zeichen",
+      "submit": "Einspruch senden",
+      "check": "Erneut prüfen",
+      "logout": "Abmelden",
+      "staffNote": "Hinweis vom Team: {note}",
+      "status": {
+        "pending": "Einspruch wird geprüft",
+        "approved": "Einspruch angenommen",
+        "rejected": "Einspruch abgelehnt, du kannst einen neuen senden"
+      }
+    },
+    "mod": {
+      "empty": "Keine gesperrten Konten.",
+      "joined": "Beigetreten am {date}",
+      "sharedWith": "Gleiche IP wie:",
+      "nobodyNow": "derzeit kein anderes Konto",
+      "noAppeal": "Noch kein Einspruch.",
+      "notePlaceholder": "Hinweis für das Mitglied (optional)",
+      "approve": "Annehmen und ausnehmen",
+      "reject": "Ablehnen",
+      "approved": "Konto freigegeben",
+      "rejected": "Einspruch abgelehnt",
+      "more": "Mehr anzeigen"
+    },
+    "retry": "Erneut versuchen"
+  }
+}

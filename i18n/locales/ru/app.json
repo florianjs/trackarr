@@ -656,12 +656,11 @@
       "installedVersion": "Установленная версия Trackarr",
       "published": "Опубликовано {date}",
       "showInstructions": "Показать инструкцию по обновлению",
-      "step": "Шаг {step}: {description}",
       "upToDate": "У вас последняя версия",
       "updateAvailable": "Доступно обновление: {version}",
-      "updateCommands": "Команды обновления",
       "versionTitle": "Версия и обновления",
-      "viewChangelog": "Список изменений"
+      "viewChangelog": "Список изменений",
+      "updateIntro": "По умолчанию Trackarr установлен в {directory}. Чтобы обновить установку до последней версии, выполните:"
     },
     "torznabUsers": {
       "blockAccess": "Заблокировать доступ к API",

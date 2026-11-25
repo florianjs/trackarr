@@ -8,6 +8,8 @@ declare module '#auth-utils' {
     downloaded: number;
     // Paid registration: locked until the sign-up payment is confirmed
     paymentPending?: boolean;
+    // Multi-account guard: held until staff approve an appeal
+    ipHold?: boolean;
   }
 
   interface UserSession {
@@ -27,6 +29,7 @@ export interface PublicUser {
   uploaded: number;
   downloaded: number;
   paymentPending?: boolean;
+  ipHold?: boolean;
 }
 
 export {};
