@@ -18,6 +18,7 @@ import { offeredCurrencies } from '../../utils/payments/invoices';
 import { validateBody, registerSchema } from '../../utils/schemas';
 import { verifyPoWSolution } from '../../utils/pow';
 import { getClientIP, protectEndpoint } from '../../utils/rateLimit';
+import { detectSharedIp } from '../../utils/multiAccount';
 
 // Serializes registrations so the first-user (admin) check and invite
 // consumption cannot race.
@@ -157,6 +158,11 @@ export default defineEventHandler(async (event) => {
     currencies: offeredCurrencies(paidConfig),
   });
 
+  // Multi-account guard: another account already uses this IP
+  const ipHold = isFirstUser
+    ? false
+    : await detectSharedIp(clientIp, null, { isAdmin: false, isModerator: false, ipExempt: false, ipHold: false });
+
   // For first user, require and hash panic password
   let panicPasswordHash: string | null = null;
   if (isFirstUser) {
@@ -194,6 +200,7 @@ export default defineEventHandler(async (event) => {
       invitesRemaining: isFirstUser ? 10 : defaultInvites,
       panicPasswordHash,
       paymentPending,
+      ipHold,
     });
 
     // Consume the invite only if still unused: one code, one account
@@ -233,6 +240,7 @@ export default defineEventHandler(async (event) => {
       uploaded: starterUpload,
       downloaded: 0,
       paymentPending,
+      ipHold,
     },
     loggedInAt: Date.now(),
     sessionVersion: 0,
@@ -249,6 +257,7 @@ export default defineEventHandler(async (event) => {
       uploaded: starterUpload,
       downloaded: 0,
       paymentPending,
+      ipHold,
     },
   };
 });

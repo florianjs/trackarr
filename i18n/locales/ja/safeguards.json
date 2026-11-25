@@ -1,0 +1,50 @@
+{
+  "safeguards": {
+    "error": "問題が発生しました。もう一度お試しください。",
+    "admin": {
+      "title": "保護機能",
+      "slurFilter": "差別用語を隠す",
+      "slurFilterHint": "人種差別・同性愛嫌悪などの差別用語は、シャウトボックス、フォーラム、コメントで伏せ字 (*****) になります（leetspeak 表記も含む）。",
+      "slurWords": "追加の単語（1行に1語、末尾に * を付けるとその文字で始まる語すべてに一致）",
+      "slurWordsPlaceholder": "word\nprefix*",
+      "saveWords": "単語を保存",
+      "multiAccount": "同一 IP の複数アカウントをブロック",
+      "multiAccountHint": "他のアカウントが使用中の IP から登録またはログインしたアカウントは保留になります。本人は異議申し立て（家族、同居人）ができ、スタッフが承認または却下します。",
+      "openAppeals": "保留中のアカウントを確認",
+      "saved": "保存しました"
+    },
+    "modNav": {
+      "label": "IP 異議申し立て",
+      "description": "IP 共有により保留中のアカウント"
+    },
+    "appeal": {
+      "title": "アカウント保留中",
+      "intro": "この IP アドレスは別のアカウントが既に使用しているため、複数アカウント防止のためあなたのアカウントは保留中です。回線を共有している場合（家族、同居人、職場）は下に説明してください。スタッフが確認します。",
+      "loading": "読み込み中…",
+      "message": "異議申し立て",
+      "placeholder": "この回線を他に誰が使っていて、どのような関係ですか？",
+      "length": "{count} / {max} 文字",
+      "submit": "送信",
+      "check": "再確認",
+      "logout": "ログアウト",
+      "staffNote": "スタッフからのメモ：{note}",
+      "status": {
+        "pending": "審査待ち",
+        "approved": "承認されました",
+        "rejected": "却下されました。再度送信できます"
+      }
+    },
+    "mod": {
+      "empty": "保留中のアカウントはありません。",
+      "joined": "{date} に参加",
+      "sharedWith": "同じ IP：",
+      "nobodyNow": "現在ほかのアカウントはありません",
+      "noAppeal": "異議申し立てはまだありません。",
+      "notePlaceholder": "メンバーへのメモ（任意）",
+      "approve": "承認して除外",
+      "reject": "却下",
+      "approved": "アカウントを解除しました",
+      "rejected": "却下しました"
+    }
+  }
+}

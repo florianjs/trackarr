@@ -1,0 +1,50 @@
+{
+  "safeguards": {
+    "error": "Something went wrong, please try again.",
+    "admin": {
+      "title": "Safeguards",
+      "slurFilter": "Hide hateful words",
+      "slurFilterHint": "Racist, homophobic and other slurs are masked (*****) in the shoutbox, forum and comments, including leetspeak spellings.",
+      "slurWords": "Extra words (one per line, end with * to match every word starting with it)",
+      "slurWordsPlaceholder": "word\nprefix*",
+      "saveWords": "Save words",
+      "multiAccount": "Block multiple accounts on one IP",
+      "multiAccountHint": "An account signing up or in from an IP already used by another account is put on hold. It can appeal (family, flatmates) and staff approve or reject it.",
+      "openAppeals": "Review held accounts",
+      "saved": "Saved"
+    },
+    "modNav": {
+      "label": "IP appeals",
+      "description": "Accounts held for sharing an IP address"
+    },
+    "appeal": {
+      "title": "Account on hold",
+      "intro": "Another account already uses this IP address, so yours is on hold to prevent multiple accounts. If you share the connection (family, flatmates, office), explain it below: staff will review your appeal.",
+      "loading": "Loading…",
+      "message": "Your appeal",
+      "placeholder": "Who else uses this connection, and how do you know each other?",
+      "length": "{count} / {max} characters",
+      "submit": "Send appeal",
+      "check": "Check again",
+      "logout": "Sign out",
+      "staffNote": "Staff note: {note}",
+      "status": {
+        "pending": "Appeal waiting for review",
+        "approved": "Appeal approved",
+        "rejected": "Appeal rejected, you can send a new one"
+      }
+    },
+    "mod": {
+      "empty": "No account on hold.",
+      "joined": "Joined {date}",
+      "sharedWith": "Same IP as:",
+      "nobodyNow": "no other account at the moment",
+      "noAppeal": "No appeal yet.",
+      "notePlaceholder": "Note for the member (optional)",
+      "approve": "Approve and exempt",
+      "reject": "Reject",
+      "approved": "Account released",
+      "rejected": "Appeal rejected"
+    }
+  }
+}

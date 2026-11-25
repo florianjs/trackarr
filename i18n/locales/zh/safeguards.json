@@ -1,0 +1,50 @@
+{
+  "safeguards": {
+    "error": "出了点问题，请重试。",
+    "admin": {
+      "title": "安全防护",
+      "slurFilter": "隐藏仇恨词语",
+      "slurFilterHint": "种族歧视、恐同等侮辱性词语会在聊天框、论坛和评论中被遮盖 (*****)，包括 leetspeak 写法。",
+      "slurWords": "额外词语（每行一个，以 * 结尾可匹配所有以此开头的词）",
+      "slurWordsPlaceholder": "word\nprefix*",
+      "saveWords": "保存词语",
+      "multiAccount": "阻止同一 IP 的多个账户",
+      "multiAccountHint": "从已被其他账户使用的 IP 注册或登录的账户将被暂停。用户可以申诉（家人、室友），由管理团队批准或拒绝。",
+      "openAppeals": "查看被暂停的账户",
+      "saved": "已保存"
+    },
+    "modNav": {
+      "label": "IP 申诉",
+      "description": "因共享 IP 被暂停的账户"
+    },
+    "appeal": {
+      "title": "账户已暂停",
+      "intro": "另一个账户已在使用此 IP 地址，为防止多账户，你的账户已被暂停。如果你与他人共用网络（家人、室友、办公室），请在下方说明，管理团队会审核你的申诉。",
+      "loading": "加载中…",
+      "message": "你的申诉",
+      "placeholder": "还有谁在使用这个网络？你们是什么关系？",
+      "length": "{count} / {max} 个字符",
+      "submit": "提交申诉",
+      "check": "重新检查",
+      "logout": "退出登录",
+      "staffNote": "管理团队备注：{note}",
+      "status": {
+        "pending": "申诉审核中",
+        "approved": "申诉已通过",
+        "rejected": "申诉被拒绝，你可以重新提交"
+      }
+    },
+    "mod": {
+      "empty": "没有被暂停的账户。",
+      "joined": "{date} 加入",
+      "sharedWith": "与以下账户同 IP：",
+      "nobodyNow": "目前没有其他账户",
+      "noAppeal": "尚未申诉。",
+      "notePlaceholder": "给成员的备注（可选）",
+      "approve": "通过并豁免",
+      "reject": "拒绝",
+      "approved": "账户已解除暂停",
+      "rejected": "申诉已拒绝"
+    }
+  }
+}

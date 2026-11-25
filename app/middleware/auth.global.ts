@@ -60,4 +60,13 @@ export default defineNuxtRouteMiddleware(async (to) => {
   if (loggedIn.value && !user.value?.paymentPending && onPaymentPage) {
     return navigateTo('/');
   }
+
+  // Multi-account guard: a held account only sees the appeal page
+  const onAppealPage = to.path === '/auth/appeal';
+  if (loggedIn.value && !user.value?.paymentPending && user.value?.ipHold && !onAppealPage) {
+    return navigateTo('/auth/appeal');
+  }
+  if (loggedIn.value && !user.value?.ipHold && onAppealPage) {
+    return navigateTo('/');
+  }
 });

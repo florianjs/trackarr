@@ -6,6 +6,7 @@ import { redis } from '../../redis/client';
 import { FAKE_CHALLENGE_MARKER } from '../../utils/crypto';
 import { isHoneypotFilled } from '../../utils/honeypot';
 import { SecurityAlertType, sendSecurityAlert } from '../../utils/alerts';
+import { detectSharedIp } from '../../utils/multiAccount';
 import {
   burnVerifierCheck,
   checkVerifier,
@@ -120,10 +121,13 @@ export default defineEventHandler(async (event) => {
     });
   }
 
+  // Multi-account guard: another account already uses this IP
+  const ipHold = user.ipHold || (await detectSharedIp(clientIp, user.id, user));
+
   // Update last seen and IP
   await db
     .update(users)
-    .set({ lastSeen: new Date(), lastIp: clientIp })
+    .set({ lastSeen: new Date(), lastIp: clientIp, ipHold })
     .where(eq(users.id, user.id));
 
   // Set user session using nuxt-auth-utils
@@ -136,6 +140,7 @@ export default defineEventHandler(async (event) => {
       uploaded: user.uploaded,
       downloaded: user.downloaded,
       paymentPending: user.paymentPending,
+      ipHold,
     },
     loggedInAt: Date.now(),
     sessionVersion: user.sessionVersion,
@@ -151,6 +156,7 @@ export default defineEventHandler(async (event) => {
       uploaded: user.uploaded,
       downloaded: user.downloaded,
       paymentPending: user.paymentPending,
+      ipHold,
     },
   };
 });

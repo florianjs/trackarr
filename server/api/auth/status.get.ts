@@ -31,6 +31,7 @@ export default defineEventHandler(async (event) => {
         downloaded: users.downloaded,
         isBanned: users.isBanned,
         paymentPending: users.paymentPending,
+        ipHold: users.ipHold,
         isAdmin: users.isAdmin,
         isModerator: users.isModerator,
         sessionVersion: users.sessionVersion,
@@ -51,7 +52,8 @@ export default defineEventHandler(async (event) => {
           dbUser.downloaded !== session.user.downloaded ||
           dbUser.isAdmin !== session.user.isAdmin ||
           dbUser.isModerator !== session.user.isModerator ||
-          dbUser.paymentPending !== Boolean(session.user.paymentPending)
+          dbUser.paymentPending !== Boolean(session.user.paymentPending) ||
+          dbUser.ipHold !== Boolean(session.user.ipHold)
         ) {
           await setUserSession(event, {
             ...session,
@@ -62,6 +64,7 @@ export default defineEventHandler(async (event) => {
               isAdmin: dbUser.isAdmin,
               isModerator: dbUser.isModerator,
               paymentPending: dbUser.paymentPending,
+              ipHold: dbUser.ipHold,
             },
           });
         }
@@ -74,6 +77,7 @@ export default defineEventHandler(async (event) => {
           uploaded: dbUser.uploaded,
           downloaded: dbUser.downloaded,
           paymentPending: dbUser.paymentPending,
+          ipHold: dbUser.ipHold,
         };
       }
     } else {

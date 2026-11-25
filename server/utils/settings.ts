@@ -80,6 +80,10 @@ export const SETTINGS_KEYS = {
   // Shoutbox
   SHOUTBOX_ENABLED: 'shoutbox_enabled',
   SHOUTBOX_SEEDED: 'shoutbox_seeded',
+  // Moderation safeguards (on by default)
+  SLUR_FILTER_ENABLED: 'slur_filter_enabled',
+  SLUR_FILTER_WORDS: 'slur_filter_words', // extra words, one per line
+  MULTI_ACCOUNT_GUARD: 'multi_account_guard',
   // Theme, fonts, login design, images, text overrides (shared/utils/appearance.ts)
   APPEARANCE: 'appearance',
   // Paid sign-up: JSON (shared/utils/paidRegistration.ts)
@@ -188,6 +192,20 @@ export async function getMinRatio(): Promise<number> {
 export async function getStarterUpload(): Promise<number> {
   const value = await getSetting(SETTINGS_KEYS.STARTER_UPLOAD);
   return value ? parseInt(value, 10) : 0;
+}
+
+/** Hateful words masked in public text (on by default) */
+export async function isSlurFilterEnabled(): Promise<boolean> {
+  return (await getSetting(SETTINGS_KEYS.SLUR_FILTER_ENABLED)) !== 'false';
+}
+
+export async function getSlurFilterWords(): Promise<string> {
+  return (await getSetting(SETTINGS_KEYS.SLUR_FILTER_WORDS)) ?? '';
+}
+
+/** Accounts sharing an IP with another one are held until staff review (on by default) */
+export async function isMultiAccountGuardEnabled(): Promise<boolean> {
+  return (await getSetting(SETTINGS_KEYS.MULTI_ACCOUNT_GUARD)) !== 'false';
 }
 
 /**

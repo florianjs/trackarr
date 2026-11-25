@@ -4,6 +4,7 @@
     <AdminAnnouncements />
     <AdminFreeleech />
     <AdminRegistration />
+    <AdminSafeguards />
     <AdminPanic />
   </div>
 </template>
