@@ -66,6 +66,35 @@
       </div>
     </div>
 
+    <!-- Staff: pending filter and bulk actions on the selection -->
+    <div v-if="isStaff" class="flex flex-wrap items-center gap-2 text-xs">
+      <label class="flex items-center gap-2 text-text-secondary">
+        <input v-model="pendingOnly" type="checkbox" />{{ t('torrents.list.pendingOnly') }}
+      </label>
+      <template v-if="selected.length">
+        <span class="ml-auto text-text-muted num">{{ t('torrents.list.selected', { count: selected.length }) }}</span>
+        <button type="button" class="btn btn-secondary text-xs" :disabled="bulkBusy" @click="runBulk({ action: 'approve' })">
+          <Icon name="ph:check" aria-hidden="true" />{{ t('common.approve') }}
+        </button>
+        <select v-model="bulkCategory" class="input !py-1 text-xs w-auto" :aria-label="t('torrents.list.moveTo')">
+          <option value="" disabled>{{ t('torrents.list.moveTo') }}</option>
+          <option v-for="c in flatCategories" :key="c.id" :value="c.id">{{ categoryLabel(c) }}</option>
+        </select>
+        <button
+          type="button"
+          class="btn btn-secondary text-xs"
+          :disabled="bulkBusy || !bulkCategory"
+          @click="runBulk({ action: 'category', categoryId: bulkCategory })"
+        >
+          {{ t('torrents.list.applyCategory') }}
+        </button>
+        <button type="button" class="btn btn-secondary text-xs hover:!text-danger" :disabled="bulkBusy" @click="bulkDelete">
+          <Icon name="ph:trash" aria-hidden="true" />{{ t('common.delete') }}
+        </button>
+        <button type="button" class="btn btn-ghost text-xs" @click="selected = []">{{ t('torrents.list.clearSelection') }}</button>
+      </template>
+    </div>
+
     <!-- Results -->
     <div class="card overflow-hidden" :aria-busy="pending">
       <div v-if="torrents.length" class="overflow-x-auto">
@@ -73,7 +102,10 @@
           :torrents="torrents"
           :categories="flatCategories"
           :can-delete="isStaff"
+          :selectable="isStaff"
+          v-model:selected="selected"
           @deleted="() => refresh()"
+          @approved="() => refresh()"
         />
       </div>
       <div v-else class="p-10 text-center">
@@ -150,15 +182,17 @@ const sort = ref(
     : 'uploaded:desc'
 );
 const page = ref(Number(route.query.page) > 1 ? Number(route.query.page) : 1);
+const pendingOnly = ref(route.query.pending === '1');
 
-watch([searchDebounced, categoryId, sort], () => (page.value = 1));
-watch([searchDebounced, categoryId, sort, page], () => {
+watch([searchDebounced, categoryId, sort, pendingOnly], () => (page.value = 1));
+watch([searchDebounced, categoryId, sort, page, pendingOnly], () => {
   router.replace({
     query: {
       search: searchDebounced.value || undefined,
       categoryId: categoryId.value || undefined,
       sort: sort.value !== 'uploaded:desc' ? sort.value : undefined,
       page: page.value > 1 ? page.value : undefined,
+      pending: pendingOnly.value ? '1' : undefined,
     },
   });
 });
@@ -177,6 +211,7 @@ const { data, refresh, pending } = await useFetch<{ data: TorrentRow[]; paginati
         categoryId: categoryId.value || undefined,
         sortBy,
         order,
+        pending: pendingOnly.value && isStaff.value ? '1' : undefined,
       };
     }),
   }
@@ -199,6 +234,44 @@ const activeTop = computed(() => {
 const subcategories = computed(
   () => topCategories.value.find((c) => c.id === activeTop.value)?.subcategories ?? []
 );
+
+// Bulk actions (staff): selection is kept per page, cleared once applied
+const notifications = useNotificationStore();
+const selected = ref<string[]>([]);
+const bulkCategory = ref('');
+const bulkBusy = ref(false);
+watch([searchDebounced, categoryId, sort, page, pendingOnly], () => (selected.value = []));
+
+function categoryLabel(c: Category) {
+  const parent = c.parentId ? topCategories.value.find((p) => p.id === c.parentId) : undefined;
+  return parent ? `${parent.name} / ${c.name}` : c.name;
+}
+
+type BulkAction = { action: 'approve' } | { action: 'delete' } | { action: 'category'; categoryId: string };
+
+async function runBulk(payload: BulkAction) {
+  if (!selected.value.length || bulkBusy.value) return;
+  bulkBusy.value = true;
+  try {
+    const res = await $fetch<{ count: number }>('/api/mod/torrents/bulk', {
+      method: 'POST',
+      body: { ...payload, infoHashes: selected.value },
+    });
+    notifications.success(t(`torrents.list.bulkDone.${payload.action}`, { count: res.count }));
+    selected.value = [];
+    bulkCategory.value = '';
+    await refresh();
+  } catch (err) {
+    notifications.error(t('torrents.list.bulkFailed'), (err as { data?: { message?: string } }).data?.message);
+  } finally {
+    bulkBusy.value = false;
+  }
+}
+
+function bulkDelete() {
+  if (!confirm(t('torrents.list.confirmBulkDelete', { count: selected.value.length }))) return;
+  return runBulk({ action: 'delete' });
+}
 
 function selectCategory(id: string) {
   categoryId.value = id;

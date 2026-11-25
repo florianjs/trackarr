@@ -87,7 +87,27 @@
         "cancelBounty": "Annulla taglia",
         "confirmCancel": "Annullare questa taglia? Tutti i contributi verranno rimborsati.",
         "confirmAccept": "Accettare questo torrent? La ricompensa verrà pagata a chi l'ha caricato.",
-        "filledBy": "Soddisfatta da {user}"
+        "filledBy": "Soddisfatta da {user}",
+        "delete": "Elimina",
+        "confirmDelete": "Eliminare questa taglia? I punti ancora bloccati tornano ai contributori."
+      },
+      "bulk": {
+        "selectAll": "Seleziona tutto",
+        "select": "Seleziona {title}",
+        "selected": "Selezionati: {count}",
+        "cancel": "Annulla e rimborsa",
+        "delete": "Elimina",
+        "clear": "Annulla selezione",
+        "confirm": {
+          "cancel": "Annullare le {count} taglie selezionate? I contributi vengono rimborsati.",
+          "delete": "Eliminare le {count} taglie selezionate? I punti bloccati vengono rimborsati. Azione irreversibile."
+        },
+        "done": {
+          "cancel": "Taglie annullate: {count}",
+          "delete": "Taglie eliminate: {count}"
+        },
+        "skipped": "Saltate (già chiuse o modificate): {count}",
+        "failed": "Azione multipla non riuscita"
       }
     },
     "admin": {

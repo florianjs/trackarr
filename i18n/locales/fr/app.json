@@ -220,7 +220,10 @@
       "deleteTorrent": "Supprimer le torrent",
       "confirmDelete": "Supprimer « {name} » ?",
       "deleteFailed": "Échec de la suppression du torrent",
-      "pending": "En attente"
+      "pending": "En attente",
+      "selectAll": "Tout sélectionner",
+      "select": "Sélectionner {name}",
+      "approveFailed": "Impossible de valider le torrent"
     },
     "list": {
       "title": "Torrents",
@@ -238,7 +241,19 @@
       "sortName": "Nom",
       "noMatch": "Aucun torrent ne correspond à ces filtres.",
       "previous": "Page précédente",
-      "next": "Page suivante"
+      "next": "Page suivante",
+      "pendingOnly": "En attente uniquement",
+      "selected": "Sélection : {count}",
+      "moveTo": "Déplacer vers…",
+      "applyCategory": "Déplacer",
+      "clearSelection": "Vider la sélection",
+      "bulkDone": {
+        "approve": "Torrents validés : {count}",
+        "delete": "Torrents supprimés : {count}",
+        "category": "Torrents déplacés : {count}"
+      },
+      "bulkFailed": "L'action groupée a échoué",
+      "confirmBulkDelete": "Supprimer les {count} torrents sélectionnés ? Action irréversible."
     },
     "detail": {
       "backToIndex": "Tous les torrents",
@@ -268,7 +283,12 @@
       "commentFailed": "Impossible de publier le commentaire.",
       "confirmDeleteComment": "Supprimer ce commentaire ?",
       "details": "Détails",
-      "commentDeleteFailed": "Impossible de supprimer le commentaire."
+      "commentDeleteFailed": "Impossible de supprimer le commentaire.",
+      "pendingReview": "Ce torrent attend la validation de l'équipe et n'est pas encore listé.",
+      "rejectReason": "Motif (facultatif)",
+      "confirmReject": "Rejeter et supprimer ce torrent ?",
+      "reviewFailed": "La validation a échoué",
+      "edited": "modifié"
     }
   },
   "search": {
@@ -361,7 +381,13 @@
       "replyPlaceholder": "Rédigez votre réponse ici...",
       "posting": "Publication...",
       "postReply": "Publier la réponse",
-      "locked": "Ce sujet est verrouillé. Vous ne pouvez pas y répondre."
+      "locked": "Ce sujet est verrouillé. Vous ne pouvez pas y répondre.",
+      "editTopic": "Modifier le sujet",
+      "topicTitle": "Titre du sujet",
+      "moveTo": "Déplacer vers la catégorie",
+      "editPost": "Modifier le message",
+      "edited": "modifié",
+      "editFailed": "Impossible d'enregistrer la modification"
     }
   },
   "users": {
@@ -378,6 +404,104 @@
       "uncategorized": "Sans catégorie",
       "pageTitle": "{username} - Profil",
       "pageTitleFallback": "Profil utilisateur"
+    },
+    "moderation": {
+      "title": "Modération",
+      "staffOnly": "Seul un admin peut agir sur un membre de l'équipe.",
+      "reason": "Motif",
+      "reasonPlaceholder": "Motif (conservé dans les journaux)",
+      "reasonOptional": "Motif (facultatif)",
+      "failed": "L'action a échoué",
+      "status": {
+        "active": "Actif",
+        "banned": "Banni",
+        "deleted": "Compte supprimé",
+        "muted": "Muet jusqu'au {until}",
+        "hold": "En attente (IP partagée)",
+        "payment": "Paiement en attente"
+      },
+      "ban": {
+        "action": "Bannir",
+        "hint": "Bloque la connexion et le tracker, déconnecte le membre et bannit sa dernière IP.",
+        "confirm": "Bannir {name}",
+        "done": "{name} est banni"
+      },
+      "unban": {
+        "action": "Débannir",
+        "hint": "{name} pourra se reconnecter et sa dernière IP est débannie.",
+        "confirm": "Débannir",
+        "done": "{name} est débanni"
+      },
+      "mute": {
+        "action": "Rendre muet (shoutbox)",
+        "duration": "Durée",
+        "hour": "1 heure",
+        "day": "1 jour",
+        "week": "7 jours",
+        "month": "30 jours",
+        "confirm": "Rendre muet",
+        "done": "{name} est muet"
+      },
+      "unmute": {
+        "action": "Lever le mute",
+        "hint": "{name} pourra de nouveau écrire dans la shoutbox.",
+        "confirm": "Lever le mute",
+        "done": "{name} peut de nouveau parler"
+      },
+      "hold": {
+        "action": "Lever le blocage IP",
+        "hint": "Ce compte partage son IP avec un autre. Lever le blocage l'exempte définitivement du contrôle.",
+        "noAppeal": "Aucun recours envoyé pour l'instant.",
+        "confirm": "Approuver et lever",
+        "done": "Blocage levé pour {name}"
+      },
+      "avatar": {
+        "action": "Retirer l'avatar",
+        "hint": "L'avatar de {name} est supprimé. Le membre pourra en envoyer un autre.",
+        "confirm": "Retirer",
+        "done": "Avatar de {name} retiré"
+      },
+      "sessions": {
+        "action": "Déconnecter partout",
+        "hint": "{name} est déconnecté sur tous ses appareils et devra se reconnecter.",
+        "confirm": "Déconnecter",
+        "done": "{name} est déconnecté partout"
+      },
+      "edit": {
+        "action": "Modifier",
+        "username": "Nom d'utilisateur",
+        "invites": "Invitations restantes",
+        "invitesLeft": "Invitations : {count}",
+        "done": "Compte de {name} mis à jour"
+      },
+      "roles": {
+        "action": "Rôles",
+        "moderator": "Modérateur",
+        "done": "Rôles de {name} mis à jour"
+      },
+      "ratio": {
+        "action": "Ratio"
+      },
+      "bonus": {
+        "action": "Points bonus",
+        "amount": "Points (+/-)",
+        "points": "{points} pts",
+        "confirm": "Appliquer",
+        "done": "Bonus de {name} mis à jour"
+      },
+      "passkey": {
+        "action": "Réinitialiser la passkey",
+        "hint": "Les torrents de {name} n'annoncent plus tant qu'ils ne sont pas retéléchargés. À utiliser après une fuite d'URL d'annonce.",
+        "confirm": "Réinitialiser",
+        "done": "Passkey de {name} réinitialisée"
+      },
+      "delete": {
+        "action": "Supprimer le compte",
+        "hint": "Le compte ne peut plus se connecter ni utiliser le tracker, et son nom est libéré. Torrents, messages et commentaires restent, sous un nom anonyme. Action irréversible.",
+        "typeName": "Tapez {name} pour confirmer",
+        "confirm": "Supprimer définitivement",
+        "done": "Compte de {name} supprimé"
+      }
     }
   },
   "invites": {

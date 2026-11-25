@@ -74,47 +74,18 @@ export function resolvePurchase(
 // Bounties
 // ============================================================================
 
-export type BountyStatus = 'open' | 'claimed' | 'filled' | 'cancelled';
-export type BountyAction = 'contribute' | 'fill' | 'accept' | 'reject' | 'cancel';
-
-export interface BountyActor {
-  userId: string;
-  isStaff: boolean;
-}
-
-/**
- * Who may do what on a bounty, given its state.
- * - open: anyone contributes or submits a fill; requester/staff cancel
- * - claimed (fill pending review): requester/staff accept or reject
- * - filled / cancelled: final
- */
-export function canBountyAction(
-  bounty: { status: string; requesterId: string },
-  action: BountyAction,
-  actor: BountyActor
-): boolean {
-  const isOwnerOrStaff = actor.userId === bounty.requesterId || actor.isStaff;
-
-  switch (action) {
-    case 'contribute':
-      return bounty.status === 'open';
-    case 'fill':
-      return bounty.status === 'open';
-    case 'accept':
-    case 'reject':
-      return bounty.status === 'claimed' && isOwnerOrStaff;
-    case 'cancel':
-      return bounty.status === 'open' && isOwnerOrStaff;
-    default:
-      return false;
-  }
-}
+export {
+  canBountyAction,
+  type BountyAction,
+  type BountyActor,
+  type BountyStatus,
+} from '../../shared/utils/bounties';
 
 // ============================================================================
 // Balance changes
 // ============================================================================
 
-type Tx = Parameters<Parameters<typeof Db.transaction>[0]>[0];
+export type Tx = Parameters<Parameters<typeof Db.transaction>[0]>[0];
 
 export class InsufficientPointsError extends Error {
   constructor() {

@@ -93,6 +93,8 @@ export const torrentQuerySchema = z.object({
   search: z.string().max(255).optional(),
   sortBy: z.enum(['uploaded', 'name', 'size']).default('uploaded'),
   order: z.enum(['asc', 'desc']).default('desc'),
+  // Staff: only torrents waiting for approval
+  pending: z.literal('1').optional(),
 });
 
 export const torrentCommentSchema = z.object({

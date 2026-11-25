@@ -29,6 +29,10 @@ export default defineEventHandler(async (event) => {
     );
   }
 
+  if (query.pending && canSeeUnapproved) {
+    conditions.push(eq(schema.torrents.isApproved, false));
+  }
+
   if (query.search) {
     // Intelligent search: if it looks like an infoHash, search by it too
     const isHash = /^[0-9a-fA-F]{40}$/.test(query.search);

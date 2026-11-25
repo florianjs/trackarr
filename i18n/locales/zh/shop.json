@@ -87,7 +87,27 @@
         "cancelBounty": "取消悬赏",
         "confirmCancel": "取消此悬赏？所有追加的魔力值都将退还。",
         "confirmAccept": "确认采纳此种子？奖励将支付给其发布者。",
-        "filledBy": "由 {user} 完成"
+        "filledBy": "由 {user} 完成",
+        "delete": "删除",
+        "confirmDelete": "删除此悬赏？仍冻结的积分将退还给贡献者。"
+      },
+      "bulk": {
+        "selectAll": "全选",
+        "select": "选择 {title}",
+        "selected": "已选：{count}",
+        "cancel": "取消并退款",
+        "delete": "删除",
+        "clear": "取消选择",
+        "confirm": {
+          "cancel": "取消所选的 {count} 个悬赏？贡献将被退还。",
+          "delete": "删除所选的 {count} 个悬赏？冻结的积分将退还。此操作不可撤销。"
+        },
+        "done": {
+          "cancel": "已取消悬赏：{count}",
+          "delete": "已删除悬赏：{count}"
+        },
+        "skipped": "已跳过（已关闭或已变更）：{count}",
+        "failed": "批量操作失败"
       }
     },
     "admin": {

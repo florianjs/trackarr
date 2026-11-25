@@ -220,7 +220,10 @@
       "deleteTorrent": "Elimina torrent",
       "confirmDelete": "Eliminare \"{name}\"?",
       "deleteFailed": "Eliminazione del torrent non riuscita",
-      "pending": "In attesa"
+      "pending": "In attesa",
+      "selectAll": "Seleziona tutto",
+      "select": "Seleziona {name}",
+      "approveFailed": "Impossibile approvare il torrent"
     },
     "list": {
       "title": "Torrent",
@@ -238,7 +241,19 @@
       "sortName": "Nome",
       "noMatch": "Nessun torrent corrisponde a questi filtri.",
       "previous": "Pagina precedente",
-      "next": "Pagina successiva"
+      "next": "Pagina successiva",
+      "pendingOnly": "Solo in attesa",
+      "selected": "Selezionati: {count}",
+      "moveTo": "Sposta in…",
+      "applyCategory": "Sposta",
+      "clearSelection": "Annulla selezione",
+      "bulkDone": {
+        "approve": "Torrent approvati: {count}",
+        "delete": "Torrent eliminati: {count}",
+        "category": "Torrent spostati: {count}"
+      },
+      "bulkFailed": "Azione multipla non riuscita",
+      "confirmBulkDelete": "Eliminare i {count} torrent selezionati? Azione irreversibile."
     },
     "detail": {
       "backToIndex": "Tutti i torrent",
@@ -268,7 +283,12 @@
       "commentFailed": "Impossibile pubblicare il commento.",
       "confirmDeleteComment": "Eliminare questo commento?",
       "details": "Dettagli",
-      "commentDeleteFailed": "Impossibile eliminare il commento."
+      "commentDeleteFailed": "Impossibile eliminare il commento.",
+      "pendingReview": "Questo torrent è in attesa di approvazione dello staff e non è ancora elencato.",
+      "rejectReason": "Motivo (facoltativo)",
+      "confirmReject": "Rifiutare ed eliminare questo torrent?",
+      "reviewFailed": "Revisione non riuscita",
+      "edited": "modificato"
     }
   },
   "search": {
@@ -361,7 +381,13 @@
       "replyPlaceholder": "Scrivi qui la tua risposta...",
       "posting": "Pubblicazione...",
       "postReply": "Invia risposta",
-      "locked": "Questa discussione è chiusa. Non puoi rispondere."
+      "locked": "Questa discussione è chiusa. Non puoi rispondere.",
+      "editTopic": "Modifica argomento",
+      "topicTitle": "Titolo dell'argomento",
+      "moveTo": "Sposta nella categoria",
+      "editPost": "Modifica messaggio",
+      "edited": "modificato",
+      "editFailed": "Impossibile salvare la modifica"
     }
   },
   "users": {
@@ -378,6 +404,104 @@
       "uncategorized": "Senza categoria",
       "pageTitle": "{username} - Profilo",
       "pageTitleFallback": "Profilo utente"
+    },
+    "moderation": {
+      "title": "Moderazione",
+      "staffOnly": "Solo un admin può agire su un membro dello staff.",
+      "reason": "Motivo",
+      "reasonPlaceholder": "Motivo (conservato nei log)",
+      "reasonOptional": "Motivo (facoltativo)",
+      "failed": "Azione non riuscita",
+      "status": {
+        "active": "Attivo",
+        "banned": "Bannato",
+        "deleted": "Account eliminato",
+        "muted": "Silenziato fino al {until}",
+        "hold": "In attesa (IP condiviso)",
+        "payment": "Pagamento in sospeso"
+      },
+      "ban": {
+        "action": "Banna",
+        "hint": "Blocca l'accesso e il tracker, disconnette il membro e banna il suo ultimo IP.",
+        "confirm": "Banna {name}",
+        "done": "{name} è stato bannato"
+      },
+      "unban": {
+        "action": "Sbanna",
+        "hint": "{name} potrà accedere di nuovo e il suo ultimo IP viene sbannato.",
+        "confirm": "Sbanna",
+        "done": "{name} è stato sbannato"
+      },
+      "mute": {
+        "action": "Silenzia nella shoutbox",
+        "duration": "Durata",
+        "hour": "1 ora",
+        "day": "1 giorno",
+        "week": "7 giorni",
+        "month": "30 giorni",
+        "confirm": "Silenzia",
+        "done": "{name} è stato silenziato"
+      },
+      "unmute": {
+        "action": "Rimuovi silenzio",
+        "hint": "{name} potrà di nuovo scrivere nella shoutbox.",
+        "confirm": "Rimuovi silenzio",
+        "done": "{name} può di nuovo scrivere"
+      },
+      "hold": {
+        "action": "Rimuovi blocco IP",
+        "hint": "Questo account condivide l'IP con un altro. Rimuovere il blocco lo esenta per sempre dal controllo.",
+        "noAppeal": "Nessun ricorso inviato finora.",
+        "confirm": "Approva e rimuovi",
+        "done": "Blocco rimosso per {name}"
+      },
+      "avatar": {
+        "action": "Rimuovi avatar",
+        "hint": "L'avatar di {name} viene eliminato. Potrà caricarne un altro.",
+        "confirm": "Rimuovi",
+        "done": "Avatar di {name} rimosso"
+      },
+      "sessions": {
+        "action": "Disconnetti ovunque",
+        "hint": "{name} viene disconnesso da tutti i dispositivi e dovrà accedere di nuovo.",
+        "confirm": "Disconnetti",
+        "done": "{name} è stato disconnesso ovunque"
+      },
+      "edit": {
+        "action": "Modifica",
+        "username": "Nome utente",
+        "invites": "Inviti rimasti",
+        "invitesLeft": "Inviti: {count}",
+        "done": "Account di {name} aggiornato"
+      },
+      "roles": {
+        "action": "Ruoli",
+        "moderator": "Moderatore",
+        "done": "Ruoli di {name} aggiornati"
+      },
+      "ratio": {
+        "action": "Ratio"
+      },
+      "bonus": {
+        "action": "Punti bonus",
+        "amount": "Punti (+/-)",
+        "points": "{points} pt",
+        "confirm": "Applica",
+        "done": "Bonus di {name} aggiornato"
+      },
+      "passkey": {
+        "action": "Reimposta passkey",
+        "hint": "I torrent di {name} smettono di annunciare finché non vengono riscaricati. Da usare dopo una fuga dell'URL di annuncio.",
+        "confirm": "Reimposta",
+        "done": "Passkey di {name} reimpostata"
+      },
+      "delete": {
+        "action": "Elimina account",
+        "hint": "L'account non potrà più accedere né usare il tracker e il nome viene liberato. Torrent, post e commenti restano, con un nome anonimo. Azione irreversibile.",
+        "typeName": "Digita {name} per confermare",
+        "confirm": "Elimina definitivamente",
+        "done": "Account di {name} eliminato"
+      }
     }
   },
   "invites": {

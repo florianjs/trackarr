@@ -61,6 +61,29 @@
       </div>
     </header>
 
+    <!-- Pending review: staff decide here, without going through the queue -->
+    <section v-if="!torrent.isApproved" class="card border-leech/40 p-4 flex flex-wrap items-center gap-3" role="status">
+      <Icon name="ph:hourglass-medium" class="text-leech" aria-hidden="true" />
+      <p class="text-sm text-text-secondary flex-1 min-w-48">{{ t('torrents.detail.pendingReview') }}</p>
+      <template v-if="isStaff">
+        <input
+          v-model="rejectReason"
+          type="text"
+          maxlength="500"
+          class="input text-xs w-56"
+          :placeholder="t('torrents.detail.rejectReason')"
+          :aria-label="t('torrents.detail.rejectReason')"
+        />
+        <button type="button" class="btn btn-secondary text-xs hover:!text-danger" :disabled="reviewing" @click="review('reject')">
+          <Icon name="ph:x" aria-hidden="true" />{{ t('common.reject') }}
+        </button>
+        <button type="button" class="btn btn-primary text-xs" :disabled="reviewing" @click="review('approve')">
+          <Icon name="ph:check" aria-hidden="true" />{{ t('common.approve') }}
+        </button>
+      </template>
+      <p v-if="reviewError" class="w-full text-sm text-danger" role="alert">{{ reviewError }}</p>
+    </section>
+
     <!-- Swarm -->
     <section class="card grid grid-cols-3 divide-x divide-border" :aria-label="t('torrents.detail.swarm')">
       <div class="p-4">
@@ -105,10 +128,22 @@
               <div class="flex items-baseline gap-2">
                 <NuxtLink v-if="comment.author" :to="`/users/${comment.author.id}`" class="text-sm font-medium hover:underline underline-offset-2">{{ comment.author.username }}</NuxtLink>
                 <span class="text-xs text-text-muted" :title="formatDate(comment.createdAt)">{{ formatAge(comment.createdAt) }}</span>
+                <span v-if="comment.updatedAt && comment.updatedAt !== comment.createdAt" class="text-xs text-text-muted">{{ t('torrents.detail.edited') }}</span>
+                <button
+                  v-if="canEditComment(comment)"
+                  type="button"
+                  class="ml-auto p-1 rounded text-text-muted hover:text-text-primary opacity-0 group-hover:opacity-100 focus:opacity-100"
+                  :title="t('common.edit')"
+                  :aria-label="t('common.edit')"
+                  @click="startCommentEdit(comment)"
+                >
+                  <Icon name="ph:pencil-simple" class="block text-sm" />
+                </button>
                 <button
                   v-if="canDeleteComment(comment)"
                   type="button"
-                  class="ml-auto p-1 rounded text-text-muted hover:text-danger opacity-0 group-hover:opacity-100 focus:opacity-100"
+                  :class="canEditComment(comment) ? '' : 'ml-auto'"
+                  class="p-1 rounded text-text-muted hover:text-danger opacity-0 group-hover:opacity-100 focus:opacity-100"
                   :title="t('common.delete')"
                   :aria-label="t('common.delete')"
                   @click="deleteComment(comment.id)"
@@ -116,7 +151,14 @@
                   <Icon name="ph:trash" class="block text-sm" />
                 </button>
               </div>
-              <p class="mt-1 text-sm text-text-secondary whitespace-pre-wrap break-words">{{ comment.content }}</p>
+              <form v-if="editingComment === comment.id" class="mt-2 space-y-2" @submit.prevent="saveCommentEdit(comment.id)">
+                <textarea v-model="commentDraft" rows="3" maxlength="5000" class="input w-full resize-y" :aria-label="t('common.edit')" />
+                <div class="flex justify-end gap-2">
+                  <button type="button" class="btn btn-ghost text-xs" @click="editingComment = null">{{ t('common.cancel') }}</button>
+                  <button type="submit" class="btn btn-secondary text-xs" :disabled="!commentDraft.trim()">{{ t('common.save') }}</button>
+                </div>
+              </form>
+              <p v-else class="mt-1 text-sm text-text-secondary whitespace-pre-wrap break-words">{{ comment.content }}</p>
             </li>
           </ul>
           <form class="p-4 border-t border-border first:border-t-0" @submit.prevent="postComment">
@@ -214,6 +256,7 @@
 </template>
 
 <script setup lang="ts">
+import { canEditContent } from '~~/shared/utils/contentRights';
 interface Peer {
   id: string;
   port: number;
@@ -232,6 +275,7 @@ interface Comment {
   id: string;
   content: string;
   createdAt: string;
+  updatedAt?: string;
   authorId: string;
   author: { id: string; username: string } | null;
 }
@@ -248,6 +292,7 @@ interface TorrentDetail {
   imdbId: string | null;
   tmdbId: number | null;
   tvdbId: number | null;
+  isApproved: boolean;
   createdAt: string;
   tags: { id: string; name: string }[];
   comments: Comment[];
@@ -269,6 +314,7 @@ const { user } = useUserSession();
 const isStaff = computed(() => Boolean(user.value?.isAdmin || user.value?.isModerator));
 const canEdit = computed(() => Boolean(user.value && (torrent.value?.uploaderId === user.value.id || isStaff.value)));
 const canDeleteComment = (comment: Comment) => Boolean(user.value && (comment.authorId === user.value.id || isStaff.value));
+const canEditComment = (comment: Comment) => canEditContent(user.value, comment);
 
 const showEditModal = ref(false);
 const showReport = ref(false);
@@ -345,6 +391,48 @@ async function deleteComment(id: string) {
   }
   // Refresh either way: a 404 usually means someone else already deleted it
   await refresh();
+}
+
+const editingComment = ref<string | null>(null);
+const commentDraft = ref('');
+
+function startCommentEdit(comment: Comment) {
+  editingComment.value = comment.id;
+  commentDraft.value = comment.content;
+}
+
+async function saveCommentEdit(id: string) {
+  commentError.value = null;
+  try {
+    await $fetch(`/api/torrents/comments/${id}`, { method: 'PATCH', body: { content: commentDraft.value.trim() } });
+    editingComment.value = null;
+    await refresh();
+  } catch (err) {
+    commentError.value = (err as { data?: { message?: string } }).data?.message ?? t('torrents.detail.commentFailed');
+  }
+}
+
+// Pending review (staff)
+const rejectReason = ref('');
+const reviewing = ref(false);
+const reviewError = ref<string | null>(null);
+
+async function review(decision: 'approve' | 'reject') {
+  if (decision === 'reject' && !confirm(t('torrents.detail.confirmReject'))) return;
+  reviewing.value = true;
+  reviewError.value = null;
+  try {
+    await $fetch(`/api/mod/torrents/${torrent.value!.infoHash}/${decision}`, {
+      method: 'POST',
+      body: decision === 'reject' ? { reason: rejectReason.value.trim() || undefined } : {},
+    });
+    if (decision === 'reject') await navigateTo('/torrents');
+    else await refresh();
+  } catch (err) {
+    reviewError.value = (err as { data?: { message?: string } }).data?.message ?? t('torrents.detail.reviewFailed');
+  } finally {
+    reviewing.value = false;
+  }
 }
 
 // Delete torrent

@@ -220,7 +220,10 @@
       "deleteTorrent": "Delete torrent",
       "confirmDelete": "Delete \"{name}\"?",
       "deleteFailed": "Failed to delete torrent",
-      "pending": "Pending"
+      "pending": "Pending",
+      "selectAll": "Select all",
+      "select": "Select {name}",
+      "approveFailed": "Failed to approve torrent"
     },
     "list": {
       "title": "Torrents",
@@ -238,7 +241,19 @@
       "sortName": "Name",
       "noMatch": "No torrent matches these filters.",
       "previous": "Previous page",
-      "next": "Next page"
+      "next": "Next page",
+      "pendingOnly": "Pending only",
+      "selected": "Selected: {count}",
+      "moveTo": "Move to category",
+      "applyCategory": "Move",
+      "clearSelection": "Clear selection",
+      "bulkDone": {
+        "approve": "Torrents approved: {count}",
+        "delete": "Torrents deleted: {count}",
+        "category": "Torrents moved: {count}"
+      },
+      "bulkFailed": "Bulk action failed",
+      "confirmBulkDelete": "Delete the {count} selected torrents? This cannot be undone."
     },
     "detail": {
       "backToIndex": "All torrents",
@@ -268,7 +283,12 @@
       "commentFailed": "Could not post the comment.",
       "confirmDeleteComment": "Delete this comment?",
       "details": "Details",
-      "commentDeleteFailed": "Could not delete the comment."
+      "commentDeleteFailed": "Could not delete the comment.",
+      "pendingReview": "This torrent is waiting for staff approval and is not listed yet.",
+      "rejectReason": "Reason (optional)",
+      "confirmReject": "Reject and delete this torrent?",
+      "reviewFailed": "Review failed",
+      "edited": "edited"
     }
   },
   "search": {
@@ -361,7 +381,13 @@
       "replyPlaceholder": "Write your reply here...",
       "posting": "Posting...",
       "postReply": "Post Reply",
-      "locked": "This topic is locked. You cannot reply."
+      "locked": "This topic is locked. You cannot reply.",
+      "editTopic": "Edit topic",
+      "topicTitle": "Topic title",
+      "moveTo": "Move to category",
+      "editPost": "Edit post",
+      "edited": "edited",
+      "editFailed": "Could not save the change"
     }
   },
   "users": {
@@ -378,6 +404,104 @@
       "uncategorized": "Uncategorized",
       "pageTitle": "{username} - Profile",
       "pageTitleFallback": "User Profile"
+    },
+    "moderation": {
+      "title": "Moderation",
+      "staffOnly": "Only an admin can act on a staff member.",
+      "reason": "Reason",
+      "reasonPlaceholder": "Reason (kept in the logs)",
+      "reasonOptional": "Reason (optional)",
+      "failed": "Action failed",
+      "status": {
+        "active": "Active",
+        "banned": "Banned",
+        "deleted": "Deleted account",
+        "muted": "Muted until {until}",
+        "hold": "On hold (shared IP)",
+        "payment": "Payment pending"
+      },
+      "ban": {
+        "action": "Ban",
+        "hint": "Blocks sign-in and the tracker, signs the member out and bans their last IP.",
+        "confirm": "Ban {name}",
+        "done": "{name} is banned"
+      },
+      "unban": {
+        "action": "Unban",
+        "hint": "{name} can sign in again and their last IP is unbanned.",
+        "confirm": "Unban",
+        "done": "{name} is unbanned"
+      },
+      "mute": {
+        "action": "Mute in shoutbox",
+        "duration": "Duration",
+        "hour": "1 hour",
+        "day": "1 day",
+        "week": "7 days",
+        "month": "30 days",
+        "confirm": "Mute",
+        "done": "{name} is muted"
+      },
+      "unmute": {
+        "action": "Lift mute",
+        "hint": "{name} can post in the shoutbox again.",
+        "confirm": "Lift mute",
+        "done": "{name} can talk again"
+      },
+      "hold": {
+        "action": "Lift IP hold",
+        "hint": "This account shares its IP with another one. Lifting the hold exempts it from the check for good.",
+        "noAppeal": "No appeal sent yet.",
+        "confirm": "Approve and lift",
+        "done": "Hold lifted for {name}"
+      },
+      "avatar": {
+        "action": "Remove avatar",
+        "hint": "The avatar of {name} is deleted. They can upload another one.",
+        "confirm": "Remove",
+        "done": "Avatar of {name} removed"
+      },
+      "sessions": {
+        "action": "Sign out everywhere",
+        "hint": "{name} is signed out on every device and must sign in again.",
+        "confirm": "Sign out",
+        "done": "{name} is signed out everywhere"
+      },
+      "edit": {
+        "action": "Edit",
+        "username": "Username",
+        "invites": "Invites left",
+        "invitesLeft": "Invites: {count}",
+        "done": "Account of {name} updated"
+      },
+      "roles": {
+        "action": "Roles",
+        "moderator": "Moderator",
+        "done": "Roles of {name} updated"
+      },
+      "ratio": {
+        "action": "Ratio"
+      },
+      "bonus": {
+        "action": "Bonus points",
+        "amount": "Points (+/-)",
+        "points": "{points} pts",
+        "confirm": "Apply",
+        "done": "Bonus of {name} updated"
+      },
+      "passkey": {
+        "action": "Reset passkey",
+        "hint": "Torrents of {name} stop announcing until they are downloaded again. Use it after a leaked announce URL.",
+        "confirm": "Reset",
+        "done": "Passkey of {name} reset"
+      },
+      "delete": {
+        "action": "Delete account",
+        "hint": "The account can no longer sign in or use the tracker, and its username is freed. Torrents, posts and comments stay, under an anonymous name. This cannot be undone.",
+        "typeName": "Type {name} to confirm",
+        "confirm": "Delete for good",
+        "done": "Account of {name} deleted"
+      }
     }
   },
   "invites": {

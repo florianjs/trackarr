@@ -30,6 +30,43 @@
       </div>
     </div>
 
+    <div v-if="can.edit || can.delete" class="flex flex-wrap gap-2">
+      <button v-if="can.edit" type="button" class="btn btn-secondary text-xs" :aria-expanded="editing" @click="startEdit">
+        <Icon name="ph:pencil-simple" aria-hidden="true" />{{ t('common.edit') }}
+      </button>
+      <button v-if="can.delete" type="button" class="btn btn-ghost text-xs hover:!text-danger" :disabled="busy" @click="remove">
+        <Icon name="ph:trash" aria-hidden="true" />{{ t('bonus.bounties.detail.delete') }}
+      </button>
+    </div>
+
+    <form v-if="editing" class="card" @submit.prevent="saveEdit">
+      <div class="card-body grid gap-3 sm:grid-cols-2">
+        <label class="space-y-1 sm:col-span-2">
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.form.title') }}</span>
+          <input v-model="draft.title" type="text" minlength="3" maxlength="200" required class="input w-full text-sm" />
+        </label>
+        <label class="space-y-1 sm:col-span-2">
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.form.description') }}</span>
+          <textarea v-model="draft.description" rows="5" maxlength="5000" class="input w-full text-sm resize-y" />
+        </label>
+        <label class="space-y-1">
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.form.imdb') }}</span>
+          <input v-model="draft.imdbId" type="text" maxlength="200" class="input w-full text-sm font-mono" />
+        </label>
+        <label class="space-y-1">
+          <span class="text-xs font-bold text-text-muted">{{ t('bonus.bounties.form.category') }}</span>
+          <select v-model="draft.categoryId" class="input w-full text-sm">
+            <option value="">-</option>
+            <option v-for="c in flatCategories" :key="c.id" :value="c.id">{{ c.name }}</option>
+          </select>
+        </label>
+        <div class="sm:col-span-2 flex justify-end gap-2">
+          <button type="button" class="btn btn-ghost text-xs" @click="editing = false">{{ t('common.cancel') }}</button>
+          <button type="submit" class="btn btn-primary text-xs" :disabled="busy || draft.title.trim().length < 3">{{ t('common.save') }}</button>
+        </div>
+      </div>
+    </form>
+
     <div v-if="message" class="text-xs px-3 py-2 rounded border" :class="message.ok ? 'border-success/30 bg-success/10 text-success' : 'border-error/30 bg-error/10 text-error'">
       {{ message.text }}
     </div>
@@ -53,7 +90,7 @@
             <p v-if="bounty.status === 'claimed'" class="text-xs text-text-muted">
               {{ t('bonus.bounties.detail.uploader', { user: bounty.filledBy?.username ?? '?' }) }}
             </p>
-            <div v-if="bounty.status === 'claimed' && canReview" class="flex gap-2">
+            <div v-if="can.accept" class="flex gap-2">
               <button class="btn btn-primary !py-1.5 text-xs" :disabled="busy" @click="act('accept', t('bonus.bounties.detail.confirmAccept'))">
                 {{ t('bonus.bounties.detail.accept') }}
               </button>
@@ -105,7 +142,7 @@
           </ul>
         </div>
 
-        <button v-if="bounty.status === 'open' && canReview" class="btn btn-secondary w-full !py-2 text-xs" :disabled="busy" @click="act('cancel', t('bonus.bounties.detail.confirmCancel'))">
+        <button v-if="can.cancel" class="btn btn-secondary w-full !py-2 text-xs" :disabled="busy" @click="act('cancel', t('bonus.bounties.detail.confirmCancel'))">
           {{ t('bonus.bounties.detail.cancelBounty') }}
         </button>
       </div>
@@ -114,6 +151,8 @@
 </template>
 
 <script setup lang="ts">
+import { canBountyAction, type BountyAction } from '~~/shared/utils/bounties';
+
 interface BountyDetail {
   id: string;
   title: string;
@@ -141,9 +180,80 @@ if (error.value || !bounty.value) {
 
 useHead({ title: () => bounty.value?.title ?? t('bonus.bounties.title') });
 
-const canReview = computed(
-  () => !!user.value && (user.value.id === bounty.value?.requesterId || user.value.isAdmin || user.value.isModerator)
-);
+// Same rules as the API (shared/utils/bounties.ts)
+const can = computed(() => {
+  const b = bounty.value;
+  const actor = user.value
+    ? { userId: user.value.id, isStaff: !!(user.value.isAdmin || user.value.isModerator) }
+    : null;
+  const allowed = (action: BountyAction) => !!b && !!actor && canBountyAction(b, action, actor);
+  return {
+    accept: allowed('accept'),
+    cancel: allowed('cancel'),
+    edit: allowed('edit'),
+    delete: allowed('delete'),
+  };
+});
+
+interface CategoryNode {
+  id: string;
+  name: string;
+  subcategories?: CategoryNode[];
+}
+const { data: categories } = await useFetch<CategoryNode[]>('/api/categories', { default: () => [] });
+const flatCategories = computed(() => {
+  const out: { id: string; name: string }[] = [];
+  const walk = (nodes: CategoryNode[], prefix: string) => {
+    for (const n of nodes) {
+      out.push({ id: n.id, name: prefix + n.name });
+      if (n.subcategories) walk(n.subcategories, `${prefix}${n.name} › `);
+    }
+  };
+  walk(categories.value ?? [], '');
+  return out;
+});
+
+const editing = ref(false);
+const draft = reactive({ title: '', description: '', imdbId: '', categoryId: '' });
+
+function startEdit() {
+  const b = bounty.value!;
+  Object.assign(draft, {
+    title: b.title,
+    description: b.description ?? '',
+    imdbId: b.imdbId ?? '',
+    categoryId: b.category?.id ?? '',
+  });
+  editing.value = !editing.value;
+}
+
+function saveEdit() {
+  return run(async () => {
+    await $fetch(`/api/bounties/${bounty.value!.id}`, {
+      method: 'PATCH',
+      body: {
+        title: draft.title.trim(),
+        description: draft.description.trim() || null,
+        imdbId: draft.imdbId.trim() || null,
+        categoryId: draft.categoryId || null,
+      },
+    });
+    editing.value = false;
+  });
+}
+
+async function remove() {
+  if (!confirm(t('bonus.bounties.detail.confirmDelete'))) return;
+  busy.value = true;
+  message.value = null;
+  try {
+    await $fetch(`/api/bounties/${bounty.value!.id}`, { method: 'DELETE' });
+    await navigateTo('/bounties');
+  } catch (err) {
+    message.value = { ok: false, text: (err as { data?: { message?: string } }).data?.message ?? 'Error' };
+    busy.value = false;
+  }
+}
 
 const busy = ref(false);
 const message = ref<{ ok: boolean; text: string } | null>(null);
