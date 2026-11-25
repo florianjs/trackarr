@@ -79,34 +79,19 @@
         </div>
 
         <!-- Update Instructions -->
-        <div v-if="showUpdateInstructions" class="space-y-3">
-          <p
-            class="text-xs font-bold text-text-muted"
-          >
-            {{ t('admin.system.updateCommands') }}
+        <div v-if="instructionsVisible && updateScript" class="space-y-3">
+          <p class="text-xs text-text-muted">
+            {{ t('admin.system.updateIntro', { directory: updateDirectory }) }}
           </p>
-          <div class="space-y-2">
-            <div
-              v-for="cmd in updateCommands"
-              :key="cmd.step"
-              class="bg-bg-tertiary border border-border rounded-lg p-3"
+          <div class="relative bg-bg-tertiary border border-border rounded-lg p-3">
+            <button
+              @click="copyCommand(updateScript)"
+              class="absolute top-2 right-2 text-text-muted hover:text-text-primary"
+              :title="t('common.copy')"
             >
-              <div class="flex items-center justify-between mb-1">
-                <span class="text-xs text-text-muted">
-                  {{ t('admin.system.step', { step: cmd.step, description: cmd.description }) }}
-                </span>
-                <button
-                  @click="copyCommand(cmd.command)"
-                  class="text-text-muted hover:text-text-primary"
-                  :title="t('common.copy')"
-                >
-                  <Icon name="ph:copy" class="text-xs" />
-                </button>
-              </div>
-              <code class="block text-xs font-mono text-text-primary break-all">
-                {{ cmd.command }}
-              </code>
-            </div>
+              <Icon :name="copied ? 'ph:check' : 'ph:copy'" class="text-xs" />
+            </button>
+            <pre class="text-xs font-mono text-text-primary whitespace-pre-wrap break-all pr-6">{{ updateScript }}</pre>
           </div>
           <div
             class="flex items-start gap-2 p-3 bg-leech/10 border border-leech/30 rounded-lg"
@@ -120,6 +105,7 @@
         </div>
 
         <button
+          v-if="!versionInfo?.updateAvailable"
           @click="toggleUpdateInstructions"
           class="w-full bg-bg-tertiary border border-border text-xs font-bold py-2.5 rounded hover:border-white/20 transition-colors flex items-center justify-center gap-2"
         >
@@ -151,16 +137,17 @@ interface VersionInfo {
   updateAvailable: boolean;
 }
 
-interface UpdateCommand {
-  step: number;
-  description: string;
-  command: string;
-}
-
 const versionInfo = ref<VersionInfo | null>(null);
 const checkingUpdates = ref(false);
 const showUpdateInstructions = ref(false);
-const updateCommands = ref<UpdateCommand[]>([]);
+const updateDirectory = ref('');
+const updateScript = ref('');
+const copied = ref(false);
+
+// Shown on demand, and right away when a new version is out
+const instructionsVisible = computed(
+  () => showUpdateInstructions.value || !!versionInfo.value?.updateAvailable
+);
 
 onMounted(async () => {
   await checkUpdates();
@@ -170,6 +157,7 @@ async function checkUpdates() {
   checkingUpdates.value = true;
   try {
     versionInfo.value = await $fetch<VersionInfo>('/api/admin/system/version');
+    if (versionInfo.value.updateAvailable) await loadUpdateScript();
   } catch (error) {
     console.error('Failed to check for updates:', error);
   } finally {
@@ -177,22 +165,28 @@ async function checkUpdates() {
   }
 }
 
-async function toggleUpdateInstructions() {
-  if (!showUpdateInstructions.value && updateCommands.value.length === 0) {
-    try {
-      const data = await $fetch<{ commands: UpdateCommand[] }>(
-        '/api/admin/system/update'
-      );
-      updateCommands.value = data.commands;
-    } catch (error) {
-      console.error('Failed to fetch update commands:', error);
-    }
+async function loadUpdateScript() {
+  if (updateScript.value) return;
+  try {
+    const data = await $fetch<{ directory: string; commands: string[] }>(
+      '/api/admin/system/update'
+    );
+    updateDirectory.value = data.directory;
+    updateScript.value = data.commands.join('\n');
+  } catch (error) {
+    console.error('Failed to fetch update commands:', error);
   }
+}
+
+async function toggleUpdateInstructions() {
+  if (!showUpdateInstructions.value) await loadUpdateScript();
   showUpdateInstructions.value = !showUpdateInstructions.value;
 }
 
-function copyCommand(command: string) {
-  navigator.clipboard.writeText(command);
+async function copyCommand(command: string) {
+  await navigator.clipboard.writeText(command);
+  copied.value = true;
+  setTimeout(() => (copied.value = false), 1500);
 }
 
 function formatDate(dateStr: string): string {

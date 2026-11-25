@@ -656,12 +656,11 @@
       "installedVersion": "インストール済みの Trackarr のバージョン",
       "published": "{date} 公開",
       "showInstructions": "更新手順を表示",
-      "step": "ステップ {step}：{description}",
       "upToDate": "最新バージョンを使用しています",
       "updateAvailable": "更新があります：{version}",
-      "updateCommands": "更新コマンド",
       "versionTitle": "バージョンと更新",
-      "viewChangelog": "変更履歴を表示"
+      "viewChangelog": "変更履歴を表示",
+      "updateIntro": "Trackarr は既定で {directory} にインストールされます。最新バージョンに更新するには、次を実行してください："
     },
     "torznabUsers": {
       "blockAccess": "API アクセスをブロック",
