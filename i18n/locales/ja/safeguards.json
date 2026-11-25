@@ -44,7 +44,9 @@
       "approve": "承認して除外",
       "reject": "却下",
       "approved": "アカウントを解除しました",
-      "rejected": "却下しました"
-    }
+      "rejected": "却下しました",
+      "more": "さらに表示"
+    },
+    "retry": "再試行"
   }
 }

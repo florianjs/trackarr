@@ -47,7 +47,9 @@ export function sessionRejection(check: SessionCheck) {
  * Require user authentication and check for bans. Accounts waiting for their
  * sign-up payment are refused (402) unless `allowPaymentPending`: only the
  * payment endpoints let them through. Accounts held by the multi-account
- * guard are refused (423) unless `allowIpHold`: only the appeal endpoints.
+ * guard are refused (423) unless `allowIpHold` (the appeal endpoints), or
+ * while their payment is pending on the payment endpoints: the sign-up is
+ * paid first, the appeal comes after.
  */
 export async function requireAuthSession(
   event: H3Event,
@@ -78,7 +80,8 @@ export async function requireAuthSession(
     throw createError({ statusCode: 402, message: 'Payment required to activate your account' });
   }
 
-  if (dbUser.ipHold && !options.allowIpHold) {
+  const payingFirst = dbUser.paymentPending && options.allowPaymentPending;
+  if (dbUser.ipHold && !options.allowIpHold && !payingFirst) {
     throw createError({ statusCode: 423, message: 'Account on hold: this IP address is shared with another account' });
   }
 

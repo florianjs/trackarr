@@ -44,7 +44,9 @@
       "approve": "Aceptar y eximir",
       "reject": "Rechazar",
       "approved": "Cuenta liberada",
-      "rejected": "Apelación rechazada"
-    }
+      "rejected": "Apelación rechazada",
+      "more": "Ver más"
+    },
+    "retry": "Reintentar"
   }
 }

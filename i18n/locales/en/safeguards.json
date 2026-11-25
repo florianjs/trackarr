@@ -44,7 +44,9 @@
       "approve": "Approve and exempt",
       "reject": "Reject",
       "approved": "Account released",
-      "rejected": "Appeal rejected"
-    }
+      "rejected": "Appeal rejected",
+      "more": "Show more"
+    },
+    "retry": "Retry"
   }
 }

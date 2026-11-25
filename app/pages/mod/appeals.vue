@@ -4,11 +4,24 @@
       {{ message.text }}
     </div>
 
-    <div v-if="!data?.accounts.length" class="card">
+    <div v-if="loadError" class="card">
+      <div class="card-body flex flex-wrap items-center justify-between gap-3 text-sm">
+        <span class="text-error">{{ loadError }}</span>
+        <button type="button" class="btn text-xs" :disabled="loading" @click="load(true)">
+          {{ t('safeguards.retry') }}
+        </button>
+      </div>
+    </div>
+
+    <div v-else-if="loaded && accounts.length === 0" class="card">
       <div class="card-body text-sm text-text-muted">{{ t('safeguards.mod.empty') }}</div>
     </div>
 
-    <div v-for="account in data?.accounts ?? []" :key="account.id" class="card">
+    <div v-if="loading && accounts.length === 0" class="text-sm text-text-muted flex items-center gap-2">
+      <Icon name="ph:spinner" class="animate-spin" />
+    </div>
+
+    <div v-for="account in accounts" :key="account.id" class="card">
       <div class="card-header flex flex-wrap items-center justify-between gap-2">
         <NuxtLink :to="`/users/${account.id}`" class="text-sm font-medium text-text-primary hover:underline">
           {{ account.username }}
@@ -58,6 +71,17 @@
         </div>
       </div>
     </div>
+
+    <button
+      v-if="nextCursor && !loadError"
+      type="button"
+      class="btn w-full text-xs"
+      :disabled="loading"
+      @click="load(false)"
+    >
+      <Icon v-if="loading" name="ph:spinner" class="animate-spin" aria-hidden="true" />
+      {{ t('safeguards.mod.more') }}
+    </button>
   </div>
 </template>
 
@@ -72,10 +96,36 @@ interface HeldAccount {
 }
 
 const { t, locale } = useI18n();
-const { data, refresh } = await useFetch<{ accounts: HeldAccount[] }>('/api/mod/appeals');
+const accounts = ref<HeldAccount[]>([]);
+const nextCursor = ref<string | null>(null);
+const loading = ref(false);
+const loaded = ref(false);
+const loadError = ref('');
 const notes = reactive<Record<string, string>>({});
 const busy = ref(false);
 const message = ref<{ ok: boolean; text: string } | null>(null);
+
+const errorText = (err: unknown) => (err as { data?: { message?: string } }).data?.message ?? t('safeguards.error');
+
+/** First page (reset) or the next one */
+async function load(reset: boolean) {
+  loading.value = true;
+  loadError.value = '';
+  try {
+    const page = await $fetch<{ accounts: HeldAccount[]; nextCursor: string | null }>('/api/mod/appeals', {
+      query: reset || !nextCursor.value ? {} : { cursor: nextCursor.value },
+    });
+    accounts.value = reset ? page.accounts : [...accounts.value, ...page.accounts];
+    nextCursor.value = page.nextCursor;
+    loaded.value = true;
+  } catch (err) {
+    loadError.value = errorText(err);
+  } finally {
+    loading.value = false;
+  }
+}
+
+onMounted(() => load(true));
 
 async function decide(userId: string, decision: 'approve' | 'reject') {
   busy.value = true;
@@ -86,9 +136,9 @@ async function decide(userId: string, decision: 'approve' | 'reject') {
       body: { decision, note: notes[userId]?.trim() || undefined },
     });
     message.value = { ok: true, text: t(decision === 'approve' ? 'safeguards.mod.approved' : 'safeguards.mod.rejected') };
-    await refresh();
+    await load(true);
   } catch (err) {
-    message.value = { ok: false, text: (err as { data?: { message?: string } }).data?.message ?? t('safeguards.error') };
+    message.value = { ok: false, text: errorText(err) };
   } finally {
     busy.value = false;
   }

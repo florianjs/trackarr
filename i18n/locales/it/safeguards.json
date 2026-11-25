@@ -44,7 +44,9 @@
       "approve": "Accogli ed esenta",
       "reject": "Respingi",
       "approved": "Account sbloccato",
-      "rejected": "Ricorso respinto"
-    }
+      "rejected": "Ricorso respinto",
+      "more": "Mostra altro"
+    },
+    "retry": "Riprova"
   }
 }

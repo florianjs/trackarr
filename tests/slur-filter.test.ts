@@ -32,6 +32,15 @@ describe('censorSlurs', () => {
     expect(censorSlurs('<p>sale nègre!</p>').text).toBe('<p>sale *****!</p>');
   });
 
+  it('catches leetspeak with ! inside a word and slurs glued by !', () => {
+    expect(censorSlurs('n!gger').text).toBe('******');
+    expect(censorSlurs('hey!nigger!!').text).toBe('hey!******!!');
+  });
+
+  it('keeps decomposed accents in the same word', () => {
+    expect(censorSlurs('sale ne\u0300gre').text).toBe('sale *****');
+  });
+
   it('reports no change on clean text', () => {
     expect(censorSlurs('Welcome to Niger')).toEqual({ text: 'Welcome to Niger', changed: false });
   });

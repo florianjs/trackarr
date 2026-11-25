@@ -47,8 +47,11 @@ const LEET: Record<string, string> = {
   '!': 'i',
 };
 
-/** Words: letters, digits and leetspeak symbols (! only inside a word) */
-const WORD = /[\p{L}\p{N}@$]+(?:!+[\p{L}\p{N}@$]+)*/gu;
+/**
+ * Words: letters (with their combining accents), digits and leetspeak
+ * symbols (! only inside a word)
+ */
+const WORD = /[\p{L}\p{M}\p{N}@$]+(?:!+[\p{L}\p{M}\p{N}@$]+)*/gu;
 
 export function normalizeWord(word: string): string {
   return word
@@ -84,10 +87,18 @@ export function isSlur(word: string, extra: RegExp[] = []): boolean {
 /** Mask every slur with asterisks, same length */
 export function censorSlurs(text: string, extra: RegExp[] = []): { text: string; changed: boolean } {
   let changed = false;
-  const result = text.replace(WORD, (word) => {
-    if (!isSlur(word, extra)) return word;
+  const mask = (word: string) => {
     changed = true;
-    return '*'.repeat([...word].length);
+    return '*'.repeat([...word.normalize('NFC')].length);
+  };
+  const result = text.replace(WORD, (word) => {
+    if (isSlur(word, extra)) return mask(word);
+    // "n!gger" is one word, "hi!nigger" two: check each part, keep the "!"
+    if (!word.includes('!')) return word;
+    return word
+      .split(/(!+)/)
+      .map((part) => (part.startsWith('!') || !isSlur(part, extra) ? part : mask(part)))
+      .join('');
   });
   return { text: result, changed };
 }

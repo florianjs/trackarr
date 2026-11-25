@@ -44,7 +44,9 @@
       "approve": "Annehmen und ausnehmen",
       "reject": "Ablehnen",
       "approved": "Konto freigegeben",
-      "rejected": "Einspruch abgelehnt"
-    }
+      "rejected": "Einspruch abgelehnt",
+      "more": "Mehr anzeigen"
+    },
+    "retry": "Erneut versuchen"
   }
 }

@@ -4,12 +4,12 @@
       <h2 class="text-lg font-semibold mb-2">{{ t('safeguards.appeal.title') }}</h2>
       <p class="text-text-muted text-sm mb-6">{{ t('safeguards.appeal.intro') }}</p>
 
-      <div v-if="!status" class="text-text-muted text-sm flex items-center gap-2">
+      <div v-if="!status && !error" class="text-text-muted text-sm flex items-center gap-2">
         <Icon name="ph:spinner" class="animate-spin" />
         {{ t('safeguards.appeal.loading') }}
       </div>
 
-      <template v-else>
+      <template v-if="status">
         <!-- Latest appeal -->
         <div v-if="latest" class="p-3 rounded border text-sm mb-6 space-y-2" :class="statusClass(latest.status)">
           <p class="flex items-center gap-2 font-medium">
@@ -48,23 +48,24 @@
             {{ t('safeguards.appeal.submit') }}
           </button>
         </form>
-
-        <div v-if="error" class="text-red-400 text-sm mt-4">{{ error }}</div>
-
-        <div class="mt-6 pt-6 border-t border-border space-y-3">
-          <button
-            type="button"
-            :disabled="busy"
-            class="w-full border border-border text-sm py-2 rounded hover:bg-bg-tertiary transition-colors disabled:opacity-50"
-            @click="refresh"
-          >
-            {{ t('safeguards.appeal.check') }}
-          </button>
-          <button type="button" class="w-full text-xs text-text-muted hover:text-text-primary" @click="logout">
-            {{ t('safeguards.appeal.logout') }}
-          </button>
-        </div>
       </template>
+
+      <!-- Also shown when the first load failed: retry or leave -->
+      <div v-if="error" class="text-red-400 text-sm mt-4">{{ error }}</div>
+
+      <div v-if="status || error" class="mt-6 pt-6 border-t border-border space-y-3">
+        <button
+          type="button"
+          :disabled="busy"
+          class="w-full border border-border text-sm py-2 rounded hover:bg-bg-tertiary transition-colors disabled:opacity-50"
+          @click="refresh"
+        >
+          {{ t('safeguards.appeal.check') }}
+        </button>
+        <button type="button" class="w-full text-xs text-text-muted hover:text-text-primary" @click="logout">
+          {{ t('safeguards.appeal.logout') }}
+        </button>
+      </div>
     </div>
   </AuthShell>
 </template>
@@ -99,7 +100,9 @@ const canAppeal = computed(() => canFileAppeal(latest.value));
 async function load() {
   status.value = await $fetch<{ held: boolean; appeals: Appeal[] }>('/api/auth/appeal');
   if (!status.value.held) {
-    // Approved: the session carries the new state, the middleware lets the user in
+    // Approved: /api/auth/status rewrites the session cookie from the
+    // database, then the reloaded session lets the middleware through
+    await $fetch('/api/auth/status');
     await fetchSession();
     await router.push('/');
   }

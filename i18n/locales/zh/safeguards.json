@@ -44,7 +44,9 @@
       "approve": "通过并豁免",
       "reject": "拒绝",
       "approved": "账户已解除暂停",
-      "rejected": "申诉已拒绝"
-    }
+      "rejected": "申诉已拒绝",
+      "more": "显示更多"
+    },
+    "retry": "重试"
   }
 }

@@ -44,7 +44,9 @@
       "approve": "Accepter et exempter",
       "reject": "Refuser",
       "approved": "Compte débloqué",
-      "rejected": "Appel refusé"
-    }
+      "rejected": "Appel refusé",
+      "more": "Voir plus"
+    },
+    "retry": "Réessayer"
   }
 }

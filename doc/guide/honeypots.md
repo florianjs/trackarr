@@ -17,7 +17,7 @@ When one is requested:
 
 1. The answer is a plain `404 Page not found`, like any missing page: the scanner learns nothing.
 2. A `honeypot_triggered` security alert is raised (IP, path, user agent).
-3. The IP is blocked. The first block lasts 5 minutes and each new offence doubles it, up to 24 hours.
+3. The IP is blocked for 5 minutes. Each new probe after that starts a new 5-minute block.
 
 Set `HONEYPOT_BAN=false` to keep the alerts without blocking (useful behind a proxy that hides the real client IP, see [Environment variables](/reference/env#security-alerts)).
 
@@ -33,7 +33,7 @@ Both raise a `honeypot_triggered` alert with the username the bot tried.
 ## Where to see the hits
 
 - **Admin dashboard → Security alerts**: every honeypot hit, next to brute force attempts, blocked IPs and suspected ratio cheats.
-- **Webhooks**: set `DISCORD_WEBHOOK_URL`, `SLACK_WEBHOOK_URL` or `SECURITY_WEBHOOK_URL` to be notified (production only, unless `ENABLE_DEV_ALERTS=true`). The same alert is sent at most once every 5 minutes per IP.
+- **Webhooks**: set `DISCORD_WEBHOOK_URL`, `SLACK_WEBHOOK_URL` or `SECURITY_WEBHOOK_URL` to be notified (production only, unless `ENABLE_DEV_ALERTS=true`). The same alert is sent at most once every 5 minutes per IP, across all app nodes (the cooldown is shared through Redis; if Redis is down, each node applies it on its own).
 
 ## Why it helps
 
